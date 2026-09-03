@@ -174,6 +174,8 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 .idea-fmt{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--violet-hi);margin-bottom:12px;display:block}
 .idea h4{font-family:var(--display);font-size:1.22rem;letter-spacing:-.03em;text-transform:lowercase;margin-bottom:9px;position:relative}
 .idea p{font-size:.87rem;line-height:1.5;position:relative}
+.idea-hook{font-family:var(--mono);font-size:.78rem!important;line-height:1.45!important;color:var(--violet-hi);
+  border-left:2px solid rgba(81,106,246,.45);padding-left:11px;margin-bottom:11px}
 .idea-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;padding-top:14px;
   border-top:1px solid var(--line);font-family:var(--mono);font-size:.65rem;color:var(--muted-2);position:relative}
 .idea-foot em{font-style:normal;color:var(--green);text-align:right}
@@ -396,18 +398,6 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 .career-item b{display:block;font-size:.94rem;margin-bottom:4px}
 .career-item p{font-size:.85rem;line-height:1.5}
 
-.fit{display:grid;grid-template-columns:1fr;gap:14px}
-@media(max-width:820px){.fit{grid-template-columns:1fr}}
-.fit-col{padding:clamp(24px,3vw,34px);border-radius:var(--r-l);border:1px solid var(--line);background:var(--surface)}
-.fit-col.yes{border-color:rgba(25,217,124,.32);background:rgba(25,217,124,.05)}
-.fit-col h3{font-size:1.5rem;margin-bottom:20px}
-.fit-col.yes h3{color:var(--green)}
-.fit-col ul{list-style:none;display:grid;gap:13px}
-.fit-col li{font-size:.92rem;color:#B4ADD4;display:flex;gap:11px;line-height:1.45}
-.fit-col.yes li::before{content:'✓';color:var(--green);font-family:var(--mono);font-size:.85rem}
-.fit-col.no li{color:var(--muted-2)}
-.fit-col.no li::before{content:'✕';color:var(--muted-2);font-family:var(--mono);font-size:.85rem}
-
 .faq{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(24px,4vw,60px)}
 @media(max-width:860px){.faq{grid-template-columns:1fr}}
 
@@ -451,7 +441,6 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
       <button data-jump="earn" type="button">the ladder</button>
       <button data-jump="role" type="button">the role</button>
       <button data-jump="ideas" type="button">what you'd post</button>
-      <button data-jump="fit" type="button">is it for you</button>
       <button data-jump="faq" type="button">faq</button>
     </div>
     <button class="burger" aria-label="menu">☰</button>
@@ -674,56 +663,69 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
     <div class="shead rv">
       <span class="eyebrow">05 — what you'd post</span>
       <h2>you'll never<br>start from blank.</h2>
-      <p>Formats that have already worked on other campuses, refreshed every month in the ambassador hub. These are the starting set, sorted by format so you can pick based on what you actually feel like making today.</p>
+      <p>Formats that are working on finance and crypto TikTok right now, rewritten for a campus audience. Each one comes with the hook to open on — that first line is most of the job. Refreshed every month in the ambassador hub.</p>
     </div>
 
     <div class="chips rv" id="chips">
       <button class="chip on" data-f="all">everything</button>
       <button class="chip" data-f="street">street interviews</button>
+      <button class="chip" data-f="green">green screen</button>
+      <button class="chip" data-f="series">running series</button>
+      <button class="chip" data-f="story">confessions</button>
       <button class="chip" data-f="data">charts &amp; numbers</button>
       <button class="chip" data-f="explainer">explainers</button>
-      <button class="chip" data-f="challenge">challenges</button>
-      <button class="chip" data-f="story">personal stories</button>
       <button class="chip" data-f="guest">guests &amp; collabs</button>
     </div>
 
     <div class="idea-grid" id="ideas-grid">
 
-      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview</span><h4>"what's in your portfolio?"</h4><p>Stop ten people outside the library. No judgement, no gotcha. The awkward answers perform best — authenticity beats polish every time.</p><div class="idea-foot"><span>25 min shoot · 5 clips</span><em>easiest start</em></div></article>
+      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview · wheel</span><h4>answer the question or show your balance</h4><p class="idea-hook">“spin it. answer the question, or show us the account.”</p><p>The format running campus TikTok right now. A spinning wheel of money questions, and the forfeit is showing your banking app. Most people answer, a few show, and the ones who do both are the clip. Bring a cheap wheel and a tripod.</p><div class="idea-foot"><span>40 min · 6–8 clips</span><em>proven format</em></div></article>
 
-      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview</span><h4>$20 for the best 30-second pitch</h4><p>Hand strangers real cash to pitch a real ticker on camera. Money changing hands is the most reliable hook there is. Reimbursed up to $100 a shoot.</p><div class="idea-foot"><span>40 min shoot · reimbursed</span><em>medium effort</em></div></article>
+      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview</span><h4>how much do you think i make</h4><p class="idea-hook">“guess my salary. you get one try.”</p><p>Ask people to guess the earnings of the person standing next to them, then reveal. The gap between guess and truth is the whole video, and the comments argue about it for days.</p><div class="idea-foot"><span>30 min · 5 clips</span><em>easiest start</em></div></article>
 
-      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview</span><h4>guess the salary, guess the burn</h4><p>Ask seniors what they think they'll earn, then what they think they'll spend. The gap between those two numbers is the entire video.</p><div class="idea-foot"><span>30 min shoot · strong comments</span><em>easy</em></div></article>
+      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview · reimbursed</span><h4>$20 for the best 30-second pitch</h4><p class="idea-hook">“pitch me one coin. thirty seconds. twenty bucks if it’s good.”</p><p>Hand strangers real cash to pitch a real ticker on camera. Money physically changing hands is the most reliable hook there is, and the bad pitches outperform the good ones. Reimbursed up to $100 a shoot.</p><div class="idea-foot"><span>40 min · reimbursed</span><em>medium effort</em></div></article>
 
-      <article class="idea rv" data-t="data"><span class="idea-fmt">chart post</span><h4>the tuition chart</h4><p>Your school's tuition over 20 years against the S&amp;P. Nothing else on screen. It writes its own outrage and always ends up in group chats.</p><div class="idea-foot"><span>15 min · shares beat views</span><em>easy</em></div></article>
+      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview</span><h4>what would you do with $1,000 today</h4><p class="idea-hook">“a thousand dollars, right now. where does it go?”</p><p>No judgement, no gotcha. You will get one person who says index fund, one who says a coin they cannot pronounce, and one who says their overdraft. That spread is the video.</p><div class="idea-foot"><span>25 min · 5 clips</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="data"><span class="idea-fmt">chart post · monthly series</span><h4>the campus price index</h4><p>Track five things students actually buy — dining plan, parking pass, that one burrito — against inflation. Repeat monthly until it's your signature.</p><div class="idea-foot"><span>1 hr · becomes a franchise</span><em>high repeat value</em></div></article>
+      <article class="idea rv" data-t="green"><span class="idea-fmt">green screen · reactive</span><h4>react to the chart, not the news</h4><p class="idea-hook">“this happened four hours ago and nobody on this campus knows.”</p><p>Green screen yourself in front of the actual chart or headline and talk over it. It is the highest-trust format in finance because you are showing your source while still being on camera. Speed beats depth here — post inside a few hours.</p><div class="idea-foot"><span>20 min · rides the news</span><em>needs speed</em></div></article>
 
-      <article class="idea rv" data-t="data"><span class="idea-fmt">chart post</span><h4>what your rent actually costs you</h4><p>Take local rent, subtract what the same money would have compounded to over four years. Hyper-local, hyper-shareable, works on every campus.</p><div class="idea-foot"><span>20 min · high saves</span><em>easy</em></div></article>
+      <article class="idea rv" data-t="green"><span class="idea-fmt">green screen</span><h4>reading my school’s subreddit out loud</h4><p class="idea-hook">“someone on r/[yourschool] just asked if they should put loan money in crypto.”</p><p>Pull a real money post from your campus subreddit or a class group chat, put it behind you, and answer it properly. Free hyper-local material that regenerates itself every single week.</p><div class="idea-foot"><span>15 min · endless supply</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="explainer"><span class="idea-fmt">explainer · 60 seconds</span><h4>"explain it to a freshman"</h4><p>One concept, sixty seconds, zero jargon. ETFs, options, gas fees. If your roommate can't repeat it back to you, reshoot it.</p><div class="idea-foot"><span>20 min · evergreen</span><em>easy</em></div></article>
+      <article class="idea rv" data-t="green"><span class="idea-fmt">green screen · faceless option</span><h4>the tuition chart</h4><p class="idea-hook">“your tuition versus the s&amp;p, same twenty years.”</p><p>Your school’s tuition over 20 years against the S&amp;P, nothing else on screen. It writes its own outrage and ends up in group chats. Works fully faceless if you are not ready to be on camera yet.</p><div class="idea-foot"><span>15 min · shares beat views</span><em>no face needed</em></div></article>
 
-      <article class="idea rv" data-t="explainer"><span class="idea-fmt">explainer · screen record</span><h4>what actually happens when you hit buy</h4><p>Walk through a real trade on your own screen, start to finish. The single highest-converting format we've seen — it removes the fear of the first tap.</p><div class="idea-foot"><span>30 min · best conversion</span><em>easy</em></div></article>
+      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · highest reach</span><h4>$100 to $1,000 — follow along</h4><p class="idea-hook">“day 6 of turning $100 into $1,000. we are down $14.”</p><p>The single highest-reach hook in finance content, because the hook is not a tip, it is a shared journey. People come back for the number, not the advice. Post the losing days — those outperform the wins.</p><div class="idea-foot"><span>10 min/day · builds habit</span><em>best for growth</em></div></article>
 
-      <article class="idea rv" data-t="explainer"><span class="idea-fmt">explainer · reactive</span><h4>"why is everyone talking about this"</h4><p>Something moves and your campus doesn't know why. Post within a few hours. Being fast matters more than being thorough here.</p><div class="idea-foot"><span>25 min · rides the news</span><em>needs speed</em></div></article>
+      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · monthly</span><h4>the campus price index</h4><p class="idea-hook">“the burrito is up 9% since september. here is the rest.”</p><p>Track five things students actually buy — dining plan, parking pass, that one burrito — against inflation. Repeat monthly until it becomes your signature and people start sending you price changes.</p><div class="idea-foot"><span>1 hr/month · becomes a franchise</span><em>high repeat value</em></div></article>
 
-      <article class="idea rv" data-t="challenge"><span class="idea-fmt">challenge · runs one week</span><h4>dorm vs dorm</h4><p>Two floors, two paper portfolios, one week. Post the standings every day. People follow a rivalry far longer than they follow advice.</p><div class="idea-foot"><span>daily posts · best retention</span><em>needs a full week</em></div></article>
+      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · one week</span><h4>dorm vs dorm</h4><p class="idea-hook">“two floors, two portfolios, one week. standings at 9pm.”</p><p>Two floors, two paper portfolios, daily standings. People follow a rivalry far longer than they follow advice, and the losing floor does your promotion for you.</p><div class="idea-foot"><span>daily posts · best retention</span><em>needs a full week</em></div></article>
 
-      <article class="idea rv" data-t="challenge"><span class="idea-fmt">challenge · gameday timing</span><h4>beat the rival school</h4><p>Time a head-to-head to your biggest football week. Whichever campus drives more signups gets the bragging rights posted nationally.</p><div class="idea-foot"><span>7 days · seasonal spike</span><em>needs planning</em></div></article>
+      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · gameday</span><h4>beat the rival school</h4><p class="idea-hook">“we are 40 signups behind [rival]. do something about it.”</p><p>Time a head-to-head to your biggest football week. Whichever campus drives more signups gets the win posted nationally. Seasonal, so plan it around the schedule rather than the algorithm.</p><div class="idea-foot"><span>7 days · seasonal spike</span><em>needs planning</em></div></article>
 
-      <article class="idea rv" data-t="challenge"><span class="idea-fmt">challenge · daily updates</span><h4>$100, one week, filmed daily</h4><p>Put real money in and post every single day, win or lose. The daily cadence trains your audience to check back — that habit is the whole point.</p><div class="idea-foot"><span>10 min/day · builds habit</span><em>medium effort</em></div></article>
+      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · experiment</span><h4>i let a bot trade for a month</h4><p class="idea-hook">“i gave a bot $200 and no input. month one results.”</p><p>Set an automated or rules-based strategy running, then report it honestly every week. The experiment framing lets you cover markets without ever telling anyone what to buy.</p><div class="idea-foot"><span>10 min/week · compounds</span><em>low risk to post</em></div></article>
 
-      <article class="idea rv" data-t="story"><span class="idea-fmt">personal story</span><h4>i lost money and here's why</h4><p>Post the losses, not just the wins. The fastest way to build trust on a finance account, and the reason people DM you instead of scrolling past.</p><div class="idea-foot"><span>20 min · trust builder</span><em>easy</em></div></article>
+      <article class="idea rv" data-t="story"><span class="idea-fmt">confession · highest engagement</span><h4>i lost money and here is exactly how</h4><p class="idea-hook">“i lost $400 in one afternoon. here is the screenshot.”</p><p>The confession hook gets roughly double the like-to-view ratio of a tips video. Post the number, post the screenshot, post what you would do differently. It is the fastest trust you can build on a finance account.</p><div class="idea-foot"><span>20 min · trust builder</span><em>highest engagement</em></div></article>
 
-      <article class="idea rv" data-t="story"><span class="idea-fmt">personal story · profile</span><h4>the classmate who actually made money</h4><p>Find the person on your campus with a real story and put them on camera. You're a reporter here, not the subject — that's what makes it repeatable.</p><div class="idea-foot"><span>45 min · series potential</span><em>medium effort</em></div></article>
+      <article class="idea rv" data-t="story"><span class="idea-fmt">milestone reveal</span><h4>how i made my first $500 at 19</h4><p class="idea-hook">“$500 in five months, starting from zero. here is the math.”</p><p>Specificity is the whole format: a concrete number, a timeframe, and where you started. Vague wins get ignored, testable ones get saved. Show the account, not a stock photo.</p><div class="idea-foot"><span>25 min · high saves</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="story"><span class="idea-fmt">personal story · ongoing</span><h4>my first semester, documented</h4><p>Film yourself learning in public from day one. Low polish, high frequency. By week ten the archive itself is the reason people follow you.</p><div class="idea-foot"><span>10 min/week · compounds</span><em>easy</em></div></article>
+      <article class="idea rv" data-t="story"><span class="idea-fmt">confession · relatable</span><h4>things i believed about money at 18</h4><p class="idea-hook">“i thought a credit card was free money. genuinely.”</p><p>List what you got wrong before you learned better. Being the person who did not know is more watchable than being the person who does, and it lowers the barrier for people to ask you things.</p><div class="idea-foot"><span>15 min · strong comments</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · on camera</span><h4>put a professor on the record</h4><p>Ten minutes with someone who teaches this for a living. Instant credibility, and it makes your channel look like a publication rather than an account.</p><div class="idea-foot"><span>1 hr · booking support</span><em>medium effort</em></div></article>
+      <article class="idea rv" data-t="data"><span class="idea-fmt">chart post</span><h4>what your rent actually costs you</h4><p class="idea-hook">“your rent, minus what it would have compounded to.”</p><p>Take local rent, subtract what the same money would have grown to over four years. Hyper-local, hyper-shareable, and every campus has its own version of this number.</p><div class="idea-foot"><span>20 min · high saves</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · collab</span><h4>finance club crossover</h4><p>The club already has the audience you want. Co-post, split the reach, and you'll pull their whole membership into your group chat.</p><div class="idea-foot"><span>1 hr · audience swap</span><em>easy</em></div></article>
+      <article class="idea rv" data-t="data"><span class="idea-fmt">chart post · list format</span><h4>5 things i would never do with my money</h4><p class="idea-hook">“five things i would never do with money. number two is normal.”</p><p>The plain numbered list beats every age-anchored version of the same video — saying “at 20” or “at 40” quietly excludes everyone else. Keep the list unqualified and it travels further.</p><div class="idea-foot"><span>20 min · evergreen</span><em>reliable</em></div></article>
 
-      <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · remote</span><h4>the alum who made it</h4><p>Track down a graduate now working in markets. Students care far more about someone who sat in their lecture halls than a stranger with credentials.</p><div class="idea-foot"><span>45 min · remote is fine</span><em>medium effort</em></div></article>
+      <article class="idea rv" data-t="data"><span class="idea-fmt">chart post · contrarian</span><h4>the take your finance class will hate</h4><p class="idea-hook">“everything they taught you about saving is one generation old.”</p><p>A contrarian rule pulls enormous reach, but it fights you until people know who you are. Worth keeping in the back pocket for once you have a few thousand followers behind it.</p><div class="idea-foot"><span>25 min · big ceiling</span><em>save for later</em></div></article>
+
+      <article class="idea rv" data-t="explainer"><span class="idea-fmt">explainer · 60 seconds</span><h4>explain it to a freshman</h4><p class="idea-hook">“explain an etf to me like i just got here.”</p><p>One concept, sixty seconds, zero jargon. If your roommate cannot repeat it back, reshoot it. Longer cuts now hold better than 15-second ones, so do not rush it artificially.</p><div class="idea-foot"><span>20 min · evergreen</span><em>easy</em></div></article>
+
+      <article class="idea rv" data-t="explainer"><span class="idea-fmt">explainer · screen record</span><h4>what actually happens when you hit buy</h4><p class="idea-hook">“this is the whole thing, start to finish, no cuts.”</p><p>Walk through a real trade on your own screen. It converts better than anything else because it removes the fear of the first tap — but it is a demo, so it trades reach for signups. Alternate it with reach formats.</p><div class="idea-foot"><span>30 min · best conversion</span><em>converts, low reach</em></div></article>
+
+      <article class="idea rv" data-t="explainer"><span class="idea-fmt">explainer · faceless</span><h4>the thing nobody explains about fees</h4><p class="idea-hook">“nobody tells you what this actually costs you.”</p><p>Screen recording, text overlay, voiceover, no face. Faceless finance is a large share of what goes viral now, which makes this the format to start on if being on camera is the thing stopping you.</p><div class="idea-foot"><span>20 min · no camera</span><em>no face needed</em></div></article>
+
+      <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · on camera</span><h4>put a professor on the record</h4><p class="idea-hook">“i asked someone who teaches this for a living.”</p><p>Ten minutes with a finance or econ professor. Instant credibility, and it makes your channel look like a publication rather than an account. Most will say yes to ten minutes.</p><div class="idea-foot"><span>1 hr · booking support</span><em>medium effort</em></div></article>
+
+      <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · collab</span><h4>finance club crossover</h4><p class="idea-hook">“your club has the audience. i have the camera.”</p><p>The club already has the people you want. Co-post, split the reach, and their whole membership ends up in your group chat by the end of the week.</p><div class="idea-foot"><span>1 hr · audience swap</span><em>easy</em></div></article>
+
+      <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · remote</span><h4>the alum who made it</h4><p class="idea-hook">“she sat in the same lecture hall. now she trades for a living.”</p><p>Track down a graduate now working in markets. Students care far more about someone who sat in their lecture halls than a stranger with credentials, and remote is completely fine.</p><div class="idea-foot"><span>45 min · remote is fine</span><em>medium effort</em></div></article>
 
     </div>
   </div>
@@ -893,33 +895,10 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
   </div>
 </section>
 
-<section id="fit">
-  <div class="wrap">
-    <div class="shead rv">
-      <span class="eyebrow">09 — is this for you</span>
-      <h2>the honest<br>version.</h2>
-      <p>This works really well for some people and not at all for others. We'd rather you work out which one you are now than three weeks in.</p>
-    </div>
-
-    <div class="fit rv">
-      <div class="fit-col yes">
-        <h3>a good fit if</h3>
-        <ul>
-          <li>You're already the person your friends ask about money, stocks or crypto</li>
-          <li>You can give it 4–6 hours a week consistently, including exam weeks</li>
-          <li>You're comfortable posting with your face and name attached</li>
-          <li>You want to learn content and distribution, not just make beer money</li>
-          <li>You're socially connected on campus — clubs, greek life, sports, dorm life</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="faq">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">10 — questions</span>
+      <span class="eyebrow">09 — questions</span>
       <h2>the things<br>everyone asks.</h2>
     </div>
 
