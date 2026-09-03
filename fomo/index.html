@@ -951,7 +951,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
     <div class="shead rv" style="margin-bottom:22px">
       <span class="eyebrow">04 — the treasure hunt</span>
       <h2>one hunt.<br>all five of you.</h2>
-      <p style="margin-top:12px">There's a single chain of bounties per campus, and your team works it together. You unlock them strictly in order — clear the one you're on and the next opens for everyone. Each rung is led by one seat with the rest backing them up, so the hunt only moves as fast as your slowest empty chair. The pot is the campus's, not any one person's.</p>
+      <p style="margin-top:12px">Ten rungs, one chain per campus, worked by the whole team. You unlock them strictly in order — clear the one you're on and the next opens for everyone. Each rung is led by one seat with the rest backing them up, so the hunt only moves as fast as your slowest empty chair. The first three pay in gear rather than cash, and the pot is the campus's, not any one person's.</p>
     </div>
 
     <div class="ladder-top rv">
@@ -1348,7 +1348,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">how is the bounty pot split?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Evenly, across the seats that were filled and active when the rung cleared. A four-person campus splits a $500 rung four ways; fill the fifth seat and the next one splits five ways but the hunt moves faster. An empty chair never takes a share, and neither does someone who went quiet — if a seat has been inactive for a month, your president can flag it and we'll leave them out of that rung. Per-view earnings are the opposite: those are entirely yours and never split.</p></div></div>
+          <div class="acc-body"><div><p>Evenly, across the seats that were filled and active when the rung cleared. A four-person campus splits the $400 rung four ways; fill the fifth seat and the next one splits five ways but the hunt moves faster. An empty chair never takes a share, and neither does someone who went quiet — if a seat has been inactive for a month, your president can flag it and we'll leave them out of that rung. Per-view earnings are the opposite: those are entirely yours and never split.</p></div></div>
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">when and how do i get paid?</span><span class="acc-i">+</span></button>
@@ -1492,66 +1492,46 @@ function wireAcc(id){
 ['acc','faq1','faq2'].forEach(wireAcc);
 
 /* ── ONE HUNT FOR THE WHOLE CAMPUS ──────────────────────
-   Every rung is cleared by the campus team together, in order.
+   Ten rungs, cleared by the campus team together, in order.
    `lead` is the seat that owns it — the rest of the team backs them up. */
 const HUNT=[
  {g:'assemble the team',n:'stage 01',t:'claim the campus',pay:0,reward:'free',time:'~1 hour',lead:'pres',tags:['easy','setup'],
   d:"Your president registers the school, claims the campus handle, and books the onboarding call. Nothing else on the hunt opens until your school is officially yours — this is the lock on the front door.",
   proof:['School registered in the hub','Campus handle claimed on TikTok and Instagram','Onboarding call attended']},
 
- {t:'three seats filled',pay:0,reward:'starter kit',time:'~1 week',lead:'pres',tags:['easy','team'],
-  d:"Get three of the five seats filled and onboarded. Most campuses start with president, content and culture, because those three produce something visible in the first week. Clear it and we ship the campus starter kit — banner, merch, interview mic.",
-  proof:['Three leads onboarded and active in the hub','Roles clearly assigned, not shared','Shipping address confirmed']},
-
- {t:'open the room',pay:0,reward:'merch box',time:'~4 days',lead:'culture',tags:['easy','community'],
-  d:"Culture starts the campus group chat and gets fifty real students into it. Name it after the school, not after FOMO. Thirty of those invites go out by DM, not by story.",
-  proof:['Screenshot of the member count at 50+','Three days of real conversation, not just joins','Campus referral link pinned']},
+ {t:'all five seats filled',pay:0,reward:'starter kit',time:'~2 weeks',lead:'pres',tags:['easy','team'],
+  d:"Every seat filled and onboarded — president, growth, partnerships, content, culture. It's the single biggest predictor of how a campus finishes the semester, so it's the gate to everything that pays. Clear it and we ship the campus starter kit: banner, merch, interview mic.",
+  proof:['All five leads onboarded and active in the hub','Roles clearly assigned, not shared','Shipping address confirmed']},
 
  {t:'first three videos',pay:0,reward:'camera rig',time:'~1 week',lead:'content',tags:['easy','content'],
   d:"Content posts the first three videos on the campus channel. Once they're live we ship a tripod and lav mic, so your street interviews stop sounding like phone audio.",
   proof:['Links to all three published videos','Posted on the campus handle, not a personal one','Each one tags @fomo']},
 
- {g:'first blood',n:'stage 02',t:'all five seats filled',pay:500,time:'~3 weeks',lead:'pres',tags:['easy','team'],
-  d:"Every seat filled and active — president, growth, partnerships, content, culture. This is the single biggest predictor of how a campus finishes the semester, which is why it's the first rung that pays real money.",
-  proof:['All five leads onboarded and active','Each has shipped something visible','Two weeks of recaps submitted']},
+ {g:'first blood',n:'stage 02',t:'open the room',pay:250,time:'~4 days',lead:'culture',tags:['easy','community'],
+  d:"Culture starts the campus group chat and gets fifty real students into it. Name it after the school, not after FOMO. Thirty of those invites go out by DM, not by story.",
+  proof:['Screenshot of the member count at 50+','Three days of real conversation, not just joins','Campus referral link pinned']},
 
- {t:'5k campus views',pay:250,time:'~1 week',lead:'content',tags:['easy','content'],
+ {t:'5k campus views',pay:300,time:'~1 week',lead:'content',tags:['easy','content'],
   d:"Five thousand total views across the campus channel. Most teams clear this inside their first couple of weeks, and it's the rung that tells you whether your hook is working.",
   proof:['Analytics screenshots from every platform','Only campus-channel content counts','Posts stay live for at least 30 days']},
 
- {t:'the first twenty-five',pay:250,time:'~1 week',lead:'growth',tags:['easy','referrals'],
-  d:"Twenty-five students download FOMO through your campus link, create an account and make one trade. Almost every team gets here off their own networks — the interesting part starts when you run out of friends.",
-  proof:['Tracked automatically from the campus link','All 25 still active after 7 days','Team members’ own accounts do not count']},
-
- {t:'first club closed',pay:250,time:'~2 weeks',lead:'partner',tags:['easy','partnerships'],
+ {t:'first club closed',pay:350,time:'~2 weeks',lead:'partner',tags:['easy','partnerships'],
   d:"Partnerships closes the first campus org — finance, business, econ, investing, anything money-adjacent. A co-post, a table at their next meeting, or a spot on the agenda.",
   proof:['Written confirmation from the club','Something actually shipped: post, table or talk','Club has 40+ members']},
 
- {g:'a campus that works',n:'stage 03',t:'a thousand followers',pay:500,time:'~1 month',lead:'content',tags:['content'],
-  d:"A thousand followers on the campus channel. At this size most of your views are coming from people nobody on the team has ever met, which is the point.",
-  proof:['Follower count screenshot from each platform','Campus channel only, not a personal account','No purchased or bot followers']},
+ {t:'the first twenty-five',pay:400,time:'~1 week',lead:'growth',tags:['referrals'],
+  d:"Twenty-five students download FOMO through your campus link, create an account and make one trade. Almost every team gets here off their own networks — the interesting part starts when you run out of friends.",
+  proof:['Tracked automatically from the campus link','All 25 still active after 7 days','Team members’ own accounts do not count']},
 
- {t:'three partnerships live',pay:500,time:'~3 weeks',lead:'partner',tags:['partnerships'],
-  d:"Three campus organisations with something live at once — a co-post, a listserv mention, a table, a code. Three is where partnerships stops being a favour from a friend and starts being a channel.",
-  proof:['Three separate orgs, each with a dated deliverable','Signups traceable to each via campaign code','No two run by the same person']},
-
- {t:'twenty-five videos',pay:500,time:'~1 month',lead:'content',tags:['content'],
-  d:"Twenty-five published videos that clear the quality bar — real audio, a real edit, and actually about your campus. Reposts and stories don't count toward it.",
-  proof:['Links to all 25 published videos','Each reviewed against the quality checklist','Posted across the semester, not batched in a weekend']},
-
- {t:'fill the room',pay:1000,time:'~1 event',lead:'culture',tags:['events'],
+ {g:'a campus that works',n:'stage 03',t:'fill the room',pay:700,time:'~1 event',lead:'culture',tags:['events'],
   d:"Run an event with a hundred people through the door. Culture runs the night, partnerships finds the venue and the sponsor, content films it, growth works the QR code. This is the rung that genuinely needs all five of you.",
   proof:['Photos and a headcount at the door','100+ attendees verified','40+ signups traced to the event code']},
 
- {t:'250 campus signups',pay:1250,time:'~6 weeks',lead:'growth',tags:['referrals'],
+ {t:'250 campus signups',pay:1000,time:'~6 weeks',lead:'growth',tags:['referrals'],
   d:"Two hundred and fifty verified signups across the whole campus. By here the number is coming from things you built rather than people you already knew.",
   proof:['Tracked automatically across every campus code','All still active after 7 days','Standard fraud review']},
 
- {g:'the vault',n:'stage 04',t:'1,000 campus signups',pay:2500,time:'~1 semester',lead:'all',tags:['rare','referrals'],
-  d:"A thousand verified signups from your school in one semester. Only a handful of campuses get here, and every one of them had five seats filled by week three.",
-  proof:['Tracked automatically across the whole campus team','All signups active after 7 days','Full fraud review before payout']},
-
- {t:'number one campus',pay:5000,time:'one semester',lead:'all',tags:['rare','competitive'],gold:true,
+ {g:'the vault',n:'stage 04',t:'number one campus',pay:2000,time:'one semester',lead:'all',tags:['rare','competitive'],gold:true,
   lock:'◆ one campus per semester — every school is eligible',
   d:"Finish the semester as the number one ranked campus in the country. Every other rung on this hunt you clear on your own schedule. This is the only one you have to win outright, and it's the biggest single rung on the hunt — double the next one.",
   proof:['Number one on the national campus board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
