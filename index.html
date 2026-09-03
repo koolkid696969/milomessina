@@ -62,6 +62,7 @@ section{padding-block:clamp(80px,11vw,150px);position:relative;scroll-margin-top
 
 header{position:sticky;top:0;z-index:100;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
 header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150%);border-bottom-color:var(--line)}
+@media(max-width:620px){header{position:static}header.stuck{background:none;backdrop-filter:none;border-bottom-color:transparent}}
 .nav{display:flex;align-items:center;gap:32px;height:70px;max-width:var(--maxw);margin:0 auto;padding-inline:var(--pad)}
 .logo{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:700;font-size:1.32rem;letter-spacing:-.05em}
 .logo-mark{width:34px;height:34px;display:grid;place-items:center;color:var(--text);flex:none}
@@ -1089,7 +1090,7 @@ document.querySelectorAll('[data-count]').forEach(c=>cObs.observe(c));
 
 const rObs=new IntersectionObserver(es=>es.forEach(e=>{
   if(e.isIntersecting){e.target.classList.add('in');rObs.unobserve(e.target);}
-}),{threshold:.12,rootMargin:'0px 0px -60px 0px'});
+}),{threshold:0,rootMargin:'0px 0px -120px 0px'});
 document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';rObs.observe(el);});
 
 document.getElementById('tabs').addEventListener('click',e=>{
