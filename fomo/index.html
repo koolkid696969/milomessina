@@ -476,6 +476,10 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 .rp-fit li{font-size:.85rem;line-height:1.45;color:#B4ADD4;display:flex;gap:10px}
 .rp-fit li::before{content:'✦';color:var(--rc-txt,var(--violet-hi));font-size:.7rem;margin-top:.25em;flex:none}
 .rpanel .kv{display:grid;gap:12px;margin-top:26px}
+.b-lead{align-self:flex-start;font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:5px 11px;border-radius:100px;border:1px solid var(--line);color:var(--muted-2);transition:.3s;margin-top:-4px}
+.b-lead.mine{border-color:var(--violet);background:rgba(81,106,246,.16);color:var(--violet-hi)}
+.b-lead[data-seat="all"]{border-color:rgba(255,196,107,.4);color:#FFC46B}
 
 /* ── PAY PER VIEW ───────────────────────────────────── */
 .ppv{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(22px,3.4vw,48px);align-items:start}
@@ -567,6 +571,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
           <div class="g-row"><span>You apply to</span><b>one role</b></div>
           <div class="g-row"><span>Experience required</span><b>none</b></div>
           <div class="g-row"><span>Followers required</span><b>none</b></div>
+          <div class="g-row"><span>Team bounty pot</span><b class="pos">$12,500</b></div>
           <div class="g-row"><span>Paid on views</span><b class="pos">every post</b></div>
           <div class="g-row"><span>Commitment</span><b>one semester</b></div>
           <div class="g-row"><span>Cost to you</span><b>$0, ever</b></div>
@@ -605,7 +610,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
           <li>A five-person team with one named job each</li>
           <li>A real title — President, Growth, Partnerships, Content, Culture</li>
           <li>We give hooks and templates — the calls are yours</li>
-          <li>Cash bounties on a ladder built for your specific role</li>
+          <li>One shared bounty hunt your whole campus works together</li>
           <li>Paid per view on top, every video, from the first one</li>
           <li>You're building something. FOMO sponsors it.</li>
         </ul>
@@ -619,7 +624,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
     <div class="shead rv">
       <span class="eyebrow">02 — the five roles</span>
       <h2>five seats.<br>you take one.</h2>
-      <p>Every campus team is the same five jobs. You apply to the one you actually want — not a general pool — and you're paid on that role's own ladder. Pick one below to see what the week looks like, what it pays, and who tends to be good at it.</p>
+      <p>Every campus team is the same five jobs. You apply to the one you actually want, not a general pool. The bounty hunt in section 04 is shared — your whole campus works one chain together — but each rung is led by a specific seat, so what you sign up for decides what you're on the hook for. Pick one below to see the week, the workload, and who tends to be good at it.</p>
     </div>
 
     <div class="roles rv" id="roles">
@@ -672,7 +677,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
       <div class="rp-side">
         <div class="rp-grid">
           <div class="rp-stat"><small>realistic time</small><b>~6 hrs / week</b></div>
-          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="pres">—</b></div>
+          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="pres">—</b></div>
           <div class="rp-stat"><small>paid on</small><b>campus total</b></div>
           <div class="rp-stat"><small>seats per school</small><b>1</b></div>
         </div>
@@ -713,7 +718,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
       <div class="rp-side">
         <div class="rp-grid">
           <div class="rp-stat"><small>realistic time</small><b>~4 hrs / week</b></div>
-          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="growth">—</b></div>
+          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="growth">—</b></div>
           <div class="rp-stat"><small>paid on</small><b>verified signups</b></div>
           <div class="rp-stat"><small>seats per school</small><b>1</b></div>
         </div>
@@ -767,7 +772,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
         </div>
         <div class="rp-grid">
           <div class="rp-stat"><small>realistic time</small><b>~4 hrs / week</b></div>
-          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="partner">—</b></div>
+          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="partner">—</b></div>
           <div class="rp-stat"><small>paid on</small><b>closed deals</b></div>
           <div class="rp-stat"><small>seats per school</small><b>1</b></div>
         </div>
@@ -819,7 +824,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
         </div>
         <div class="rp-grid">
           <div class="rp-stat"><small>realistic time</small><b>~5 hrs / week</b></div>
-          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="content">—</b></div>
+          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="content">—</b></div>
           <div class="rp-stat"><small>paid on</small><b class="pos">views, per post</b></div>
           <div class="rp-stat"><small>seats per school</small><b>1–2</b></div>
         </div>
@@ -863,7 +868,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
         </div>
         <div class="rp-grid">
           <div class="rp-stat"><small>realistic time</small><b>~4 hrs / week</b></div>
-          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="culture">—</b></div>
+          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="culture">—</b></div>
           <div class="rp-stat"><small>paid on</small><b>chat &amp; events</b></div>
           <div class="rp-stat"><small>event budget</small><b>we fund it</b></div>
         </div>
@@ -921,23 +926,15 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
 <section id="earn">
   <div class="wrap">
     <div class="shead rv" style="margin-bottom:22px">
-      <span class="eyebrow">04 — the bounty ladder</span>
-      <h2>a ladder for<br>every seat.</h2>
-      <p style="margin-top:12px">Each role has its own ladder, because "get 5,000 followers" is a meaningless target for the person closing sponsorships. Bounties unlock one at a time — clear the one you're on and the next opens. One target at a time is much easier than staring at a menu, and the early rungs teach you what the later ones need.</p>
-    </div>
-
-    <div class="tabs rv" id="ladtabs">
-      <button class="tab" data-l="pres">campus president</button>
-      <button class="tab" data-l="growth">growth</button>
-      <button class="tab" data-l="partner">partnerships</button>
-      <button class="tab on" data-l="content">content</button>
-      <button class="tab" data-l="culture">culture</button>
+      <span class="eyebrow">04 — the treasure hunt</span>
+      <h2>one hunt.<br>all five of you.</h2>
+      <p style="margin-top:12px">There's a single chain of bounties per campus, and your team works it together. You unlock them strictly in order — clear the one you're on and the next opens for everyone. Each rung is led by one seat with the rest backing them up, so the hunt only moves as fast as your slowest empty chair. The pot is the campus's, not any one person's.</p>
     </div>
 
     <div class="ladder-top rv">
-      <div class="lt-item"><small>bounties on this ladder</small><b id="ltCount">—</b></div>
-      <div class="lt-item"><small>first one you’d work on</small><b id="ltFirst">—</b></div>
-      <div class="lt-item"><small>total if you clear all of it</small><b class="pos" id="ltTotal">—</b></div>
+      <div class="lt-item"><small>rungs on the hunt</small><b id="ltCount">—</b></div>
+      <div class="lt-item"><small>where every campus starts</small><b id="ltFirst">—</b></div>
+      <div class="lt-item"><small>total pot if you clear it all</small><b class="pos" id="ltTotal">—</b></div>
     </div>
 
     <div id="ladder" class="ladder rv"></div>
@@ -947,8 +944,8 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
       <div class="mech-item"><span class="mech-ic">◎</span><div><b>Proof is straightforward</b><p>Most bounties are tracked automatically. For events and content milestones, you upload a screenshot — reviewed within 48 hours.</p></div></div>
       <div class="mech-item"><span class="mech-ic">⚠</span><div><b>Real students only</b><p>Bounties tied to signups require unique people who stay active for 7 days. Fake or duplicate accounts void the bounty — we do check.</p></div></div>
       <div class="mech-item"><span class="mech-ic">§</span><div><b>You’re a contractor</b><p>Paid as a 1099 contractor, not an employee. If you earn over $600 in a year we’ll send tax paperwork in January.</p></div></div>
-      <div class="mech-item"><span class="mech-ic">◆</span><div><b>Your ladder is yours</b><p>You only ever work the ladder for your own seat. Nobody on your campus team is competing with you for the same bounty.</p></div></div>
-      <div class="mech-item"><span class="mech-ic">▶</span><div><b>Views pay on top</b><p>Everything here is separate from the per-view rate in section 05. Content earns both; the other four seats earn per view on anything they post too.</p></div></div>
+      <div class="mech-item"><span class="mech-ic">◆</span><div><b>The pot splits</b><p>Each rung is paid to the campus and split evenly across the seats that were filled and active when it cleared. An empty chair doesn’t take a share.</p></div></div>
+      <div class="mech-item"><span class="mech-ic">▶</span><div><b>Views pay on top</b><p>The hunt is the team’s. The per-view rate in section 05 is yours alone — whatever you post and submit is paid straight to you, on top of your share.</p></div></div>
     </div>
   </div>
 </section>
@@ -1259,7 +1256,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">can i switch roles later?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Once a semester, if the seat you want is open and your president signs off. Your earnings from the old ladder are yours and don't reset — you just start the new ladder at rung one. Switching mid-semester is rare and usually means something went wrong, so we'd rather talk about it first.</p></div></div>
+          <div class="acc-body"><div><p>Once a semester, if the seat you want is open and your president signs off. Nothing resets — the hunt belongs to the campus, so your team keeps every rung it has already cleared and you just start leading different ones. Switching mid-semester is rare and usually means something went wrong, so we'd rather talk about it first.</p></div></div>
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">do i need a following already?</span><span class="acc-i">+</span></button>
@@ -1285,8 +1282,8 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
           <div class="acc-body"><div><p>Yes. The per-view rate isn't restricted to the content lead — if you're on partnerships and you post a video about closing a sponsor, tag @fomo and submit it, you get paid on it exactly the same. Content just does it more often, and their ladder is built around it. There's no cap on how many videos you submit in a month, only the $2,500 ceiling on any single one.</p></div></div>
         </div>
         <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">is my pay split with my team?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>No. Every seat has its own ladder and its own earnings, and nothing you clear comes out of anyone else's pocket. The one place it combines is the president, who earns on the campus total on top of their own ladder — that's the deal for being accountable for the whole school. Campus-level grand prizes are the other exception, and those are additional money rather than a split of yours.</p></div></div>
+          <button class="acc-btn"><span class="acc-t">how is the bounty pot split?</span><span class="acc-i">+</span></button>
+          <div class="acc-body"><div><p>Evenly, across the seats that were filled and active when the rung cleared. A four-person campus splits a $500 rung four ways; fill the fifth seat and the next one splits five ways but the hunt moves faster. An empty chair never takes a share, and neither does someone who went quiet — if a seat has been inactive for a month, your president can flag it and we'll leave them out of that rung. Per-view earnings are the opposite: those are entirely yours and never split.</p></div></div>
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">when and how do i get paid?</span><span class="acc-i">+</span></button>
@@ -1429,208 +1426,73 @@ function wireAcc(id){
 }
 ['acc','faq1','faq2'].forEach(wireAcc);
 
-const LADDERS={
+/* ── ONE HUNT FOR THE WHOLE CAMPUS ──────────────────────
+   Every rung is cleared by the campus team together, in order.
+   `lead` is the seat that owns it — the rest of the team backs them up. */
+const HUNT=[
+ {g:'assemble the team',n:'stage 01',t:'claim the campus',pay:0,reward:'free',time:'~1 hour',lead:'pres',tags:['easy','setup'],
+  d:"Your president registers the school, claims the campus handle, and books the onboarding call. Nothing else on the hunt opens until your school is officially yours — this is the lock on the front door.",
+  proof:['School registered in the hub','Campus handle claimed on TikTok and Instagram','Onboarding call attended']},
 
-/* ── CONTENT ─────────────────────────────────────────── */
-content:[
- {g:'starting out',n:'group 01',t:'claim your handle',pay:0,reward:'free',time:'~1 hour',tags:['easy','setup'],
-  d:"Claim your campus handle on TikTok and Instagram. Suggested name is your school plus fomo — for example, uscfomo. Same name on both so people can actually find you.",
-  proof:['Screenshot of your claimed handle(s)','Same name on each platform','Campus referral link in the bio']},
+ {t:'three seats filled',pay:0,reward:'starter kit',time:'~1 week',lead:'pres',tags:['easy','team'],
+  d:"Get three of the five seats filled and onboarded. Most campuses start with president, content and culture, because those three produce something visible in the first week. Clear it and we ship the campus starter kit — banner, merch, interview mic.",
+  proof:['Three leads onboarded and active in the hub','Roles clearly assigned, not shared','Shipping address confirmed']},
 
- {t:'post three videos',pay:0,reward:'microphone',time:'~1 week',tags:['easy','content'],
-  d:"Post your first three videos on the campus channel. Once they're up we ship you a FOMO-branded interview mic, so your street interviews stop sounding like phone audio.",
-  proof:['Links to all three published videos','Posted on the campus handle, not a personal one','Shipping address confirmed in the hub']},
+ {t:'open the room',pay:0,reward:'merch box',time:'~4 days',lead:'culture',tags:['easy','community'],
+  d:"Culture starts the campus group chat and gets fifty real students into it. Name it after the school, not after FOMO. Thirty of those invites go out by DM, not by story.",
+  proof:['Screenshot of the member count at 50+','Three days of real conversation, not just joins','Campus referral link pinned']},
 
- {g:'finding traction',n:'group 02',t:'5k views',pay:25,time:'~1 week',tags:['easy','content'],
-  d:"Five thousand total views across the campus channel. First one that pays cash, and most people clear it inside their first couple of weeks.",
+ {t:'first three videos',pay:0,reward:'camera rig',time:'~1 week',lead:'content',tags:['easy','content'],
+  d:"Content posts the first three videos on the campus channel. Once they're live we ship a tripod and lav mic, so your street interviews stop sounding like phone audio.",
+  proof:['Links to all three published videos','Posted on the campus handle, not a personal one','Each one tags @fomo']},
+
+ {g:'first blood',n:'stage 02',t:'all five seats filled',pay:500,time:'~3 weeks',lead:'pres',tags:['easy','team'],
+  d:"Every seat filled and active — president, growth, partnerships, content, culture. This is the single biggest predictor of how a campus finishes the semester, which is why it's the first rung that pays real money.",
+  proof:['All five leads onboarded and active','Each has shipped something visible','Two weeks of recaps submitted']},
+
+ {t:'5k campus views',pay:250,time:'~1 week',lead:'content',tags:['easy','content'],
+  d:"Five thousand total views across the campus channel. Most teams clear this inside their first couple of weeks, and it's the rung that tells you whether your hook is working.",
   proof:['Analytics screenshots from every platform','Only campus-channel content counts','Posts stay live for at least 30 days']},
 
- {t:'1k followers',pay:100,time:'~1 month',tags:['content'],
-  d:"A thousand followers on the campus channel. At this size most of your views are coming from people you've never met.",
+ {t:'the first twenty-five',pay:250,time:'~1 week',lead:'growth',tags:['easy','referrals'],
+  d:"Twenty-five students download FOMO through your campus link, create an account and make one trade. Almost every team gets here off their own networks — the interesting part starts when you run out of friends.",
+  proof:['Tracked automatically from the campus link','All 25 still active after 7 days','Team members’ own accounts do not count']},
+
+ {t:'first club closed',pay:250,time:'~2 weeks',lead:'partner',tags:['easy','partnerships'],
+  d:"Partnerships closes the first campus org — finance, business, econ, investing, anything money-adjacent. A co-post, a table at their next meeting, or a spot on the agenda.",
+  proof:['Written confirmation from the club','Something actually shipped: post, table or talk','Club has 40+ members']},
+
+ {g:'a campus that works',n:'stage 03',t:'a thousand followers',pay:500,time:'~1 month',lead:'content',tags:['content'],
+  d:"A thousand followers on the campus channel. At this size most of your views are coming from people nobody on the team has ever met, which is the point.",
   proof:['Follower count screenshot from each platform','Campus channel only, not a personal account','No purchased or bot followers']},
 
- {t:'a format that repeats',pay:150,time:'~3 weeks',tags:['content'],
-  d:"Run the same recurring segment five times — the campus price index, dorm vs dorm, whatever you name it. A franchise beats five unrelated videos, and this is the rung that turns an account into a channel.",
-  proof:['Links to five posts in the same named series','Consistent title card or opener across all five','Fifth one outperforms the first']},
-
- {g:'a real channel',n:'group 03',t:'twenty-five videos',pay:250,time:'~1 month',tags:['content'],
-  d:"Publish 25 videos that clear our quality bar — real audio, a real edit, and actually about your campus.",
-  proof:['Links to all 25 published videos','Each reviewed against the quality checklist','Reposts and stories do not count']},
-
- {t:'50k on one video',pay:500,time:'one video',tags:['rare','content'],
-  d:"Get a single post past 50,000 views. The hook library has 200 tested openers if you're staring at a blank screen.",
-  proof:['Screenshot of post analytics showing 50K+','Post is campus-specific and tags @fomo','Stays live for at least 30 days']},
-
- {t:'5k followers',pay:1000,time:'cumulative',tags:['rare','content'],
-  d:"Five thousand followers on the campus channel. This is the number that does the most work for you in an interview.",
-  proof:['Follower count across all platforms','Only campus-channel content counts','Verified manually by our team']},
-
- {g:'the grand prize',n:'group 04',t:'number one',pay:2500,time:'one semester',tags:['rare','competitive'],gold:true,
-  lock:'◆ one winner per semester — every content lead is eligible',
-  d:"Finish the semester as the number one ranked content lead in the country, by total verified reach. Every other bounty you clear on your own schedule; this is the only one you have to win outright.",
-  proof:['Final standing on the national content board on the last day of the semester','Ranked on verified reach across the whole semester','Full fraud review before payout']}
-],
-
-/* ── CAMPUS PRESIDENT ────────────────────────────────── */
-pres:[
- {g:'standing it up',n:'group 01',t:'claim the campus',pay:0,reward:'free',time:'~1 hour',tags:['easy','setup'],
-  d:"Register your school, claim the campus handle, and get your onboarding call with our campus team booked. Nothing else on this ladder opens until your school is officially yours.",
-  proof:['School registered in the hub','Campus handle claimed','Onboarding call attended']},
-
- {t:'fill two seats',pay:0,reward:'starter kit',time:'~1 week',tags:['easy','team'],
-  d:"Recruit two of your four leads and get them through onboarding. Most presidents start with Content and Culture, because those two produce something visible in week one. Clear it and we ship the campus starter kit — banner, merch, mic.",
-  proof:['Two leads onboarded and active in the hub','Each has posted or shipped something','Roles clearly assigned, not shared']},
-
- {g:'a real team',n:'group 02',t:'all five seats filled',pay:200,time:'~3 weeks',tags:['easy','team'],
-  d:"Every seat on your campus filled and active — president, growth, partnerships, content, culture. This is the single biggest predictor of how the semester goes for a school.",
-  proof:['All five leads onboarded and active','Each has cleared at least one bounty on their own ladder','Two weeks of weekly recaps submitted']},
-
- {t:'four weeks of recaps',pay:150,time:'~1 month',tags:['easy','ops'],
-  d:"Four consecutive weekly recaps, submitted on time. Short and honest — what shipped, what didn't, what you need. The boring rung that separates campuses that finish from campuses that fade in October.",
-  proof:['Four recaps submitted in four consecutive weeks','Each includes the campus number for that week','Submitted before Monday 9am each time']},
-
- {t:'250 campus signups',pay:300,time:'~6 weeks',tags:['referrals'],
-  d:"Your campus clears 250 verified signups, combining everyone on the team. You're paid on the campus total here — this is the rung where leading a team beats doing it yourself.",
-  proof:['Tracked automatically across all five referral links','All signups still active after 7 days','Standard fraud review']},
-
- {g:'a campus that runs',n:'group 03',t:'every seat paid',pay:500,time:'~2 months',tags:['team'],
-  d:"Every one of your four leads has earned at least one cash bounty on their own ladder. It means nobody on your team is coasting, and it's the cleanest signal we have that a president is actually managing.",
-  proof:['Each of the four leads has one paid bounty cleared','No seat inactive for more than 14 days','Verified from hub records']},
-
- {t:'top 25 campus',pay:750,time:'~1 semester',tags:['rare','competitive'],
-  d:"Finish a month ranked in the top 25 campuses nationally on verified signups. Around 300 schools are live, so this is roughly the top 8%.",
-  proof:['Top 25 on the national campus board at a month close','Ranked on verified signups','Full fraud review before payout']},
-
- {t:'1,000 campus signups',pay:1500,time:'~1 semester',tags:['rare','referrals'],
-  d:"A thousand verified signups from your school in one semester. Only a handful of campuses hit this, and all of them had five filled seats by week three.",
-  proof:['Tracked automatically across the whole campus team','All signups active after 7 days','Full fraud review before payout']},
-
- {g:'the grand prize',n:'group 04',t:'campus of the semester',pay:3000,time:'one semester',tags:['rare','competitive'],gold:true,
-  lock:'◆ one campus per semester — every president is eligible',
-  d:"Finish the semester as the number one ranked campus in the country. The president takes this one; there's a separate pot that splits across the rest of your team.",
-  proof:['Number one on the national campus board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
-],
-
-/* ── GROWTH ──────────────────────────────────────────── */
-growth:[
- {g:'starting out',n:'group 01',t:'set up tracking',pay:0,reward:'free',time:'~1 hour',tags:['easy','setup'],
-  d:"Claim the campus referral link, generate your first three campaign codes — one for the feed, one for the chat, one for events — and get them live so you can tell the sources apart from day one.",
-  proof:['Referral link claimed in the hub','Three campaign codes generated and placed','Each code live in a different place']},
-
- {t:'the first five',pay:0,reward:'banner',time:'~2 days',tags:['easy','referrals'],
-  d:"Get five students to download FOMO, create an account and make one trade each. Clear it and we send a printed campus banner for events and tabling.",
-  proof:['Tracked automatically from your referral link','All five still active after 7 days','Your own account does not count']},
-
- {g:'finding traction',n:'group 02',t:'25 signups',pay:50,time:'~1 week',tags:['easy','referrals'],
-  d:"Twenty-five verified signups. Almost everyone gets here off their own network — the interesting part starts when you run out of friends.",
-  proof:['Tracked automatically from your campus links','All 25 active after 7 days','Standard fraud review']},
-
- {t:'walk five people through it',pay:75,time:'~1 week',tags:['easy','community'],
-  d:"Personally walk five people through their first trade, start to finish. It's the highest-converting thing anyone on the team does, and it's the rung that teaches you why.",
-  proof:['Five first trades traced to your codes','Screenshot of each walkthrough conversation','People are students at your school']},
-
- {t:'100 signups',pay:200,time:'~1 month',tags:['referrals'],
-  d:"A hundred verified signups. At this point your own network is exhausted and the number is coming from things you built rather than people you know.",
-  proof:['Tracked automatically','All still active after 7 days','Standard fraud review']},
-
- {g:'a real funnel',n:'group 03',t:'four experiments, written up',pay:250,time:'~1 month',tags:['ops'],
-  d:"Run four conversion experiments and write up each one — what you changed, what happened, what you'd do next. Two of them should have failed. This is the rung you'll actually talk about in an interview.",
-  proof:['Four write-ups submitted in the hub','Each names a metric and a result','At least two report a negative result honestly']},
-
- {t:'250 signups',pay:600,time:'~2 months',tags:['rare','referrals'],
-  d:"Two hundred and fifty verified signups traced to your campus links. Roughly the point where a growth lead is out-earning most on-campus jobs.",
-  proof:['Tracked automatically','All active after 7 days','Full fraud review before payout']},
-
- {t:'500 signups',pay:1250,time:'cumulative',tags:['rare','referrals'],
-  d:"Five hundred verified signups in a semester. A small number of growth leads get here, and every one of them was running experiments by week four.",
-  proof:['Tracked automatically','All active after 7 days','Full fraud review before payout']},
-
- {g:'the grand prize',n:'group 04',t:'number one',pay:2500,time:'one semester',tags:['rare','competitive'],gold:true,
-  lock:'◆ one winner per semester — every growth lead is eligible',
-  d:"Finish the semester as the number one ranked growth lead in the country on verified signups. The only bounty on this ladder you have to win rather than clear.",
-  proof:['Final standing on the national growth board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
-],
-
-/* ── PARTNERSHIPS ────────────────────────────────────── */
-partner:[
- {g:'starting out',n:'group 01',t:'build the target list',pay:0,reward:'free',time:'~2 hours',tags:['easy','setup'],
-  d:"List every club, chapter, org and local business on your campus worth talking to, with a name and a contact for each. Twenty minimum. Every rung above this one comes off this list.",
-  proof:['20+ targets logged in the hub','A named contact for each, not a general inbox','Sorted by how many people they reach']},
-
- {t:'first club partnership',pay:0,reward:'banner + deck',time:'~1 week',tags:['easy','partnerships'],
-  d:"Close your first club — finance, business, econ, investing, anything money-adjacent. A co-post, a table at their next meeting, or a spot on the agenda. Clear it and we send a printed banner and the partner pitch deck.",
-  proof:['Screenshot of the agreement or confirmation','Something actually shipped: post, table or talk','Club has 40+ members']},
-
- {g:'finding traction',n:'group 02',t:'three orgs live',pay:100,time:'~3 weeks',tags:['easy','partnerships'],
-  d:"Three campus organisations with something live — a co-post, a listserv mention, a table, a code. Three is the point where partnerships stops being a favour from a friend and starts being a channel.",
+ {t:'three partnerships live',pay:500,time:'~3 weeks',lead:'partner',tags:['partnerships'],
+  d:"Three campus organisations with something live at once — a co-post, a listserv mention, a table, a code. Three is where partnerships stops being a favour from a friend and starts being a channel.",
   proof:['Three separate orgs, each with a dated deliverable','Signups traceable to each via campaign code','No two run by the same person']},
 
- {t:'a greek chapter',pay:150,time:'~3 weeks',tags:['partnerships'],
-  d:"Close a fraternity or sorority chapter on a house-wide push. High density, one decision-maker, and the fastest signup spike available to anyone on the team.",
-  proof:['Confirmation from the chapter president or social chair','House-wide push actually ran','25+ signups traced to the chapter code']},
+ {t:'twenty-five videos',pay:500,time:'~1 month',lead:'content',tags:['content'],
+  d:"Twenty-five published videos that clear the quality bar — real audio, a real edit, and actually about your campus. Reposts and stories don't count toward it.",
+  proof:['Links to all 25 published videos','Each reviewed against the quality checklist','Posted across the semester, not batched in a weekend']},
 
- {t:'a local business',pay:200,time:'~1 month',tags:['partnerships'],
-  d:"A café, bar, print shop or gym running a co-promo — a QR on the counter, a window card, a discount tied to a signup. It buys you a physical surface on a campus where everyone else is fighting for the feed.",
-  proof:['Signed or written agreement from the owner','Photo of the placement in the venue','30-day minimum placement']},
-
- {g:'a real book',n:'group 03',t:'a creator collab',pay:300,time:'~1 month',tags:['partnerships'],
-  d:"Get one of the biggest creators already on your campus to post with your channel. Their audience is the one you can't buy, and the swap costs you nothing but the ask.",
-  proof:['Creator has 10K+ followers and is at your school','Collab post published on both accounts','Signups traced via a dedicated code']},
-
- {t:'ten partnerships live',pay:600,time:'~2 months',tags:['rare','partnerships'],
-  d:"Ten partnerships live at once — clubs, chapters, businesses, creators, in any mix. This is a real book of business, and it's the thing you'll point at in a BD interview.",
-  proof:['Ten active partnerships listed in the hub','Each with a dated deliverable and a live code','All still running at the time of review']},
-
- {t:'a funded sponsor',pay:1000,time:'~1 semester',tags:['rare','partnerships'],
-  d:"Land an outside sponsor — a local business or brand putting real money or product into a campus event. You source it and close it; we handle the paperwork.",
-  proof:['Written agreement with the sponsor','Sponsorship value of $500+ in cash or product','Event actually ran with the sponsor named']},
-
- {g:'the grand prize',n:'group 04',t:'number one',pay:2500,time:'one semester',tags:['rare','competitive'],gold:true,
-  lock:'◆ one winner per semester — every partnerships lead is eligible',
-  d:"Finish the semester as the number one ranked partnerships lead in the country, on signups driven through partner codes. Not on deals signed — on deals that worked.",
-  proof:['Final standing on the national partnerships board on the last day of the semester','Ranked on partner-code signups across the semester','Full fraud review before payout']}
-],
-
-/* ── CULTURE ─────────────────────────────────────────── */
-culture:[
- {g:'starting out',n:'group 01',t:'open the room',pay:0,reward:'free',time:'~1 day',tags:['easy','setup'],
-  d:"Start the campus group chat on whatever your school already uses — Discord, GroupMe, iMessage. Name it after the school, not after FOMO. Personally invite thirty people by DM, not by story.",
-  proof:['Screenshot of the chat created and named','30 invites sent individually','Campus referral link pinned']},
-
- {t:'fifty in the room',pay:0,reward:'merch box',time:'~4 days',tags:['easy','community'],
-  d:"Get the chat to fifty real students from your school. Clear it and we ship a merch box — stickers, tees, a couple of things worth giving away.",
-  proof:['Screenshot of the member count at 50+','Three days of real conversation, not just joins','Members are students at your school']},
-
- {g:'finding traction',n:'group 02',t:'a daily ritual',pay:75,time:'~2 weeks',tags:['easy','community'],
-  d:"Run the same post at the same time for fourteen straight days — a morning open, an end-of-day, a Friday recap. The ritual is what keeps a chat alive after the novelty wears off.",
-  proof:['Fourteen consecutive days of the same named post','Screenshots or export showing the timestamps','Real replies on at least ten of them']},
-
- {t:'your first event',pay:150,time:'~3 weeks',tags:['easy','events'],
-  d:"Pitch us an event and run it. A trading night, a watch party, a table outside the union. We set the budget and ship banners, merch and prizes; you pick the date and run the room.",
-  proof:['Event pitch approved in the hub','Photos of the event with 20+ people','Signups traced to the event code']},
-
- {t:'150 in the room',pay:200,time:'~1 month',tags:['community'],
-  d:"A hundred and fifty members, still talking. Growth is easy here and retention isn't — a chat that's grown to 150 and gone silent doesn't clear this.",
-  proof:['Member count screenshot at 150+','Seven consecutive days with real conversation','No mass-add or bot members']},
-
- {g:'a room that runs',n:'group 03',t:'fill the room',pay:400,time:'~1 event',tags:['events'],
-  d:"Run an event with 100+ people through the door. This is the one that needs Partnerships and Content pulling with you — solo culture leads rarely clear it, and that's the point.",
+ {t:'fill the room',pay:1000,time:'~1 event',lead:'culture',tags:['events'],
+  d:"Run an event with a hundred people through the door. Culture runs the night, partnerships finds the venue and the sponsor, content films it, growth works the QR code. This is the rung that genuinely needs all five of you.",
   proof:['Photos and a headcount at the door','100+ attendees verified','40+ signups traced to the event code']},
 
- {t:'a rival showdown',pay:600,time:'~1 week',tags:['rare','events'],
-  d:"Run a head-to-head against another campus during your biggest football or basketball week. Whichever school drives more signups wins, and we post the result nationally.",
-  proof:['Both campuses confirmed and dated in advance','Event or challenge actually ran on both sides','Result verified from both campus codes']},
+ {t:'250 campus signups',pay:1250,time:'~6 weeks',lead:'growth',tags:['referrals'],
+  d:"Two hundred and fifty verified signups across the whole campus. By here the number is coming from things you built rather than people you already knew.",
+  proof:['Tracked automatically across every campus code','All still active after 7 days','Standard fraud review']},
 
- {t:'300 in the room',pay:1000,time:'cumulative',tags:['rare','community'],
-  d:"Three hundred active members. At this size the chat converts better than the feed does, and it's the number that makes 'community management' on your résumé mean something.",
-  proof:['Member count screenshot at 300+','30-day active rate above 40%','Verified manually by our team']},
+ {g:'the vault',n:'stage 04',t:'1,000 campus signups',pay:2500,time:'~1 semester',lead:'all',tags:['rare','referrals'],
+  d:"A thousand verified signups from your school in one semester. Only a handful of campuses get here, and every one of them had five seats filled by week three.",
+  proof:['Tracked automatically across the whole campus team','All signups active after 7 days','Full fraud review before payout']},
 
- {g:'the grand prize',n:'group 04',t:'number one',pay:2500,time:'one semester',tags:['rare','competitive'],gold:true,
-  lock:'◆ one winner per semester — every culture lead is eligible',
-  d:"Finish the semester as the number one ranked culture lead in the country, on active community size and event-driven signups combined.",
-  proof:['Final standing on the national culture board on the last day of the semester','Ranked on active members and event signups','Full fraud review before payout']}
-]
-};
+ {t:'number one campus',pay:5000,time:'one semester',lead:'all',tags:['rare','competitive'],gold:true,
+  lock:'◆ one campus per semester — every school is eligible',
+  d:"Finish the semester as the number one ranked campus in the country. Every other rung on this hunt you clear on your own schedule. This is the only one you have to win outright, and it's the biggest single rung on the hunt — double the next one.",
+  proof:['Number one on the national campus board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
+];
+const SEATS={pres:'president leads',growth:'growth leads',partner:'partnerships leads',
+             content:'content leads',culture:'culture leads',all:'all five'};
 const ROLES={
   pres:{label:'campus president',li:'Campus President, Campus',skills:'Skills: Team Leadership · Operations · Growth Strategy'},
   growth:{label:'growth',li:'Growth Lead, Campus',skills:'Skills: Growth Marketing · Funnel Analytics · A/B Testing'},
@@ -1638,18 +1500,17 @@ const ROLES={
   content:{label:'content',li:'Content Lead, Campus',skills:'Skills: Content Strategy · Social Media · Video Production'},
   culture:{label:'culture',li:'Community Lead, Campus',skills:'Skills: Community Management · Event Planning · Brand'}
 };
-let LADDER=LADDERS.content;
 const money=n=>'$'+n.toLocaleString();
-const ladTotal=k=>LADDERS[k].reduce((t,b)=>t+b.pay,0);
+const HUNT_TOTAL=HUNT.reduce((t,b)=>t+b.pay,0);
 
-function renderLadder(){
+function renderHunt(){
   const wrap=document.getElementById('ladder');
   let html='',run=0;
-  LADDER.forEach((b,i)=>{
+  HUNT.forEach((b,i)=>{
     if(b.g){
       let grpTotal=0;
-      for(let k=i;k<LADDER.length;k++){if(k>i&&LADDER[k].g)break;grpTotal+=LADDER[k].pay;}
-      html+=`<div class="grp"><span>${b.n}</span><h4>${b.g}</h4><span class="tot">${grpTotal?money(grpTotal)+' in this group':'gear, not cash'}</span></div>`;
+      for(let k=i;k<HUNT.length;k++){if(k>i&&HUNT[k].g)break;grpTotal+=HUNT[k].pay;}
+      html+=`<div class="grp"><span>${b.n}</span><h4>${b.g}</h4><span class="tot">${grpTotal?money(grpTotal)+' in this stage':'gear, not cash'}</span></div>`;
     }
     run+=b.pay;
     const first=i===0;
@@ -1657,65 +1518,61 @@ function renderLadder(){
       ? '<span class="b-lock open">◆ start here — unlocked on day one</span>'
       : b.lock
         ? `<span class="b-lock open">${b.lock}</span>`
-        : `<span class="b-lock">🔒 unlocks after "${LADDER[i-1].t}"</span>`;
+        : `<span class="b-lock">🔒 the campus unlocks this after "${HUNT[i-1].t}"</span>`;
     html+=`<div class="rung ${first?'first':''} ${b.gold?'gold':''}">
       <div class="node">${String(i+1).padStart(2,'0')}</div>
       <article class="bounty ${b.gold?'gold':''} ${first||b.lock?'':'locked'}" data-i="${i}">
         <div class="b-top"><h4>${b.t}</h4><span class="b-pay${b.reward?' reward':''}">${b.reward||money(b.pay)}</span></div>
+        <span class="b-lead" data-seat="${b.lead}">${SEATS[b.lead]}</span>
         <p>${b.d}</p>
         <div class="b-meta">${b.tags.map(t=>`<span class="${t==='easy'?'easy':t==='rare'?'rare':''}">${t}</span>`).join('')}<span>${b.time}</span></div>
-        <div class="b-proof">${lock}${run?`<div style="margin-top:8px">running total to here · <b>${money(run)}</b></div>`:''}</div>
+        <div class="b-proof">${lock}${run?`<div style="margin-top:8px">campus pot to here · <b>${money(run)}</b></div>`:''}</div>
         <button class="b-btn">see requirements</button>
       </article>
     </div>`;
   });
   wrap.innerHTML=html;
 }
+renderHunt();
 
-/* one place that switches the whole page to a role */
+document.getElementById('ltCount').textContent=HUNT.length;
+document.getElementById('ltFirst').textContent=HUNT[0].t;
+document.getElementById('ltTotal').textContent=money(HUNT_TOTAL);
+
+/* how many rungs each seat leads — fills the stat in the role panels */
+document.querySelectorAll('[data-lt]').forEach(el=>{
+  const k=el.dataset.lt;
+  const n=HUNT.filter(b=>b.lead===k).length;
+  el.textContent=n+' of '+HUNT.length;
+});
+
+/* picking a role swaps the panel and the résumé card — the hunt is shared */
 let CURROLE='content';
-function setRole(key,scroll){
-  if(!LADDERS[key])return;
+function setRole(key){
+  if(!ROLES[key])return;
   CURROLE=key;
-  LADDER=LADDERS[key];
-
   document.querySelectorAll('#roles .rcard').forEach(c=>c.classList.toggle('on',c.dataset.r===key));
   document.querySelectorAll('.rpanel').forEach(pn=>pn.classList.toggle('on',pn.id==='r-'+key));
-  document.querySelectorAll('#ladtabs .tab').forEach(t=>t.classList.toggle('on',t.dataset.l===key));
-
-  document.getElementById('ltCount').textContent=LADDER.length;
-  document.getElementById('ltFirst').textContent=LADDER[0].t;
-  document.getElementById('ltTotal').textContent=money(ladTotal(key));
-
+  document.querySelectorAll('#ladder .b-lead').forEach(el=>
+    el.classList.toggle('mine',el.dataset.seat===key));
   const r=ROLES[key];
   const lt=document.getElementById('liTitle'),ls=document.getElementById('liSkills');
   if(lt){lt.textContent=r.li;ls.textContent=r.skills;}
-
-  renderLadder();
   document.querySelectorAll('.rpanel.on .rv,.rpanel.on').forEach(el=>el.classList.add('in'));
-  if(scroll){const el=document.getElementById(scroll);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 }
-
-document.querySelectorAll('[data-lt]').forEach(el=>{el.textContent=money(ladTotal(el.dataset.lt))});
-
 document.getElementById('roles').addEventListener('click',e=>{
   const c=e.target.closest('.rcard');if(!c)return;
   setRole(c.dataset.r);
 });
-document.getElementById('ladtabs').addEventListener('click',e=>{
-  const t=e.target.closest('.tab');if(!t)return;
-  setRole(t.dataset.l);
-});
-
 setRole('content');
 
 /* bounty detail modal */
 const modal=document.getElementById('modal');
 document.getElementById('ladder').addEventListener('click',e=>{
   const btn=e.target.closest('.b-btn');if(!btn)return;
-  const i=+btn.closest('.bounty').dataset.i,b=LADDER[i];
-  let gName='';for(let k=i;k>=0;k--){if(LADDER[k].g){gName=LADDER[k].n+' · '+LADDER[k].g;break}}
-  document.getElementById('mStage').textContent=ROLES[CURROLE].label+' · step '+String(i+1).padStart(2,'0')+' · '+gName;
+  const i=+btn.closest('.bounty').dataset.i,b=HUNT[i];
+  let gName='';for(let k=i;k>=0;k--){if(HUNT[k].g){gName=HUNT[k].n+' · '+HUNT[k].g;break}}
+  document.getElementById('mStage').textContent='rung '+String(i+1).padStart(2,'0')+' · '+gName+' · '+SEATS[b.lead];
   document.getElementById('mTitle').textContent=b.t;
   document.getElementById('mPay').textContent=b.reward?b.reward:money(b.pay);
   document.getElementById('mTime').textContent=b.time;
