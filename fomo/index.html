@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>fomo campus — the ambassador program, explained</title>
-<meta name="description" content="Everything you need to know about becoming a FOMO campus ambassador: what the role is, what you'd post, what it pays, and how much time it takes.">
+<title>fomo campus — five roles, one campus team</title>
+<meta name="description" content="FOMO Campus runs a five-person team at every school: Campus President, Growth, Partnerships, Content and Culture. Pick the seat you want, see what it pays, and how views turn into money.">
 <meta name="theme-color" content="#08070F">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
 <style>
@@ -425,6 +425,98 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 .rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.8,.3,1),transform .8s cubic-bezier(.2,.8,.3,1)}
 .rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+
+/* ── THE FIVE ROLES ─────────────────────────────────── */
+.roles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:clamp(28px,4vw,44px)}
+@media(max-width:1140px){.roles{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.roles{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.roles{grid-template-columns:1fr}}
+.rcard{position:relative;overflow:hidden;text-align:left;padding:22px 20px 20px;border-radius:var(--r-m);
+  border:1px solid var(--line);background:var(--surface);transition:.32s cubic-bezier(.2,.8,.3,1);display:flex;flex-direction:column;gap:9px}
+.rcard::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:.32s;
+  background:radial-gradient(120% 90% at 50% 0%,var(--rc,rgba(81,106,246,.3)),transparent 62%)}
+.rcard:hover{transform:translateY(-4px);border-color:var(--line-2)}
+.rcard:hover::after{opacity:.45}
+.rcard.on{border-color:var(--rc-line,var(--violet));background:rgba(255,255,255,.05);transform:translateY(-4px)}
+.rcard.on::after{opacity:1}
+.rcard .rc-n{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:var(--muted-2);position:relative;z-index:1}
+.rcard.on .rc-n{color:var(--rc-txt,var(--violet-hi))}
+.rcard .rc-ic{font-style:normal;font-size:1.15rem;line-height:1;position:relative;z-index:1;color:var(--rc-txt,var(--violet-hi));margin-bottom:2px}
+.rcard h4{font-family:var(--display);font-size:1.16rem;font-weight:700;letter-spacing:-.035em;text-transform:lowercase;
+  line-height:1.05;position:relative;z-index:1}
+.rcard p{font-size:.8rem;line-height:1.45;color:var(--muted);position:relative;z-index:1}
+.rcard .rc-open{margin-top:auto;padding-top:10px;font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted-2);position:relative;z-index:1;transition:.3s}
+.rcard.on .rc-open{color:var(--rc-txt,var(--violet-hi))}
+
+.rpanel{display:none;animation:fade .45s ease;grid-template-columns:1fr 1fr;gap:clamp(22px,3.4vw,48px);align-items:start}
+.rpanel.on{display:grid}
+@media(max-width:900px){.rpanel{grid-template-columns:1fr}}
+.rp-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--rc-txt,var(--violet-hi));margin-bottom:14px}
+.rp-tag::before{content:'';width:20px;height:1px;background:currentColor}
+.rpanel h3{font-family:var(--display);font-size:clamp(1.7rem,3.2vw,2.5rem);font-weight:700;letter-spacing:-.045em;
+  text-transform:lowercase;line-height:.98;margin-bottom:16px}
+.rpanel>div>p{font-size:.98rem}
+.rp-own{list-style:none;display:grid;gap:11px;margin-top:24px}
+.rp-own li{display:flex;gap:12px;font-size:.9rem;line-height:1.45;color:#BDB6DC;padding:13px 16px;
+  border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.rp-own li::before{content:'▸';color:var(--rc-txt,var(--violet-hi));flex:none}
+.rp-side{display:grid;gap:12px}
+.rp-stat{border:1px solid var(--line);border-radius:var(--r-m);padding:20px;background:var(--surface)}
+.rp-stat small{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted-2);margin-bottom:8px}
+.rp-stat b{font-family:var(--display);font-size:1.44rem;font-weight:700;letter-spacing:-.04em;text-transform:lowercase;display:block}
+.rp-stat b.pos{color:var(--green)}
+.rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:460px){.rp-grid{grid-template-columns:1fr}}
+.rp-fit{border:1px solid var(--line);border-radius:var(--r-m);padding:22px;background:rgba(255,255,255,.018)}
+.rp-fit h5{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin-bottom:13px}
+.rp-fit ul{list-style:none;display:grid;gap:9px}
+.rp-fit li{font-size:.85rem;line-height:1.45;color:#B4ADD4;display:flex;gap:10px}
+.rp-fit li::before{content:'✦';color:var(--rc-txt,var(--violet-hi));font-size:.7rem;margin-top:.25em;flex:none}
+.rpanel .kv{display:grid;gap:12px;margin-top:26px}
+
+/* ── PAY PER VIEW ───────────────────────────────────── */
+.ppv{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(22px,3.4vw,48px);align-items:start}
+@media(max-width:940px){.ppv{grid-template-columns:1fr}}
+.calc{border-radius:var(--r-l);border:1px solid rgba(81,106,246,.34);padding:clamp(24px,3.4vw,38px);
+  background:radial-gradient(circle at 50% 0%,rgba(81,106,246,.22),transparent 64%),linear-gradient(180deg,rgba(255,255,255,.055),transparent)}
+.calc-lab{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2)}
+.calc-views{font-family:var(--display);font-size:clamp(1.9rem,4vw,2.6rem);font-weight:700;letter-spacing:-.045em;
+  line-height:1;margin:8px 0 4px}
+.calc-out{margin:26px 0 6px;padding-top:24px;border-top:1px solid var(--line)}
+.calc-pay{font-family:var(--display);font-size:clamp(3rem,8vw,4.6rem);font-weight:700;letter-spacing:-.055em;line-height:.9;
+  background:linear-gradient(100deg,#fff 8%,#A3B0FF 44%,#19D97C 96%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.calc-sub{font-family:var(--mono);font-size:.68rem;color:var(--muted-2);letter-spacing:.06em;margin-top:12px;line-height:1.6}
+.calc-sub b{color:var(--green)}
+input[type=range].sl{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:100px;margin:22px 0 4px;
+  background:linear-gradient(90deg,var(--violet) var(--p,60.6%),rgba(255,255,255,.12) var(--p,60.6%));cursor:pointer}
+input[type=range].sl::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;
+  background:linear-gradient(160deg,#8FA2FF,#3D53E0);border:2px solid #fff;box-shadow:0 0 22px -2px var(--violet);cursor:grab}
+input[type=range].sl::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.1)}
+input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:linear-gradient(160deg,#8FA2FF,#3D53E0);
+  border:2px solid #fff;box-shadow:0 0 22px -2px var(--violet);cursor:grab}
+.sl-ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;color:var(--muted-2);letter-spacing:.08em}
+.rate{display:grid;gap:8px;margin-top:8px}
+.rate-row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:15px 18px;
+  border:1px solid var(--line);border-radius:12px;background:var(--surface);transition:.28s;position:relative;overflow:hidden}
+.rate-row.hot{border-color:rgba(25,217,124,.45);background:rgba(25,217,124,.07)}
+.rate-row span{font-size:.88rem}
+.rate-row small{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted-2);margin-top:3px}
+.rate-row b{font-family:var(--mono);font-size:.84rem;color:var(--green);white-space:nowrap}
+.ppv-notes{display:grid;gap:10px;margin-top:20px}
+.ppv-note{display:flex;gap:12px;font-size:.85rem;line-height:1.5;color:#B4ADD4}
+.ppv-note i{font-style:normal;color:var(--violet-hi);flex:none}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:clamp(30px,4vw,46px)}
+@media(max-width:860px){.flow{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:440px){.flow{grid-template-columns:1fr}}
+.flow-s{padding:22px 20px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);transition:.3s;position:relative}
+.flow-s:hover{border-color:var(--line-2);transform:translateY(-4px)}
+.flow-s b{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;color:var(--violet-hi);margin-bottom:11px}
+.flow-s h4{font-family:var(--display);font-size:1.1rem;text-transform:lowercase;letter-spacing:-.03em;margin-bottom:7px}
+.flow-s p{font-size:.83rem;line-height:1.5}
 </style>
 </head>
 <body>
@@ -437,10 +529,10 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
     <button class="logo" data-jump="top" type="button"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></button>
     <div class="nav-links">
       <button data-jump="what" type="button">what it is</button>
+      <button data-jump="role" type="button">the five roles</button>
       <button data-jump="career" type="button">your résumé</button>
-      <button data-jump="earn" type="button">the ladder</button>
-      <button data-jump="role" type="button">the role</button>
-      <button data-jump="ideas" type="button">what you'd post</button>
+      <button data-jump="earn" type="button">bounties</button>
+      <button data-jump="views" type="button">paid per view</button>
       <button data-jump="faq" type="button">faq</button>
     </div>
     <button class="burger" aria-label="menu">☰</button>
@@ -453,12 +545,12 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <span class="eyebrow"><span class="dot"></span>&nbsp;program overview · fall 2026</span>
-        <h1 class="h1">become your<br><span class="out">school's</span><br><span class="grad">fomo ambassador.</span></h1>
-        <p class="lede">FOMO Campus is our student ambassador program — a paid, referenceable role at a venture-backed company that you can put on your résumé. You build a small financial media channel for your university: the posts, the group chat, the events. This page walks through what the role is, what it does for you afterwards, what it pays, and how much time it takes. Read it before you decide.</p>
+        <span class="eyebrow"><span class="dot"></span>&nbsp;five roles open · fall 2026</span>
+        <h1 class="h1">every campus<br><span class="out">runs five.</span><br><span class="grad">pick your seat.</span></h1>
+        <p class="lede">FOMO Campus puts a five-person team at every university — a Campus President plus Growth, Partnerships, Content and Culture. Together you run your school's financial media channel: the posts, the sponsors, the group chat, the events. You apply to one seat, not all five, and you're paid for that seat. This page walks through each role, what it pays, and how much time it actually takes. Read it before you decide.</p>
         <div class="hero-cta">
-          <button class="btn btn-p" data-jump="what" type="button">start reading →</button>
-          <button class="btn btn-g" data-jump="career" type="button">what you get out of it</button>
+          <button class="btn btn-p" data-jump="role" type="button">see the five roles →</button>
+          <button class="btn btn-g" data-jump="views" type="button">how you get paid</button>
         </div>
       </div>
 
@@ -470,10 +562,12 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
             <span class="g-badge"><i>$75M Series&nbsp;B</i></span>
           </div>
           <p class="g-lead">A social-first on-chain trading platform. Raised June&nbsp;2026 at a $550M valuation.</p>
-          <h4>the role at a glance</h4>
+          <h4>the team at a glance</h4>
+          <div class="g-row"><span>Seats per campus</span><b>5</b></div>
+          <div class="g-row"><span>You apply to</span><b>one role</b></div>
           <div class="g-row"><span>Experience required</span><b>none</b></div>
           <div class="g-row"><span>Followers required</span><b>none</b></div>
-          <div class="g-row"><span>Ambassadors per school</span><b>no limit</b></div>
+          <div class="g-row"><span>Paid on views</span><b class="pos">every post</b></div>
           <div class="g-row"><span>Commitment</span><b>one semester</b></div>
           <div class="g-row"><span>Cost to you</span><b>$0, ever</b></div>
         </div>
@@ -488,19 +582,19 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
   <div class="wrap">
     <div class="shead rv">
       <span class="eyebrow">01 — what this actually is</span>
-      <h2>it's a media gig,<br>not a flyer gig.</h2>
-      <p>Most campus ambassador programs hand you a box of stickers and a graphic to repost. This one is closer to running a small publication. You get a brand, a content playbook, and a cut of everyone you bring in.</p>
+      <h2>it's a newsroom,<br>not a flyer gig.</h2>
+      <p>Most campus programs hand one student a box of stickers and a graphic to repost. This is closer to staffing a small publication. Five people, five jobs, one campus — a president who owns the number, someone on growth, someone on partnerships, someone on content, someone on culture. You take one seat and get paid for that seat.</p>
     </div>
 
     <div class="vs rv">
       <div class="vs-col vs-old">
         <h3>the usual ambassador gig</h3>
         <ul>
-          <li>Hand out branded water bottles at the quad</li>
+          <li>One student, handed a box of water bottles</li>
+          <li>A vague title that means whatever nobody else did</li>
           <li>Repost a graphic the marketing team wrote</li>
           <li>Flat fee or just free merch</li>
           <li>No real skill built, nothing to show afterwards</li>
-          <li>Program ends, you get a line on your résumé</li>
           <li>You're a distribution channel for someone else</li>
         </ul>
       </div>
@@ -508,13 +602,280 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
       <div class="vs-col vs-new">
         <h3>fomo campus</h3>
         <ul>
-          <li>You run an account in your own voice, about your own school</li>
+          <li>A five-person team with one named job each</li>
+          <li>A real title — President, Growth, Partnerships, Content, Culture</li>
           <li>We give hooks and templates — the calls are yours</li>
-          <li>Cash bounties for completing real tasks</li>
-          <li>You learn content, distribution and analytics for real</li>
-          <li>The audience you build is yours and follows you out</li>
+          <li>Cash bounties on a ladder built for your specific role</li>
+          <li>Paid per view on top, every video, from the first one</li>
           <li>You're building something. FOMO sponsors it.</li>
         </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="role">
+  <div class="wrap">
+    <div class="shead rv">
+      <span class="eyebrow">02 — the five roles</span>
+      <h2>five seats.<br>you take one.</h2>
+      <p>Every campus team is the same five jobs. You apply to the one you actually want — not a general pool — and you're paid on that role's own ladder. Pick one below to see what the week looks like, what it pays, and who tends to be good at it.</p>
+    </div>
+
+    <div class="roles rv" id="roles">
+      <button class="rcard" data-r="pres" style="--rc:rgba(255,196,107,.26);--rc-txt:#FFC46B;--rc-line:rgba(255,196,107,.55)" type="button">
+        <span class="rc-n">01</span><i class="rc-ic">◆</i>
+        <h4>campus president</h4>
+        <p>Owns the campus and the number. Runs the other four.</p>
+        <span class="rc-open">the lead role →</span>
+      </button>
+      <button class="rcard" data-r="growth" style="--rc:rgba(25,217,124,.24);--rc-txt:#19D97C;--rc-line:rgba(25,217,124,.55)" type="button">
+        <span class="rc-n">02</span><i class="rc-ic">↗</i>
+        <h4>growth</h4>
+        <p>Turns views into signups. Owns the link and the funnel.</p>
+        <span class="rc-open">the numbers role →</span>
+      </button>
+      <button class="rcard" data-r="partner" style="--rc:rgba(255,77,143,.24);--rc-txt:#FF4D8F;--rc-line:rgba(255,77,143,.55)" type="button">
+        <span class="rc-n">03</span><i class="rc-ic">§</i>
+        <h4>partnerships</h4>
+        <p>Brings the rooms you don't own. Clubs, greek, local business.</p>
+        <span class="rc-open">the closing role →</span>
+      </button>
+      <button class="rcard on" data-r="content" style="--rc:rgba(81,106,246,.3);--rc-txt:#A3B0FF;--rc-line:#516AF6" type="button">
+        <span class="rc-n">04</span><i class="rc-ic">▶</i>
+        <h4>content</h4>
+        <p>Runs the feed. Paid per view on top of the ladder.</p>
+        <span class="rc-open">most applied for →</span>
+      </button>
+      <button class="rcard" data-r="culture" style="--rc:rgba(111,215,255,.24);--rc-txt:#6FD7FF;--rc-line:rgba(111,215,255,.55)" type="button">
+        <span class="rc-n">05</span><i class="rc-ic">◎</i>
+        <h4>culture</h4>
+        <p>Owns the room. The group chat, the rituals, the events.</p>
+        <span class="rc-open">the people role →</span>
+      </button>
+    </div>
+
+    <!-- CAMPUS PRESIDENT -->
+    <div class="rpanel rv" id="r-pres" style="--rc-txt:#FFC46B">
+      <div>
+        <span class="rp-tag">role 01 · campus president</span>
+        <h3>you own the campus,<br>and the number.</h3>
+        <p>The president isn't a title we hand out for seniority — it's the person accountable for what the school does this semester. You set the weekly plan, keep four other people moving, and you're the one on the call with our campus team when the number is good and when it isn't. In exchange you earn on the whole campus total, not just your own work.</p>
+        <ul class="rp-own">
+          <li>A 20-minute weekly standup with your four leads</li>
+          <li>The campus number — signups, reach, events, all of it</li>
+          <li>Filling empty seats when someone graduates or steps back</li>
+          <li>One written recap to FOMO every week. Short, honest, no spin</li>
+          <li>Representing your school on the national board</li>
+        </ul>
+      </div>
+      <div class="rp-side">
+        <div class="rp-grid">
+          <div class="rp-stat"><small>realistic time</small><b>~6 hrs / week</b></div>
+          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="pres">—</b></div>
+          <div class="rp-stat"><small>paid on</small><b>campus total</b></div>
+          <div class="rp-stat"><small>seats per school</small><b>1</b></div>
+        </div>
+        <div class="rp-fit">
+          <h5>this suits you if</h5>
+          <ul>
+            <li>You've run a club, a team or a house before and liked it</li>
+            <li>You're comfortable chasing people who haven't replied</li>
+            <li>You'd rather own an outcome than be handed a task list</li>
+            <li>You want the line on your résumé to say you led something</li>
+          </ul>
+        </div>
+        <div class="rp-fit">
+          <h5>what we watch</h5>
+          <ul>
+            <li>Whether all five seats are actually filled and active</li>
+            <li>Campus signups, not your personal follower count</li>
+            <li>Whether the weekly recap shows up without being asked</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROWTH -->
+    <div class="rpanel rv" id="r-growth" style="--rc-txt:#19D97C">
+      <div>
+        <span class="rp-tag">role 02 · growth</span>
+        <h3>views are vanity.<br>you own the number.</h3>
+        <p>Content brings people to the edge; you get them over it. You own the referral link, the campaign codes and the honest read on what's actually converting — which usually turns out to be a walkthrough in the group chat at 11pm, not the video with 80K views. You're the person on the team who can say "that post did nothing" with data behind it.</p>
+        <ul class="rp-own">
+          <li>The campus referral link and every campaign code under it</li>
+          <li>Walking new people through their first trade, personally</li>
+            <li>One conversion experiment a week — landing spot, CTA, timing</li>
+          <li>The Monday readout: what drove signups, what didn't</li>
+          <li>Killing formats that don't convert, even popular ones</li>
+        </ul>
+      </div>
+      <div class="rp-side">
+        <div class="rp-grid">
+          <div class="rp-stat"><small>realistic time</small><b>~4 hrs / week</b></div>
+          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="growth">—</b></div>
+          <div class="rp-stat"><small>paid on</small><b>verified signups</b></div>
+          <div class="rp-stat"><small>seats per school</small><b>1</b></div>
+        </div>
+        <div class="rp-fit">
+          <h5>this suits you if</h5>
+          <ul>
+            <li>A scoreboard makes you competitive rather than anxious</li>
+            <li>You like spreadsheets more than you'd admit out loud</li>
+            <li>You'd rather DM 40 people than be on camera once</li>
+            <li>You want "growth marketing" on your résumé with numbers attached</li>
+          </ul>
+        </div>
+        <div class="rp-fit">
+          <h5>what we watch</h5>
+          <ul>
+            <li>Verified signups — real people, still active after 7 days</li>
+            <li>Signups per 1,000 views, which is the number that matters</li>
+            <li>Whether you're testing or just repeating last week</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTNERSHIPS -->
+    <div class="rpanel rv" id="r-partner" style="--rc-txt:#FF4D8F">
+      <div>
+        <span class="rp-tag">role 03 · partnerships</span>
+        <h3>every room on campus<br>already has people in it.</h3>
+        <p>The finance club has 200 members. The business frat has a listserv. The coffee place by the library has a window. None of that is yours yet, and getting it is a completely different skill from making videos. You bring the audiences we can't buy and the rooms we can't book — and you get paid per partnership you actually close, not per email you send.</p>
+        <ul class="rp-own">
+          <li>Club and org partnerships — finance, business, econ, investing</li>
+          <li>Greek chapter deals and house-wide signup pushes</li>
+          <li>Local business co-promos: cafés, bars, print shops, gyms</li>
+          <li>Collabs with the biggest creators already on your campus</li>
+          <li>Finding sponsors and venues for whatever Culture is running</li>
+        </ul>
+      </div>
+      <div class="rp-side">
+        <div class="phone">
+          <div class="phone-bar"><span>OUTREACH · SENT</span><span>REPLY 2h</span></div>
+          <div class="post">
+            <div class="post-top"><span class="av"></span><div><b>Michigan Finance Club</b><br><small>PRESIDENT · REPLIED</small></div></div>
+            <p>yes we'd do this. we have 210 members and a speaker night on the 14th — you can have 10 min and a table.</p>
+            <div class="post-metrics"><span>✓ closed</span><span>+68 signups</span></div>
+          </div>
+          <div class="post">
+            <div class="post-top"><span class="av"></span><div><b>Comet Coffee</b><br><small>OWNER · REPLIED</small></div></div>
+            <p>happy to put the QR on the counter for a month if you post about us twice.</p>
+            <div class="post-metrics"><span>✓ closed</span><span>30-day placement</span></div>
+          </div>
+        </div>
+        <div class="rp-grid">
+          <div class="rp-stat"><small>realistic time</small><b>~4 hrs / week</b></div>
+          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="partner">—</b></div>
+          <div class="rp-stat"><small>paid on</small><b>closed deals</b></div>
+          <div class="rp-stat"><small>seats per school</small><b>1</b></div>
+        </div>
+        <div class="rp-fit">
+          <h5>this suits you if</h5>
+          <ul>
+            <li>Cold emailing a stranger doesn't make you want to lie down</li>
+            <li>You already know people across a few different circles</li>
+            <li>You like the moment something closes more than the build-up</li>
+            <li>You want "partnerships" or "BD" on your résumé before you graduate</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="rpanel on rv" id="r-content" style="--rc-txt:#A3B0FF">
+      <div>
+        <span class="rp-tag">role 04 · content</span>
+        <h3>you're the beat reporter<br>for money on campus.</h3>
+        <p>You run the account. Short, fast, local — you're not teaching people what a candlestick is, you're covering money the way a beat reporter covers your football team. This is the only role paid twice: the ladder like everyone else, plus a rate on every video you post and submit. A single video that runs gets you more than a week of anything else on this page.</p>
+        <ul class="rp-own">
+          <li>5–7 posts a week on the campus channel, in your own voice</li>
+          <li>The hook — the first line does most of the job</li>
+          <li>One batch shoot a week, cut into five outputs</li>
+          <li>45 minutes in the comments after every post</li>
+          <li>Killing your worst format each week and doubling the best</li>
+        </ul>
+        <div class="kv">
+          <div class="kv-row"><span>Posting cadence</span><span>5–7 per week</span></div>
+          <div class="kv-row"><span>Format that works</span><span>15–35s vertical</span></div>
+          <div class="kv-row"><span>Paid per video</span><span>yes — see section 05</span></div>
+          <div class="kv-row"><span>What we provide</span><span>hooks, templates, edits</span></div>
+        </div>
+      </div>
+      <div class="rp-side">
+        <div class="phone">
+          <div class="phone-bar"><span>@wolverine.capital</span><span>9:41</span></div>
+          <div class="post">
+            <div class="post-top"><span class="av"></span><div><b>wolverine.capital</b><br><small>MICHIGAN · 2h</small></div></div>
+            <p>i asked 40 people outside the UGLi what they'd buy with $100 right now. #3 broke me.</p>
+            <div class="post-metrics"><span>▶ 84.2K</span><span>♥ 6,109</span><span>↻ 412</span></div>
+          </div>
+          <div class="post">
+            <div class="post-top"><span class="av"></span><div><b>wolverine.capital</b><br><small>MICHIGAN · 1d</small></div></div>
+            <p>ann arbor rent went up 11% this year. here's what that same money does in an index over 4 years 📉</p>
+            <div class="post-metrics"><span>▶ 121K</span><span>♥ 9,880</span><span>↻ 1,204</span></div>
+          </div>
+        </div>
+        <div class="rp-grid">
+          <div class="rp-stat"><small>realistic time</small><b>~5 hrs / week</b></div>
+          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="content">—</b></div>
+          <div class="rp-stat"><small>paid on</small><b class="pos">views, per post</b></div>
+          <div class="rp-stat"><small>seats per school</small><b>1–2</b></div>
+        </div>
+        <div class="rp-fit">
+          <h5>this suits you if</h5>
+          <ul>
+            <li>You already post, or you've been meaning to start for a year</li>
+            <li>You're fine on camera — or you want a faceless format, which works</li>
+            <li>You can ship something decent on a Tuesday instead of something perfect in March</li>
+            <li>You want a public portfolio you can pull up in an interview</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- CULTURE -->
+    <div class="rpanel rv" id="r-culture" style="--rc-txt:#6FD7FF">
+      <div>
+        <span class="rp-tag">role 05 · culture</span>
+        <h3>the feed pulls strangers in.<br>you make them stay.</h3>
+        <p>You own the room — the campus group chat and everything that happens in person. It's the surface that actually converts, because people ask questions there they'd be embarrassed to ask publicly. You run the daily ritual that keeps it alive, and you pitch us the events. We set the budget and ship the banners, merch and prizes; you pick the date and run the night.</p>
+        <ul class="rp-own">
+          <li>The campus group chat — Discord, GroupMe, whatever your school uses</li>
+          <li>A daily ritual post. Morning open, end-of-day, something repeatable</li>
+          <li>Pitching events to us, then actually running them</li>
+          <li>Keeping it a room people want to be in, not a promo channel</li>
+          <li>Merch drops, watch parties, dorm-vs-dorm tournaments</li>
+        </ul>
+        <div class="kv">
+          <div class="kv-row"><span>Realistic size by week 8</span><span>150–250 members</span></div>
+          <div class="kv-row"><span>Events</span><span>you pitch, we fund</span></div>
+          <div class="kv-row"><span>Typical signups per event</span><span>60 – 140</span></div>
+          <div class="kv-row"><span>Converts vs. the feed</span><span>roughly 4×</span></div>
+        </div>
+      </div>
+      <div class="rp-side">
+        <div class="phone">
+          <div class="phone-bar"><span># michigan-markets</span><span>412 online</span></div>
+          <div class="post"><div class="post-top"><span class="av"></span><div><b>dev_k</b><br><small>9:04 AM</small></div></div><p>morning open 🔔 futures green, someone explain to me why my portfolio is not</p><div class="post-metrics"><span>😂 31</span><span>🔥 12</span></div></div>
+          <div class="post"><div class="post-top"><span class="av"></span><div><b>priya.s</b><br><small>9:11 AM</small></div></div><p>first trade ever done. terrified. thank u for the walkthrough last night</p><div class="post-metrics"><span>🫡 88</span><span>♥ 40</span></div></div>
+        </div>
+        <div class="rp-grid">
+          <div class="rp-stat"><small>realistic time</small><b>~4 hrs / week</b></div>
+          <div class="rp-stat"><small>ladder total</small><b class="pos" data-lt="culture">—</b></div>
+          <div class="rp-stat"><small>paid on</small><b>chat &amp; events</b></div>
+          <div class="rp-stat"><small>event budget</small><b>we fund it</b></div>
+        </div>
+        <div class="rp-fit">
+          <h5>this suits you if</h5>
+          <ul>
+            <li>You're already the person who makes the group chat</li>
+            <li>You'd rather host eighty people than film one video</li>
+            <li>You know which dorms, houses and clubs actually show up</li>
+            <li>You want "community management" and "events" on your résumé</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -523,9 +884,9 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="career">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">02 — your résumé</span>
+      <span class="eyebrow">03 — your résumé</span>
       <h2>it goes on<br>your linkedin.</h2>
-      <p>A paid, referenceable role at a venture-backed company — not a volunteer badge or a club officer title. You leave with your own numbers, a public portfolio, and someone here who will take a reference call.</p>
+      <p>A paid, referenceable role at a venture-backed company — not a volunteer badge or a club officer title. Each of the five seats has a real title behind it, and you leave with your own numbers, a public portfolio, and someone here who will take a reference call.</p>
     </div>
 
     <div class="career">
@@ -534,20 +895,21 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
         <div class="li-row">
           <span class="li-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>
           <div class="li-body">
-            <h5>GTM Intern</h5>
-            <p>fomo · Full-time</p>
+            <h5 id="liTitle">Content Lead, Campus</h5>
+            <p>fomo · Contract</p>
             <small>Sep 2026 – Present · 1 mo</small>
-            <small>Remote</small>
+            <small id="liSkills">Skills: Content Strategy · Social Media · Video Production</small>
           </div>
         </div>
       </div>
 
       <div class="rv">
         <h3>what you can actually claim</h3>
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:-8px">The card on the left updates with whichever role you picked in section 02.</p>
         <div class="career-list">
-          <div class="career-item"><i>◷</i><div><b>Numbers you own</b><p>“Grew a campus channel to 40K followers and drove 200+ product signups” beats every bullet on a normal student résumé, because it’s a result rather than a responsibility.</p></div></div>
-          <div class="career-item"><i>◎</i><div><b>A portfolio you can show</b><p>Every post stays public. In an interview you can pull up the account, the analytics and the growth curve on your phone. Almost nobody your age can do that.</p></div></div>
-          <div class="career-item"><i>◈</i><div><b>Real skills, named properly</b><p>Growth marketing, content production, community management, performance analytics. These are the exact words on entry-level job postings in tech, media and finance.</p></div></div>
+          <div class="career-item"><i>◷</i><div><b>Numbers you own</b><p>“Grew a campus channel to 40K followers and drove 200+ signups,” or “closed 10 campus partnerships,” or “ran a five-person team to #1 nationally.” Every seat leaves with a result rather than a responsibility.</p></div></div>
+          <div class="career-item"><i>◎</i><div><b>A portfolio you can show</b><p>The account, the partner list, the event photos, the growth curve — all public, all pullable on your phone in an interview. Almost nobody your age can do that.</p></div></div>
+          <div class="career-item"><i>◈</i><div><b>Real skills, named properly</b><p>Team leadership, growth marketing, business development, content production, community management. Each seat maps onto a different set of words that appear verbatim on entry-level postings in tech, media and finance.</p></div></div>
           <div class="career-item"><i>§</i><div><b>A reference who picks up</b><p>You work directly with our campus team. We write recommendations, take reference calls, and make intros — for ambassadors at any level, not just the top ones.</p></div></div>
           <div class="career-item"><i>→</i><div><b>First look at open roles</b><p>We hire from this program, and several ambassadors have already converted their work here into internships and full-time GTM roles.</p></div></div>
         </div>
@@ -559,15 +921,23 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="earn">
   <div class="wrap">
     <div class="shead rv" style="margin-bottom:22px">
-      <span class="eyebrow">03 — the bounty ladder</span>
-      <h2>the bounty<br>ladder.</h2>
-      <p style="margin-top:12px">Ten bounties, in a fixed order. You unlock them one at a time — clear the one you’re on and the next opens up. One target at a time is much easier than staring at a menu, and the early ones teach you what the later ones need.</p>
+      <span class="eyebrow">04 — the bounty ladder</span>
+      <h2>a ladder for<br>every seat.</h2>
+      <p style="margin-top:12px">Each role has its own ladder, because "get 5,000 followers" is a meaningless target for the person closing sponsorships. Bounties unlock one at a time — clear the one you're on and the next opens. One target at a time is much easier than staring at a menu, and the early rungs teach you what the later ones need.</p>
+    </div>
+
+    <div class="tabs rv" id="ladtabs">
+      <button class="tab" data-l="pres">campus president</button>
+      <button class="tab" data-l="growth">growth</button>
+      <button class="tab" data-l="partner">partnerships</button>
+      <button class="tab on" data-l="content">content</button>
+      <button class="tab" data-l="culture">culture</button>
     </div>
 
     <div class="ladder-top rv">
-      <div class="lt-item"><small>bounties on the ladder</small><b>10</b></div>
-      <div class="lt-item"><small>first one you’d work on</small><b>claim your handle</b></div>
-      <div class="lt-item"><small>total if you clear all of it</small><b class="pos">$4,425</b></div>
+      <div class="lt-item"><small>bounties on this ladder</small><b id="ltCount">—</b></div>
+      <div class="lt-item"><small>first one you’d work on</small><b id="ltFirst">—</b></div>
+      <div class="lt-item"><small>total if you clear all of it</small><b class="pos" id="ltTotal">—</b></div>
     </div>
 
     <div id="ladder" class="ladder rv"></div>
@@ -577,83 +947,57 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
       <div class="mech-item"><span class="mech-ic">◎</span><div><b>Proof is straightforward</b><p>Most bounties are tracked automatically. For events and content milestones, you upload a screenshot — reviewed within 48 hours.</p></div></div>
       <div class="mech-item"><span class="mech-ic">⚠</span><div><b>Real students only</b><p>Bounties tied to signups require unique people who stay active for 7 days. Fake or duplicate accounts void the bounty — we do check.</p></div></div>
       <div class="mech-item"><span class="mech-ic">§</span><div><b>You’re a contractor</b><p>Paid as a 1099 contractor, not an employee. If you earn over $600 in a year we’ll send tax paperwork in January.</p></div></div>
+      <div class="mech-item"><span class="mech-ic">◆</span><div><b>Your ladder is yours</b><p>You only ever work the ladder for your own seat. Nobody on your campus team is competing with you for the same bounty.</p></div></div>
+      <div class="mech-item"><span class="mech-ic">▶</span><div><b>Views pay on top</b><p>Everything here is separate from the per-view rate in section 05. Content earns both; the other four seats earn per view on anything they post too.</p></div></div>
     </div>
   </div>
 </section>
 
-<section id="role">
+<section id="views">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">04 — the role</span>
-      <h2>three things<br>you'd be doing.</h2>
-      <p>Nobody does all three in week one. Most ambassadors start with the feed, add the group chat by week three, and pitch an event once they have people to invite.</p>
+      <span class="eyebrow">05 — paid per view</span>
+      <h2>post it. tag us.<br>get paid on views.</h2>
+      <p>The bounty ladder is the long game. This is the part that pays every single week. Post a video, tag @fomo, submit the link in the hub — and once it's had 30 days to run, we pay you on what it actually did. Every seat on the team can earn this, not just Content. There's no follower minimum and no cap on how many you submit.</p>
     </div>
 
-    <div class="tabs rv" id="tabs">
-      <button class="tab on" data-p="p1">the feed</button>
-      <button class="tab" data-p="p2">the group chat</button>
-      <button class="tab" data-p="p3">irl events</button>
-    </div>
+    <div class="ppv rv">
+      <div class="calc">
+        <span class="calc-lab">drag to see what a video pays</span>
+        <div class="calc-views" id="cViews">100K views</div>
+        <input type="range" class="sl" id="cSlide" min="0" max="1000" value="606" style="--p:60.6%" aria-label="views on a video">
+        <div class="sl-ends"><span>1K</span><span>2M+</span></div>
 
-    <div class="panel on rv" id="p1">
+        <div class="calc-out">
+          <span class="calc-lab">that video pays you</span>
+          <div class="calc-pay" id="cPay">$210</div>
+          <p class="calc-sub" id="cNote">That works out to about <b>$2.10</b> per 1,000 views. Post five like this in a month and it's <b>$1,050</b>.</p>
+        </div>
+      </div>
+
       <div>
-        <h3>the feed</h3>
-        <p>A campus-branded account on TikTok and Reels. Short, fast, local. You're not teaching people what a candlestick is — you're covering money the way a beat reporter covers your football team, with your school as the audience.</p>
-        <div class="kv">
-          <div class="kv-row"><span>Posting cadence</span><span>5–7 per week</span></div>
-          <div class="kv-row"><span>Format that works</span><span>15–35s vertical</span></div>
-          <div class="kv-row"><span>Realistic time cost</span><span>~3 hrs / week</span></div>
-          <div class="kv-row"><span>What we provide</span><span>hooks, templates, edits</span></div>
+        <div class="rate" id="rateCard">
+          <div class="rate-row" data-t="0"><span>every approved video<small>even if it flops</small></span><b>$10 floor</b></div>
+          <div class="rate-row" data-t="1"><span>up to 100K views<small>the standard rate</small></span><b>$2.00 / 1K</b></div>
+          <div class="rate-row" data-t="2"><span>100K – 500K views<small>the video is running</small></span><b>$3.00 / 1K</b></div>
+          <div class="rate-row" data-t="3"><span>500K+ views<small>top rate</small></span><b>$4.00 / 1K</b></div>
+          <div class="rate-row" data-t="4"><span>ceiling per video<small>one post, one payout</small></span><b>$2,500 max</b></div>
         </div>
-      </div>
-      <div class="phone">
-        <div class="phone-bar"><span>@wolverine.capital</span><span>9:41</span></div>
-        <div class="post">
-          <div class="post-top"><span class="av"></span><div><b>wolverine.capital</b><br><small>MICHIGAN · 2h</small></div></div>
-          <p>i asked 40 people outside the UGLi what they'd buy with $100 right now. #3 broke me.</p>
-          <div class="post-metrics"><span>▶ 84.2K</span><span>♥ 6,109</span><span>↻ 412</span></div>
-        </div>
-        <div class="post">
-          <div class="post-top"><span class="av"></span><div><b>wolverine.capital</b><br><small>MICHIGAN · 1d</small></div></div>
-          <p>ann arbor rent went up 11% this year. here's what that same money does in an index over 4 years 📉</p>
-          <div class="post-metrics"><span>▶ 121K</span><span>♥ 9,880</span><span>↻ 1,204</span></div>
+
+        <div class="ppv-notes">
+          <div class="ppv-note"><i>◷</i><p>Counted at <b>30 days</b> after posting, so a slow burn still gets paid. Views after that don't count toward the same video.</p></div>
+          <div class="ppv-note"><i>◎</i><p>Every platform counts — TikTok, Reels, Shorts. The same video posted to three platforms is <b>one submission</b>, and we add the view counts together.</p></div>
+          <div class="ppv-note"><i>⚠</i><p>It has to be your campus channel, tag <b>@fomo</b>, and be about money or markets. Bought views void the payout and we check every submission over 50K.</p></div>
+          <div class="ppv-note"><i>§</i><p>Paid on the same 1st-and-15th cycle as everything else, and it stacks on top of your ladder — clearing "50k on one video" pays the bounty <b>and</b> the view rate.</p></div>
         </div>
       </div>
     </div>
 
-    <div class="panel rv" id="p2">
-      <div>
-        <h3>the group chat</h3>
-        <p>The surface that actually converts. A campus-only Discord or GroupMe where people post trades, ask questions they'd be embarrassed to ask publicly, and react in real time when something moves. The feed pulls strangers in; the chat turns them into regulars.</p>
-        <div class="kv">
-          <div class="kv-row"><span>Realistic size by week 8</span><span>150–250 members</span></div>
-          <div class="kv-row"><span>Ritual that works</span><span>a daily morning post</span></div>
-          <div class="kv-row"><span>Time cost</span><span>~20 min / day</span></div>
-          <div class="kv-row"><span>Converts vs. the feed</span><span>roughly 4×</span></div>
-        </div>
-      </div>
-      <div class="phone">
-        <div class="phone-bar"><span># michigan-markets</span><span>412 online</span></div>
-        <div class="post"><div class="post-top"><span class="av"></span><div><b>dev_k</b><br><small>9:04 AM</small></div></div><p>morning open 🔔 futures green, someone explain to me why my portfolio is not</p><div class="post-metrics"><span>😂 31</span><span>🔥 12</span></div></div>
-        <div class="post"><div class="post-top"><span class="av"></span><div><b>priya.s</b><br><small>9:11 AM</small></div></div><p>first trade ever done. terrified. thank u for the walkthrough last night</p><div class="post-metrics"><span>🫡 88</span><span>♥ 40</span></div></div>
-      </div>
-    </div>
-
-    <div class="panel rv" id="p3">
-      <div>
-        <h3>irl events</h3>
-        <p>Your unfair advantage over every online account: you can be in the room. You pitch us the event and we set the budget for it — a trading night, a watch party, a dorm-vs-dorm paper trading tournament, a table outside the union during finals, or a funded dinner with the biggest creators on your campus. We ship the banners, merch and prizes; you pick the date and run it.</p>
-        <div class="kv">
-          <div class="kv-row"><span>How it works</span><span>you pitch, we fund</span></div>
-          <div class="kv-row"><span>Budget</span><span>we set it per event</span></div>
-          <div class="kv-row"><span>Typical signups per event</span><span>60 – 140</span></div>
-          <div class="kv-row"><span>Time cost</span><span>~6 hrs per event</span></div>
-        </div>
-      </div>
-      <div class="phone">
-        <div class="phone-bar"><span>EVENT · THU 8PM</span><span>RSVP 214</span></div>
-        <div class="post"><div class="post-top"><span class="av"></span><div><b>DORM WARS: TRADING NIGHT</b><br><small>ROSS SCHOOL, RM 1210</small></div></div><p>8 dorms. $1,000 paper portfolio each. 90 minutes. Winner takes the belt and $500 real. Pizza until it's gone.</p><div class="post-metrics"><span>👥 214 rsvp</span><span>🏆 $500 pot</span></div></div>
-      </div>
+    <div class="flow rv">
+      <div class="flow-s"><b>STEP 01</b><h4>post it</h4><p>On your campus channel, tagging @fomo. No approval needed first — post what you want, when you want.</p></div>
+      <div class="flow-s"><b>STEP 02</b><h4>submit the link</h4><p>Paste the URL into the hub. Takes about ten seconds. Do it the same day so the 30-day clock starts.</p></div>
+      <div class="flow-s"><b>STEP 03</b><h4>let it run</h4><p>We check the view count 30 days later, straight from the platform. Nothing for you to screenshot or chase.</p></div>
+      <div class="flow-s"><b>STEP 04</b><h4>get paid</h4><p>It lands in your next payout on the 1st or the 15th, itemised per video so you can see what each one earned.</p></div>
     </div>
   </div>
 </section>
@@ -661,9 +1005,9 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="ideas">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">05 — what you'd post</span>
+      <span class="eyebrow">06 — what you'd post</span>
       <h2>you'll never<br>start from blank.</h2>
-      <p>Formats that are working on finance and crypto TikTok right now, rewritten for a campus audience. Each one comes with the hook to open on — that first line is most of the job. Refreshed every month in the ambassador hub.</p>
+      <p>Mostly the Content seat's problem, but anyone on the team can post and earn the per-view rate. These are formats working on finance TikTok right now, rewritten for a campus audience. Each comes with the hook to open on — that first line is most of the job. Refreshed monthly in the hub.</p>
     </div>
 
     <div class="chips rv" id="chips">
@@ -734,7 +1078,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="playbook">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">06 — the playbook</span>
+      <span class="eyebrow">07 — the playbook</span>
       <h2>how the good<br>ones do it.</h2>
       <p>Reverse-engineered from the ambassadors currently doing the best numbers. None of it requires you to be good on camera on day one.</p>
     </div>
@@ -782,10 +1126,10 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
           </div></div>
         </div>
         <div class="acc-item">
-          <button class="acc-btn"><span class="acc-n">05</span><span class="acc-t">team up with your campus</span><span class="acc-i">+</span></button>
+          <button class="acc-btn"><span class="acc-n">05</span><span class="acc-t">use the other four seats</span><span class="acc-i">+</span></button>
           <div class="acc-body"><div>
-            <p>There's no cap on ambassadors per school, and the strongest campuses run as small teams rather than solo acts. Split the beat, share the group chat, cross-post each other.</p>
-            <ul><li>Bring in friends who are better on camera than you</li><li>Each person owns one recurring segment</li><li>Refer another ambassador and earn on their first 90 days</li><li>Campus totals combine on the national board</li></ul>
+            <p>The campuses that win aren't the ones with the best individual — they're the ones where five people actually hand things off. The most common failure is five people quietly doing content because it's the fun one.</p>
+            <ul><li>Content gets the reach; Growth decides what to keep making</li><li>Partnerships brings rooms Content can film in</li><li>Culture turns one-time viewers into people who show up</li><li>The president kills whatever isn't working, weekly</li><li>Campus totals combine on the national board</li></ul>
           </div></div>
         </div>
       </div>
@@ -801,31 +1145,31 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
   <div class="wrap">
     <div class="shead split-head rv">
       <div style="max-width:620px">
-        <span class="eyebrow">07 — the board</span>
+        <span class="eyebrow">08 — the board</span>
         <h2>where the<br>campuses stand.</h2>
-        <p>Every school is ranked by verified signups, combining everyone who's an ambassador there. Bragging rights, mostly — the one exception is the grand prize, which goes to whoever finishes the semester ranked first.</p>
+        <p>Schools are ranked on verified signups, combining all five seats. There's also a board per role, so a partnerships lead isn't measured against a content lead. Bragging rights mostly — the exception is the grand prize on each ladder, which goes to whoever finishes the semester ranked first.</p>
       </div>
       <div class="tabs" id="lbtabs" style="margin-bottom:0">
         <button class="tab on" data-lb="schools">schools</button>
-        <button class="tab" data-lb="ambassadors">ambassadors</button>
+        <button class="tab" data-lb="ambassadors">by role</button>
         <button class="tab" data-lb="rising">rising</button>
       </div>
     </div>
 
     <div class="lb rv">
-      <div class="lb-head"><span>rank</span><span id="lbcol1">campus</span><span id="lbcol2">team</span><span>reach</span><span style="text-align:right">signups</span></div>
+      <div class="lb-head"><span>rank</span><span id="lbcol1">campus</span><span id="lbcol2">seats filled</span><span>reach</span><span style="text-align:right">signups</span></div>
       <div id="lbbody"></div>
     </div>
-    <p class="rv" style="font-family:var(--mono);font-size:.66rem;color:var(--muted-2);margin-top:16px;letter-spacing:.06em">↻ updated every monday · campus totals combine every ambassador at that school</p>
+    <p class="rv" style="font-family:var(--mono);font-size:.66rem;color:var(--muted-2);margin-top:16px;letter-spacing:.06em">↻ updated every monday · campus totals combine all five seats at that school</p>
   </div>
 </section>
 
 <section id="dashboard">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">08 — the hub</span>
+      <span class="eyebrow">09 — the hub</span>
       <h2>what you'd see<br>every day.</h2>
-      <p>Every ambassador gets a dashboard: your referral link, live signup tracking, which posts actually drove installs, and your next payout. This is a real view from an ambassador at USC in her second semester.</p>
+      <p>Every seat gets a dashboard tuned to that role — your referral link, live tracking, submitted videos and what each one earned, and your next payout. This is a content lead at USC in her second semester.</p>
     </div>
 
     <div class="dash rv">
@@ -838,14 +1182,14 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
         <div>
           <div class="d-hi">
             <div class="d-av">MR</div>
-            <div><h3>maya r.</h3><small>USC Film · @uscfomo</small></div>
+            <div><h3>maya r.</h3><small>USC · content lead · @uscfomo</small></div>
           </div>
 
           <div class="d-stats">
             <div class="d-stat"><b data-count="41.2" data-suffix="K" data-dec="1">0</b><small>followers</small><i>+18% wk</i></div>
             <div class="d-stat"><b data-count="212" data-suffix="">0</b><small>signups</small><i>+31 this wk</i></div>
             <div class="d-stat"><b data-count="1840" data-prefix="$">0</b><small>earned this sem</small><i>+$341 wk</i></div>
-            <div class="d-stat"><b data-count="437" data-prefix="$">0</b><small>bounties earned</small><i>+$250 wk</i></div>
+            <div class="d-stat"><b data-count="612" data-prefix="$">0</b><small>view earnings</small><i>9 videos paid</i></div>
           </div>
 
           <div class="ref">
@@ -862,8 +1206,8 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
             <div style="margin-top:14px">
               <div class="q-item checked"><span class="q-box">✓</span><span class="q-txt">Post a reel</span><span class="q-time">20 min</span></div>
               <div class="q-item checked"><span class="q-box">✓</span><span class="q-txt">Story post</span><span class="q-time">5 min</span></div>
-              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Onboard a cameraman</span><span class="q-time">40 min</span></div>
-              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Pin your next event RSVP in the chat</span><span class="q-time">5 min</span></div>
+              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Submit last week's videos for view payout</span><span class="q-time">2 min</span></div>
+              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Send Growth your top 3 posts</span><span class="q-time">5 min</span></div>
               <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Post a chart or data card</span><span class="q-time">15 min</span></div>
             </div>
             <div class="prog"><i id="qbar"></i></div>
@@ -880,14 +1224,15 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
               </svg>
               <div class="ring-mid"><b>212</b><small>signups</small></div>
             </div>
-            <p>38 more signups to unlock the next challenge.</p>
+            <p>38 more signups to unlock the next rung on the content ladder.</p>
           </div>
 
           <div class="payout">
             <div style="font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin-bottom:12px">next payout · oct 1</div>
             <div class="pay-row"><span>Bounties this period</span><span>$437</span></div>
-                        <div class="pay-row"><span>"Fill the room" bounty</span><span>$250</span></div>
-            <div class="pay-row pay-total"><span>Total</span><span>$837</span></div>
+            <div class="pay-row"><span>Per-view earnings · 9 videos</span><span>$612</span></div>
+            <div class="pay-row"><span>"50k on one video" bounty</span><span>$500</span></div>
+            <div class="pay-row pay-total"><span>Total</span><span>$1,549</span></div>
           </div>
         </div>
       </div>
@@ -898,15 +1243,23 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="faq">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">09 — questions</span>
+      <span class="eyebrow">10 — questions</span>
       <h2>the things<br>everyone asks.</h2>
     </div>
 
     <div class="faq rv">
       <div class="acc" id="faq1">
         <div class="acc-item open">
-          <button class="acc-btn"><span class="acc-t">can more than one person from my school do this?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Yes — there's no cap. Several campuses run teams of three or four, and it generally works better than going solo: you can split the filming, cover more of the school, and keep the group chat alive when one person has midterms. Your rate, your level and your earnings are all tracked individually, so nobody is taking money out of your pocket.</p></div></div>
+          <button class="acc-btn"><span class="acc-t">do i pick a role, or do you assign me one?</span><span class="acc-i">+</span></button>
+          <div class="acc-body"><div><p>You pick. You apply to one specific seat — president, growth, partnerships, content or culture — and that's the ladder you're on. We'll tell you if the seat you want is already taken at your school and what else is open, but we won't put you somewhere you didn't ask for. If you'd genuinely be happy in two of them, say so on the application and we'll talk it through.</p></div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn"><span class="acc-t">what if my school already has a team?</span><span class="acc-i">+</span></button>
+          <div class="acc-body"><div><p>Then you take whichever seat is still open — most campuses are running with three or four of the five filled, and the empty ones are usually partnerships and growth because everyone applies for content. If every seat at your school is genuinely full, we'll put you on the list for next semester, or you can join as a second content lead, which is the one seat that supports two people.</p></div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn"><span class="acc-t">can i switch roles later?</span><span class="acc-i">+</span></button>
+          <div class="acc-body"><div><p>Once a semester, if the seat you want is open and your president signs off. Your earnings from the old ladder are yours and don't reset — you just start the new ladder at rung one. Switching mid-semester is rare and usually means something went wrong, so we'd rather talk about it first.</p></div></div>
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">do i need a following already?</span><span class="acc-i">+</span></button>
@@ -918,7 +1271,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">how much time does this really take?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Four to six hours a week is the honest number for someone doing well. Most of that is one batch filming session plus daily check-ins on the group chat. Events add about six hours in the week you run one. It's built to survive a normal course load, but it isn't a zero-effort thing.</p></div></div>
+          <div class="acc-body"><div><p>It depends on the seat. Growth, partnerships and culture are around four hours a week; content is closer to five because of filming; president is about six, most of it spent chasing the other four. Events add roughly six hours in the week you run one. It's built to survive a normal course load, but it isn't a zero-effort thing.</p></div></div>
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">am i giving people financial advice?</span><span class="acc-i">+</span></button>
@@ -928,8 +1281,16 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 
       <div class="acc" id="faq2">
         <div class="acc-item">
+          <button class="acc-btn"><span class="acc-t">can i really earn per view in any seat?</span><span class="acc-i">+</span></button>
+          <div class="acc-body"><div><p>Yes. The per-view rate isn't restricted to the content lead — if you're on partnerships and you post a video about closing a sponsor, tag @fomo and submit it, you get paid on it exactly the same. Content just does it more often, and their ladder is built around it. There's no cap on how many videos you submit in a month, only the $2,500 ceiling on any single one.</p></div></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn"><span class="acc-t">is my pay split with my team?</span><span class="acc-i">+</span></button>
+          <div class="acc-body"><div><p>No. Every seat has its own ladder and its own earnings, and nothing you clear comes out of anyone else's pocket. The one place it combines is the president, who earns on the campus total on top of their own ladder — that's the deal for being accountable for the whole school. Campus-level grand prizes are the other exception, and those are additional money rather than a split of yours.</p></div></div>
+        </div>
+        <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">when and how do i get paid?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Twice a month, on the 1st and the 15th, via Venmo, PayPal or direct deposit. Signup earnings are calculated automatically from your referral link. Bounties are reviewed within 48 hours of you submitting proof and paid in the next cycle. You're a 1099 contractor, so if you clear $600 in a calendar year we'll send tax paperwork in January.</p></div></div>
+          <div class="acc-body"><div><p>Twice a month, on the 1st and the 15th, via Venmo, PayPal or direct deposit. Signup earnings are calculated automatically from your referral link. Bounties are reviewed within 48 hours of you submitting proof. Per-view earnings land once a video has had its full 30 days, itemised so you can see what each one paid. You're a 1099 contractor, so if you clear $600 in a calendar year we'll send tax paperwork in January.</p></div></div>
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">what counts as a "verified signup"?</span><span class="acc-i">+</span></button>
@@ -937,7 +1298,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">what's the commitment, and can i quit?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>We ask for one semester so you actually get past the slow first few weeks, but nothing is binding. You can step away whenever you want and you'll be paid for everything you've already earned. Plenty of people go quiet over the summer and pick it back up in the fall.</p></div></div>
+          <div class="acc-body"><div><p>We ask for one semester so you actually get past the slow first few weeks, but nothing is binding. You can step away whenever you want and you'll be paid for everything you've already earned. The one courtesy we ask is telling your president rather than going quiet, since four other people are planning around your seat. Plenty of people pause over the summer and pick it back up in the fall.</p></div></div>
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">can i do this alongside an internship or job?</span><span class="acc-i">+</span></button>
@@ -945,7 +1306,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">what happens when i graduate?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>The account is yours — you keep it, the audience and the archive. Some people hand it to a younger student and stay on as an advisor, some keep running it independently, and we're happy to be a reference either way.</p></div></div>
+          <div class="acc-body"><div><p>The account is yours — you keep it, the audience and the archive. What we ask is that you help fill your seat before you go, since a campus that loses two seats in May usually doesn't recover by September. Plenty of people hand it to a younger student and stay on as an advisor. We're happy to be a reference either way.</p></div></div>
         </div>
       </div>
     </div>
@@ -974,12 +1335,12 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
     <div class="f-grid">
       <div>
         <button class="logo" data-jump="top" type="button"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></button>
-        <p>Where traders become legends — and campuses become channels.</p>
+        <p>Where traders become legends — and five students turn a campus into a channel.</p>
       </div>
     </div>
     <div class="f-bot">
       <span>© 2026 FOMO LABS INC. · CAMPUS PROGRAM</span>
-      <span>TRADING INVOLVES RISK. AMBASSADORS DO NOT PROVIDE FINANCIAL ADVICE.</span>
+      <span>TRADING INVOLVES RISK. CAMPUS TEAMS DO NOT PROVIDE FINANCIAL ADVICE.</span>
     </div>
   </div>
 </footer>
@@ -1036,12 +1397,6 @@ const rObs=new IntersectionObserver(es=>es.forEach(e=>{
 }),{threshold:0,rootMargin:'0px 0px -120px 0px'});
 document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';rObs.observe(el);});
 
-document.getElementById('tabs').addEventListener('click',e=>{
-  const b=e.target.closest('.tab');if(!b)return;
-  document.querySelectorAll('#tabs .tab').forEach(t=>t.classList.toggle('on',t===b));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id===b.dataset.p));
-});
-
 document.getElementById('chips').addEventListener('click',e=>{
   const b=e.target.closest('.chip');if(!b)return;
   document.querySelectorAll('#chips .chip').forEach(c=>c.classList.toggle('on',c===b));
@@ -1074,50 +1429,220 @@ function wireAcc(id){
 }
 ['acc','faq1','faq2'].forEach(wireAcc);
 
-const LADDER=[
+const LADDERS={
+
+/* ── CONTENT ─────────────────────────────────────────── */
+content:[
  {g:'starting out',n:'group 01',t:'claim your handle',pay:0,reward:'free',time:'~1 hour',tags:['easy','setup'],
-  d:"Claim your campus handle on TikTok and/or Instagram. Suggested name is your school name plus fomo — for example, uscfomo. Same name on both so people can actually find you.",
-  proof:['Screenshot of your claimed handle(s)','Same name on each platform','Referral link in the bio']},
+  d:"Claim your campus handle on TikTok and Instagram. Suggested name is your school plus fomo — for example, uscfomo. Same name on both so people can actually find you.",
+  proof:['Screenshot of your claimed handle(s)','Same name on each platform','Campus referral link in the bio']},
 
  {t:'post three videos',pay:0,reward:'microphone',time:'~1 week',tags:['easy','content'],
-  d:"Post your first three videos on your campus channel. Once they are up we ship you a FOMO-branded interview microphone, so your street interviews stop sounding like phone audio.",
-  proof:['Links to all three published videos','Posted on your campus handle, not a personal one','Shipping address confirmed in the hub']},
-
- {t:'the first five',pay:0,reward:'banner',time:'~2 days',tags:['easy','referrals'],
-  d:"Get five students to download FOMO, create an account and make one trade each. Clear it and we send you a printed campus banner for events and tabling.",
-  proof:['Tracked automatically from your referral link','All five still active after 7 days','Your own account does not count']},
+  d:"Post your first three videos on the campus channel. Once they're up we ship you a FOMO-branded interview mic, so your street interviews stop sounding like phone audio.",
+  proof:['Links to all three published videos','Posted on the campus handle, not a personal one','Shipping address confirmed in the hub']},
 
  {g:'finding traction',n:'group 02',t:'5k views',pay:25,time:'~1 week',tags:['easy','content'],
-  d:"Five thousand total views across your campus channel. This is the first one that pays cash, and most people clear it inside their first couple of weeks.",
+  d:"Five thousand total views across the campus channel. First one that pays cash, and most people clear it inside their first couple of weeks.",
   proof:['Analytics screenshots from every platform','Only campus-channel content counts','Posts stay live for at least 30 days']},
 
- {t:'open the room',pay:50,time:'~4 days',tags:['easy','community'],
-  d:"Start your campus group chat and get it to 50 real students. Discord, GroupMe, whatever your school already uses.",
-  proof:['Screenshot of the member count at 50+','Screenshot showing three days of real conversation','Members should be students at your school']},
-
  {t:'1k followers',pay:100,time:'~1 month',tags:['content'],
-  d:"A thousand followers on your campus channel. At this size most of your views come from people you have never met.",
+  d:"A thousand followers on the campus channel. At this size most of your views are coming from people you've never met.",
   proof:['Follower count screenshot from each platform','Campus channel only, not a personal account','No purchased or bot followers']},
+
+ {t:'a format that repeats',pay:150,time:'~3 weeks',tags:['content'],
+  d:"Run the same recurring segment five times — the campus price index, dorm vs dorm, whatever you name it. A franchise beats five unrelated videos, and this is the rung that turns an account into a channel.",
+  proof:['Links to five posts in the same named series','Consistent title card or opener across all five','Fifth one outperforms the first']},
 
  {g:'a real channel',n:'group 03',t:'twenty-five videos',pay:250,time:'~1 month',tags:['content'],
   d:"Publish 25 videos that clear our quality bar — real audio, a real edit, and actually about your campus.",
-  proof:['Links to all 25 published videos','Each one reviewed against the quality checklist','Reposts and stories do not count']},
+  proof:['Links to all 25 published videos','Each reviewed against the quality checklist','Reposts and stories do not count']},
 
  {t:'50k on one video',pay:500,time:'one video',tags:['rare','content'],
-  d:"Get a single post past 50,000 views. The hook library has 200 tested openers if you are staring at a blank screen.",
+  d:"Get a single post past 50,000 views. The hook library has 200 tested openers if you're staring at a blank screen.",
   proof:['Screenshot of post analytics showing 50K+','Post is campus-specific and tags @fomo','Stays live for at least 30 days']},
 
  {t:'5k followers',pay:1000,time:'cumulative',tags:['rare','content'],
-  d:"Five thousand followers on your campus channel. This is the number that does the most work for you in an interview.",
+  d:"Five thousand followers on the campus channel. This is the number that does the most work for you in an interview.",
   proof:['Follower count across all platforms','Only campus-channel content counts','Verified manually by our team']},
 
  {g:'the grand prize',n:'group 04',t:'number one',pay:2500,time:'one semester',tags:['rare','competitive'],gold:true,
-  lock:'◆ one winner per semester — every ambassador is eligible',
-  d:"Finish the semester as the number one ranked ambassador in the country. Every other bounty here you clear on your own schedule; this is the only one you have to win outright.",
-  proof:['Final standing on the national ambassador board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
-];
+  lock:'◆ one winner per semester — every content lead is eligible',
+  d:"Finish the semester as the number one ranked content lead in the country, by total verified reach. Every other bounty you clear on your own schedule; this is the only one you have to win outright.",
+  proof:['Final standing on the national content board on the last day of the semester','Ranked on verified reach across the whole semester','Full fraud review before payout']}
+],
+
+/* ── CAMPUS PRESIDENT ────────────────────────────────── */
+pres:[
+ {g:'standing it up',n:'group 01',t:'claim the campus',pay:0,reward:'free',time:'~1 hour',tags:['easy','setup'],
+  d:"Register your school, claim the campus handle, and get your onboarding call with our campus team booked. Nothing else on this ladder opens until your school is officially yours.",
+  proof:['School registered in the hub','Campus handle claimed','Onboarding call attended']},
+
+ {t:'fill two seats',pay:0,reward:'starter kit',time:'~1 week',tags:['easy','team'],
+  d:"Recruit two of your four leads and get them through onboarding. Most presidents start with Content and Culture, because those two produce something visible in week one. Clear it and we ship the campus starter kit — banner, merch, mic.",
+  proof:['Two leads onboarded and active in the hub','Each has posted or shipped something','Roles clearly assigned, not shared']},
+
+ {g:'a real team',n:'group 02',t:'all five seats filled',pay:200,time:'~3 weeks',tags:['easy','team'],
+  d:"Every seat on your campus filled and active — president, growth, partnerships, content, culture. This is the single biggest predictor of how the semester goes for a school.",
+  proof:['All five leads onboarded and active','Each has cleared at least one bounty on their own ladder','Two weeks of weekly recaps submitted']},
+
+ {t:'four weeks of recaps',pay:150,time:'~1 month',tags:['easy','ops'],
+  d:"Four consecutive weekly recaps, submitted on time. Short and honest — what shipped, what didn't, what you need. The boring rung that separates campuses that finish from campuses that fade in October.",
+  proof:['Four recaps submitted in four consecutive weeks','Each includes the campus number for that week','Submitted before Monday 9am each time']},
+
+ {t:'250 campus signups',pay:300,time:'~6 weeks',tags:['referrals'],
+  d:"Your campus clears 250 verified signups, combining everyone on the team. You're paid on the campus total here — this is the rung where leading a team beats doing it yourself.",
+  proof:['Tracked automatically across all five referral links','All signups still active after 7 days','Standard fraud review']},
+
+ {g:'a campus that runs',n:'group 03',t:'every seat paid',pay:500,time:'~2 months',tags:['team'],
+  d:"Every one of your four leads has earned at least one cash bounty on their own ladder. It means nobody on your team is coasting, and it's the cleanest signal we have that a president is actually managing.",
+  proof:['Each of the four leads has one paid bounty cleared','No seat inactive for more than 14 days','Verified from hub records']},
+
+ {t:'top 25 campus',pay:750,time:'~1 semester',tags:['rare','competitive'],
+  d:"Finish a month ranked in the top 25 campuses nationally on verified signups. Around 300 schools are live, so this is roughly the top 8%.",
+  proof:['Top 25 on the national campus board at a month close','Ranked on verified signups','Full fraud review before payout']},
+
+ {t:'1,000 campus signups',pay:1500,time:'~1 semester',tags:['rare','referrals'],
+  d:"A thousand verified signups from your school in one semester. Only a handful of campuses hit this, and all of them had five filled seats by week three.",
+  proof:['Tracked automatically across the whole campus team','All signups active after 7 days','Full fraud review before payout']},
+
+ {g:'the grand prize',n:'group 04',t:'campus of the semester',pay:3000,time:'one semester',tags:['rare','competitive'],gold:true,
+  lock:'◆ one campus per semester — every president is eligible',
+  d:"Finish the semester as the number one ranked campus in the country. The president takes this one; there's a separate pot that splits across the rest of your team.",
+  proof:['Number one on the national campus board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
+],
+
+/* ── GROWTH ──────────────────────────────────────────── */
+growth:[
+ {g:'starting out',n:'group 01',t:'set up tracking',pay:0,reward:'free',time:'~1 hour',tags:['easy','setup'],
+  d:"Claim the campus referral link, generate your first three campaign codes — one for the feed, one for the chat, one for events — and get them live so you can tell the sources apart from day one.",
+  proof:['Referral link claimed in the hub','Three campaign codes generated and placed','Each code live in a different place']},
+
+ {t:'the first five',pay:0,reward:'banner',time:'~2 days',tags:['easy','referrals'],
+  d:"Get five students to download FOMO, create an account and make one trade each. Clear it and we send a printed campus banner for events and tabling.",
+  proof:['Tracked automatically from your referral link','All five still active after 7 days','Your own account does not count']},
+
+ {g:'finding traction',n:'group 02',t:'25 signups',pay:50,time:'~1 week',tags:['easy','referrals'],
+  d:"Twenty-five verified signups. Almost everyone gets here off their own network — the interesting part starts when you run out of friends.",
+  proof:['Tracked automatically from your campus links','All 25 active after 7 days','Standard fraud review']},
+
+ {t:'walk five people through it',pay:75,time:'~1 week',tags:['easy','community'],
+  d:"Personally walk five people through their first trade, start to finish. It's the highest-converting thing anyone on the team does, and it's the rung that teaches you why.",
+  proof:['Five first trades traced to your codes','Screenshot of each walkthrough conversation','People are students at your school']},
+
+ {t:'100 signups',pay:200,time:'~1 month',tags:['referrals'],
+  d:"A hundred verified signups. At this point your own network is exhausted and the number is coming from things you built rather than people you know.",
+  proof:['Tracked automatically','All still active after 7 days','Standard fraud review']},
+
+ {g:'a real funnel',n:'group 03',t:'four experiments, written up',pay:250,time:'~1 month',tags:['ops'],
+  d:"Run four conversion experiments and write up each one — what you changed, what happened, what you'd do next. Two of them should have failed. This is the rung you'll actually talk about in an interview.",
+  proof:['Four write-ups submitted in the hub','Each names a metric and a result','At least two report a negative result honestly']},
+
+ {t:'250 signups',pay:600,time:'~2 months',tags:['rare','referrals'],
+  d:"Two hundred and fifty verified signups traced to your campus links. Roughly the point where a growth lead is out-earning most on-campus jobs.",
+  proof:['Tracked automatically','All active after 7 days','Full fraud review before payout']},
+
+ {t:'500 signups',pay:1250,time:'cumulative',tags:['rare','referrals'],
+  d:"Five hundred verified signups in a semester. A small number of growth leads get here, and every one of them was running experiments by week four.",
+  proof:['Tracked automatically','All active after 7 days','Full fraud review before payout']},
+
+ {g:'the grand prize',n:'group 04',t:'number one',pay:2500,time:'one semester',tags:['rare','competitive'],gold:true,
+  lock:'◆ one winner per semester — every growth lead is eligible',
+  d:"Finish the semester as the number one ranked growth lead in the country on verified signups. The only bounty on this ladder you have to win rather than clear.",
+  proof:['Final standing on the national growth board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
+],
+
+/* ── PARTNERSHIPS ────────────────────────────────────── */
+partner:[
+ {g:'starting out',n:'group 01',t:'build the target list',pay:0,reward:'free',time:'~2 hours',tags:['easy','setup'],
+  d:"List every club, chapter, org and local business on your campus worth talking to, with a name and a contact for each. Twenty minimum. Every rung above this one comes off this list.",
+  proof:['20+ targets logged in the hub','A named contact for each, not a general inbox','Sorted by how many people they reach']},
+
+ {t:'first club partnership',pay:0,reward:'banner + deck',time:'~1 week',tags:['easy','partnerships'],
+  d:"Close your first club — finance, business, econ, investing, anything money-adjacent. A co-post, a table at their next meeting, or a spot on the agenda. Clear it and we send a printed banner and the partner pitch deck.",
+  proof:['Screenshot of the agreement or confirmation','Something actually shipped: post, table or talk','Club has 40+ members']},
+
+ {g:'finding traction',n:'group 02',t:'three orgs live',pay:100,time:'~3 weeks',tags:['easy','partnerships'],
+  d:"Three campus organisations with something live — a co-post, a listserv mention, a table, a code. Three is the point where partnerships stops being a favour from a friend and starts being a channel.",
+  proof:['Three separate orgs, each with a dated deliverable','Signups traceable to each via campaign code','No two run by the same person']},
+
+ {t:'a greek chapter',pay:150,time:'~3 weeks',tags:['partnerships'],
+  d:"Close a fraternity or sorority chapter on a house-wide push. High density, one decision-maker, and the fastest signup spike available to anyone on the team.",
+  proof:['Confirmation from the chapter president or social chair','House-wide push actually ran','25+ signups traced to the chapter code']},
+
+ {t:'a local business',pay:200,time:'~1 month',tags:['partnerships'],
+  d:"A café, bar, print shop or gym running a co-promo — a QR on the counter, a window card, a discount tied to a signup. It buys you a physical surface on a campus where everyone else is fighting for the feed.",
+  proof:['Signed or written agreement from the owner','Photo of the placement in the venue','30-day minimum placement']},
+
+ {g:'a real book',n:'group 03',t:'a creator collab',pay:300,time:'~1 month',tags:['partnerships'],
+  d:"Get one of the biggest creators already on your campus to post with your channel. Their audience is the one you can't buy, and the swap costs you nothing but the ask.",
+  proof:['Creator has 10K+ followers and is at your school','Collab post published on both accounts','Signups traced via a dedicated code']},
+
+ {t:'ten partnerships live',pay:600,time:'~2 months',tags:['rare','partnerships'],
+  d:"Ten partnerships live at once — clubs, chapters, businesses, creators, in any mix. This is a real book of business, and it's the thing you'll point at in a BD interview.",
+  proof:['Ten active partnerships listed in the hub','Each with a dated deliverable and a live code','All still running at the time of review']},
+
+ {t:'a funded sponsor',pay:1000,time:'~1 semester',tags:['rare','partnerships'],
+  d:"Land an outside sponsor — a local business or brand putting real money or product into a campus event. You source it and close it; we handle the paperwork.",
+  proof:['Written agreement with the sponsor','Sponsorship value of $500+ in cash or product','Event actually ran with the sponsor named']},
+
+ {g:'the grand prize',n:'group 04',t:'number one',pay:2500,time:'one semester',tags:['rare','competitive'],gold:true,
+  lock:'◆ one winner per semester — every partnerships lead is eligible',
+  d:"Finish the semester as the number one ranked partnerships lead in the country, on signups driven through partner codes. Not on deals signed — on deals that worked.",
+  proof:['Final standing on the national partnerships board on the last day of the semester','Ranked on partner-code signups across the semester','Full fraud review before payout']}
+],
+
+/* ── CULTURE ─────────────────────────────────────────── */
+culture:[
+ {g:'starting out',n:'group 01',t:'open the room',pay:0,reward:'free',time:'~1 day',tags:['easy','setup'],
+  d:"Start the campus group chat on whatever your school already uses — Discord, GroupMe, iMessage. Name it after the school, not after FOMO. Personally invite thirty people by DM, not by story.",
+  proof:['Screenshot of the chat created and named','30 invites sent individually','Campus referral link pinned']},
+
+ {t:'fifty in the room',pay:0,reward:'merch box',time:'~4 days',tags:['easy','community'],
+  d:"Get the chat to fifty real students from your school. Clear it and we ship a merch box — stickers, tees, a couple of things worth giving away.",
+  proof:['Screenshot of the member count at 50+','Three days of real conversation, not just joins','Members are students at your school']},
+
+ {g:'finding traction',n:'group 02',t:'a daily ritual',pay:75,time:'~2 weeks',tags:['easy','community'],
+  d:"Run the same post at the same time for fourteen straight days — a morning open, an end-of-day, a Friday recap. The ritual is what keeps a chat alive after the novelty wears off.",
+  proof:['Fourteen consecutive days of the same named post','Screenshots or export showing the timestamps','Real replies on at least ten of them']},
+
+ {t:'your first event',pay:150,time:'~3 weeks',tags:['easy','events'],
+  d:"Pitch us an event and run it. A trading night, a watch party, a table outside the union. We set the budget and ship banners, merch and prizes; you pick the date and run the room.",
+  proof:['Event pitch approved in the hub','Photos of the event with 20+ people','Signups traced to the event code']},
+
+ {t:'150 in the room',pay:200,time:'~1 month',tags:['community'],
+  d:"A hundred and fifty members, still talking. Growth is easy here and retention isn't — a chat that's grown to 150 and gone silent doesn't clear this.",
+  proof:['Member count screenshot at 150+','Seven consecutive days with real conversation','No mass-add or bot members']},
+
+ {g:'a room that runs',n:'group 03',t:'fill the room',pay:400,time:'~1 event',tags:['events'],
+  d:"Run an event with 100+ people through the door. This is the one that needs Partnerships and Content pulling with you — solo culture leads rarely clear it, and that's the point.",
+  proof:['Photos and a headcount at the door','100+ attendees verified','40+ signups traced to the event code']},
+
+ {t:'a rival showdown',pay:600,time:'~1 week',tags:['rare','events'],
+  d:"Run a head-to-head against another campus during your biggest football or basketball week. Whichever school drives more signups wins, and we post the result nationally.",
+  proof:['Both campuses confirmed and dated in advance','Event or challenge actually ran on both sides','Result verified from both campus codes']},
+
+ {t:'300 in the room',pay:1000,time:'cumulative',tags:['rare','community'],
+  d:"Three hundred active members. At this size the chat converts better than the feed does, and it's the number that makes 'community management' on your résumé mean something.",
+  proof:['Member count screenshot at 300+','30-day active rate above 40%','Verified manually by our team']},
+
+ {g:'the grand prize',n:'group 04',t:'number one',pay:2500,time:'one semester',tags:['rare','competitive'],gold:true,
+  lock:'◆ one winner per semester — every culture lead is eligible',
+  d:"Finish the semester as the number one ranked culture lead in the country, on active community size and event-driven signups combined.",
+  proof:['Final standing on the national culture board on the last day of the semester','Ranked on active members and event signups','Full fraud review before payout']}
+]
+};
+const ROLES={
+  pres:{label:'campus president',li:'Campus President, Campus',skills:'Skills: Team Leadership · Operations · Growth Strategy'},
+  growth:{label:'growth',li:'Growth Lead, Campus',skills:'Skills: Growth Marketing · Funnel Analytics · A/B Testing'},
+  partner:{label:'partnerships',li:'Partnerships Lead, Campus',skills:'Skills: Business Development · Partnerships · Negotiation'},
+  content:{label:'content',li:'Content Lead, Campus',skills:'Skills: Content Strategy · Social Media · Video Production'},
+  culture:{label:'culture',li:'Community Lead, Campus',skills:'Skills: Community Management · Event Planning · Brand'}
+};
+let LADDER=LADDERS.content;
 const money=n=>'$'+n.toLocaleString();
-(function renderLadder(){
+const ladTotal=k=>LADDERS[k].reduce((t,b)=>t+b.pay,0);
+
+function renderLadder(){
   const wrap=document.getElementById('ladder');
   let html='',run=0;
   LADDER.forEach((b,i)=>{
@@ -1145,20 +1670,57 @@ const money=n=>'$'+n.toLocaleString();
     </div>`;
   });
   wrap.innerHTML=html;
-})();
-const grid=document.getElementById('ladder');
+}
 
+/* one place that switches the whole page to a role */
+let CURROLE='content';
+function setRole(key,scroll){
+  if(!LADDERS[key])return;
+  CURROLE=key;
+  LADDER=LADDERS[key];
+
+  document.querySelectorAll('#roles .rcard').forEach(c=>c.classList.toggle('on',c.dataset.r===key));
+  document.querySelectorAll('.rpanel').forEach(pn=>pn.classList.toggle('on',pn.id==='r-'+key));
+  document.querySelectorAll('#ladtabs .tab').forEach(t=>t.classList.toggle('on',t.dataset.l===key));
+
+  document.getElementById('ltCount').textContent=LADDER.length;
+  document.getElementById('ltFirst').textContent=LADDER[0].t;
+  document.getElementById('ltTotal').textContent=money(ladTotal(key));
+
+  const r=ROLES[key];
+  const lt=document.getElementById('liTitle'),ls=document.getElementById('liSkills');
+  if(lt){lt.textContent=r.li;ls.textContent=r.skills;}
+
+  renderLadder();
+  document.querySelectorAll('.rpanel.on .rv,.rpanel.on').forEach(el=>el.classList.add('in'));
+  if(scroll){const el=document.getElementById(scroll);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+
+document.querySelectorAll('[data-lt]').forEach(el=>{el.textContent=money(ladTotal(el.dataset.lt))});
+
+document.getElementById('roles').addEventListener('click',e=>{
+  const c=e.target.closest('.rcard');if(!c)return;
+  setRole(c.dataset.r);
+});
+document.getElementById('ladtabs').addEventListener('click',e=>{
+  const t=e.target.closest('.tab');if(!t)return;
+  setRole(t.dataset.l);
+});
+
+setRole('content');
+
+/* bounty detail modal */
 const modal=document.getElementById('modal');
-grid.addEventListener('click',e=>{
+document.getElementById('ladder').addEventListener('click',e=>{
   const btn=e.target.closest('.b-btn');if(!btn)return;
   const i=+btn.closest('.bounty').dataset.i,b=LADDER[i];
   let gName='';for(let k=i;k>=0;k--){if(LADDER[k].g){gName=LADDER[k].n+' · '+LADDER[k].g;break}}
-  document.getElementById('mStage').textContent='step '+String(i+1).padStart(2,'0')+' · '+gName;
+  document.getElementById('mStage').textContent=ROLES[CURROLE].label+' · step '+String(i+1).padStart(2,'0')+' · '+gName;
   document.getElementById('mTitle').textContent=b.t;
-  document.getElementById('mPay').textContent=money(b.pay);
+  document.getElementById('mPay').textContent=b.reward?b.reward:money(b.pay);
   document.getElementById('mTime').textContent=b.time;
   document.getElementById('mDesc').textContent=b.d;
-  document.getElementById('mProof').innerHTML=b.proof.map(p=>`<li>${p}</li>`).join('');
+  document.getElementById('mProof').innerHTML=b.proof.map(x=>`<li>${x}</li>`).join('');
   modal.classList.add('on');document.body.style.overflow='hidden';
 });
 function closeModal(){modal.classList.remove('on');document.body.style.overflow=''}
@@ -1167,36 +1729,82 @@ document.getElementById('mClose').addEventListener('click',closeModal);
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('on'))closeModal()});
 
+/* ── pay-per-view calculator ── */
+(function(){
+  const sl=document.getElementById('cSlide'),vEl=document.getElementById('cViews'),
+        pEl=document.getElementById('cPay'),nEl=document.getElementById('cNote'),
+        rows=[...document.querySelectorAll('#rateCard .rate-row')];
+  const CAP=2500, FLOOR=10;
+
+  /* slider position 0-1000 -> views, exponential so the low end is usable */
+  const toViews=t=>{
+    const v=1000*Math.pow(2000,t/1000);      /* 1K → 2M */
+    if(v<10000)  return Math.round(v/500)*500;
+    if(v<100000) return Math.round(v/1000)*1000;
+    if(v<1000000)return Math.round(v/5000)*5000;
+    return Math.round(v/10000)*10000;
+  };
+  const fmt=v=>v>=1e6?(v/1e6).toFixed(v>=1e7?0:2).replace(/\.?0+$/,'')+'M'
+             :v>=1000?(v/1000).toFixed(v>=1e5?0:1).replace(/\.0$/,'')+'K':v;
+
+  function payFor(v){
+    let p=FLOOR;
+    p+=Math.min(v,100000)/1000*2;
+    if(v>100000)  p+=(Math.min(v,500000)-100000)/1000*3;
+    if(v>500000)  p+=(v-500000)/1000*4;
+    return {pay:Math.min(Math.round(p),CAP),capped:p>CAP};
+  }
+
+  function tierOf(v){return v<10000?1:v<100000?1:v<500000?2:3}
+
+  function paint(){
+    const t=+sl.value,v=toViews(t),r=payFor(v);
+    sl.style.setProperty('--p',(t/10)+'%');
+    vEl.textContent=fmt(v)+' views';
+    pEl.textContent='$'+r.pay.toLocaleString();
+    const per=(r.pay/(v/1000));
+    nEl.innerHTML = r.capped
+      ? 'Over the <b>$2,500</b> per-video ceiling. Anything past this is on the house — and a video at this size usually clears a ladder bounty too.'
+      : v<10000
+        ? 'Small ones still pay. Every approved video earns the <b>$10</b> floor plus the rate, so a post that does nothing is never worth $0.'
+        : 'That works out to about <b>$'+per.toFixed(2)+'</b> per 1,000 views. Post five like this in a month and it\'s <b>$'+(r.pay*5).toLocaleString()+'</b>.';
+    const ti=tierOf(v);
+    rows.forEach(rw=>rw.classList.toggle('hot',+rw.dataset.t===ti||(r.capped&&+rw.dataset.t===4)));
+  }
+  sl.addEventListener('input',paint);
+  paint();
+})();
+
 const LB={
- schools:{c1:'campus',c2:'ambassadors',rows:[
-  ['UT Austin','austin, tx','6 people','412K','1,204'],
-  ['Michigan','ann arbor, mi','4 people','388K','1,102'],
-  ['Ohio State','columbus, oh','5 people','341K','988'],
-  ['NYU','new york, ny','3 people','316K','942'],
-  ['Arizona State','tempe, az','4 people','302K','901'],
-  ['Florida','gainesville, fl','3 people','288K','870'],
-  ['Penn State','state college, pa','2 people','266K','812'],
-  ['Georgia','athens, ga','3 people','244K','756']
+ schools:{c1:'campus',c2:'seats filled',rows:[
+  ['UT Austin','austin, tx','5 / 5','412K','1,204'],
+  ['Michigan','ann arbor, mi','5 / 5','388K','1,102'],
+  ['Ohio State','columbus, oh','5 / 5','341K','988'],
+  ['NYU','new york, ny','4 / 5','316K','942'],
+  ['Arizona State','tempe, az','5 / 5','302K','901'],
+  ['Florida','gainesville, fl','4 / 5','288K','870'],
+  ['Penn State','state college, pa','3 / 5','266K','812'],
+  ['Georgia','athens, ga','4 / 5','244K','756']
  ]},
- ambassadors:{c1:'ambassador',c2:'level',rows:[
-  ['Sofia A.','ut austin','level 05','122K','611'],
-  ['Deven K.','michigan','level 04','88.4K','404'],
-  ['Marcus T.','ohio state','level 04','76.1K','388'],
-  ['Maya R.','usc film','level 03','41.2K','212'],
-  ['Priya S.','arizona state','level 03','38.9K','198'],
-  ['Jules B.','florida','level 03','35.2K','176'],
-  ['Ana L.','penn state','level 02','21.4K','98'],
-  ['Chris W.','georgia','level 02','19.8K','86']
+ ambassadors:{c1:'name',c2:'seat',rows:[
+  ['Sofia A.','ut austin','president','412K','1,204'],
+  ['Deven K.','michigan','content','188K','404'],
+  ['Marcus T.','ohio state','growth','76.1K','388'],
+  ['Maya R.','usc','content','141K','212'],
+  ['Priya S.','arizona state','partnerships','38.9K','198'],
+  ['Jules B.','florida','culture','35.2K','176'],
+  ['Ana L.','penn state','growth','21.4K','98'],
+  ['Chris W.','georgia','partnerships','19.8K','86']
  ]},
- rising:{c1:'campus',c2:'ambassadors',rows:[
-  ['Rutgers','new brunswick, nj','2 people','88K','311'],
-  ['Clemson','clemson, sc','2 people','81K','288'],
-  ['Boise State','boise, id','1 person','66K','244'],
-  ['Howard','washington, dc','3 people','61K','232'],
-  ['UC Santa Barbara','santa barbara, ca','2 people','58K','214'],
-  ['Villanova','villanova, pa','1 person','52K','196'],
-  ['Tulane','new orleans, la','2 people','47K','174'],
-  ['Iowa State','ames, ia','1 person','44K','161']
+ rising:{c1:'campus',c2:'seats filled',rows:[
+  ['Rutgers','new brunswick, nj','4 / 5','88K','311'],
+  ['Clemson','clemson, sc','3 / 5','81K','288'],
+  ['Boise State','boise, id','3 / 5','66K','244'],
+  ['Howard','washington, dc','5 / 5','61K','232'],
+  ['UC Santa Barbara','santa barbara, ca','3 / 5','58K','214'],
+  ['Villanova','villanova, pa','2 / 5','52K','196'],
+  ['Tulane','new orleans, la','3 / 5','47K','174'],
+  ['Iowa State','ames, ia','2 / 5','44K','161']
  ]}
 };
 function paintLB(key){
