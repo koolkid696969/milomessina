@@ -481,6 +481,30 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 .b-lead.mine{border-color:var(--violet);background:rgba(81,106,246,.16);color:var(--violet-hi)}
 .b-lead[data-seat="all"]{border-color:rgba(255,196,107,.4);color:#FFC46B}
 
+/* ── TWO WAYS TO EARN ON VIEWS ───────────────────────── */
+.paths{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,22px);margin-top:clamp(34px,4.5vw,54px)}
+@media(max-width:860px){.paths{grid-template-columns:1fr}}
+.path{position:relative;padding:clamp(24px,3vw,34px);border-radius:var(--r-l);border:1px solid var(--line);
+  background:var(--surface);display:flex;flex-direction:column;transition:.3s}
+.path:hover{border-color:var(--line-2);transform:translateY(-4px)}
+.path.lead{border-color:rgba(81,106,246,.4);
+  background:linear-gradient(168deg,rgba(81,106,246,.15),rgba(81,106,246,.02));box-shadow:0 40px 100px -55px var(--violet)}
+.path-n{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);margin-bottom:12px}
+.path.lead .path-n{color:var(--violet-hi)}
+.path h3{font-family:var(--display);font-size:clamp(1.4rem,2.4vw,1.9rem);font-weight:700;letter-spacing:-.04em;
+  text-transform:lowercase;line-height:1.02;margin-bottom:12px}
+.path>p{font-size:.93rem;line-height:1.55}
+.path ul{list-style:none;display:grid;gap:10px;margin:22px 0}
+.path li{display:flex;gap:11px;font-size:.87rem;line-height:1.45;color:#B4ADD4}
+.path li::before{content:'▸';color:var(--muted-2);flex:none}
+.path.lead li::before{color:var(--green)}
+.path-foot{margin-top:auto;padding-top:18px;border-top:1px solid var(--line);display:flex;
+  justify-content:space-between;gap:14px;align-items:baseline;flex-wrap:wrap}
+.path-foot small{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
+.path-foot b{font-family:var(--mono);font-size:.78rem;color:var(--green);text-align:right}
+.path-note{margin-top:22px;font-size:.88rem;color:var(--muted);text-align:center;max-width:70ch;margin-inline:auto}
+.path-note b{color:var(--text)}
+
 /* ── PAY PER VIEW ───────────────────────────────────── */
 .ppv{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(22px,3.4vw,48px);align-items:start}
 @media(max-width:940px){.ppv{grid-template-columns:1fr}}
@@ -554,7 +578,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
         <p class="lede">FOMO Campus puts a five-person team at every university — a Campus President plus Growth, Partnerships, Content and Culture. Together you run your school's financial media channel: the posts, the sponsors, the group chat, the events. You apply to one seat, not all five, and you're paid for that seat. This page walks through each role, what it pays, and how much time it actually takes. Read it before you decide.</p>
         <div class="hero-cta">
           <button class="btn btn-p" data-jump="role" type="button">see the five roles →</button>
-          <button class="btn btn-g" data-jump="views" type="button">how you get paid</button>
+          <button class="btn btn-g" data-jump="views" type="button">get paid for views</button>
         </div>
       </div>
 
@@ -944,7 +968,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
       <div class="mech-item"><span class="mech-ic">⚠</span><div><b>Real students only</b><p>Bounties tied to signups require unique people who stay active for 7 days. Fake or duplicate accounts void the bounty — we do check.</p></div></div>
       <div class="mech-item"><span class="mech-ic">§</span><div><b>You’re a contractor</b><p>Paid as a 1099 contractor, not an employee. If you earn over $600 in a year we’ll send tax paperwork in January.</p></div></div>
       <div class="mech-item"><span class="mech-ic">◆</span><div><b>The pot splits</b><p>Each rung is paid to the campus and split evenly across the seats that were filled and active when it cleared. An empty chair doesn’t take a share.</p></div></div>
-      <div class="mech-item"><span class="mech-ic">▶</span><div><b>Views pay on top</b><p>The hunt is the team’s. The per-view rate in section 05 is yours alone — whatever you post and submit is paid straight to you, on top of your share.</p></div></div>
+      <div class="mech-item"><span class="mech-ic">▶</span><div><b>Views pay on top</b><p>The hunt is the team’s. The per-view rate in section 05 is yours alone — whatever you post and submit is paid straight to you, on top of your share. You can also earn that rate without joining a team at all.</p></div></div>
     </div>
   </div>
 </section>
@@ -954,7 +978,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
     <div class="shead rv">
       <span class="eyebrow">05 — paid per view</span>
       <h2>post it. tag us.<br>get paid on views.</h2>
-      <p>The bounty ladder is the long game. This is the part that pays every single week. Post a video, tag @fomo, submit the link in the hub — and once it's had 30 days to run, we pay you on what it actually did. Every seat on the team can earn this, not just Content. There's no follower minimum and no cap on how many you submit.</p>
+      <p>Post a video about money, tag @fomo, submit the link — and once it's had 30 days to run, we pay you on what it actually did. Drag the slider to see the rate. There's no follower minimum and no cap on how many you submit. You can earn this as part of a campus team, or entirely on your own without joining anything — both are explained below the numbers.</p>
     </div>
 
     <div class="ppv rv">
@@ -983,14 +1007,52 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
         <div class="ppv-notes">
           <div class="ppv-note"><i>◷</i><p>Counted at <b>30 days</b> after posting, so a slow burn still gets paid. Views after that don't count toward the same video.</p></div>
           <div class="ppv-note"><i>◎</i><p>Every platform counts — TikTok, Reels, Shorts. The same video posted to three platforms is <b>one submission</b>, and we add the view counts together.</p></div>
-          <div class="ppv-note"><i>⚠</i><p>It has to be your campus channel, tag <b>@fomo</b>, and be about money or markets. Bought views void the payout and we check every submission over 50K.</p></div>
+          <div class="ppv-note"><i>⚠</i><p>It has to tag <b>@fomo</b> and be about money or markets — any account you own, campus channel or not. Bought views void the payout and we check every submission over 50K.</p></div>
           <div class="ppv-note"><i>§</i><p>Paid on the same 1st-and-15th cycle as everything else, and it stacks on top of your ladder — clearing "50k on one video" pays the bounty <b>and</b> the view rate.</p></div>
         </div>
       </div>
     </div>
 
+    <div class="paths rv">
+      <div class="path lead">
+        <span class="path-n">option a · the campus team</span>
+        <h3>do it with a team,<br>earn on top of it.</h3>
+        <p>Take one of the five seats at your school. You still earn the per-view rate on everything you post — it just stops being the only thing you're paid for.</p>
+        <ul>
+          <li>The same per-view rate on every video you submit</li>
+          <li>Plus your share of the campus treasure hunt in section 04</li>
+          <li>Plus the gear — mic, tripod, banner, merch — sent to you free</li>
+          <li>Plus a real title on your résumé and someone here who takes reference calls</li>
+          <li>Four other people covering the parts you're bad at</li>
+        </ul>
+        <div class="path-foot">
+          <small>needs an application · one semester · ~4–6 hrs a week</small>
+          <b>views + bounties + gear</b>
+        </div>
+      </div>
+
+      <div class="path">
+        <span class="path-n">option b · on your own</span>
+        <h3>or skip all that<br>and just post.</h3>
+        <p>No team, no application, no seat, no commitment. Make a video about money, tag @fomo, submit the link, get paid on what it does. That's the entire arrangement.</p>
+        <ul>
+          <li>The same per-view rate, the same $2,500 ceiling per video</li>
+          <li>No interview, no onboarding call, no weekly anything</li>
+          <li>Post one video a semester or thirty — nobody chases you</li>
+          <li>You don't need a campus channel, a following, or a school we're live at</li>
+          <li>Stop whenever. You keep everything you've already earned</li>
+        </ul>
+        <div class="path-foot">
+          <small>needs nothing · sign up and post</small>
+          <b>views only</b>
+        </div>
+      </div>
+    </div>
+
+    <p class="path-note rv">Plenty of people start on the right and switch. Have one video do well on your own, and <b>that clip is the strongest application you can send us</b> for a seat on your campus team.</p>
+
     <div class="flow rv">
-      <div class="flow-s"><b>STEP 01</b><h4>post it</h4><p>On your campus channel, tagging @fomo. No approval needed first — post what you want, when you want.</p></div>
+      <div class="flow-s"><b>STEP 01</b><h4>post it</h4><p>On whichever account is yours, tagging @fomo. No approval first — post what you want, when you want.</p></div>
       <div class="flow-s"><b>STEP 02</b><h4>submit the link</h4><p>Paste the URL into the hub. Takes about ten seconds. Do it the same day so the 30-day clock starts.</p></div>
       <div class="flow-s"><b>STEP 03</b><h4>let it run</h4><p>We check the view count 30 days later, straight from the platform. Nothing for you to screenshot or chase.</p></div>
       <div class="flow-s"><b>STEP 04</b><h4>get paid</h4><p>It lands in your next payout on the 1st or the 15th, itemised per video so you can see what each one earned.</p></div>
@@ -1276,6 +1338,10 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
       </div>
 
       <div class="acc" id="faq2">
+        <div class="acc-item">
+          <button class="acc-btn"><span class="acc-t">do i have to join a team to get paid for views?</span><span class="acc-i">+</span></button>
+          <div class="acc-body"><div><p>No. That's the whole point of option B in section 05. Sign up, post a video about money, tag @fomo, submit the link — you get the same rate and the same $2,500 ceiling as anyone on a campus team. No application, no interview, no weekly commitment, and it doesn't matter whether we're live at your school. The team is worth joining because of the bounty hunt, the gear and the title, not because it unlocks the view rate.</p></div></div>
+        </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">can i really earn per view in any seat?</span><span class="acc-i">+</span></button>
           <div class="acc-body"><div><p>Yes. The per-view rate isn't restricted to the content lead — if you're on partnerships and you post a video about closing a sponsor, tag @fomo and submit it, you get paid on it exactly the same. Content just does it more often, and their ladder is built around it. There's no cap on how many videos you submit in a month, only the $2,500 ceiling on any single one.</p></div></div>
