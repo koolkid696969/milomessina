@@ -421,12 +421,8 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 .cta-note{font-family:var(--mono);font-size:.65rem;color:var(--muted-2);margin-top:22px;letter-spacing:.06em}
 
 footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp(60px,9vw,120px)}
-.f-grid{display:grid;grid-template-columns:1.6fr repeat(3,1fr);gap:34px}
-@media(max-width:800px){.f-grid{grid-template-columns:1fr 1fr}}
+.f-grid{display:grid;grid-template-columns:1fr;gap:34px}
 .f-grid p{font-size:.86rem;margin-top:14px;max-width:34ch}
-.f-col h5{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);margin-bottom:16px;font-weight:500}
-.f-col a{display:block;font-size:.88rem;color:var(--muted);padding:5px 0;transition:.2s}
-.f-col a:hover{color:var(--text);padding-left:5px}
 .f-bot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:46px;padding-top:26px;border-top:1px solid var(--line);font-family:var(--mono);font-size:.66rem;color:var(--muted-2)}
 
 .rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.8,.3,1),transform .8s cubic-bezier(.2,.8,.3,1)}
@@ -445,14 +441,12 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
     <div class="nav-links">
       <button data-jump="what" type="button">what it is</button>
       <button data-jump="earn" type="button">what it pays</button>
-      <button data-jump="levels" type="button">levels</button>
       <button data-jump="role" type="button">the role</button>
       <button data-jump="ideas" type="button">what you'd post</button>
       <button data-jump="career" type="button">your résumé</button>
       <button data-jump="fit" type="button">is it for you</button>
       <button data-jump="faq" type="button">faq</button>
     </div>
-    <button class="btn btn-p btn-sm" data-jump="faq" type="button">how to join</button>
     <button class="burger" aria-label="menu">☰</button>
   </nav>
 </header>
@@ -536,20 +530,20 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
     <div class="pay-hero rv" style="grid-template-columns:1fr;max-width:560px">
       <div class="pay-card">
         <span class="lbl">bounties</span>
-        <b>$15 – $2,500</b>
+        <b>$15 – $10,000</b>
         <p>Cash payments for completing specific tasks on the bounty ladder — posting a video, running an event, hitting signup milestones. Each has a clear payout and clear proof requirement.</p>
       </div>
     </div>
 
     <div class="shead rv" style="margin-bottom:22px">
       <h3>the bounty ladder</h3>
-      <p style="margin-top:12px">Seventeen bounties, in a fixed order. You unlock them one at a time — clear the one you’re on and the next opens up. One target at a time is much easier than staring at a menu, and the early ones teach you what the later ones need.</p>
+      <p style="margin-top:12px">Eighteen bounties, in a fixed order. You unlock them one at a time — clear the one you’re on and the next opens up. One target at a time is much easier than staring at a menu, and the early ones teach you what the later ones need.</p>
     </div>
 
     <div class="ladder-top rv">
-      <div class="lt-item"><small>bounties on the ladder</small><b>17</b></div>
-      <div class="lt-item"><small>first one you’d work on</small><b>plant the flag</b></div>
-      <div class="lt-item"><small>total if you clear all of it</small><b class="pos">$11,270</b></div>
+      <div class="lt-item"><small>bounties on the ladder</small><b>18</b></div>
+      <div class="lt-item"><small>first one you’d work on</small><b>claim your handle</b></div>
+      <div class="lt-item"><small>total if you clear all of it</small><b class="pos">$21,270</b></div>
     </div>
 
     <div id="ladder" class="ladder rv"></div>
@@ -563,36 +557,10 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
   </div>
 </section>
 
-<section id="levels">
-  <div class="wrap">
-    <div class="shead rv">
-      <span class="eyebrow">03 — levels</span>
-      <h2>your rate goes<br>up as you grow.</h2>
-      <p>Levels are based on one number: total verified signups you've driven since you started. Nothing expires and nothing resets between semesters.</p>
-    </div>
-
-    <div class="tier-rail rv">
-      <div class="tier"><span class="lvl">level 01</span><h4>rookie</h4><div class="req">0 – 25 signups</div><ul><li>Brand kit and starter merch</li><li>Referral link + live dashboard</li><li>Ambassador hub access</li></ul></div>
-      <div class="tier"><span class="lvl">level 02</span><h4>regular</h4><div class="req">25 – 100 signups</div><ul><li>Free event kit shipped to you</li><li>Weekly office hours with our team</li></ul></div>
-      <div class="tier"><span class="lvl">level 03</span><h4>lead</h4><div class="req">100 – 250 signups</div><ul><li>Event budget up to $1,200</li><li>Bring on teammates, earn 10% of theirs</li><li>Direct Slack channel with us</li></ul></div>
-      <div class="tier"><span class="lvl">level 04</span><h4>campus lead</h4><div class="req">250 – 500 signups</div><ul><li>Help onboard nearby schools</li><li>Invite to the NYC summit, flights covered</li><li>Input on FOMO's product roadmap</li></ul></div>
-      <div class="tier legend"><span class="lvl">level 05</span><h4>legend</h4><div class="req">500+ signups</div><ul><li>Priority interview for FOMO internships</li><li>Real production budget for your channel</li><li>A referenceable title and a case study</li></ul></div>
-    </div>
-
-    <div class="note-strip rv">
-      <span style="color:var(--green);font-size:1.1rem">✓</span>
-      <div>
-        <b>There's no cap on how many ambassadors a school can have.</b>
-        <p>You're not competing for a single slot, and you're not blocked if someone at your school signed up first. Plenty of campuses run three or four ambassadors who split the work and share a group chat — it usually works better than going solo. Your level and your earnings are tracked entirely on your own.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="role">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">04 — the role</span>
+      <span class="eyebrow">03 — the role</span>
       <h2>four things<br>you'd be doing.</h2>
       <p>Nobody does all four in week one. Most ambassadors start with the feed, add the group chat by week three, and try an event once they have people to invite.</p>
     </div>
@@ -607,7 +575,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
     <div class="panel on rv" id="p1">
       <div>
         <h3>the feed</h3>
-        <p>A campus-branded account on TikTok, Reels and X. Short, fast, local. You're not teaching people what a candlestick is — you're covering money the way a beat reporter covers your football team, with your school as the audience.</p>
+        <p>A campus-branded account on TikTok and Reels. Short, fast, local. You're not teaching people what a candlestick is — you're covering money the way a beat reporter covers your football team, with your school as the audience.</p>
         <div class="kv">
           <div class="kv-row"><span>Posting cadence</span><span>5–7 per week</span></div>
           <div class="kv-row"><span>Format that works</span><span>15–35s vertical</span></div>
@@ -687,9 +655,9 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="ideas">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">05 — what you'd post</span>
+      <span class="eyebrow">04 — what you'd post</span>
       <h2>you'll never<br>start from blank.</h2>
-      <p>Forty-plus formats that have already worked on other campuses, refreshed every month in the ambassador hub. These eighteen are the starting set, sorted by format so you can pick based on what you actually feel like making today.</p>
+      <p>Formats that have already worked on other campuses, refreshed every month in the ambassador hub. These are the starting set, sorted by format so you can pick based on what you actually feel like making today.</p>
     </div>
 
     <div class="chips rv" id="chips">
@@ -747,7 +715,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="playbook">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">06 — the playbook</span>
+      <span class="eyebrow">05 — the playbook</span>
       <h2>how the good<br>ones do it.</h2>
       <p>Reverse-engineered from the ambassadors currently doing the best numbers. None of it is theory, and none of it requires you to be good on camera on day one.</p>
     </div>
@@ -757,11 +725,11 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
         <h4>your first week</h4>
         <p>A realistic seven days. Ship all of it and you'll be ahead of most people who start the same month as you.</p>
         <div class="day"><b>day 1</b><p>Claim your handle on three platforms. Same name everywhere. Write a six-word bio.</p></div>
-        <div class="day"><b>day 2</b><p>Film three "what's in your portfolio" streets in one 40-minute session. Bank them.</p></div>
+        <div class="day"><b>day 2</b><p>Record your first video.</p></div>
         <div class="day"><b>day 3</b><p>Post #1. Open the group chat. Personally invite 30 people — by DM, not by story.</p></div>
         <div class="day"><b>day 4</b><p>Post #2. Reply to every comment within an hour. That matters more than the edit.</p></div>
         <div class="day"><b>day 5</b><p>Put your referral link in your bio and pin it in the chat. First signups land here.</p></div>
-        <div class="day"><b>day 6</b><p>Post the tuition chart. Highest-share asset in the kit — use it to spike your reach.</p></div>
+        <div class="day"><b>day 6</b><p>Post #3, and share it in a couple of campus group chats or class threads to reach people outside your first invites.</p></div>
         <div class="day"><b>day 7</b><p>Check your analytics in the hub. Kill your worst format, double down on your best.</p></div>
       </div>
 
@@ -814,7 +782,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
   <div class="wrap">
     <div class="shead split-head rv">
       <div style="max-width:620px">
-        <span class="eyebrow">07 — the board</span>
+        <span class="eyebrow">06 — the board</span>
         <h2>where the<br>campuses stand.</h2>
         <p>Every school is ranked by verified signups, combining everyone who's an ambassador there. It's mostly for bragging rights — your pay never depends on your rank.</p>
       </div>
@@ -836,22 +804,22 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="dashboard">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">08 — the hub</span>
+      <span class="eyebrow">07 — the hub</span>
       <h2>what you'd see<br>every day.</h2>
-      <p>Every ambassador gets a dashboard: your referral link, live signup tracking, which posts actually drove installs, and your next payout. This is a real view from an ambassador at NYU in her second semester.</p>
+      <p>Every ambassador gets a dashboard: your referral link, live signup tracking, which posts actually drove installs, and your next payout. This is a real view from an ambassador at USC in her second semester.</p>
     </div>
 
     <div class="dash rv">
       <div class="dash-bar">
         <div class="dots"><i></i><i></i><i></i></div>
-        <span>hub.fomo.family/maya-nyu</span>
+        <span>hub.fomo.family/maya-usc</span>
         <span class="live"><span class="dot"></span> live</span>
       </div>
       <div class="dash-body">
         <div>
           <div class="d-hi">
             <div class="d-av">MR</div>
-            <div><h3>maya r.</h3><small>NYU STERN · @washingtonsq.capital · level 03 lead</small></div>
+            <div><h3>maya r.</h3><small>USC Film · @uscfomo</small></div>
           </div>
 
           <div class="d-stats">
@@ -864,7 +832,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
           <div class="ref">
             <small>your referral link</small>
             <div class="ref-row">
-              <div class="ref-code" id="refcode">fomo.family/c/washingtonsq</div>
+              <div class="ref-code" id="refcode">fomo.family/c/uscfomo</div>
               <button class="copy" id="copybtn">copy</button>
             </div>
           </div>
@@ -873,11 +841,11 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
             <h4>this week's checklist</h4>
             <small>SUGGESTED, NOT REQUIRED — YOU SET YOUR OWN PACE</small>
             <div style="margin-top:14px">
-              <div class="q-item checked"><span class="q-box">✓</span><span class="q-txt">Street interviews outside Bobst</span><span class="q-time">25 min</span></div>
-              <div class="q-item checked"><span class="q-box">✓</span><span class="q-txt">Monday Open — episode 14</span><span class="q-time">2 hrs</span></div>
-              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">NYC rent vs S&P chart post</span><span class="q-time">15 min</span></div>
-              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Pin trading night RSVP in the chat</span><span class="q-time">5 min</span></div>
-              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Onboard 2 teammates from the chat</span><span class="q-time">40 min</span></div>
+              <div class="q-item checked"><span class="q-box">✓</span><span class="q-txt">Post a reel</span><span class="q-time">20 min</span></div>
+              <div class="q-item checked"><span class="q-box">✓</span><span class="q-txt">Story post</span><span class="q-time">5 min</span></div>
+              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Onboard a cameraman</span><span class="q-time">40 min</span></div>
+              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Pin your next event RSVP in the chat</span><span class="q-time">5 min</span></div>
+              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Post a chart or data card</span><span class="q-time">15 min</span></div>
             </div>
             <div class="prog"><i id="qbar"></i></div>
           </div>
@@ -893,7 +861,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
               </svg>
               <div class="ring-mid"><b>212</b><small>signups</small></div>
             </div>
-            <p>38 more signups to reach <em>campus lead</em> — unlocks bigger event budget and NYC summit.</p>
+            <p>38 more signups to unlock the next challenge.</p>
           </div>
 
           <div class="payout">
@@ -911,7 +879,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="career">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">09 — your résumé</span>
+      <span class="eyebrow">08 — your résumé</span>
       <h2>it goes on<br>your linkedin.</h2>
       <p>This isn’t a volunteer badge or a club officer title. It’s a real, paid, referenceable role at a venture-backed company — the kind of line that gets a second look on an actual résumé.</p>
     </div>
@@ -937,7 +905,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
           <div class="career-item"><i>◎</i><div><b>A portfolio you can show</b><p>Every post stays public. In an interview you can pull up the account, the analytics and the growth curve on your phone. Almost nobody your age can do that.</p></div></div>
           <div class="career-item"><i>◈</i><div><b>Real skills, named properly</b><p>Growth marketing, content production, community management, performance analytics. These are the exact words on entry-level job postings in tech, media and finance.</p></div></div>
           <div class="career-item"><i>§</i><div><b>A reference who picks up</b><p>You work directly with our campus team. We write recommendations, take reference calls, and make intros — for ambassadors at any level, not just the top ones.</p></div></div>
-          <div class="career-item"><i>→</i><div><b>First look at open roles</b><p>We hire from this program. Ambassadors at level 04 and up get a priority interview for internships and full-time GTM roles, and several have already converted.</p></div></div>
+          <div class="career-item"><i>→</i><div><b>First look at open roles</b><p>We hire from this program, and several ambassadors have already converted their work here into internships and full-time GTM roles.</p></div></div>
         </div>
       </div>
     </div>
@@ -947,7 +915,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="fit">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">10 — is this for you</span>
+      <span class="eyebrow">09 — is this for you</span>
       <h2>the honest<br>version.</h2>
       <p>This works really well for some people and not at all for others. We'd rather you work out which one you are now than three weeks in.</p>
     </div>
@@ -970,7 +938,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 <section id="faq">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">11 — questions</span>
+      <span class="eyebrow">10 — questions</span>
       <h2>the things<br>everyone asks.</h2>
     </div>
 
@@ -1017,14 +985,28 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">what happens when i graduate?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>The account is yours — you keep it, the audience and the archive. Some people hand it to a younger student and stay on as an advisor, some keep running it independently. Ambassadors at level 04 and up get a priority interview for FOMO roles and internships, and we're happy to be a reference either way.</p></div></div>
+          <div class="acc-body"><div><p>The account is yours — you keep it, the audience and the archive. Some people hand it to a younger student and stay on as an advisor, some keep running it independently, and we're happy to be a reference either way.</p></div></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<section id="start">
+  <div class="wrap">
+    <div class="shead rv">
+      <span class="eyebrow">11 — how to get started</span>
+      <h2>make an account.<br>start posting.</h2>
+      <p>That's genuinely all of it. There's no application to fill in, no interview, no follower minimum and nothing to pay. You make a FOMO account, claim a handle for your campus, and start posting. Everything else on this page — the bounties, the group chat, the events, the leaderboard — happens after that, at whatever pace you want to go.</p>
+    </div>
 
+    <div class="mech rv" style="grid-template-columns:repeat(3,1fr)">
+      <div class="mech-item"><span class="mech-ic">01</span><div><b>Make an account</b><p>Sign up on FOMO with your school email. Takes a couple of minutes and costs nothing, ever.</p></div></div>
+      <div class="mech-item"><span class="mech-ic">02</span><div><b>Claim your handle</b><p>TikTok and/or Instagram, named after your school — uscfomo, and so on. Same name on both so people can actually find you.</p></div></div>
+      <div class="mech-item"><span class="mech-ic">03</span><div><b>Start posting</b><p>Post your first three videos. That alone clears the first bounty and puts $15 in your account. After that you just keep going.</p></div></div>
+    </div>
+  </div>
+</section>
 
 </main>
 
@@ -1050,9 +1032,6 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
         <button class="logo" data-jump="top" type="button"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></button>
         <p>Where traders become legends — and campuses become channels.</p>
       </div>
-      <div class="f-col"><h5>this page</h5><button data-jump="what" type="button">What it is</button><button data-jump="role" type="button">The role</button><button data-jump="earn" type="button">What it pays</button><button data-jump="levels" type="button">Levels</button></div>
-      <div class="f-col"><h5>deciding</h5><button data-jump="career" type="button">Your résumé</button><button data-jump="fit" type="button">Is it for you</button><button data-jump="faq" type="button">FAQ</button><button data-jump="leaderboard" type="button">The board</button></div>
-      <div class="f-col"><h5>the day-to-day</h5><button data-jump="ideas" type="button">Content ideas</button><button data-jump="playbook" type="button">The playbook</button><button data-jump="dashboard" type="button">The hub</button></div>
     </div>
     <div class="f-bot">
       <span>© 2026 FOMO LABS INC. · CAMPUS PROGRAM</span>
@@ -1152,9 +1131,9 @@ function wireAcc(id){
 ['acc','faq1','faq2'].forEach(wireAcc);
 
 const LADDER=[
- {g:'starting out',n:'group 01',t:'plant the flag',pay:15,time:'~1 hour',tags:['easy','setup'],
-  d:"Claim your campus handle on TikTok, Reels and X, and post an intro video announcing the channel. Same name on all three so people can actually find you.",
-  proof:['Screenshots of all three claimed profiles','A link to your first published post','Referral link in the bio']},
+ {g:'starting out',n:'group 01',t:'claim your handle',pay:15,time:'~1 hour',tags:['easy','setup'],
+  d:"Claim your campus handle on TikTok and/or Instagram. Suggested name is your school name plus fomo — for example, uscfomo. Once you post 3 videos, you get $15.",
+  proof:['Screenshot of your claimed handle(s)','Links to your 3 posted videos','Referral link in the bio']},
  {t:'the first five',pay:20,time:'~2 days',tags:['easy','referrals'],
   d:"Get five friends to download FOMO, create an account and make one trade each. This is where almost everybody starts.",
   proof:['Tracked automatically from your referral link','All five still active after 7 days','Your own account does not count']},
@@ -1169,8 +1148,8 @@ const LADDER=[
   d:"Get a single post past 25,000 views on any platform. The hook library has 200 tested openers if you're staring at a blank screen.",
   proof:['Screenshot of post analytics showing 25K+','Post is campus-specific and tags @fomo','Stays live for at least 30 days']},
  {t:'the interview',pay:120,time:'~1 week',tags:['the show'],
-  d:"Get a professor, finance club president or local fund manager on camera for at least ten minutes. This is the piece that makes it look like a publication.",
-  proof:['Link to the published episode','Signed guest release (template in your kit)','Ten minutes minimum runtime']},
+  d:"Get a professor, finance club president or local fund manager on camera. This is the piece that makes it look like a publication.",
+  proof:['Link to the published episode','Signed guest release (template in your kit)']},
  {t:'fifty deep',pay:180,time:'~2 weeks',tags:['referrals'],
   d:"Fifty verified signups. Around here you stop being a student with an account and start being a channel your school recognises.",
   proof:['Tracked automatically from referral data','50 unique students, active after 7 days','No duplicate devices']},
@@ -1205,7 +1184,12 @@ const LADDER=[
   proof:['Tracked automatically, calendar month','250 unique students, active after 7 days','Full fraud review before payout']},
  {t:'one million',pay:2500,time:'cumulative',tags:['content','rare'],gold:true,
   d:"A million cumulative views on your campus channel. Roughly the point where recruiters and brands start finding you rather than the other way around.",
-  proof:['Lifetime analytics across all platforms','Only campus-channel content counts','Verified manually by our team']}
+  proof:['Lifetime analytics across all platforms','Only campus-channel content counts','Verified manually by our team']},
+
+ {g:'the grand prize',n:'group 05',t:'number one',pay:10000,time:'one semester',tags:['rare','competitive'],gold:true,
+  lock:'◆ one winner per semester — every ambassador is eligible',
+  d:"Finish the semester as the number one ranked ambassador in the country. Exactly one person wins this each semester. Everything else on the ladder you clear on your own schedule — this one you have to beat everybody for.",
+  proof:['Final standing on the national ambassador board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
 ];
 const money=n=>'$'+n.toLocaleString();
 (function renderLadder(){
@@ -1221,10 +1205,12 @@ const money=n=>'$'+n.toLocaleString();
     const first=i===0;
     const lock=first
       ? '<span class="b-lock open">◆ start here — unlocked on day one</span>'
-      : `<span class="b-lock">🔒 unlocks after "${LADDER[i-1].t}"</span>`;
+      : b.lock
+        ? `<span class="b-lock open">${b.lock}</span>`
+        : `<span class="b-lock">🔒 unlocks after "${LADDER[i-1].t}"</span>`;
     html+=`<div class="rung ${first?'first':''} ${b.gold?'gold':''}">
       <div class="node">${String(i+1).padStart(2,'0')}</div>
-      <article class="bounty ${b.gold?'gold':''} ${first?'':'locked'}" data-i="${i}">
+      <article class="bounty ${b.gold?'gold':''} ${first||b.lock?'':'locked'}" data-i="${i}">
         <div class="b-top"><h4>${b.t}</h4><span class="b-pay">${money(b.pay)}</span></div>
         <p>${b.d}</p>
         <div class="b-meta">${b.tags.map(t=>`<span class="${t==='easy'?'easy':t==='rare'?'rare':''}">${t}</span>`).join('')}<span>${b.time}</span></div>
@@ -1271,7 +1257,7 @@ const LB={
   ['Sofia A.','ut austin','level 05','122K','611'],
   ['Deven K.','michigan','level 04','88.4K','404'],
   ['Marcus T.','ohio state','level 04','76.1K','388'],
-  ['Maya R.','nyu stern','level 03','41.2K','212'],
+  ['Maya R.','usc film','level 03','41.2K','212'],
   ['Priya S.','arizona state','level 03','38.9K','198'],
   ['Jules B.','florida','level 03','35.2K','176'],
   ['Ana L.','penn state','level 02','21.4K','98'],
