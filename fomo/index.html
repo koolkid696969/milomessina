@@ -96,7 +96,18 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .glance h4{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);font-weight:500;margin-bottom:18px}
 .g-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:13px 0;border-top:1px solid var(--line)}
-.g-row:first-of-type{border-top:none;padding-top:0}
+.glance h4+.g-row{border-top:none;padding-top:0}
+.g-brand{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.g-mark{width:24px;height:24px;display:grid;place-items:center;color:var(--text);flex:none}
+.g-mark svg{width:100%;height:100%;display:block}
+.g-brand b{font-family:var(--display);font-size:1.1rem;font-weight:600;letter-spacing:-.03em;color:var(--text)}
+.g-badge{margin-left:auto;font-family:var(--mono);font-size:.58rem;font-weight:600;letter-spacing:.11em;
+  text-transform:uppercase;white-space:nowrap;padding:5px 10px;border-radius:999px;
+  border:1px solid var(--line-2);background:rgba(255,255,255,.05)}
+.g-badge i{font-style:normal;
+  background-image:linear-gradient(95deg,var(--violet-hi),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+.g-lead{font-size:.8rem;line-height:1.5;color:var(--muted);text-wrap:balance;
+  padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--line)}
 .g-row span{font-size:.86rem;color:var(--muted)}
 .g-row b{font-family:var(--mono);font-size:.8rem;color:var(--text);text-align:right;white-space:nowrap}
 .g-row b.pos{color:var(--green)}
@@ -455,7 +466,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
       <div>
         <span class="eyebrow"><span class="dot"></span>&nbsp;program overview · fall 2026</span>
         <h1 class="h1">become your<br><span class="out">school's</span><br><span class="grad">fomo ambassador.</span></h1>
-        <p class="lede">FOMO Campus is our student ambassador program — a paid, referenceable role at a venture-backed company that you can put on your résumé. You build a small financial media channel for your university: the posts, the group chat, the events. This page walks through what the role actually is, what it does for you afterwards, what it pays, and how much of your time it takes. Read it before you decide.</p>
+        <p class="lede">FOMO Campus is our student ambassador program — a paid, referenceable role at a venture-backed company that you can put on your résumé. You build a small financial media channel for your university: the posts, the group chat, the events. This page walks through what the role is, what it does for you afterwards, what it pays, and how much time it takes. Read it before you decide.</p>
         <div class="hero-cta">
           <button class="btn btn-p" data-jump="what" type="button">start reading →</button>
           <button class="btn btn-g" data-jump="career" type="button">what you get out of it</button>
@@ -464,8 +475,13 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 
       <div>
         <div class="card-glass glance">
+          <div class="g-brand">
+            <span class="g-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>
+            <b>fomo</b>
+            <span class="g-badge"><i>$75M Series&nbsp;B</i></span>
+          </div>
+          <p class="g-lead">A social-first on-chain trading platform. Raised June&nbsp;2026 at a $550M valuation.</p>
           <h4>the role at a glance</h4>
-          <div class="g-row"><span>Top ambassadors earn</span><b class="pos">$2,500+ / mo</b></div>
           <div class="g-row"><span>Experience required</span><b>none</b></div>
           <div class="g-row"><span>Followers required</span><b>none</b></div>
           <div class="g-row"><span>Ambassadors per school</span><b>no limit</b></div>
@@ -484,7 +500,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
     <div class="shead rv">
       <span class="eyebrow">01 — what this actually is</span>
       <h2>it's a media gig,<br>not a flyer gig.</h2>
-      <p>Most campus ambassador programs hand you a box of stickers and a graphic to repost. This one is closer to running a small publication. You get a brand, a content playbook, and a cut of everyone you bring in. Here's the honest difference.</p>
+      <p>Most campus ambassador programs hand you a box of stickers and a graphic to repost. This one is closer to running a small publication. You get a brand, a content playbook, and a cut of everyone you bring in.</p>
     </div>
 
     <div class="vs rv">
@@ -520,7 +536,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
     <div class="shead rv">
       <span class="eyebrow">02 — your résumé</span>
       <h2>it goes on<br>your linkedin.</h2>
-      <p>This isn’t a volunteer badge or a club officer title. It’s a real, paid, referenceable role at a venture-backed company — the kind of line that gets a second look on an actual résumé.</p>
+      <p>A paid, referenceable role at a venture-backed company — not a volunteer badge or a club officer title. You leave with your own numbers, a public portfolio, and someone here who will take a reference call.</p>
     </div>
 
     <div class="career">
@@ -580,15 +596,14 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
   <div class="wrap">
     <div class="shead rv">
       <span class="eyebrow">04 — the role</span>
-      <h2>four things<br>you'd be doing.</h2>
-      <p>Nobody does all four in week one. Most ambassadors start with the feed, add the group chat by week three, and try an event once they have people to invite.</p>
+      <h2>three things<br>you'd be doing.</h2>
+      <p>Nobody does all three in week one. Most ambassadors start with the feed, add the group chat by week three, and pitch an event once they have people to invite.</p>
     </div>
 
     <div class="tabs rv" id="tabs">
       <button class="tab on" data-p="p1">the feed</button>
       <button class="tab" data-p="p2">the group chat</button>
-      <button class="tab" data-p="p3">the show</button>
-      <button class="tab" data-p="p4">irl events</button>
+      <button class="tab" data-p="p3">irl events</button>
     </div>
 
     <div class="panel on rv" id="p1">
@@ -637,30 +652,13 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 
     <div class="panel rv" id="p3">
       <div>
-        <h3>the show</h3>
-        <p>Optional, but it's what separates an account from a publication. Once a week, something longer: a ten-minute recap, a livestream during earnings, a sit-down with the finance club president. This is the part that ends up in internship interviews.</p>
-        <div class="kv">
-          <div class="kv-row"><span>Cadence</span><span>1 per week</span></div>
-          <div class="kv-row"><span>Best slot</span><span>sunday night</span></div>
-          <div class="kv-row"><span>Time cost</span><span>~2 hrs / week</span></div>
-          <div class="kv-row"><span>Production budget</span><span>reimbursed per event</span></div>
-        </div>
-      </div>
-      <div class="phone">
-        <div class="phone-bar"><span>THE MONDAY OPEN · EP.14</span><span>12:42</span></div>
-        <div class="post"><div class="post-top"><span class="av"></span><div><b>this week on campus</b><br><small>MICHIGAN</small></div></div><p>→ the freshman who turned $40 into $610<br>→ what the fed did to your summer internship<br>→ business school vs the group chat: who called it</p><div class="post-metrics"><span>▶ 9,102</span><span>⧗ 12:42</span></div></div>
-      </div>
-    </div>
-
-    <div class="panel rv" id="p4">
-      <div>
         <h3>irl events</h3>
-        <p>Your unfair advantage over every online account: you can be in the room. Trading nights, watch parties, a table outside the union during finals, a paper-trading tournament between dorms. We fund it and ship the kit — you pick the date.</p>
+        <p>Your unfair advantage over every online account: you can be in the room. You pitch us the event and we set the budget for it — a trading night, a watch party, a dorm-vs-dorm paper trading tournament, a table outside the union during finals, or a funded dinner with the biggest creators on your campus. We ship the banners, merch and prizes; you pick the date and run it.</p>
         <div class="kv">
-          <div class="kv-row"><span>Event budget per semester</span><span>$300 – $1,200</span></div>
+          <div class="kv-row"><span>How it works</span><span>you pitch, we fund</span></div>
+          <div class="kv-row"><span>Budget</span><span>we set it per event</span></div>
           <div class="kv-row"><span>Typical signups per event</span><span>60 – 140</span></div>
           <div class="kv-row"><span>Time cost</span><span>~6 hrs per event</span></div>
-          <div class="kv-row"><span>What we ship</span><span>banners, merch, prizes</span></div>
         </div>
       </div>
       <div class="phone">
@@ -736,7 +734,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
     <div class="shead rv">
       <span class="eyebrow">06 — the playbook</span>
       <h2>how the good<br>ones do it.</h2>
-      <p>Reverse-engineered from the ambassadors currently doing the best numbers. None of it is theory, and none of it requires you to be good on camera on day one.</p>
+      <p>Reverse-engineered from the ambassadors currently doing the best numbers. None of it requires you to be good on camera on day one.</p>
     </div>
 
     <div class="pb">
@@ -803,7 +801,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
       <div style="max-width:620px">
         <span class="eyebrow">07 — the board</span>
         <h2>where the<br>campuses stand.</h2>
-        <p>Every school is ranked by verified signups, combining everyone who's an ambassador there. It's mostly for bragging rights — your pay never depends on your rank.</p>
+        <p>Every school is ranked by verified signups, combining everyone who's an ambassador there. Bragging rights, mostly — the one exception is the grand prize, which goes to whoever finishes the semester ranked first.</p>
       </div>
       <div class="tabs" id="lbtabs" style="margin-bottom:0">
         <button class="tab on" data-lb="schools">schools</button>
@@ -1103,7 +1101,7 @@ const LADDER=[
   proof:['Screenshot of your claimed handle(s)','Same name on each platform','Referral link in the bio']},
 
  {t:'post three videos',pay:0,reward:'microphone',time:'~1 week',tags:['easy','content'],
-  d:"Post your first three videos on your campus channel. Once they are up we ship you a FOMO-branded interview microphone, so your street interviews actually sound like a publication.",
+  d:"Post your first three videos on your campus channel. Once they are up we ship you a FOMO-branded interview microphone, so your street interviews stop sounding like phone audio.",
   proof:['Links to all three published videos','Posted on your campus handle, not a personal one','Shipping address confirmed in the hub']},
 
  {t:'the first five',pay:0,reward:'banner',time:'~2 days',tags:['easy','referrals'],
@@ -1119,11 +1117,11 @@ const LADDER=[
   proof:['Screenshot of the member count at 50+','Screenshot showing three days of real conversation','Members should be students at your school']},
 
  {t:'1k followers',pay:100,time:'~1 month',tags:['content'],
-  d:"A thousand followers on your campus channel. Around here it stops being your friends watching out of politeness and starts being your school.",
+  d:"A thousand followers on your campus channel. At this size most of your views come from people you have never met.",
   proof:['Follower count screenshot from each platform','Campus channel only, not a personal account','No purchased or bot followers']},
 
  {g:'a real channel',n:'group 03',t:'twenty-five videos',pay:250,time:'~1 month',tags:['content'],
-  d:"Publish 25 videos that clear our quality bar — real audio, a real edit, and actually about your campus. Consistency is the whole skill here.",
+  d:"Publish 25 videos that clear our quality bar — real audio, a real edit, and actually about your campus.",
   proof:['Links to all 25 published videos','Each one reviewed against the quality checklist','Reposts and stories do not count']},
 
  {t:'50k on one video',pay:500,time:'one video',tags:['rare','content'],
@@ -1131,12 +1129,12 @@ const LADDER=[
   proof:['Screenshot of post analytics showing 50K+','Post is campus-specific and tags @fomo','Stays live for at least 30 days']},
 
  {t:'5k followers',pay:1000,time:'cumulative',tags:['rare','content'],
-  d:"Five thousand followers on your campus channel. Roughly the point where recruiters and brands start finding you rather than the other way around.",
+  d:"Five thousand followers on your campus channel. This is the number that does the most work for you in an interview.",
   proof:['Follower count across all platforms','Only campus-channel content counts','Verified manually by our team']},
 
  {g:'the grand prize',n:'group 04',t:'number one',pay:2500,time:'one semester',tags:['rare','competitive'],gold:true,
   lock:'◆ one winner per semester — every ambassador is eligible',
-  d:"Finish the semester as the number one ranked ambassador in the country. Exactly one person wins this each semester. Everything else on the ladder you clear on your own schedule — this one you have to beat everybody for.",
+  d:"Finish the semester as the number one ranked ambassador in the country. Every other bounty here you clear on your own schedule; this is the only one you have to win outright.",
   proof:['Final standing on the national ambassador board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
 ];
 const money=n=>'$'+n.toLocaleString();
