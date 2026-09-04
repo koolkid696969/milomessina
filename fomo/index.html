@@ -380,11 +380,11 @@ body::after{display:none}
 .stat small{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
   color:var(--muted-2);margin-top:8px}
 @media(max-width:600px){
-  /* 3 + 1 looked accidental; 2 x 2 reads as deliberate */
-  .hero-stats{display:grid;grid-template-columns:1fr 1fr}
-  .stat{padding:18px 10px;border-top:1px solid var(--line)}
-  .stat:nth-child(odd){border-left:none}
-  .stat:nth-child(-n+2){border-top:none}
+  /* three of them, so keep the row rather than let flex wrap 2 + 1 */
+  .hero-stats{display:grid;grid-template-columns:repeat(3,1fr)}
+  .stat{padding:0 6px}
+  .stat b{font-size:1.3rem}
+  .stat small{font-size:.55rem;letter-spacing:.05em}
 }
 
 /* apply: quick links so the CTA isn't mostly empty space */
@@ -441,10 +441,9 @@ body::after{display:none}
         </div>
 
         <div class="hero-stats">
-          <div class="stat"><b>5</b><small>seats per campus</small></div>
-          <div class="stat"><b>1</b><small>you apply to</small></div>
-          <div class="stat"><b>60</b><small>days</small></div>
-          <div class="stat"><b>$75M</b><small>raised by fomo</small></div>
+          <div class="stat"><b>$550M</b><small>valuation</small></div>
+          <div class="stat"><b>$75M</b><small>raised</small></div>
+          <div class="stat"><b>~$1M</b><small>revenue a day</small></div>
         </div>
       </div>
     </div>
