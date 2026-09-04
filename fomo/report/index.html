@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>weekly report — fomo campus</title>
+<meta name="description" content="Upload your campus team's Sunday report to fomo HQ.">
+<meta name="theme-color" content="#08070F">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/fomo/assets/base.css">
+<style>
+.formwrap:has(#repForm){display:block;max-width:620px}
+/* .f>span in base.css forces display:block, so out-specify it here */
+.f>.drop{position:relative;display:grid;place-items:center;gap:8px;text-align:center;
+  padding:44px 24px;border:1px dashed var(--line-2);border-radius:16px;background:rgba(255,255,255,.02);
+  transition:border-color .2s,background .2s;cursor:pointer;margin-bottom:0}
+.f>.drop:hover,.f>.drop.over{border-color:var(--violet);background:rgba(81,106,246,.07)}
+.drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.drop .ic{font-size:1.5rem;color:var(--violet-hi);line-height:1}
+.drop b{font-size:.98rem;font-weight:600}
+.drop small{font-family:var(--mono);font-size:.68rem;color:var(--muted-2);letter-spacing:.04em}
+.f>.drop.has{border-style:solid;border-color:rgba(25,217,124,.5);background:rgba(25,217,124,.06)}
+.drop.has .ic{color:var(--green)}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="aurora"><i></i><i></i><i></i></div>
+
+<header id="hdr">
+  <nav class="nav">
+    <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
+  </nav>
+</header>
+
+<main>
+
+<div class="wrap">
+  <div class="pagehead rv">
+    <a class="back" href="/fomo">&larr; back to the campus page</a>
+    <span class="eyebrow">sunday report &middot; to fomo HQ</span>
+    <h1 class="h1">drop the<br><span class="grad">report here.</span></h1>
+    <p>Every Sunday. Write it however you like &mdash; a PDF or a spreadsheet, both are fine &mdash; and drop it here so HQ knows where your campus is.</p>
+  </div>
+
+  <div class="formwrap">
+    <form id="repForm" novalidate>
+      <div class="banner"></div>
+
+      <div class="card">
+        <div class="frow">
+          <label class="f"><span>School</span>
+            <input type="text" name="school" required placeholder="University of Michigan">
+            <span class="err"></span></label>
+          <label class="f"><span>Your name</span>
+            <input type="text" name="full_name" required autocomplete="name" placeholder="Maya Rodriguez">
+            <span class="err"></span></label>
+        </div>
+        <div class="frow">
+          <label class="f"><span>Your seat</span>
+            <select name="seat" required>
+              <option value="">pick one</option>
+              <option>Campus President</option>
+              <option>Growth</option>
+              <option>Partnerships</option>
+              <option>Content</option>
+              <option>Culture</option>
+            </select>
+            <span class="err"></span></label>
+          <label class="f"><span>Which week</span>
+            <select name="week" required>
+              <option value="">pick one</option>
+              <option>Week 1</option><option>Week 2</option><option>Week 3</option><option>Week 4</option>
+              <option>Week 5</option><option>Week 6</option><option>Week 7</option><option>Week 8</option>
+            </select>
+            <span class="err"></span></label>
+        </div>
+
+        <label class="f"><span>The report</span>
+          <span class="drop" id="drop">
+            <input type="file" name="report_file" id="file" required
+              accept=".pdf,.csv,.xlsx,.xls,.ods,.numbers,application/pdf">
+            <span class="ic" id="dropIc">&#8681;</span>
+            <b id="dropTxt">drop a file, or click to pick one</b>
+            <small id="dropSub">PDF or spreadsheet &middot; up to 10MB</small>
+          </span>
+          <span class="hint">Working in Google Sheets or Docs? <b>File &rarr; Download</b> as PDF or .xlsx, then drop it here.</span>
+          <span class="err"></span></label>
+
+        <div class="actions">
+          <button class="btn btn-p" type="submit">send this week's report &rarr;</button>
+          <span class="note">every sunday</span>
+        </div>
+      </div>
+    </form>
+
+    <div class="done">
+      <div class="tick">&#10003;</div>
+      <h2>report filed.</h2>
+      <p class="msg">HQ reads every one. If something in it needs a decision from us you'll hear back before your next Sunday meeting.</p>
+      <div class="dump" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
+        <p>Where traders become legends &mdash; and five students turn a campus into a team.</p>
+      </div>
+    </div>
+    <div class="f-bot">
+      <span>&copy; 2026 FOMO LABS INC. &middot; CAMPUS PROGRAM</span>
+      <span>TRADING INVOLVES RISK. CAMPUS TEAMS DO NOT PROVIDE FINANCIAL ADVICE.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/fomo/assets/form.js?v=2"></script>
+<script>
+/* drop zone: click-to-pick already works via the overlaid input, this adds drag-and-drop */
+(function(){
+  const zone=document.getElementById('drop'),input=document.getElementById('file'),
+        txt=document.getElementById('dropTxt'),sub=document.getElementById('dropSub'),
+        ic=document.getElementById('dropIc');
+  const size=b=>b<1024*1024?Math.round(b/1024)+' KB':(b/1048576).toFixed(1)+' MB';
+  function show(){
+    const f=input.files[0];
+    zone.classList.toggle('has',!!f);
+    ic.innerHTML=f?'&#10003;':'&#8681;';
+    txt.textContent=f?f.name:'drop a file, or click to pick one';
+    sub.textContent=f?size(f.size)+' · click to swap it':'PDF or spreadsheet · up to 10MB';
+  }
+  input.addEventListener('change',show);
+  ['dragenter','dragover'].forEach(t=>zone.addEventListener(t,e=>{e.preventDefault();zone.classList.add('over')}));
+  ['dragleave','drop'].forEach(t=>zone.addEventListener(t,e=>{e.preventDefault();zone.classList.remove('over')}));
+  zone.addEventListener('drop',e=>{
+    if(!e.dataTransfer.files.length)return;
+    input.files=e.dataTransfer.files;
+    show();input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  show();
+})();
+
+wireForm(document.getElementById('repForm'));
+</script>
+</body>
+</html>

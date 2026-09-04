@@ -322,6 +322,14 @@ body::after{display:none}
 .rp-fit.nofit h5{color:var(--orange)}
 .rp-fit.nofit li::before{content:'\2715';color:var(--orange)}
 
+.report{display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;
+  margin-top:clamp(20px,3vw,30px);padding:26px 28px;border:1px solid rgba(81,106,246,.4);
+  border-radius:var(--r-l);background:var(--ink-2)}
+.report b{display:block;font-family:var(--display);font-size:1.25rem;font-weight:500;letter-spacing:-.03em;
+  text-transform:lowercase;margin-bottom:6px}
+.report p{font-size:.88rem;max-width:56ch}
+.report .btn{flex:none}
+
 .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media(max-width:900px){.rules{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.rules{grid-template-columns:1fr}}
@@ -639,6 +647,14 @@ body::after{display:none}
     </div>
 
     <p class="path-note rv" style="margin-top:26px">Goals are the bar, not the ceiling. <b>HQ adjusts them per school size.</b></p>
+
+    <div class="report rv">
+      <div>
+        <b>the sunday report</b>
+        <p>Every Sunday, drop your report in as a PDF or a spreadsheet. That's the whole thing.</p>
+      </div>
+      <a class="btn btn-p" href="/fomo/report">file this week's report &rarr;</a>
+    </div>
   </div>
 </section>
 
@@ -678,6 +694,7 @@ body::after{display:none}
           <h5>get started</h5>
           <a href="/fomo/apply">apply for a seat</a>
           <button data-jump="runs" type="button">how the team runs</button>
+          <a href="/fomo/report">file a weekly report</a>
         </div>
         <div>
           <h5>fomo</h5>

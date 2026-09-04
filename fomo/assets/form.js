@@ -70,7 +70,10 @@ function wireForm(form,opts){
     let bad=null;
     form.querySelectorAll('[required]').forEach(el=>{
       const v=(el.type==='checkbox')?el.checked:el.value.trim();
-      if(!v){showErr(el,el.type==='checkbox'?'You need to confirm this to submit.':'This one is required.');bad=bad||el;return}
+      if(!v){showErr(el,el.type==='checkbox'?'You need to confirm this to submit.'
+        :el.type==='file'?'Pick a file to upload.':'This one is required.');bad=bad||el;return}
+      if(el.type==='file'&&el.files[0]&&el.files[0].size>10*1024*1024){
+        showErr(el,'That file is over 10MB. Export it smaller, or send it to the campus team directly.');bad=bad||el;return}
       if(el.type==='email'&&!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(el.value.trim())){
         showErr(el,"That doesn't look like an email address.");bad=bad||el;return}
       if(el.type==='url'){
@@ -94,7 +97,9 @@ function wireForm(form,opts){
       bad.focus();bad.scrollIntoView({behavior:'smooth',block:'center'});
       return;
     }
-    const data=Object.fromEntries(new FormData(form).entries());
+    const fileInput=form.querySelector('input[type=file]');
+    const data=Object.fromEntries([...new FormData(form).entries()]
+      .map(([k,v])=>[k,v instanceof File?v.name:v]));
     data._page=location.pathname;
     data._submitted=new Date().toISOString();
 
@@ -111,6 +116,9 @@ function wireForm(form,opts){
       const dump=done.querySelector('.dump');
       dump.textContent=Object.entries(data).filter(([k])=>!k.startsWith('_'))
         .map(([k,v])=>k.replace(/_/g,' ')+': '+v).join('\n');
+      if(fileInput&&fileInput.files[0])
+        done.querySelector('.msg').innerHTML+=' <b>Your file was not uploaded either</b> — send '+
+          fileInput.files[0].name+' across manually.';
       dump.style.display='block';
       done.scrollIntoView({behavior:'smooth',block:'center'});
       return;
@@ -120,8 +128,16 @@ function wireForm(form,opts){
     const label=submitBtn.textContent;
     submitBtn.textContent='sending…';
     try{
-      const res=await fetch(ENDPOINT,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},
-        body:JSON.stringify(data)});
+      let res;
+      if(fileInput){
+        /* multipart, so the browser sets its own boundary — never set Content-Type here */
+        const fd=new FormData(form);
+        fd.append('_page',data._page);fd.append('_submitted',data._submitted);
+        res=await fetch(ENDPOINT,{method:'POST',headers:{'Accept':'application/json'},body:fd});
+      }else{
+        res=await fetch(ENDPOINT,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},
+          body:JSON.stringify(data)});
+      }
       if(!res.ok)throw new Error('HTTP '+res.status);
       form.style.display='none';
       done.classList.add('on');
