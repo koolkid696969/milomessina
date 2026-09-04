@@ -538,14 +538,14 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
 .ppv-notes{display:grid;gap:10px;margin-top:20px}
 .ppv-note{display:flex;gap:12px;font-size:.85rem;line-height:1.5;color:#B4ADD4}
 .ppv-note i{font-style:normal;color:var(--violet-hi);flex:none}
-.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:clamp(30px,4vw,46px)}
-@media(max-width:860px){.flow{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:440px){.flow{grid-template-columns:1fr}}
-.flow-s{padding:22px 20px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);transition:.3s;position:relative}
-.flow-s:hover{border-color:var(--line-2);transform:translateY(-4px)}
-.flow-s b{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;color:var(--violet-hi);margin-bottom:11px}
-.flow-s h4{font-family:var(--display);font-size:1.1rem;text-transform:lowercase;letter-spacing:-.03em;margin-bottom:7px}
-.flow-s p{font-size:.83rem;line-height:1.5}
+.calc-flow{font-family:var(--mono);font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted-2);
+  margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+
+/* ── THE HUB (dashboard + board, one section) ────────── */
+.hub-panel{display:none}
+.hub-panel.on{display:block;animation:fade .4s ease}
+.hub-note{font-family:var(--mono);font-size:.66rem;color:var(--muted-2);margin-top:16px;letter-spacing:.06em}
+.hub-lede{font-size:1rem;max-width:760px;margin-bottom:26px}
 </style>
 </head>
 <body>
@@ -613,7 +613,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
     <div class="shead rv">
       <span class="eyebrow">01 — what this actually is</span>
       <h2>it's a newsroom,<br>not a flyer gig.</h2>
-      <p>Most campus programs hand one student a box of stickers and a graphic to repost. This is closer to staffing a small publication. Five people, five jobs, one campus — a president who owns the number, someone on growth, someone on partnerships, someone on content, someone on culture. You take one seat and get paid for that seat.</p>
+      <p>Most campus programs hand one student a box of stickers and a graphic to repost. This is closer to staffing a small publication.</p>
     </div>
 
     <div class="vs rv">
@@ -674,7 +674,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
       <button class="rcard on" data-r="content" style="--rc:rgba(81,106,246,.3);--rc-txt:#A3B0FF;--rc-line:#516AF6" type="button">
         <span class="rc-n">04</span><i class="rc-ic">▶</i>
         <h4>content</h4>
-        <p>Runs the feed. Paid per view on top of the ladder.</p>
+        <p>Runs the feed. Paid per view on every post.</p>
         <span class="rc-open">most applied for →</span>
       </button>
       <button class="rcard" data-r="culture" style="--rc:rgba(111,215,255,.24);--rc-txt:#6FD7FF;--rc-line:rgba(111,215,255,.55)" type="button">
@@ -713,7 +713,6 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
             <li>You've run a club, a team or a house before and liked it</li>
             <li>You're comfortable chasing people who haven't replied</li>
             <li>You'd rather own an outcome than be handed a task list</li>
-            <li>You want the line on your résumé to say you led something</li>
           </ul>
         </div>
         <div class="rp-fit">
@@ -731,7 +730,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
     <div class="rpanel rv" id="r-growth" style="--rc-txt:#19D97C">
       <div>
         <span class="rp-tag">role 02 · growth</span>
-        <h3>views are vanity.<br>you own the number.</h3>
+        <h3>views get attention.<br>you turn them into signups.</h3>
         <p>Content brings people to the edge; you get them over it. You own the referral link, the campaign codes and the honest read on what's actually converting — which usually turns out to be a walkthrough in the group chat at 11pm, not the video with 80K views. You're the person on the team who can say "that post did nothing" with data behind it.</p>
         <ul class="rp-own">
           <li>The campus referral link and every campaign code under it</li>
@@ -755,7 +754,6 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
             <li>A scoreboard makes you competitive rather than anxious</li>
             <li>You like spreadsheets more than you'd admit out loud</li>
             <li>You'd rather DM 40 people than be on camera once</li>
-            <li>You want "growth marketing" on your résumé with numbers attached</li>
           </ul>
         </div>
         <div class="rp-fit">
@@ -810,7 +808,6 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
             <li>Cold emailing a stranger doesn't make you want to lie down</li>
             <li>You already know people across a few different circles</li>
             <li>You like the moment something closes more than the build-up</li>
-            <li>You want "partnerships" or "BD" on your résumé before you graduate</li>
           </ul>
         </div>
       </div>
@@ -863,7 +860,6 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
             <li>You already post, or you've been meaning to start for a year</li>
             <li>You're fine on camera — or you want a faceless format, which works</li>
             <li>You can ship something decent on a Tuesday instead of something perfect in March</li>
-            <li>You want a public portfolio you can pull up in an interview</li>
           </ul>
         </div>
       </div>
@@ -908,7 +904,6 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
             <li>You're already the person who makes the group chat</li>
             <li>You'd rather host eighty people than film one video</li>
             <li>You know which dorms, houses and clubs actually show up</li>
-            <li>You want "community management" and "events" on your résumé</li>
           </ul>
         </div>
       </div>
@@ -975,7 +970,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
       <div class="mech-item"><span class="mech-ic">⚠</span><div><b>Real students only</b><p>Bounties tied to signups require unique people who stay active for 7 days. Fake or duplicate accounts void the bounty — we do check.</p></div></div>
       <div class="mech-item"><span class="mech-ic">§</span><div><b>You’re a contractor</b><p>Paid as a 1099 contractor, not an employee. If you earn over $600 in a year we’ll send tax paperwork in January.</p></div></div>
       <div class="mech-item"><span class="mech-ic">◆</span><div><b>The pot splits</b><p>Each rung is paid to the campus and split evenly across the seats that were filled and active when it cleared. An empty chair doesn’t take a share.</p></div></div>
-      <div class="mech-item"><span class="mech-ic">▶</span><div><b>Views pay on top</b><p>The hunt is the team’s. The per-view rate in section 05 is yours alone — whatever you post and submit is paid straight to you, on top of your share. You can also earn that rate without joining a team at all.</p></div></div>
+      <div class="mech-item"><span class="mech-ic">▶</span><div><b>Views pay on top</b><p>The hunt is the team’s. The per-view rate in section 05 is yours alone, paid on top of your share.</p></div></div>
     </div>
   </div>
 </section>
@@ -985,7 +980,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
     <div class="shead rv">
       <span class="eyebrow">05 — paid per view</span>
       <h2>post it. tag us.<br>get paid on views.</h2>
-      <p>Post a video about money, tag @fomo, submit the link — and once it's had 30 days to run, we pay you on what it actually did. Drag the slider to see the rate. There's no follower minimum and no cap on how many you submit. You can earn this as part of a campus team, or entirely on your own without joining anything — both are explained below the numbers.</p>
+      <p>Post a video about money, tag @fomo, submit the link — and once it's had 30 days to run, we pay you on what it actually did. Drag the slider to see the rate. There's no follower minimum — about two thirds of the people earning it started under 500 — and no cap on how many you submit. You can do it on a campus team or entirely on your own; both are below the numbers.</p>
     </div>
 
     <div class="ppv rv">
@@ -1000,6 +995,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
           <div class="calc-pay" id="cPay">$210</div>
           <p class="calc-sub" id="cNote">That works out to about <b>$2.10</b> per 1,000 views. Post five like this in a month and it's <b>$1,050</b>.</p>
         </div>
+        <p class="calc-flow">post it → submit the link → 30 days → paid</p>
       </div>
 
       <div>
@@ -1015,7 +1011,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
           <div class="ppv-note"><i>◷</i><p>Counted at <b>30 days</b> after posting, so a slow burn still gets paid. Views after that don't count toward the same video.</p></div>
           <div class="ppv-note"><i>◎</i><p>Every platform counts — TikTok, Reels, Shorts. The same video posted to three platforms is <b>one submission</b>, and we add the view counts together.</p></div>
           <div class="ppv-note"><i>⚠</i><p>It has to tag <b>@fomo</b> and be about money or markets — any account you own, campus channel or not. Bought views void the payout and we check every submission over 50K.</p></div>
-          <div class="ppv-note"><i>§</i><p>Paid on the same 1st-and-15th cycle as everything else, and it stacks on top of your ladder — clearing "50k on one video" pays the bounty <b>and</b> the view rate.</p></div>
+          <div class="ppv-note"><i>§</i><p>It stacks with the campus hunt — a video that helps clear a rung pays the <b>bounty and the view rate</b>, not one or the other.</p></div>
         </div>
       </div>
     </div>
@@ -1029,12 +1025,12 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
           <li>The same per-view rate on every video you submit</li>
           <li>Plus your share of the campus treasure hunt in section 04</li>
           <li>Plus the gear — mic, tripod, banner, merch — sent to you free</li>
-          <li>Plus a real title on your résumé and someone here who takes reference calls</li>
+          <li>Plus everything in section 03 — the title, the numbers, the reference</li>
           <li>Four other people covering the parts you're bad at</li>
         </ul>
         <a class="btn btn-g" href="/fomo/apply">apply for a seat →</a>
         <div class="path-foot">
-          <small>needs an application · one semester · ~4–6 hrs a week</small>
+          <small>needs an application · ~4–6 hrs a week</small>
           <b>views + bounties + gear</b>
         </div>
       </div>
@@ -1047,7 +1043,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
           <li>The same per-view rate, the same $2,500 ceiling per video</li>
           <li>No interview, no onboarding call, no weekly anything</li>
           <li>Post one video a semester or thirty — nobody chases you</li>
-          <li>You don't need a campus channel, a following, or a school we're live at</li>
+          <li>You don't need a campus channel or a school we're live at</li>
           <li>Stop whenever. You keep everything you've already earned</li>
         </ul>
         <a class="btn btn-p" href="/fomo/submit">submit a video →</a>
@@ -1059,13 +1055,6 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
     </div>
 
     <p class="path-note rv">Plenty of people start on the right and switch. Have one video do well on your own, and <b>that clip is the strongest application you can send us</b> for a seat on your campus team.</p>
-
-    <div class="flow rv">
-      <div class="flow-s"><b>STEP 01</b><h4>post it</h4><p>On whichever account is yours, tagging @fomo. No approval first — post what you want, when you want.</p></div>
-      <div class="flow-s"><b>STEP 02</b><h4>submit the link</h4><p>Paste the URL into the hub. Takes about ten seconds. Do it the same day so the 30-day clock starts.</p></div>
-      <div class="flow-s"><b>STEP 03</b><h4>let it run</h4><p>We check the view count 30 days later, straight from the platform. Nothing for you to screenshot or chase.</p></div>
-      <div class="flow-s"><b>STEP 04</b><h4>get paid</h4><p>It lands in your next payout on the 1st or the 15th, itemised per video so you can see what each one earned.</p></div>
-    </div>
   </div>
 </section>
 
@@ -1074,7 +1063,7 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
     <div class="shead rv">
       <span class="eyebrow">06 — what you'd post</span>
       <h2>you'll never<br>start from blank.</h2>
-      <p>Mostly the Content seat's problem, but anyone on the team can post and earn the per-view rate. These are formats working on finance TikTok right now, rewritten for a campus audience. Each comes with the hook to open on — that first line is most of the job. Refreshed monthly in the hub.</p>
+      <p>Mostly the Content seat's problem, but anyone on the team can post. These are formats working on finance TikTok right now, rewritten for a campus audience. Each comes with the hook to open on — that first line is most of the job.</p>
     </div>
 
     <div class="chips rv" id="chips">
@@ -1083,8 +1072,6 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
       <button class="chip" data-f="green">green screen</button>
       <button class="chip" data-f="series">running series</button>
       <button class="chip" data-f="story">confessions</button>
-      <button class="chip" data-f="data">charts &amp; numbers</button>
-      <button class="chip" data-f="explainer">explainers</button>
       <button class="chip" data-f="guest">guests &amp; collabs</button>
     </div>
 
@@ -1094,13 +1081,10 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
 
       <article class="idea rv" data-t="street"><span class="idea-fmt">street interview</span><h4>how much do you think i make</h4><p class="idea-hook">“guess my salary. you get one try.”</p><p>Ask people to guess the earnings of the person standing next to them, then reveal. The gap between guess and truth is the whole video, and the comments argue about it for days.</p><div class="idea-foot"><span>30 min · 5 clips</span><em>easiest start</em></div></article>
 
-      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview · reimbursed</span><h4>$20 for the best 30-second pitch</h4><p class="idea-hook">“pitch me one coin. thirty seconds. twenty bucks if it’s good.”</p><p>Hand strangers real cash to pitch a real ticker on camera. Money physically changing hands is the most reliable hook there is, and the bad pitches outperform the good ones. Reimbursed up to $100 a shoot.</p><div class="idea-foot"><span>40 min · reimbursed</span><em>medium effort</em></div></article>
 
-      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview</span><h4>what would you do with $1,000 today</h4><p class="idea-hook">“a thousand dollars, right now. where does it go?”</p><p>No judgement, no gotcha. You will get one person who says index fund, one who says a coin they cannot pronounce, and one who says their overdraft. That spread is the video.</p><div class="idea-foot"><span>25 min · 5 clips</span><em>easy</em></div></article>
 
       <article class="idea rv" data-t="green"><span class="idea-fmt">green screen · reactive</span><h4>react to the chart, not the news</h4><p class="idea-hook">“this happened four hours ago and nobody on this campus knows.”</p><p>Green screen yourself in front of the actual chart or headline and talk over it. It is the highest-trust format in finance because you are showing your source while still being on camera. Speed beats depth here — post inside a few hours.</p><div class="idea-foot"><span>20 min · rides the news</span><em>needs speed</em></div></article>
 
-      <article class="idea rv" data-t="green"><span class="idea-fmt">green screen</span><h4>reading my school’s subreddit out loud</h4><p class="idea-hook">“someone on r/[yourschool] just asked if they should put loan money in crypto.”</p><p>Pull a real money post from your campus subreddit or a class group chat, put it behind you, and answer it properly. Free hyper-local material that regenerates itself every single week.</p><div class="idea-foot"><span>15 min · endless supply</span><em>easy</em></div></article>
 
       <article class="idea rv" data-t="green"><span class="idea-fmt">green screen · faceless option</span><h4>the tuition chart</h4><p class="idea-hook">“your tuition versus the s&amp;p, same twenty years.”</p><p>Your school’s tuition over 20 years against the S&amp;P, nothing else on screen. It writes its own outrage and ends up in group chats. Works fully faceless if you are not ready to be on camera yet.</p><div class="idea-foot"><span>15 min · shares beat views</span><em>no face needed</em></div></article>
 
@@ -1108,37 +1092,26 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
 
       <article class="idea rv" data-t="series"><span class="idea-fmt">running series · monthly</span><h4>the campus price index</h4><p class="idea-hook">“the burrito is up 9% since september. here is the rest.”</p><p>Track five things students actually buy — dining plan, parking pass, that one burrito — against inflation. Repeat monthly until it becomes your signature and people start sending you price changes.</p><div class="idea-foot"><span>1 hr/month · becomes a franchise</span><em>high repeat value</em></div></article>
 
-      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · one week</span><h4>dorm vs dorm</h4><p class="idea-hook">“two floors, two portfolios, one week. standings at 9pm.”</p><p>Two floors, two paper portfolios, daily standings. People follow a rivalry far longer than they follow advice, and the losing floor does your promotion for you.</p><div class="idea-foot"><span>daily posts · best retention</span><em>needs a full week</em></div></article>
 
-      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · gameday</span><h4>beat the rival school</h4><p class="idea-hook">“we are 40 signups behind [rival]. do something about it.”</p><p>Time a head-to-head to your biggest football week. Whichever campus drives more signups gets the win posted nationally. Seasonal, so plan it around the schedule rather than the algorithm.</p><div class="idea-foot"><span>7 days · seasonal spike</span><em>needs planning</em></div></article>
 
-      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · experiment</span><h4>i let a bot trade for a month</h4><p class="idea-hook">“i gave a bot $200 and no input. month one results.”</p><p>Set an automated or rules-based strategy running, then report it honestly every week. The experiment framing lets you cover markets without ever telling anyone what to buy.</p><div class="idea-foot"><span>10 min/week · compounds</span><em>low risk to post</em></div></article>
 
       <article class="idea rv" data-t="story"><span class="idea-fmt">confession · highest engagement</span><h4>i lost money and here is exactly how</h4><p class="idea-hook">“i lost $400 in one afternoon. here is the screenshot.”</p><p>The confession hook gets roughly double the like-to-view ratio of a tips video. Post the number, post the screenshot, post what you would do differently. It is the fastest trust you can build on a finance account.</p><div class="idea-foot"><span>20 min · trust builder</span><em>highest engagement</em></div></article>
 
-      <article class="idea rv" data-t="story"><span class="idea-fmt">milestone reveal</span><h4>how i made my first $500 at 19</h4><p class="idea-hook">“$500 in five months, starting from zero. here is the math.”</p><p>Specificity is the whole format: a concrete number, a timeframe, and where you started. Vague wins get ignored, testable ones get saved. Show the account, not a stock photo.</p><div class="idea-foot"><span>25 min · high saves</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="story"><span class="idea-fmt">confession · relatable</span><h4>things i believed about money at 18</h4><p class="idea-hook">“i thought a credit card was free money. genuinely.”</p><p>List what you got wrong before you learned better. Being the person who did not know is more watchable than being the person who does, and it lowers the barrier for people to ask you things.</p><div class="idea-foot"><span>15 min · strong comments</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="data"><span class="idea-fmt">chart post</span><h4>what your rent actually costs you</h4><p class="idea-hook">“your rent, minus what it would have compounded to.”</p><p>Take local rent, subtract what the same money would have grown to over four years. Hyper-local, hyper-shareable, and every campus has its own version of this number.</p><div class="idea-foot"><span>20 min · high saves</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="data"><span class="idea-fmt">chart post · list format</span><h4>5 things i would never do with my money</h4><p class="idea-hook">“five things i would never do with money. number two is normal.”</p><p>The plain numbered list beats every age-anchored version of the same video — saying “at 20” or “at 40” quietly excludes everyone else. Keep the list unqualified and it travels further.</p><div class="idea-foot"><span>20 min · evergreen</span><em>reliable</em></div></article>
 
-      <article class="idea rv" data-t="data"><span class="idea-fmt">chart post · contrarian</span><h4>the take your finance class will hate</h4><p class="idea-hook">“everything they taught you about saving is one generation old.”</p><p>A contrarian rule pulls enormous reach, but it fights you until people know who you are. Worth keeping in the back pocket for once you have a few thousand followers behind it.</p><div class="idea-foot"><span>25 min · big ceiling</span><em>save for later</em></div></article>
 
-      <article class="idea rv" data-t="explainer"><span class="idea-fmt">explainer · 60 seconds</span><h4>explain it to a freshman</h4><p class="idea-hook">“explain an etf to me like i just got here.”</p><p>One concept, sixty seconds, zero jargon. If your roommate cannot repeat it back, reshoot it. Longer cuts now hold better than 15-second ones, so do not rush it artificially.</p><div class="idea-foot"><span>20 min · evergreen</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="explainer"><span class="idea-fmt">explainer · screen record</span><h4>what actually happens when you hit buy</h4><p class="idea-hook">“this is the whole thing, start to finish, no cuts.”</p><p>Walk through a real trade on your own screen. It converts better than anything else because it removes the fear of the first tap — but it is a demo, so it trades reach for signups. Alternate it with reach formats.</p><div class="idea-foot"><span>30 min · best conversion</span><em>converts, low reach</em></div></article>
 
-      <article class="idea rv" data-t="explainer"><span class="idea-fmt">explainer · faceless</span><h4>the thing nobody explains about fees</h4><p class="idea-hook">“nobody tells you what this actually costs you.”</p><p>Screen recording, text overlay, voiceover, no face. Faceless finance is a large share of what goes viral now, which makes this the format to start on if being on camera is the thing stopping you.</p><div class="idea-foot"><span>20 min · no camera</span><em>no face needed</em></div></article>
 
       <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · on camera</span><h4>put a professor on the record</h4><p class="idea-hook">“i asked someone who teaches this for a living.”</p><p>Ten minutes with a finance or econ professor. Instant credibility, and it makes your channel look like a publication rather than an account. Most will say yes to ten minutes.</p><div class="idea-foot"><span>1 hr · booking support</span><em>medium effort</em></div></article>
 
-      <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · collab</span><h4>finance club crossover</h4><p class="idea-hook">“your club has the audience. i have the camera.”</p><p>The club already has the people you want. Co-post, split the reach, and their whole membership ends up in your group chat by the end of the week.</p><div class="idea-foot"><span>1 hr · audience swap</span><em>easy</em></div></article>
 
-      <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · remote</span><h4>the alum who made it</h4><p class="idea-hook">“she sat in the same lecture hall. now she trades for a living.”</p><p>Track down a graduate now working in markets. Students care far more about someone who sat in their lecture halls than a stranger with credentials, and remote is completely fine.</p><div class="idea-foot"><span>45 min · remote is fine</span><em>medium effort</em></div></article>
 
     </div>
+
+    <p class="path-note rv" style="margin-top:30px">Eight of the strongest, to show the shape. <b>100+ more hooks and formats live in the Ambassador Hub</b>, refreshed monthly.</p>
   </div>
 </section>
 
@@ -1165,38 +1138,24 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
 
       <div class="acc rv" id="acc">
         <div class="acc-item open">
-          <button class="acc-btn"><span class="acc-n">01</span><span class="acc-t">pick a beat, not a topic</span><span class="acc-i">+</span></button>
+          <button class="acc-btn"><span class="acc-n">01</span><span class="acc-t">be local, not "finance"</span><span class="acc-i">+</span></button>
           <div class="acc-body"><div>
             <p>"Finance content" isn't a channel. "The money desk for Ohio State" is. Your beat is where markets meet one specific campus, and ideally nothing you post could have been posted by someone at another school.</p>
-            <ul><li>Name it like a publication, not a username</li><li>Pick one recurring segment you can run 20 times</li><li>If a national account could post it, rewrite it</li></ul>
+            <ul><li>Name it like a publication, not a username</li><li>Lead with a number, a stake or a named place — never "hey guys, so today"</li><li>If a national account could post it, rewrite it</li></ul>
           </div></div>
         </div>
         <div class="acc-item">
-          <button class="acc-btn"><span class="acc-n">02</span><span class="acc-t">hook in three seconds</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div>
-            <p>You're competing with everything else on the phone. The first line does most of the work, and on campus the hooks that land are almost always a number, a stake, or a named place.</p>
-            <ul><li>Lead with the number: "$1,400 a semester on coffee"</li><li>Name the place: "outside the union right now"</li><li>Open a gap: "nobody at this school knows this"</li><li>Never open with "hey guys, so today"</li></ul>
-          </div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-n">03</span><span class="acc-t">post like a beat reporter</span><span class="acc-i">+</span></button>
+          <button class="acc-btn"><span class="acc-n">02</span><span class="acc-t">post like a beat reporter</span><span class="acc-i">+</span></button>
           <div class="acc-body"><div>
             <p>Consistency beats brilliance. Five decent posts a week outperforms one perfect post a month, because the algorithm rewards frequency and your campus rewards familiarity.</p>
             <ul><li>Batch it: one shoot day, five outputs</li><li>Same slots every week — people learn your schedule</li><li>Spend 45 minutes in the comments after posting</li><li>Repost your best performer to the other platforms</li></ul>
           </div></div>
         </div>
         <div class="acc-item">
-          <button class="acc-btn"><span class="acc-n">04</span><span class="acc-t">turn views into signups</span><span class="acc-i">+</span></button>
+          <button class="acc-btn"><span class="acc-n">03</span><span class="acc-t">turn attention into signups</span><span class="acc-i">+</span></button>
           <div class="acc-body"><div>
-            <p>Views don't pay — signups do. The bridge between them is always a reason to act right now: a tournament, a challenge, a walkthrough you're running in the chat tonight.</p>
-            <ul><li>One clear ask per week, not per post</li><li>Walk people through their first trade personally</li><li>Your referral link goes everywhere, every time</li><li>Follow up with anyone who asks a question</li></ul>
-          </div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-n">05</span><span class="acc-t">use the other four seats</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div>
-            <p>The campuses that win aren't the ones with the best individual — they're the ones where five people actually hand things off. The most common failure is five people quietly doing content because it's the fun one.</p>
-            <ul><li>Content gets the reach; Growth decides what to keep making</li><li>Partnerships brings rooms Content can film in</li><li>Culture turns one-time viewers into people who show up</li><li>The president kills whatever isn't working, weekly</li><li>Campus totals combine on the national board</li></ul>
+            <p>Views earn money. Signups win campuses. The bridge between them is always a reason to act right now: a tournament, a challenge, a walkthrough you're running in the chat tonight.</p>
+            <ul><li>One clear ask per week, not per post</li><li>Walk people through their first trade personally</li><li>Your referral link goes everywhere, every time</li><li>Hand your top posts to Growth and let them decide what to keep making</li></ul>
           </div></div>
         </div>
       </div>
@@ -1208,37 +1167,20 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
 
 
 
-<section id="leaderboard">
-  <div class="wrap">
-    <div class="shead split-head rv">
-      <div style="max-width:620px">
-        <span class="eyebrow">08 — the board</span>
-        <h2>where the<br>campuses stand.</h2>
-        <p>Schools are ranked on verified signups, combining all five seats. There's also a board per role, so a partnerships lead isn't measured against a content lead. Bragging rights mostly — the exception is the grand prize on each ladder, which goes to whoever finishes the semester ranked first.</p>
-      </div>
-      <div class="tabs" id="lbtabs" style="margin-bottom:0">
-        <button class="tab on" data-lb="schools">schools</button>
-        <button class="tab" data-lb="ambassadors">by role</button>
-        <button class="tab" data-lb="rising">rising</button>
-      </div>
-    </div>
-
-    <div class="lb rv">
-      <div class="lb-head"><span>rank</span><span id="lbcol1">campus</span><span id="lbcol2">seats filled</span><span>reach</span><span style="text-align:right">signups</span></div>
-      <div id="lbbody"></div>
-    </div>
-    <p class="rv" style="font-family:var(--mono);font-size:.66rem;color:var(--muted-2);margin-top:16px;letter-spacing:.06em">↻ updated every monday · campus totals combine all five seats at that school</p>
-  </div>
-</section>
-
-<section id="dashboard">
+<section id="hub">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">09 — the hub</span>
-      <h2>what you'd see<br>every day.</h2>
-      <p>Every seat gets a dashboard tuned to that role — your referral link, live tracking, submitted videos and what each one earned, and your next payout. This is a content lead at USC in her second semester.</p>
+      <span class="eyebrow">08 — inside the hub</span>
+      <h2>your numbers,<br>and everyone else's.</h2>
+      <p>One login. Your own dashboard — referral link, live tracking, every video you've submitted and what it earned, and your next payout — plus the national board showing where your campus sits against every other school.</p>
     </div>
 
+    <div class="tabs" id="hubtabs">
+      <button class="tab on" data-hub="dash">your dashboard</button>
+      <button class="tab" data-hub="board">national leaderboard</button>
+    </div>
+
+    <div class="hub-panel on" id="hub-dash">
     <div class="dash rv">
       <div class="dash-bar">
         <div class="dots"><i></i><i></i><i></i></div>
@@ -1304,23 +1246,35 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
         </div>
       </div>
     </div>
+      <p class="hub-note">↻ every seat gets a version tuned to that role · shown here: a content lead at USC, second semester</p>
+    </div>
+
+    <div class="hub-panel" id="hub-board">
+      <p class="hub-lede">Schools are ranked on verified signups, combining all five seats. There's a board by role too, so a partnerships lead isn't measured against a content lead. Bragging rights mostly — the exception is the $2,000 rung at the top of the hunt, which goes to whichever campus finishes the semester ranked first.</p>
+      <div class="chips" id="lbtabs">
+        <button class="chip on" data-lb="schools">schools</button>
+        <button class="chip" data-lb="ambassadors">by role</button>
+        <button class="chip" data-lb="rising">rising</button>
+      </div>
+    <div class="lb rv">
+      <div class="lb-head"><span>rank</span><span id="lbcol1">campus</span><span id="lbcol2">seats filled</span><span>reach</span><span style="text-align:right">signups</span></div>
+      <div id="lbbody"></div>
+    </div>
+      <p class="hub-note">↻ updated every monday · campus totals combine all five seats at that school</p>
+    </div>
   </div>
 </section>
 
 <section id="faq">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">10 — questions</span>
+      <span class="eyebrow">09 — questions</span>
       <h2>the things<br>everyone asks.</h2>
     </div>
 
     <div class="faq rv">
       <div class="acc" id="faq1">
         <div class="acc-item open">
-          <button class="acc-btn"><span class="acc-t">do i pick a role, or do you assign me one?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>You pick. You apply to one specific seat — president, growth, partnerships, content or culture — and that's the ladder you're on. We'll tell you if the seat you want is already taken at your school and what else is open, but we won't put you somewhere you didn't ask for. If you'd genuinely be happy in two of them, say so on the application and we'll talk it through.</p></div></div>
-        </div>
-        <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">what if my school already has a team?</span><span class="acc-i">+</span></button>
           <div class="acc-body"><div><p>Then you take whichever seat is still open — most campuses are running with three or four of the five filled, and the empty ones are usually partnerships and growth because everyone applies for content. If every seat at your school is genuinely full, we'll put you on the list for next semester, or you can join as a second content lead, which is the one seat that supports two people.</p></div></div>
         </div>
@@ -1329,16 +1283,8 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
           <div class="acc-body"><div><p>Once a semester, if the seat you want is open and your president signs off. Nothing resets — the hunt belongs to the campus, so your team keeps every rung it has already cleared and you just start leading different ones. Switching mid-semester is rare and usually means something went wrong, so we'd rather talk about it first.</p></div></div>
         </div>
         <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">do i need a following already?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>No. Roughly two thirds of our ambassadors started with under 500 followers. Campus content is one of the few places a brand new account can get real reach quickly, because the audience is specific and the competition is thin. Being socially connected on campus and consistent for the first month matters far more than your follower count.</p></div></div>
-        </div>
-        <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">do i need to know a lot about finance?</span><span class="acc-i">+</span></button>
           <div class="acc-body"><div><p>You need to be interested, not expert. The best-performing content is usually a student learning out loud — asking questions, showing losses, explaining something simply right after working it out themselves. If you're already deep in markets, great, but a finance degree isn't what predicts success here.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">how much time does this really take?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>It depends on the seat. Growth, partnerships and culture are around four hours a week; content is closer to five because of filming; president is about six, most of it spent chasing the other four. Events add roughly six hours in the week you run one. It's built to survive a normal course load, but it isn't a zero-effort thing.</p></div></div>
         </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">am i giving people financial advice?</span><span class="acc-i">+</span></button>
@@ -1347,22 +1293,6 @@ input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;
       </div>
 
       <div class="acc" id="faq2">
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">do i have to join a team to get paid for views?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>No. That's the whole point of option B in section 05. Sign up, post a video about money, tag @fomo, submit the link — you get the same rate and the same $2,500 ceiling as anyone on a campus team. No application, no interview, no weekly commitment, and it doesn't matter whether we're live at your school. The team is worth joining because of the bounty hunt, the gear and the title, not because it unlocks the view rate.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">can i really earn per view in any seat?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Yes. The per-view rate isn't restricted to the content lead — if you're on partnerships and you post a video about closing a sponsor, tag @fomo and submit it, you get paid on it exactly the same. Content just does it more often, and their ladder is built around it. There's no cap on how many videos you submit in a month, only the $2,500 ceiling on any single one.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">how is the bounty pot split?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Evenly, across the seats that were filled and active when the rung cleared. A four-person campus splits the $400 rung four ways; fill the fifth seat and the next one splits five ways but the hunt moves faster. An empty chair never takes a share, and neither does someone who went quiet — if a seat has been inactive for a month, your president can flag it and we'll leave them out of that rung. Per-view earnings are the opposite: those are entirely yours and never split.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">when and how do i get paid?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Twice a month, on the 1st and the 15th, via Venmo, PayPal or direct deposit. Signup earnings are calculated automatically from your referral link. Bounties are reviewed within 48 hours of you submitting proof. Per-view earnings land once a video has had its full 30 days, itemised so you can see what each one paid. You're a 1099 contractor, so if you clear $600 in a calendar year we'll send tax paperwork in January.</p></div></div>
-        </div>
         <div class="acc-item">
           <button class="acc-btn"><span class="acc-t">what counts as a "verified signup"?</span><span class="acc-i">+</span></button>
           <div class="acc-body"><div><p>A unique person who installs the app through your link, finishes creating an account, and is still active seven days later. Duplicate accounts, several accounts on one device, and anyone who deletes immediately don't count. We run fraud checks before every payout — one flagged batch is a conversation, a pattern of them ends the arrangement.</p></div></div>
@@ -1737,9 +1667,21 @@ function paintLB(key){
 }
 paintLB('schools');
 document.getElementById('lbtabs').addEventListener('click',e=>{
-  const b=e.target.closest('.tab');if(!b)return;
-  document.querySelectorAll('#lbtabs .tab').forEach(t=>t.classList.toggle('on',t===b));
+  const b=e.target.closest('.chip');if(!b)return;
+  document.querySelectorAll('#lbtabs .chip').forEach(t=>t.classList.toggle('on',t===b));
   paintLB(b.dataset.lb);
+});
+
+/* dashboard | national board — one section, two views */
+document.getElementById('hubtabs').addEventListener('click',e=>{
+  const b=e.target.closest('.tab');if(!b)return;
+  document.querySelectorAll('#hubtabs .tab').forEach(t=>t.classList.toggle('on',t===b));
+  document.querySelectorAll('.hub-panel').forEach(pn=>{
+    const on=pn.id==='hub-'+b.dataset.hub;
+    pn.classList.toggle('on',on);
+    /* a panel that was hidden never tripped the reveal observer */
+    if(on)pn.querySelectorAll('.rv').forEach(el=>el.classList.add('in'));
+  });
 });
 
 const copyBtn=document.getElementById('copybtn');
@@ -1760,7 +1702,7 @@ const dObs=new IntersectionObserver(es=>es.forEach(e=>{
   r.style.transition='stroke-dashoffset 1.6s cubic-bezier(.2,.8,.3,1)';
   r.style.strokeDashoffset=402*(1-212/250);
 }),{threshold:.25});
-dObs.observe(document.getElementById('dashboard'));
+dObs.observe(document.getElementById('hub'));
 
 /* scrollspy — highlight the section you're currently in */
 (function(){
