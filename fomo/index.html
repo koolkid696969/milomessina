@@ -317,9 +317,6 @@ body::after{display:none}
 .job b{font-family:var(--display);font-size:1.05rem;font-weight:500;letter-spacing:-.03em;text-transform:lowercase}
 .job span{font-size:.9rem;color:var(--muted)}
 
-.rp-fit.nofit{border-color:rgba(255,91,46,.32);background:rgba(255,91,46,.05)}
-.rp-fit.nofit h5{color:var(--orange)}
-.rp-fit.nofit li::before{content:'\2715';color:var(--orange)}
 
 .report{display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;
   margin-top:clamp(20px,3vw,30px);padding:26px 28px;border:1px solid rgba(81,106,246,.4);
@@ -459,7 +456,7 @@ body::after{display:none}
     <div class="shead rv">
       <span class="eyebrow">01 &mdash; who fits each role</span>
       <h2>read all five.<br>apply to one.</h2>
-      <p>You apply to one seat, not a general pool. Each one says who tends to be good at it &mdash; and who isn't.</p>
+      <p>You apply to one seat, not a general pool. Each one says who tends to be good at it.</p>
     </div>
 
     <div class="roles rv" id="roles">
@@ -506,10 +503,6 @@ body::after{display:none}
             <li>You answer texts</li>
           </ul>
         </div>
-        <div class="rp-fit nofit">
-          <h5>not a fit</h5>
-          <ul><li>Someone who wants to do all the work themselves.</li></ul>
-        </div>
       </div>
     </div>
     <div class="rpanel rv" id="r-growth" style="--rc-txt:#19D97C">
@@ -527,10 +520,6 @@ body::after{display:none}
             <li>You treat a number as a personal challenge</li>
             <li>You've sold something before &mdash; tickets, merch, bids, anything</li>
           </ul>
-        </div>
-        <div class="rp-fit nofit">
-          <h5>not a fit</h5>
-          <ul><li>Someone who hates being told no.</li></ul>
         </div>
       </div>
     </div>
@@ -550,10 +539,6 @@ body::after{display:none}
             <li>You're comfortable on the phone and in meetings, not just DMs</li>
           </ul>
         </div>
-        <div class="rp-fit nofit">
-          <h5>not a fit</h5>
-          <ul><li>Someone who won't follow up twice.</li></ul>
-        </div>
       </div>
     </div>
     <div class="rpanel on rv" id="r-content" style="--rc-txt:#A3B0FF">
@@ -572,10 +557,6 @@ body::after{display:none}
             <li>You're funny &mdash; that matters more here than being polished</li>
           </ul>
         </div>
-        <div class="rp-fit nofit">
-          <h5>not a fit</h5>
-          <ul><li>A perfectionist who takes a week per video.</li></ul>
-        </div>
       </div>
     </div>
     <div class="rpanel rv" id="r-culture" style="--rc-txt:#6FD7FF">
@@ -593,10 +574,6 @@ body::after{display:none}
             <li>You get invited to things</li>
             <li>You could build a guest list from memory right now</li>
           </ul>
-        </div>
-        <div class="rp-fit nofit">
-          <h5>not a fit</h5>
-          <ul><li>Someone with a big following but no real connections at school.</li></ul>
         </div>
       </div>
     </div>
@@ -625,7 +602,7 @@ body::after{display:none}
           <div class="li-row">
             <span class="li-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>
             <div class="li-body">
-              <h5 id="liTitle">Campus Content Lead &mdash; Fomo</h5>
+              <h5 id="liTitle">Campus Content Lead</h5>
               <p>fomo &middot; Contract</p>
               <small>Sep 2026 &ndash; Present &middot; 2 mos</small>
               <small id="liSkills">Skills: Content Strategy &middot; Social Media &middot; Video Production</small>
@@ -805,11 +782,11 @@ const MAP=[
 ];
 const SEATKEYS=['pres','growth','partner','content','culture'];
 const ROLES={
-  pres:{li:'Campus President \u2014 Fomo',skills:'Skills: Team Leadership \u00b7 Operations \u00b7 Growth Strategy'},
-  growth:{li:'Campus Growth Lead \u2014 Fomo',skills:'Skills: Growth Marketing \u00b7 User Acquisition \u00b7 Funnel Analytics'},
-  partner:{li:'Campus Partnerships Lead \u2014 Fomo',skills:'Skills: Business Development \u00b7 Partnerships \u00b7 Negotiation'},
-  content:{li:'Campus Content Lead \u2014 Fomo',skills:'Skills: Content Strategy \u00b7 Social Media \u00b7 Video Production'},
-  culture:{li:'Campus Culture Lead \u2014 Fomo',skills:'Skills: Community Management \u00b7 Event Planning \u00b7 Brand'}
+  pres:{li:'Campus President',skills:'Skills: Team Leadership \u00b7 Operations \u00b7 Growth Strategy'},
+  growth:{li:'Campus Growth Lead',skills:'Skills: Growth Marketing \u00b7 User Acquisition \u00b7 Funnel Analytics'},
+  partner:{li:'Campus Partnerships Lead',skills:'Skills: Business Development \u00b7 Partnerships \u00b7 Negotiation'},
+  content:{li:'Campus Content Lead',skills:'Skills: Content Strategy \u00b7 Social Media \u00b7 Video Production'},
+  culture:{li:'Campus Culture Lead',skills:'Skills: Community Management \u00b7 Event Planning \u00b7 Brand'}
 };
 
 document.getElementById('mapBody').innerHTML=MAP.map((row,i)=>
