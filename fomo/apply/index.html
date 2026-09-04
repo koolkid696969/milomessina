@@ -113,7 +113,7 @@
               <option>2–4 hours</option><option>4–6 hours</option>
               <option>6–8 hours</option><option>8+ hours</option>
             </select>
-            <span class="hint">Be honest here. Under-promising and delivering is how campuses finish the semester.</span>
+            <span class="hint">Be honest here. Under-promising and delivering is how campuses finish the sixty days.</span>
             <span class="err"></span></label>
         </fieldset>
       </div>
@@ -145,16 +145,15 @@
       </div>
       <div class="card aside">
         <h4>what you'd get</h4>
-        <div class="krow"><span>Per-view rate on everything you post</span><b>yes</b></div>
-        <div class="krow"><span>Share of the campus hunt</span><b>$5,000 pot</b></div>
+        <div class="krow"><span>Budget for events, dinners and prizes</span><b>fomo funds it</b></div>
         <div class="krow"><span>Gear — mic, tripod, banner, merch</span><b>free</b></div>
+        <div class="krow"><span>Numbers you own for your résumé</span><b>yes</b></div>
         <div class="krow"><span>Cost to you</span><b>$0, ever</b></div>
-        <div class="krow"><span>Commitment</span><b>one semester</b></div>
+        <div class="krow"><span>Programme length</span><b>60 days</b></div>
       </div>
       <div class="card aside">
-        <h4>not ready to join a team?</h4>
-        <p style="font-size:.87rem;line-height:1.55;color:#B4ADD4">You don't have to apply for anything to get paid for views. Post a video, tag @fomo, submit the link.</p>
-        <a class="btn btn-g btn-sm" href="/fomo/submit" style="margin-top:16px">submit a video instead →</a>
+        <h4>one seat, not five</h4>
+        <p style="font-size:.87rem;line-height:1.55;color:#B4ADD4">Apply to the role you actually want. If it's taken at your school we'll tell you which of the other four are open rather than reassigning you.</p>
       </div>
     </aside>
   </div>
@@ -163,8 +162,6 @@
     <div class="tick">✓</div>
     <h2>application in.</h2>
     <p class="msg">We read every one and reply either way, usually inside a week. If your campus already has the seat filled we'll tell you what else is open rather than leaving you hanging.</p>
-    <p style="font-family:var(--mono);font-size:.7rem;color:var(--muted-2)">
-      In the meantime you can start earning on views without a seat — <a href="/fomo/submit" style="color:var(--violet-hi);text-decoration:underline">submit a video</a>.</p>
     <div class="dump" style="display:none"></div>
   </div>
 </div>
@@ -191,20 +188,20 @@
 const SEATS={
  pres:{name:'campus president',ey:'apply · campus president',
    h:'apply to run<br><span class="grad">your campus.</span>',
-   sub:"One president per school. You own the number, run the other four seats, and you're the one on the call with our campus team when it's going well and when it isn't.",
+   sub:"One president per school. You run the other four seats and you're the main line to fomo HQ — the Sunday meeting, the Sunday report, and the call when it's going well and when it isn't.",
    hint:'One seat per campus. If yours is taken we\'ll tell you which of the other four are open.',
    q:'Name something you\'ve run before — a club, a team, a house, a group project — and tell us what went wrong with it.',
    qh:'We care far more about what went wrong and what you did about it than about the thing succeeding.',
    ph:'What it was, what broke, what you did.',
-   own:['A 20-minute weekly standup with your four leads','The campus number — signups, reach, events','Filling seats when someone graduates or steps back','One short written recap to FOMO every week','Representing your school on the national board']},
+   own:['One group chat, and everything goes in it','A 20-minute Sunday meeting you run','The Sunday report to HQ, sent without being chased','The month one review and the 60-day report','Filling a seat when someone steps back']},
  growth:{name:'growth',ey:'apply · growth',
    h:'apply to own<br><span class="grad">the number.</span>',
-   sub:'Content brings people to the edge; you get them over it. You own the referral link, the campaign codes and the honest read on what actually converts.',
+   sub:'Content brings people to the edge; you get them over it. Downloads are easy — the number on your seat is people still using the app after they signed up.',
    hint:'One seat per campus. Usually the last one filled, which makes it the easiest to get.',
-   q:'A video gets 50,000 views and 2 signups. What do you check first, and what do you change?',
+   q:'A video gets 50,000 views and 2 downloads. What do you check first, and what do you change?',
    qh:"There's no single right answer. We want to see how you think about a funnel.",
    ph:'Walk us through it the way you\'d actually work it out.',
-   own:['The campus referral link and every code under it','Walking new people through their first trade','One conversion experiment a week','The Monday readout: what drove signups, what didn\'t','Killing formats that don\'t convert, even popular ones']},
+   own:['Knowing the app cold before you sell it to anyone','The campus group-chat blitz','Walking new people through their first trade','The week five referral competition','Converting the traffic the dinners and events bring in']},
  partner:{name:'partnerships',ey:'apply · partnerships',
    h:'apply to close<br><span class="grad">the rooms.</span>',
    sub:"The finance club has 200 members. The frat has a listserv. The café by the library has a window. None of it is yours yet, and getting it is a different skill from making videos.",
@@ -215,20 +212,20 @@ const SEATS={
    own:['Club and org partnerships','Greek chapter deals and house-wide pushes','Local business co-promos','Collabs with the biggest creators on your campus','Sponsors and venues for the events Culture runs']},
  content:{name:'content',ey:'apply · content',
    h:'apply to run<br><span class="grad">the feed.</span>',
-   sub:"Short, fast, local. You're not teaching people what a candlestick is — you're covering money the way a beat reporter covers your football team. Paid per view on top of everything else.",
+   sub:"The school's fomo IG and TikTok are yours, mic in hand. Short, fast, local — you already know what's going viral at your school. Funny beats polished, and posted beats perfect.",
    hint:'The most applied-for seat, and the only one that can take two people at a campus.',
    q:'Give us one hook for a video about money at your school. Just the first line.',
    qh:"The opening line is most of the job, so this is the closest thing we have to a work sample. Numbers, stakes and named places tend to land.",
    ph:'One line. The thing you\'d say in the first three seconds.',
-   own:['5–7 posts a week on the campus channel, in your voice','The hook — the first line does most of the job','One batch shoot a week, cut into five outputs','45 minutes in the comments after every post','Killing your worst format weekly, doubling the best']},
+   own:['The campus accounts, live in week one','Street interviews once the mic lands','Three formats tested by week three, then repeat the winner','Covering the activation, the dinners and the big event','Killing your worst format weekly, doubling the best']},
  culture:{name:'culture',ey:'apply · culture',
    h:'apply to own<br><span class="grad">the room.</span>',
-   sub:'The feed pulls strangers in; you make them stay. The campus group chat, the daily ritual, and every event that happens in person.',
-   hint:'One seat per campus. The one that decides whether people stick around.',
-   q:"What's a group chat you're already in that people actually use — and why does that one work when others die?",
-   qh:'This is the whole job, so answer it about a real chat rather than in the abstract.',
-   ph:'Which chat, and what keeps it alive.',
-   own:['The campus group chat','A daily ritual post people come back for','Pitching events to us, then running them','Keeping it a room people want to be in','Merch drops, watch parties, dorm-vs-dorm tournaments']}
+   sub:'You make the fomo influencer dinners happen — the list, the DMs, the venue and the night itself. fomo pays for it; you decide who\'s at the table.',
+   hint:'One seat per campus. The one that decides whether the right people show up.',
+   q:'Name three creators, DJs or promoters at your school you could get to a dinner — and how you know them.',
+   qh:'Name them specifically. "Some campus influencers" is weaker than three names and how you\'d text each one.',
+   ph:'Three names, and your way in to each.',
+   own:['A list of thirty campus creators in week one','The first ten DMs by week two','Locking relationships and scouting the venue','Dinner one in week five, dinner two by week eight','The follow-up after, which is where it pays off']}
 };
 
 const q=new URLSearchParams(location.search);

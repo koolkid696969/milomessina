@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>fomo campus — five roles, one campus team</title>
-<meta name="description" content="FOMO Campus runs a five-person team at every school: Campus President, Growth, Partnerships, Content and Culture. Pick the seat you want, see what it pays, and how views turn into money.">
+<title>fomo campus — five roles, sixty days</title>
+<meta name="description" content="fomo Campus puts a five-person startup team inside every school: Campus President, Growth, Partnerships, Content and Culture. Read the five roles, the eight-week goal map, and apply to one seat.">
 <meta name="theme-color" content="#08070F">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/fomo/assets/fonts.css">
@@ -57,7 +57,6 @@ section{padding-block:clamp(80px,11vw,150px);position:relative;scroll-margin-top
 .btn-p:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(81,106,246,.55),0 26px 70px -18px rgba(81,106,246,.85)}
 .btn-g{background:transparent;border:1px solid var(--line-2);color:var(--text)}
 .btn-g:hover{background:var(--surface-2);border-color:var(--violet);transform:translateY(-2px)}
-.btn-sm{padding:9px 16px;font-size:.8rem}
 
 header{position:sticky;top:0;z-index:100;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
 header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150%);border-bottom-color:var(--line)}
@@ -78,67 +77,28 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 @media(max-width:1100px){.nav-links{display:none}.burger{display:grid}}
 
 .hero{padding-top:clamp(50px,8vw,90px);padding-bottom:0;overflow:hidden}
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(30px,5vw,70px);align-items:center}
-@media(max-width:1000px){.hero-grid{grid-template-columns:1fr}}
+.hero-grid{max-width:880px;margin-inline:auto;text-align:center}
 .h1{font-family:var(--display);font-weight:700;text-transform:lowercase;letter-spacing:-.045em;line-height:.88;
   font-size:clamp(2.4rem,6.1vw,4.9rem);margin:22px 0 0}
 .h1 .out{-webkit-text-stroke:1.4px var(--violet-hi);color:transparent;paint-order:stroke}
 .h1 .grad{background:linear-gradient(100deg,#fff 10%,#A3B0FF 45%,#19D97C 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p.lede{font-size:clamp(1rem,1.3vw,1.16rem);max-width:58ch;margin-top:26px;color:#A9A2CC}
-.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
-.hero-stats{display:flex;flex-wrap:wrap;gap:clamp(20px,4vw,52px);margin-top:46px;padding-top:26px;border-top:1px solid var(--line)}
-.stat b{display:block;font-family:var(--display);font-size:clamp(1.6rem,3vw,2.3rem);font-weight:700;letter-spacing:-.04em}
-.stat small{font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2)}
-.card-glass{background:linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid var(--line);
-  border-radius:var(--r-l);backdrop-filter:blur(14px);box-shadow:0 40px 90px -40px rgba(0,0,0,.9)}
+.hero p.lede{font-size:clamp(1rem,1.3vw,1.16rem);max-width:56ch;margin:26px auto 0;color:#A9A2CC}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;justify-content:center}
+
 .glance{padding:26px;animation:float 7s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .glance h4{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);font-weight:500;margin-bottom:18px}
-.g-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:13px 0;border-top:1px solid var(--line)}
+
 .glance h4+.g-row{border-top:none;padding-top:0}
-.g-brand{display:flex;align-items:center;gap:9px;margin-bottom:12px}
-.g-mark{width:24px;height:24px;display:grid;place-items:center;color:var(--text);flex:none}
-.g-mark svg{width:100%;height:100%;display:block}
-.g-brand b{font-family:var(--display);font-size:1.1rem;font-weight:600;letter-spacing:-.03em;color:var(--text)}
-.g-badge{margin-left:auto;font-family:var(--mono);font-size:.58rem;font-weight:600;letter-spacing:.11em;
-  text-transform:uppercase;white-space:nowrap;padding:5px 10px;border-radius:999px;
-  border:1px solid var(--line-2);background:rgba(255,255,255,.05)}
-.g-badge i{font-style:normal;
-  background-image:linear-gradient(95deg,var(--violet-hi),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
-.g-lead{font-size:.8rem;line-height:1.5;color:var(--muted);text-wrap:balance;
-  padding-bottom:20px;margin-bottom:20px;border-bottom:1px solid var(--line)}
-.g-row span{font-size:.86rem;color:var(--muted)}
-.g-row b{font-family:var(--mono);font-size:.8rem;color:var(--text);text-align:right;white-space:nowrap}
-.g-row b.pos{color:var(--green)}
+
 @media(max-width:1000px){.glance{animation:none}}
 
-.ticker{border-block:1px solid var(--line);background:rgba(255,255,255,.015);overflow:hidden;margin-top:clamp(56px,8vw,96px);padding:14px 0}
-.ticker-track{display:flex;gap:44px;width:max-content;animation:slide 42s linear infinite;font-family:var(--mono);font-size:.76rem;letter-spacing:.06em;color:var(--muted)}
-.ticker:hover .ticker-track{animation-play-state:paused}
 @keyframes slide{to{transform:translateX(-50%)}}
-.ticker em{font-style:normal;color:var(--green)}
 
 .shead{max-width:760px;margin-bottom:clamp(40px,5vw,64px)}
 .shead h2{margin:16px 0 18px}
 .shead p{font-size:1.04rem}
-.split-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;flex-wrap:wrap}
 
-.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:clamp(16px,3vw,34px);align-items:stretch}
-@media(max-width:860px){.vs{grid-template-columns:1fr}}
-.vs-col{padding:clamp(24px,3vw,36px);border-radius:var(--r-l);border:1px solid var(--line)}
-.vs-old{background:rgba(255,255,255,.015)}
-.vs-old h3{color:var(--muted-2)}
-.vs-new{background:linear-gradient(165deg,rgba(81,106,246,.16),rgba(81,106,246,.02));border-color:rgba(81,106,246,.38);box-shadow:0 40px 100px -50px var(--violet)}
-.vs-col ul{list-style:none;margin-top:22px;display:grid;gap:14px}
-.vs-col li{display:flex;gap:12px;font-size:.95rem;line-height:1.45;color:#BDB6DC}
-.vs-old li{color:var(--muted-2)}
-.vs-col li::before{content:'—';font-family:var(--mono);color:var(--muted-2)}
-.vs-new li::before{content:'▸';color:var(--green)}
-.vs-mid{display:grid;place-items:center;font-family:var(--display);font-size:1.1rem;color:var(--muted-2);letter-spacing:-.03em}
-
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
-.tab{padding:10px 18px;border-radius:100px;border:1px solid var(--line);font-size:.86rem;color:var(--muted);transition:.25s}
-.tab:hover{color:var(--text);border-color:var(--line-2)}
 .tab.on{background:var(--text);color:var(--ink);border-color:var(--text);font-weight:600}
 .panel{display:none;animation:fade .4s ease;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,44px);align-items:center}
 .panel.on{display:grid}
@@ -146,58 +106,19 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 @media(max-width:900px){.panel{grid-template-columns:1fr}}
 .panel h3{margin-bottom:14px}
 .panel .kv{display:grid;gap:12px;margin-top:26px}
-.kv-row{display:flex;justify-content:space-between;gap:16px;padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:.88rem}
-.kv-row span:last-child{font-family:var(--mono);font-size:.78rem;color:var(--green);text-align:right}
+
 .phone{border-radius:30px;border:1px solid var(--line-2);background:linear-gradient(170deg,#141327,#0F0E1C);padding:16px;
   box-shadow:0 50px 110px -40px #000;max-width:340px;justify-self:center;width:100%}
-.phone-bar{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;color:var(--muted-2);margin-bottom:14px}
+
 .post{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;background:var(--surface)}
-.post-top{display:flex;align-items:center;gap:9px;margin-bottom:10px}
-.av{width:26px;height:26px;border-radius:50%;background:linear-gradient(140deg,var(--violet),var(--pink));flex:none}
-.post-top b{font-size:.8rem}
-.post-top small{font-family:var(--mono);font-size:.6rem;color:var(--muted-2)}
+
 .post p{font-size:.83rem;color:#CFC9EA;line-height:1.5}
-.post-metrics{display:flex;gap:14px;margin-top:11px;font-family:var(--mono);font-size:.63rem;color:var(--muted-2)}
 
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px}
-.chip{padding:8px 15px;border-radius:100px;border:1px solid var(--line);font-family:var(--mono);font-size:.7rem;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--muted);transition:.22s}
-.chip:hover{border-color:var(--line-2);color:var(--text)}
 .chip.on{background:rgba(81,106,246,.18);border-color:var(--violet);color:var(--violet-hi)}
-.idea-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:14px}
-.idea{border:1px solid var(--line);border-radius:var(--r-m);padding:22px;background:var(--surface);position:relative;overflow:hidden;
-  transition:transform .3s cubic-bezier(.2,.8,.3,1),border-color .3s}
-.idea::before{content:'';position:absolute;inset:0;background:radial-gradient(400px circle at var(--mx,50%) var(--my,50%),rgba(81,106,246,.16),transparent 65%);opacity:0;transition:opacity .3s}
-.idea:hover{transform:translateY(-5px);border-color:var(--line-2)}
-.idea:hover::before{opacity:1}
-.idea-fmt{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--violet-hi);margin-bottom:12px;display:block}
-.idea h4{font-family:var(--display);font-size:1.22rem;letter-spacing:-.03em;text-transform:lowercase;margin-bottom:9px;position:relative}
-.idea p{font-size:.87rem;line-height:1.5;position:relative}
-.idea-hook{font-family:var(--mono);font-size:.78rem!important;line-height:1.45!important;color:var(--violet-hi);
-  border-left:2px solid rgba(81,106,246,.45);padding-left:11px;margin-bottom:11px}
-.idea-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;padding-top:14px;
-  border-top:1px solid var(--line);font-family:var(--mono);font-size:.65rem;color:var(--muted-2);position:relative}
-.idea-foot em{font-style:normal;color:var(--green);text-align:right}
-.hidden{display:none!important}
 
-.pb{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(24px,4vw,60px);align-items:start}
-@media(max-width:900px){.pb{grid-template-columns:1fr}}
-.acc{border-top:1px solid var(--line)}
-.acc-item{border-bottom:1px solid var(--line)}
-.acc-btn{width:100%;display:flex;align-items:center;gap:18px;padding:22px 0;text-align:left;transition:.25s}
-.acc-btn:hover{padding-left:6px}
-.acc-n{font-family:var(--mono);font-size:.7rem;color:var(--muted-2);width:26px;flex:none}
-.acc-t{font-family:var(--display);font-size:clamp(1.1rem,1.8vw,1.45rem);font-weight:700;letter-spacing:-.03em;text-transform:lowercase;flex:1;line-height:1.15}
-.acc-i{width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;font-size:1rem;color:var(--muted);transition:.3s;flex:none}
 .acc-item.open .acc-i{transform:rotate(45deg);background:var(--violet);border-color:var(--violet);color:#fff}
 .acc-item.open .acc-n{color:var(--violet-hi)}
-.acc-body{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.2,.8,.3,1)}
-.acc-body div{padding:0 0 24px 44px}
-.acc-body p{font-size:.92rem}
-.acc-body ul{list-style:none;margin-top:14px;display:grid;gap:9px}
-.acc-body li{font-size:.87rem;color:#B4ADD4;display:flex;gap:10px}
-.acc-body li::before{content:'✦';color:var(--violet);font-size:.7rem;margin-top:.25em}
-@media(max-width:600px){.acc-body div{padding-left:0}}
+
 .week{border:1px solid var(--line);border-radius:var(--r-l);padding:clamp(20px,3vw,30px);background:linear-gradient(170deg,rgba(255,255,255,.05),transparent)}
 .week h4{font-family:var(--display);font-size:1.3rem;text-transform:lowercase;letter-spacing:-.03em;margin-bottom:4px}
 .week>p{font-size:.85rem;margin-bottom:22px}
@@ -205,179 +126,21 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 .day b{font-family:var(--mono);font-size:.68rem;color:var(--violet-hi);letter-spacing:.1em;text-transform:uppercase;padding-top:2px}
 .day p{font-size:.86rem;color:#B4ADD4}
 
-.ladder-top{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:30px}
-@media(max-width:700px){.ladder-top{grid-template-columns:1fr}}
-.lt-item{border:1px solid var(--line);border-radius:var(--r-m);padding:18px 20px;background:var(--surface)}
-.lt-item small{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);display:block;margin-bottom:7px}
-.lt-item b{font-family:var(--display);font-size:1.5rem;font-weight:700;letter-spacing:-.04em;text-transform:lowercase}
-.lt-item b.pos{color:var(--green)}
-.ladder{position:relative;display:grid;gap:10px}
-.ladder::before{content:'';position:absolute;left:23px;top:20px;bottom:30px;width:2px;
-  background:linear-gradient(180deg,var(--violet) 0%,rgba(81,106,246,.5) 22%,rgba(255,255,255,.09) 60%);z-index:0}
-.rung{display:grid;grid-template-columns:48px 1fr;gap:18px;align-items:start;position:relative}
-.node{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-family:var(--mono);font-size:.76rem;
-  background:var(--ink-2);border:1px solid var(--line-2);color:var(--muted-2);position:relative;z-index:1;transition:.3s}
 .rung.first .node{background:linear-gradient(150deg,#6C82F8,#2E3EB8);border-color:var(--violet);color:#fff;box-shadow:0 0 26px -4px var(--violet)}
-.rung.gold .node{border-color:rgba(255,91,46,.45);color:#FFA46B}
-.rung:hover .node{border-color:var(--line-2);transform:scale(1.05)}
+
 .bounty.locked{opacity:.66}
 .bounty.locked:hover{opacity:1}
-.b-lock{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--muted-2)}
+
 .b-lock.open{color:var(--green)}
-.grp{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:30px 0 4px;padding-left:66px}
-.grp:first-child{margin-top:0}
-.grp h4{font-family:var(--display);font-size:1.16rem;text-transform:lowercase;letter-spacing:-.03em}
-.grp span{font-family:var(--mono);font-size:.62rem;color:var(--muted-2);letter-spacing:.14em;text-transform:uppercase}
-.grp .tot{margin-left:auto;font-family:var(--mono);font-size:.68rem;color:var(--green)}
-@media(max-width:620px){
-  .ladder::before{display:none}
-  .grp{padding-left:0}
-  .rung{grid-template-columns:38px 1fr;gap:12px}
-  .node{width:38px;height:38px;border-radius:12px;font-size:.66rem}
-}
-.bounty{border:1px solid var(--line);border-radius:var(--r-m);padding:24px;background:var(--surface);display:flex;flex-direction:column;gap:13px;
-  transition:transform .3s cubic-bezier(.2,.8,.3,1),border-color .3s}
-.bounty:hover{transform:translateY(-5px);border-color:var(--line-2)}
-.b-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
-.b-pay{font-family:var(--display);font-size:1.9rem;font-weight:700;letter-spacing:-.05em;color:var(--green);line-height:1;white-space:nowrap}
-.b-pay.reward{font-size:1rem;letter-spacing:-.01em;color:var(--violet-hi);white-space:normal;text-align:right;max-width:120px}
-.bounty h4{font-family:var(--display);font-size:1.3rem;letter-spacing:-.035em;text-transform:lowercase;line-height:1.05}
-.bounty p{font-size:.87rem;line-height:1.5}
-.b-meta{display:flex;gap:6px;flex-wrap:wrap;font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase}
-.b-meta span{padding:4px 9px;border:1px solid var(--line);border-radius:6px;color:var(--muted-2)}
-.b-meta .rare{border-color:rgba(255,91,46,.5);color:var(--orange)}
-.b-meta .easy{border-color:rgba(25,217,124,.4);color:var(--green)}
-.b-proof{font-family:var(--mono);font-size:.66rem;color:var(--muted-2);padding-top:12px;border-top:1px solid var(--line);line-height:1.5}
-.b-proof b{color:var(--violet-hi);font-weight:500}
-.b-btn{margin-top:auto;padding:12px;border-radius:10px;border:1px solid var(--line-2);font-size:.85rem;font-weight:600;transition:.25s;text-align:center}
-.b-btn:hover{background:var(--text);color:var(--ink);border-color:var(--text)}
-.bounty.gold{background:linear-gradient(170deg,rgba(255,91,46,.14),rgba(81,106,246,.05));border-color:rgba(255,91,46,.42)}
-.bounty.gold .b-pay{background:linear-gradient(95deg,#FFC46B,#FF4D8F);-webkit-background-clip:text;background-clip:text;color:transparent}
-.mech{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:34px}
-@media(max-width:900px){.mech{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.mech{grid-template-columns:1fr}}
-.mech-item{display:flex;gap:13px;padding:20px;border:1px solid var(--line);border-radius:var(--r-m);background:rgba(255,255,255,.018)}
-.mech-ic{width:32px;height:32px;flex:none;border-radius:9px;display:grid;place-items:center;background:rgba(81,106,246,.16);border:1px solid rgba(81,106,246,.3);font-size:.9rem}
-.mech-item b{display:block;font-size:.9rem;margin-bottom:5px}
-.mech-item p{font-size:.79rem;line-height:1.45}
 
-.modal{position:fixed;inset:0;z-index:300;display:none;place-items:center;padding:20px;background:rgba(4,3,12,.82);backdrop-filter:blur(8px)}
 .modal.on{display:grid;animation:fade .3s ease}
-.modal-card{width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:clamp(24px,4vw,36px);border-radius:var(--r-l);
-  border:1px solid var(--line-2);background:linear-gradient(170deg,#141327,#0F0E1C);box-shadow:0 60px 140px -40px #000;position:relative}
-.modal-x{position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);color:var(--muted);transition:.25s}
-.modal-x:hover{background:var(--surface-2);color:var(--text)}
-.modal-card h3{margin:14px 0 12px}
-.m-pay{display:flex;align-items:baseline;gap:12px;margin-bottom:16px}
-.m-pay span{font-family:var(--display);font-size:2.4rem;font-weight:700;letter-spacing:-.05em;color:var(--green)}
-.m-pay small{font-family:var(--mono);font-size:.68rem;color:var(--muted-2)}
-.modal-card>p{font-size:.9rem}
-.proof-box{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--surface);margin:20px 0}
-.proof-box small{font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;color:var(--violet-hi)}
-.proof-box ul{list-style:none;margin-top:11px;display:grid;gap:8px}
-.proof-box li{font-size:.83rem;color:#B4ADD4;display:flex;gap:9px;line-height:1.4}
-.proof-box li::before{content:'▸';color:var(--violet);font-size:.7rem;margin-top:.2em}
 
-.tier-rail{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-@media(max-width:1000px){.tier-rail{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.tier-rail{grid-template-columns:1fr}}
-.tier{border:1px solid var(--line);border-radius:var(--r-m);padding:22px;background:var(--surface);transition:.3s}
-.tier:hover{transform:translateY(-6px);border-color:var(--line-2)}
-.tier .lvl{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;color:var(--muted-2);text-transform:uppercase}
-.tier h4{font-family:var(--display);font-size:1.5rem;letter-spacing:-.035em;text-transform:lowercase;margin:8px 0 6px}
-.tier .req{font-family:var(--mono);font-size:.68rem;color:var(--violet-hi);margin-bottom:16px}
-.tier ul{list-style:none;display:grid;gap:9px}
-.tier li{font-size:.82rem;color:#B0A9D0;display:flex;gap:8px;line-height:1.4}
-.tier li::before{content:'+';color:var(--green);font-family:var(--mono)}
-.tier.legend{background:linear-gradient(170deg,rgba(255,91,46,.16),rgba(81,106,246,.08));border-color:rgba(255,91,46,.42)}
-.tier.legend h4{background:linear-gradient(95deg,#FFA46B,#FF4D8F);-webkit-background-clip:text;background-clip:text;color:transparent}
-.note-strip{display:flex;gap:14px;align-items:flex-start;margin-top:22px;padding:20px 22px;border:1px solid rgba(25,217,124,.3);
-  background:rgba(25,217,124,.06);border-radius:var(--r-m)}
-.note-strip b{color:var(--green);font-size:.94rem;display:block}
-.note-strip p{font-size:.88rem;margin-top:6px}
-
-.lb{border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;background:rgba(255,255,255,.018)}
-.lb-head,.lb-row{display:grid;grid-template-columns:60px 1.6fr .9fr .9fr 100px;gap:12px;align-items:center}
-.lb-head{padding:14px 22px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2)}
-.lb-row{padding:16px 22px;border-bottom:1px solid var(--line);position:relative;transition:background .25s}
-.lb-row:last-child{border-bottom:none}
-.lb-row:hover{background:var(--surface-2)}
 .lb-row .bar{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(81,106,246,.20),transparent);width:0;transition:width 1.3s cubic-bezier(.2,.8,.3,1)}
-.lb-row>*{position:relative}
-.lb-rank{font-family:var(--display);font-size:1.5rem;font-weight:700;letter-spacing:-.05em;color:var(--muted-2)}
-.lb-row:nth-child(1) .lb-rank{color:#FFC46B}
-.lb-row:nth-child(2) .lb-rank{color:#D8D8E8}
-.lb-row:nth-child(3) .lb-rank{color:#D9925B}
-.lb-school b{display:block;font-size:.98rem;font-weight:600}
-.lb-school small{font-family:var(--mono);font-size:.65rem;color:var(--muted-2)}
-.lb-num{font-family:var(--mono);font-size:.86rem}
-.lb-pts{font-family:var(--mono);font-size:.95rem;color:var(--green);text-align:right}
-@media(max-width:760px){.lb-head{display:none}.lb-row{grid-template-columns:44px 1fr auto;gap:10px}.lb-num{display:none}}
 
-.dash{border:1px solid var(--line-2);border-radius:var(--r-xl);overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.012));box-shadow:0 60px 140px -60px #000}
-.dash-bar{display:flex;align-items:center;gap:12px;padding:16px 24px;border-bottom:1px solid var(--line);background:rgba(6,5,16,.5)}
-.dots{display:flex;gap:6px}
-.dots i{width:9px;height:9px;border-radius:50%;background:var(--line-2);display:block}
-.dash-bar span{font-family:var(--mono);font-size:.68rem;color:var(--muted-2);margin-left:8px}
 .dash-bar .live{margin-left:auto;display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.63rem;color:var(--green)}
-.dash-body{padding:clamp(20px,3vw,34px);display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(18px,2.6vw,30px)}
-@media(max-width:940px){.dash-body{grid-template-columns:1fr}}
-.d-hi{display:flex;align-items:center;gap:16px;margin-bottom:24px}
-.d-av{width:52px;height:52px;border-radius:16px;background:linear-gradient(140deg,var(--violet),var(--pink));display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1.2rem}
-.d-hi h3{font-size:1.5rem;margin-bottom:2px}
-.d-hi small{font-family:var(--mono);font-size:.68rem;color:var(--muted-2)}
-.d-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
-@media(max-width:660px){.d-stats{grid-template-columns:repeat(2,1fr)}}
-.d-stat{border:1px solid var(--line);border-radius:14px;padding:15px;background:var(--surface)}
-.d-stat b{font-family:var(--display);font-size:1.5rem;font-weight:700;letter-spacing:-.04em;display:block}
-.d-stat small{font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted-2)}
-.d-stat i{font-style:normal;font-family:var(--mono);font-size:.65rem;color:var(--green)}
-.ref{border:1px solid rgba(81,106,246,.4);background:linear-gradient(120deg,rgba(81,106,246,.16),transparent);border-radius:16px;padding:18px;margin-bottom:20px}
-.ref small{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--violet-hi)}
-.ref-row{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
-.ref-code{flex:1;min-width:200px;font-family:var(--mono);font-size:.9rem;padding:11px 14px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.copy{padding:11px 18px;border-radius:10px;background:var(--text);color:var(--ink);font-weight:600;font-size:.83rem;transition:.25s}
-.copy.ok{background:var(--green)}
-.queue{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--surface)}
-.queue h4{font-family:var(--display);font-size:1.15rem;text-transform:lowercase;letter-spacing:-.03em;margin-bottom:3px}
-.queue>small{font-family:var(--mono);font-size:.62rem;color:var(--muted-2)}
-.q-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
-.q-item:last-of-type{border-bottom:none}
-.q-box{width:19px;height:19px;border-radius:6px;border:1px solid var(--line-2);flex:none;display:grid;place-items:center;font-size:.65rem;color:transparent;transition:.22s}
-.q-item.checked .q-box{background:var(--green);border-color:var(--green);color:var(--ink)}
-.q-item.checked .q-txt{color:var(--muted-2);text-decoration:line-through}
-.q-txt{font-size:.87rem;flex:1}
-.q-time{font-family:var(--mono);font-size:.66rem;color:var(--muted-2)}
-.prog{height:6px;border-radius:100px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:16px}
-.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--violet),var(--green));width:0;transition:width .6s cubic-bezier(.2,.8,.3,1)}
-.ring-card{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--surface);text-align:center;margin-bottom:14px}
-.ring{width:150px;height:150px;margin:0 auto 14px;position:relative}
-.ring svg{transform:rotate(-90deg)}
-.ring-mid{position:absolute;inset:0;display:grid;place-content:center;gap:2px}
-.ring-mid b{font-family:var(--display);font-size:2rem;font-weight:700;letter-spacing:-.05em;line-height:1}
-.ring-mid small{font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
-.ring-card p{font-size:.83rem}
-.ring-card p em{font-style:normal;color:var(--violet-hi)}
-.payout{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--surface)}
-.pay-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:.86rem}
-.pay-row:last-child{border-bottom:none}
-.pay-row span:last-child{font-family:var(--mono);color:var(--green)}
-.pay-total{font-weight:600}
-.pay-total span:last-child{font-size:1.05rem}
-
-.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-.res{display:flex;gap:14px;align-items:flex-start;padding:20px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);transition:.28s}
-.res:hover{border-color:var(--violet);background:rgba(81,106,246,.07);transform:translateY(-3px)}
-.res-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(81,106,246,.16);border:1px solid rgba(81,106,246,.3);flex:none;font-size:1rem}
-.res b{display:block;font-size:.93rem;margin-bottom:3px}
-.res small{font-family:var(--mono);font-size:.63rem;color:var(--muted-2)}
-.res .dl{margin-left:auto;font-family:var(--mono);font-size:.7rem;color:var(--muted-2);transition:.25s}
-.res:hover .dl{color:var(--violet-hi)}
-
 
 /* CAREER */
-.career{display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(24px,4vw,54px);align-items:center}
+.career{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(24px,4vw,48px);align-items:start}
 @media(max-width:900px){.career{grid-template-columns:1fr}}
 .li-card{background:#fff;border-radius:14px;padding:26px 24px;box-shadow:0 40px 90px -35px rgba(0,0,0,.85);color:#1B1B1F}
 .li-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E6E6E9;padding-bottom:14px;margin-bottom:18px}
@@ -390,24 +153,6 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 .li-body h5{font-size:1.06rem;font-weight:700;color:#111;letter-spacing:-.01em;margin-bottom:2px}
 .li-body p{font-size:.95rem;color:#1B1B1F;font-weight:500;margin:0}
 .li-body small{display:block;font-size:.88rem;color:#6B6B72;margin-top:2px}
-.career-list{display:grid;gap:12px;margin-top:26px}
-.career-item{display:flex;gap:13px;padding:18px 20px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);transition:.28s}
-.career-item:hover{border-color:var(--line-2);transform:translateY(-3px)}
-.career-item i{font-style:normal;width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;background:rgba(81,106,246,.14);border:1px solid rgba(81,106,246,.3);font-size:.85rem}
-.career-item b{display:block;font-size:.94rem;margin-bottom:4px}
-.career-item p{font-size:.85rem;line-height:1.5}
-
-.faq{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(24px,4vw,60px)}
-@media(max-width:860px){.faq{grid-template-columns:1fr}}
-
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:880px){.steps{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:520px){.steps{grid-template-columns:1fr}}
-.step{padding:24px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);transition:.3s}
-.step:hover{border-color:var(--line-2);transform:translateY(-4px)}
-.step b{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--violet-hi);margin-bottom:12px}
-.step h4{font-family:var(--display);font-size:1.2rem;text-transform:lowercase;letter-spacing:-.03em;margin-bottom:8px}
-.step p{font-size:.85rem;line-height:1.5}
 
 .cta{text-align:center;border-radius:var(--r-xl);border:1px solid rgba(81,106,246,.34);padding:clamp(40px,7vw,80px) clamp(20px,4vw,50px);
   background:radial-gradient(circle at 50% 0%,rgba(81,106,246,.28),transparent 62%),linear-gradient(180deg,rgba(255,255,255,.05),transparent)}
@@ -457,18 +202,9 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 .rpanel h3{font-family:var(--display);font-size:clamp(1.7rem,3.2vw,2.5rem);font-weight:700;letter-spacing:-.045em;
   text-transform:lowercase;line-height:.98;margin-bottom:16px}
 .rpanel>div>p{font-size:.98rem}
-.rp-own{list-style:none;display:grid;gap:11px;margin-top:24px}
-.rp-own li{display:flex;gap:12px;font-size:.9rem;line-height:1.45;color:#BDB6DC;padding:13px 16px;
-  border:1px solid var(--line);border-radius:12px;background:var(--surface)}
-.rp-own li::before{content:'▸';color:var(--rc-txt,var(--violet-hi));flex:none}
+
 .rp-side{display:grid;gap:12px}
-.rp-stat{border:1px solid var(--line);border-radius:var(--r-m);padding:20px;background:var(--surface)}
-.rp-stat small{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--muted-2);margin-bottom:8px}
-.rp-stat b{font-family:var(--display);font-size:1.44rem;font-weight:700;letter-spacing:-.04em;text-transform:lowercase;display:block}
-.rp-stat b.pos{color:var(--green)}
-.rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:460px){.rp-grid{grid-template-columns:1fr}}
+
 .rp-fit{border:1px solid var(--line);border-radius:var(--r-m);padding:22px;background:rgba(255,255,255,.018)}
 .rp-fit h5{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin-bottom:13px}
 .rp-fit ul{list-style:none;display:grid;gap:9px}
@@ -478,20 +214,15 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 .navcta{padding:8px 16px;border-radius:100px;background:var(--text);color:var(--ink);font-weight:600;font-size:.84rem;transition:.25s;white-space:nowrap}
 .navcta:hover{background:var(--violet);color:#fff}
 .path .btn{align-self:flex-start;margin:4px 0 22px}
-.b-lead{align-self:flex-start;font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
-  padding:5px 11px;border-radius:100px;border:1px solid var(--line);color:var(--muted-2);transition:.3s;margin-top:-4px}
-.b-lead.mine{border-color:var(--violet);background:rgba(81,106,246,.16);color:var(--violet-hi)}
-.b-lead[data-seat="all"]{border-color:rgba(255,196,107,.4);color:#FFC46B}
 
 /* ── TWO WAYS TO EARN ON VIEWS ───────────────────────── */
-.paths{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,22px);margin-top:clamp(34px,4.5vw,54px)}
-@media(max-width:860px){.paths{grid-template-columns:1fr}}
+
 .path{position:relative;padding:clamp(24px,3vw,34px);border-radius:var(--r-l);border:1px solid var(--line);
   background:var(--surface);display:flex;flex-direction:column;transition:.3s}
 .path:hover{border-color:var(--line-2);transform:translateY(-4px)}
 .path.lead{border-color:rgba(81,106,246,.4);
   background:linear-gradient(168deg,rgba(81,106,246,.15),rgba(81,106,246,.02));box-shadow:0 40px 100px -55px var(--violet)}
-.path-n{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);margin-bottom:12px}
+
 .path.lead .path-n{color:var(--violet-hi)}
 .path h3{font-family:var(--display);font-size:clamp(1.4rem,2.4vw,1.9rem);font-weight:700;letter-spacing:-.04em;
   text-transform:lowercase;line-height:1.02;margin-bottom:12px}
@@ -500,53 +231,15 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 .path li{display:flex;gap:11px;font-size:.87rem;line-height:1.45;color:#B4ADD4}
 .path li::before{content:'▸';color:var(--muted-2);flex:none}
 .path.lead li::before{color:var(--green)}
-.path-foot{margin-top:auto;padding-top:18px;border-top:1px solid var(--line);display:flex;
-  justify-content:space-between;gap:14px;align-items:baseline;flex-wrap:wrap}
-.path-foot small{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-2)}
-.path-foot b{font-family:var(--mono);font-size:.78rem;color:var(--green);text-align:right}
+
 .path-note{margin-top:22px;font-size:.88rem;color:var(--muted);text-align:center;max-width:70ch;margin-inline:auto}
 .path-note b{color:var(--text)}
 
 /* ── PAY PER VIEW ───────────────────────────────────── */
-.ppv{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(22px,3.4vw,48px);align-items:start}
-@media(max-width:940px){.ppv{grid-template-columns:1fr}}
-.calc{border-radius:var(--r-l);border:1px solid rgba(81,106,246,.34);padding:clamp(24px,3.4vw,38px);
-  background:radial-gradient(circle at 50% 0%,rgba(81,106,246,.22),transparent 64%),linear-gradient(180deg,rgba(255,255,255,.055),transparent)}
-.calc-lab{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2)}
-.calc-views{font-family:var(--display);font-size:clamp(1.9rem,4vw,2.6rem);font-weight:700;letter-spacing:-.045em;
-  line-height:1;margin:8px 0 4px}
-.calc-out{margin:26px 0 6px;padding-top:24px;border-top:1px solid var(--line)}
-.calc-pay{font-family:var(--display);font-size:clamp(3rem,8vw,4.6rem);font-weight:700;letter-spacing:-.055em;line-height:.9;
-  background:linear-gradient(100deg,#fff 8%,#A3B0FF 44%,#19D97C 96%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.calc-sub{font-family:var(--mono);font-size:.68rem;color:var(--muted-2);letter-spacing:.06em;margin-top:12px;line-height:1.6}
-.calc-sub b{color:var(--green)}
-input[type=range].sl{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:100px;margin:22px 0 4px;
-  background:linear-gradient(90deg,var(--violet) var(--p,60.6%),rgba(255,255,255,.12) var(--p,60.6%));cursor:pointer}
-input[type=range].sl::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;
-  background:linear-gradient(160deg,#8FA2FF,#3D53E0);border:2px solid #fff;box-shadow:0 0 22px -2px var(--violet);cursor:grab}
-input[type=range].sl::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.1)}
-input[type=range].sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:linear-gradient(160deg,#8FA2FF,#3D53E0);
-  border:2px solid #fff;box-shadow:0 0 22px -2px var(--violet);cursor:grab}
-.sl-ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;color:var(--muted-2);letter-spacing:.08em}
-.rate{display:grid;gap:8px;margin-top:8px}
-.rate-row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:15px 18px;
-  border:1px solid var(--line);border-radius:12px;background:var(--surface);transition:.28s;position:relative;overflow:hidden}
-.rate-row.hot{border-color:rgba(25,217,124,.45);background:rgba(25,217,124,.07)}
-.rate-row span{font-size:.88rem}
-.rate-row small{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted-2);margin-top:3px}
-.rate-row b{font-family:var(--mono);font-size:.84rem;color:var(--green);white-space:nowrap}
-.ppv-notes{display:grid;gap:10px;margin-top:20px}
-.ppv-note{display:flex;gap:12px;font-size:.85rem;line-height:1.5;color:#B4ADD4}
-.ppv-note i{font-style:normal;color:var(--violet-hi);flex:none}
-.calc-flow{font-family:var(--mono);font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted-2);
-  margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
 
 /* ── THE HUB (dashboard + board, one section) ────────── */
-.hub-panel{display:none}
+
 .hub-panel.on{display:block;animation:fade .4s ease}
-.hub-note{font-family:var(--mono);font-size:.66rem;color:var(--muted-2);margin-top:16px;letter-spacing:.06em}
-.hub-lede{font-size:1rem;max-width:760px;margin-bottom:26px}
 
 /* ══ FOMO BRAND ALIGNMENT ══════════════════════════════
    Everything below matches fomo.family: weight-500 headings with
@@ -558,7 +251,7 @@ h1,h2,h3,h4{font-weight:500;letter-spacing:-.03em;line-height:1}
 h2{font-size:clamp(2.1rem,4.6vw,3.75rem)}
 h3{font-size:clamp(1.35rem,2.3vw,2.25rem);letter-spacing:-.025em;line-height:1.06}
 p{font-weight:500}
-.h1{font-weight:500;font-size:clamp(2.3rem,5.2vw,4.2rem);letter-spacing:-.035em;line-height:.98}
+.h1{font-weight:500;font-size:clamp(2.8rem,7.4vw,5.8rem);letter-spacing:-.04em;line-height:.98}
 .hero p.lede{color:var(--lede);font-size:clamp(1.02rem,1.5vw,1.35rem);letter-spacing:-.012em;max-width:52ch}
 .shead p{color:var(--lede);font-size:clamp(1rem,1.3vw,1.2rem);letter-spacing:-.01em}
 .stat b,.lt-item b,.b-pay,.m-pay span,.lb-rank,.d-stat b,.ring-mid b,.rp-stat b,
@@ -574,32 +267,23 @@ p{font-weight:500}
 .btn-p:hover{background:rgba(96,106,247,.8);transform:none;box-shadow:none}
 .btn-g{background:rgba(255,255,255,.12);border:1px solid var(--line)}
 .btn-g:hover{background:rgba(255,255,255,.2);border-color:var(--line);transform:none}
-.btn-sm{padding:9px 16px;font-size:.85rem;border-radius:8px}
+
 .navcta{border-radius:8px;background:var(--ink-2);color:var(--text);font-weight:700;border:1px solid var(--line)}
 .navcta:hover{background:var(--violet);color:#fff}
-.tab,.chip{border-radius:8px}
+
 .tab.on{background:var(--ink-2);color:var(--text);border-color:var(--line-2)}
 .chip.on{background:rgba(81,106,246,.2);border-color:var(--violet);color:#fff}
-.copy,.b-btn,.ref-code{border-radius:8px}
-.b-btn:hover{background:rgba(96,106,247,.5);color:var(--text);border-color:var(--line)}
 
 /* surfaces — opaque cards, no glass, no drop shadows */
 .card-glass,.dash,.modal-card,.phone,.lb,.week,.vs-old,.vs-new,.cta,.calc,.bounty.gold,.tier.legend{
   background:var(--ink-2);backdrop-filter:none;box-shadow:none}
 .glance{animation:none}
-.vs-new,.calc{border-color:rgba(81,106,246,.4)}
-.bounty.gold,.tier.legend{border-color:rgba(255,91,46,.4)}
+
 .cta{border-color:var(--line)}
-.ref{background:rgba(81,106,246,.12);border-color:rgba(81,106,246,.4)}
-.d-av{background:var(--violet)}
+
 .rung.first .node{box-shadow:none;background:var(--violet);border-color:var(--violet)}
 
 /* no gradient-filled text on fomo.family — everything is a solid colour */
-.calc-pay,.bounty.gold .b-pay,.tier.legend h4,.g-badge i{
-  background-image:none;-webkit-background-clip:border-box;background-clip:border-box}
-.calc-pay{color:var(--green)}
-.bounty.gold .b-pay,.tier.legend h4{color:#FFA46B}
-.g-badge i{color:var(--violet-hi)}
 
 /* background chrome — fomo.family has no film grain and only a soft violet wash */
 body::after{display:none}
@@ -625,7 +309,60 @@ body::after{display:none}
 .stat small,.idea-fmt,.lt-item small,.proof-box small,.tier .lvl,.lb-head,.ref small,
 .step b,.rcard .rc-n,.rp-fit h5,.path-n,.calc-lab,.d-stat small,.ring-mid small,
 .dash-bar span,.queue>small,.b-lock,.b-meta,.grp span,.eyebrow,.f-cols h5{letter-spacing:.06em}
-.d-stat small,.d-stat i{display:block}
+
+/* ── NEW STRUCTURE (60-day program) ──────────────────── */
+
+.job{display:grid;grid-template-columns:210px 1fr;gap:18px;align-items:baseline;padding:16px 20px;
+  border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface)}
+@media(max-width:640px){.job{grid-template-columns:1fr;gap:4px}}
+.job b{font-family:var(--display);font-size:1.05rem;font-weight:500;letter-spacing:-.03em;text-transform:lowercase}
+.job span{font-size:.9rem;color:var(--muted)}
+
+.rp-fit.nofit{border-color:rgba(255,91,46,.32);background:rgba(255,91,46,.05)}
+.rp-fit.nofit h5{color:var(--orange)}
+.rp-fit.nofit li::before{content:'\2715';color:var(--orange)}
+
+.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.rules{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.rules{grid-template-columns:1fr}}
+.rule{padding:24px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);transition:.3s}
+.rule:hover{border-color:var(--line-2);transform:translateY(-3px)}
+.rule span{display:block;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;color:var(--violet);
+  font-weight:700;margin-bottom:16px}
+.rule b{display:block;font-family:var(--display);font-size:1.18rem;font-weight:500;letter-spacing:-.03em;
+  text-transform:lowercase;margin-bottom:8px}
+.rule p{font-size:.86rem;line-height:1.5}
+
+.gets{display:grid;gap:8px}
+.get{display:flex;gap:13px;padding:15px 18px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);
+  font-size:.89rem;line-height:1.5;color:var(--muted)}
+.get i{font-style:normal;width:26px;height:26px;flex:none;border-radius:8px;display:grid;place-items:center;
+  background:rgba(81,106,246,.14);border:1px solid rgba(81,106,246,.3);font-size:.8rem;color:var(--violet-hi)}
+.get b{color:var(--text);font-weight:500}
+
+.li-copy{border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);padding:22px;margin-top:22px}
+.li-copy h5{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted-2);font-weight:500;margin-bottom:14px}
+.li-copy p{font-size:.92rem;color:#C9CCDA}
+.li-copy ul{list-style:none;display:grid;gap:9px;margin-top:14px}
+.li-copy li{font-size:.89rem;color:#B4ADD4;display:flex;gap:10px}
+.li-copy li::before{content:'\2022';color:var(--violet-hi);flex:none}
+.li-copy em{font-style:normal;font-family:var(--mono);font-size:.86em;color:var(--violet-hi);
+  background:rgba(81,106,246,.14);border-radius:5px;padding:1px 5px}
+.li-note{font-size:.82rem;color:var(--muted-2);margin-top:14px}
+
+.map-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-l);background:var(--ink-2)}
+.map{width:100%;min-width:940px;border-collapse:collapse}
+.map th,.map td{padding:15px 18px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);
+  font-size:.85rem;line-height:1.4}
+.map thead th{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted-2);white-space:nowrap;background:var(--ink-2)}
+.map tbody tr:last-child td{border-bottom:none}
+.map td{color:#C9CCDA;font-weight:500}
+.map .wk{font-family:var(--mono);color:var(--violet);font-weight:700;white-space:nowrap;width:80px}
+.map col.on{background:rgba(81,106,246,.1)}
+.map th.on{color:var(--violet)}
+.map td.on{color:var(--text)}
 </style>
 </head>
 <body>
@@ -637,13 +374,11 @@ body::after{display:none}
   <nav class="nav">
     <button class="logo" data-jump="top" type="button"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></button>
     <div class="nav-links">
-      <button data-jump="what" type="button">what it is</button>
       <button data-jump="role" type="button">the five roles</button>
-      <button data-jump="career" type="button">your résumé</button>
-      <button data-jump="earn" type="button">bounties</button>
-      <button data-jump="views" type="button">paid per view</button>
-      <button data-jump="faq" type="button">faq</button>
-      <a class="navcta" href="/fomo/apply">apply →</a>
+      <button data-jump="get" type="button">what you get</button>
+      <button data-jump="runs" type="button">how it runs</button>
+      <button data-jump="map" type="button">the 8 weeks</button>
+      <a class="navcta" href="/fomo/apply">apply &rarr;</a>
     </div>
     <button class="burger" aria-label="menu">☰</button>
   </nav>
@@ -655,70 +390,13 @@ body::after{display:none}
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <span class="eyebrow"><span class="dot"></span>&nbsp;five roles open · fall 2026</span>
-        <h1 class="h1">run your school's<br>money channel.<br>get paid per view.</h1>
-        <p class="lede">FOMO is a social-first trading app. FOMO Campus puts a five-person team at every university — Campus President, Growth, Partnerships, Content and Culture — and that team runs the school's money channel: the posts, the sponsors, the group chat, the events. You apply to one seat, not all five, and you're paid two ways: a rate on every view your videos do, plus a share of your campus's bounty pot.</p>
+        <span class="eyebrow"><span class="dot"></span>&nbsp;five seats open &middot; fall 2026</span>
+        <h1 class="h1">own fomo<br>at your campus.</h1>
+        <p class="lede">You and four other people run fomo at your school &mdash; president, growth, partnerships, content, culture. It's a real internship at a startup that's raised $75M: we hand you the brand, a budget and the playbook, then get out of the way. Sixty days to make fomo something people bring up when you're not in the room.</p>
         <div class="hero-cta">
-          <button class="btn btn-p" data-jump="role" type="button">see the five roles →</button>
-          <button class="btn btn-g" data-jump="views" type="button">get paid for views</button>
+          <button class="btn btn-p" data-jump="role" type="button">see the five roles &rarr;</button>
+          <button class="btn btn-g" data-jump="map" type="button">the 8-week map</button>
         </div>
-      </div>
-
-      <div>
-        <div class="card-glass glance">
-          <div class="g-brand">
-            <span class="g-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>
-            <b>fomo</b>
-            <span class="g-badge"><i>$75M Series&nbsp;B</i></span>
-          </div>
-          <p class="g-lead">A social-first on-chain trading platform. Raised June&nbsp;2026 at a $550M valuation.</p>
-          <h4>the team at a glance</h4>
-          <div class="g-row"><span>Seats per campus</span><b>5</b></div>
-          <div class="g-row"><span>You apply to</span><b>one role</b></div>
-          <div class="g-row"><span>Experience required</span><b>none</b></div>
-          <div class="g-row"><span>Followers required</span><b>none</b></div>
-          <div class="g-row"><span>Paid on views</span><b class="pos">every post</b></div>
-          <div class="g-row"><span>Commitment</span><b>one semester</b></div>
-          <div class="g-row"><span>Cost to you</span><b>$0, ever</b></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="ticker"><div class="ticker-track" id="tick"></div></div>
-</section>
-
-<section id="what">
-  <div class="wrap">
-    <div class="shead rv">
-      <span class="eyebrow">01 — what this actually is</span>
-      <h2>it's a newsroom,<br>not a flyer gig.</h2>
-      <p>Most campus programs hand one student a box of stickers and a graphic to repost. This is closer to staffing a small publication.</p>
-    </div>
-
-    <div class="vs rv">
-      <div class="vs-col vs-old">
-        <h3>the usual ambassador gig</h3>
-        <ul>
-          <li>One student, handed a box of water bottles</li>
-          <li>A vague title that means whatever nobody else did</li>
-          <li>Repost a graphic the marketing team wrote</li>
-          <li>Flat fee or just free merch</li>
-          <li>No real skill built, nothing to show afterwards</li>
-          <li>You're a distribution channel for someone else</li>
-        </ul>
-      </div>
-      <div class="vs-mid">vs</div>
-      <div class="vs-col vs-new">
-        <h3>fomo campus</h3>
-        <ul>
-          <li>A five-person team with one named job each</li>
-          <li>A real title — President, Growth, Partnerships, Content, Culture</li>
-          <li>We give hooks and templates — the calls are yours</li>
-          <li>One shared bounty hunt your whole campus works together</li>
-          <li>Paid per view on top, every video, from the first one</li>
-          <li>You're building something. FOMO sponsors it.</li>
-        </ul>
       </div>
     </div>
   </div>
@@ -727,711 +405,279 @@ body::after{display:none}
 <section id="role">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">02 — the five roles</span>
+      <span class="eyebrow">01 &mdash; who fits each role</span>
       <h2>read all five.<br>apply to one.</h2>
-      <p>Every campus team is the same five jobs. You apply to the one you actually want, not a general pool. The bounty hunt in section 04 is shared — your whole campus works one chain together — but each rung is led by a specific seat, so what you sign up for decides what you're on the hook for. Pick one below to see the week, the workload, and who tends to be good at it.</p>
+      <p>You apply to one seat, not a general pool. Each one says who tends to be good at it &mdash; and who isn't.</p>
     </div>
 
     <div class="roles rv" id="roles">
       <button class="rcard" data-r="pres" style="--rc:rgba(255,196,107,.26);--rc-txt:#FFC46B;--rc-line:rgba(255,196,107,.55)" type="button">
-        <span class="rc-n">01</span><i class="rc-ic">◆</i>
+        <span class="rc-n">01</span><i class="rc-ic">&#9670;</i>
         <h4>campus president</h4>
-        <p>Owns the campus and the number. Runs the other four.</p>
-        <span class="rc-open">the lead role →</span>
+        <span class="rc-open">the lead role &rarr;</span>
       </button>
       <button class="rcard" data-r="growth" style="--rc:rgba(25,217,124,.24);--rc-txt:#19D97C;--rc-line:rgba(25,217,124,.55)" type="button">
-        <span class="rc-n">02</span><i class="rc-ic">↗</i>
+        <span class="rc-n">02</span><i class="rc-ic">&#8599;</i>
         <h4>growth</h4>
-        <p>Turns views into signups. Owns the link and the funnel.</p>
-        <span class="rc-open">the numbers role →</span>
+        <span class="rc-open">the numbers role &rarr;</span>
       </button>
       <button class="rcard" data-r="partner" style="--rc:rgba(255,77,143,.24);--rc-txt:#FF4D8F;--rc-line:rgba(255,77,143,.55)" type="button">
-        <span class="rc-n">03</span><i class="rc-ic">§</i>
+        <span class="rc-n">03</span><i class="rc-ic">&sect;</i>
         <h4>partnerships</h4>
-        <p>Brings the rooms you don't own. Clubs, greek, local business.</p>
-        <span class="rc-open">the closing role →</span>
+        <span class="rc-open">the closing role &rarr;</span>
       </button>
       <button class="rcard on" data-r="content" style="--rc:rgba(81,106,246,.3);--rc-txt:#A3B0FF;--rc-line:#516AF6" type="button">
-        <span class="rc-n">04</span><i class="rc-ic">▶</i>
+        <span class="rc-n">04</span><i class="rc-ic">&#9654;</i>
         <h4>content</h4>
-        <p>Runs the feed. Paid per view on every post.</p>
-        <span class="rc-open">most applied for →</span>
+        <span class="rc-open">most applied for &rarr;</span>
       </button>
       <button class="rcard" data-r="culture" style="--rc:rgba(111,215,255,.24);--rc-txt:#6FD7FF;--rc-line:rgba(111,215,255,.55)" type="button">
-        <span class="rc-n">05</span><i class="rc-ic">◎</i>
+        <span class="rc-n">05</span><i class="rc-ic">&#9678;</i>
         <h4>culture</h4>
-        <p>Owns the room. The group chat, the rituals, the events.</p>
-        <span class="rc-open">the people role →</span>
+        <span class="rc-open">the people role &rarr;</span>
       </button>
     </div>
 
-    <!-- CAMPUS PRESIDENT -->
     <div class="rpanel rv" id="r-pres" style="--rc-txt:#FFC46B">
       <div>
-        <span class="rp-tag">role 01 · campus president</span>
-        <h3>you own the campus,<br>and the number.</h3>
-        <p>The president isn't a title we hand out for seniority — it's the person accountable for what the school does this semester. You set the weekly plan, keep four other people moving, and you're the one on the call with our campus team when the number is good and when it isn't. In exchange you earn on the whole campus total, not just your own work.</p>
-        <ul class="rp-own">
-          <li>A 20-minute weekly standup with your four leads</li>
-          <li>The campus number — signups, reach, events, all of it</li>
-          <li>Filling empty seats when someone graduates or steps back</li>
-          <li>One written recap to FOMO every week. Short, honest, no spin</li>
-          <li>Representing your school on the national board</li>
-        </ul>
-        <a class="btn btn-p" href="/fomo/apply?role=pres" style="margin-top:26px">apply for this seat →</a>
+        <span class="rp-tag">role 01 &middot; campus president</span>
+        <h3>runs the team.<br>main line to fomo HQ.</h3>
+        <a class="btn btn-p" href="/fomo/apply?role=pres" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
-        <div class="rp-grid">
-          <div class="rp-stat"><small>realistic time</small><b>~6 hrs / week</b></div>
-          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="pres">—</b></div>
-          <div class="rp-stat"><small>paid on</small><b>campus total</b></div>
-          <div class="rp-stat"><small>seats per school</small><b>1</b></div>
-        </div>
         <div class="rp-fit">
           <h5>this suits you if</h5>
           <ul>
-            <li>You've run a club, a team or a house before and liked it</li>
-            <li>You're comfortable chasing people who haven't replied</li>
-            <li>You'd rather own an outcome than be handed a task list</li>
+            <li>You're a frat exec, an org president, or whoever already runs things on campus</li>
+            <li>You know people across Greek life, teams and clubs</li>
+            <li>You can hold four people accountable without being annoying about it</li>
+            <li>You answer texts</li>
           </ul>
         </div>
-        <div class="rp-fit">
-          <h5>what we watch</h5>
-          <ul>
-            <li>Whether all five seats are actually filled and active</li>
-            <li>Campus signups, not your personal follower count</li>
-            <li>Whether the weekly recap shows up without being asked</li>
-          </ul>
+        <div class="rp-fit nofit">
+          <h5>not a fit</h5>
+          <ul><li>Someone who wants to do all the work themselves.</li></ul>
         </div>
       </div>
     </div>
-
-    <!-- GROWTH -->
     <div class="rpanel rv" id="r-growth" style="--rc-txt:#19D97C">
       <div>
-        <span class="rp-tag">role 02 · growth</span>
-        <h3>views get attention.<br>you turn them into signups.</h3>
-        <p>Content brings people to the edge; you get them over it. You own the referral link, the campaign codes and the honest read on what's actually converting — which usually turns out to be a walkthrough in the group chat at 11pm, not the video with 80K views. You're the person on the team who can say "that post did nothing" with data behind it.</p>
-        <ul class="rp-own">
-          <li>The campus referral link and every campaign code under it</li>
-          <li>Walking new people through their first trade, personally</li>
-            <li>One conversion experiment a week — landing spot, CTA, timing</li>
-          <li>The Monday readout: what drove signups, what didn't</li>
-          <li>Killing formats that don't convert, even popular ones</li>
-        </ul>
-        <a class="btn btn-p" href="/fomo/apply?role=growth" style="margin-top:26px">apply for this seat →</a>
+        <span class="rp-tag">role 02 &middot; growth</span>
+        <h3>gets people to download it<br>and actually use it.</h3>
+        <a class="btn btn-p" href="/fomo/apply?role=growth" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
-        <div class="rp-grid">
-          <div class="rp-stat"><small>realistic time</small><b>~4 hrs / week</b></div>
-          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="growth">—</b></div>
-          <div class="rp-stat"><small>paid on</small><b>verified signups</b></div>
-          <div class="rp-stat"><small>seats per school</small><b>1</b></div>
-        </div>
         <div class="rp-fit">
           <h5>this suits you if</h5>
           <ul>
-            <li>A scoreboard makes you competitive rather than anxious</li>
-            <li>You like spreadsheets more than you'd admit out loud</li>
-            <li>You'd rather DM 40 people than be on camera once</li>
+            <li>You're the competitive one</li>
+            <li>Walking up to a stranger or posting to 300 people doesn't faze you</li>
+            <li>You treat a number as a personal challenge</li>
+            <li>You've sold something before &mdash; tickets, merch, bids, anything</li>
           </ul>
         </div>
-        <div class="rp-fit">
-          <h5>what we watch</h5>
-          <ul>
-            <li>Verified signups — real people, still active after 7 days</li>
-            <li>Signups per 1,000 views, which is the number that matters</li>
-            <li>Whether you're testing or just repeating last week</li>
-          </ul>
+        <div class="rp-fit nofit">
+          <h5>not a fit</h5>
+          <ul><li>Someone who hates being told no.</li></ul>
         </div>
       </div>
     </div>
-
-    <!-- PARTNERSHIPS -->
     <div class="rpanel rv" id="r-partner" style="--rc-txt:#FF4D8F">
       <div>
-        <span class="rp-tag">role 03 · partnerships</span>
-        <h3>every room on campus<br>already has people in it.</h3>
-        <p>The finance club has 200 members. The business frat has a listserv. The coffee place by the library has a window. None of that is yours yet, and getting it is a completely different skill from making videos. You bring the audiences we can't buy and the rooms we can't book — and you get paid per partnership you actually close, not per email you send.</p>
-        <ul class="rp-own">
-          <li>Club and org partnerships — finance, business, econ, investing</li>
-          <li>Greek chapter deals and house-wide signup pushes</li>
-          <li>Local business co-promos: cafés, bars, print shops, gyms</li>
-          <li>Collabs with the biggest creators already on your campus</li>
-          <li>Finding sponsors and venues for whatever Culture is running</li>
-        </ul>
-        <a class="btn btn-p" href="/fomo/apply?role=partner" style="margin-top:26px">apply for this seat →</a>
+        <span class="rp-tag">role 03 &middot; partnerships</span>
+        <h3>gets fomo into orgs,<br>teams and events.</h3>
+        <a class="btn btn-p" href="/fomo/apply?role=partner" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
-        <div class="phone">
-          <div class="phone-bar"><span>OUTREACH · SENT</span><span>REPLY 2h</span></div>
-          <div class="post">
-            <div class="post-top"><span class="av"></span><div><b>Michigan Finance Club</b><br><small>PRESIDENT · REPLIED</small></div></div>
-            <p>yes we'd do this. we have 210 members and a speaker night on the 14th — you can have 10 min and a table.</p>
-            <div class="post-metrics"><span>✓ closed</span><span>+68 signups</span></div>
-          </div>
-          <div class="post">
-            <div class="post-top"><span class="av"></span><div><b>Comet Coffee</b><br><small>OWNER · REPLIED</small></div></div>
-            <p>happy to put the QR on the counter for a month if you post about us twice.</p>
-            <div class="post-metrics"><span>✓ closed</span><span>30-day placement</span></div>
-          </div>
-        </div>
-        <div class="rp-grid">
-          <div class="rp-stat"><small>realistic time</small><b>~4 hrs / week</b></div>
-          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="partner">—</b></div>
-          <div class="rp-stat"><small>paid on</small><b>closed deals</b></div>
-          <div class="rp-stat"><small>seats per school</small><b>1</b></div>
-        </div>
         <div class="rp-fit">
           <h5>this suits you if</h5>
           <ul>
-            <li>Cold emailing a stranger doesn't make you want to lie down</li>
-            <li>You already know people across a few different circles</li>
-            <li>You like the moment something closes more than the build-up</li>
+            <li>You already know exec boards</li>
+            <li>You can text a social chair and get a reply</li>
+            <li>You keep a pipeline updated without being asked</li>
+            <li>You're comfortable on the phone and in meetings, not just DMs</li>
           </ul>
+        </div>
+        <div class="rp-fit nofit">
+          <h5>not a fit</h5>
+          <ul><li>Someone who won't follow up twice.</li></ul>
         </div>
       </div>
     </div>
-
-    <!-- CONTENT -->
     <div class="rpanel on rv" id="r-content" style="--rc-txt:#A3B0FF">
       <div>
-        <span class="rp-tag">role 04 · content</span>
-        <h3>you're the beat reporter<br>for money on campus.</h3>
-        <p>You run the account. Short, fast, local — you're not teaching people what a candlestick is, you're covering money the way a beat reporter covers your football team. This is the only role paid twice: the ladder like everyone else, plus a rate on every video you post and submit. A single video that runs gets you more than a week of anything else on this page.</p>
-        <ul class="rp-own">
-          <li>5–7 posts a week on the campus channel, in your own voice</li>
-          <li>The hook — the first line does most of the job</li>
-          <li>One batch shoot a week, cut into five outputs</li>
-          <li>45 minutes in the comments after every post</li>
-          <li>Killing your worst format each week and doubling the best</li>
-        </ul>
-        <div class="kv">
-          <div class="kv-row"><span>Posting cadence</span><span>5–7 per week</span></div>
-          <div class="kv-row"><span>Format that works</span><span>15–35s vertical</span></div>
-          <div class="kv-row"><span>Paid per video</span><span>yes — see section 05</span></div>
-          <div class="kv-row"><span>What we provide</span><span>hooks, templates, edits</span></div>
-        </div>
-        <a class="btn btn-p" href="/fomo/apply?role=content" style="margin-top:26px">apply for this seat →</a>
+        <span class="rp-tag">role 04 &middot; content</span>
+        <h3>runs the school's page.<br>mic in hand.</h3>
+        <a class="btn btn-p" href="/fomo/apply?role=content" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
-        <div class="phone">
-          <div class="phone-bar"><span>@wolverine.capital</span><span>9:41</span></div>
-          <div class="post">
-            <div class="post-top"><span class="av"></span><div><b>wolverine.capital</b><br><small>MICHIGAN · 2h</small></div></div>
-            <p>i asked 40 people outside the UGLi what they'd buy with $100 right now. #3 broke me.</p>
-            <div class="post-metrics"><span>▶ 84.2K</span><span>♥ 6,109</span><span>↻ 412</span></div>
-          </div>
-          <div class="post">
-            <div class="post-top"><span class="av"></span><div><b>wolverine.capital</b><br><small>MICHIGAN · 1d</small></div></div>
-            <p>ann arbor rent went up 11% this year. here's what that same money does in an index over 4 years 📉</p>
-            <div class="post-metrics"><span>▶ 121K</span><span>♥ 9,880</span><span>↻ 1,204</span></div>
-          </div>
-        </div>
-        <div class="rp-grid">
-          <div class="rp-stat"><small>realistic time</small><b>~5 hrs / week</b></div>
-          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="content">—</b></div>
-          <div class="rp-stat"><small>paid on</small><b class="pos">views, per post</b></div>
-          <div class="rp-stat"><small>seats per school</small><b>1–2</b></div>
-        </div>
         <div class="rp-fit">
           <h5>this suits you if</h5>
           <ul>
-            <li>You already post, or you've been meaning to start for a year</li>
-            <li>You're fine on camera — or you want a faceless format, which works</li>
-            <li>You can ship something decent on a Tuesday instead of something perfect in March</li>
+            <li>You can film, edit, and hold a mic in front of a crowd without freezing</li>
+            <li>You already know what's going viral at your school</li>
+            <li>You post constantly on your own account</li>
+            <li>You're funny &mdash; that matters more here than being polished</li>
           </ul>
+        </div>
+        <div class="rp-fit nofit">
+          <h5>not a fit</h5>
+          <ul><li>A perfectionist who takes a week per video.</li></ul>
         </div>
       </div>
     </div>
-
-    <!-- CULTURE -->
     <div class="rpanel rv" id="r-culture" style="--rc-txt:#6FD7FF">
       <div>
-        <span class="rp-tag">role 05 · culture</span>
-        <h3>the feed pulls strangers in.<br>you make them stay.</h3>
-        <p>You own the room — the campus group chat and everything that happens in person. It's the surface that actually converts, because people ask questions there they'd be embarrassed to ask publicly. You run the daily ritual that keeps it alive, and you pitch us the events. We set the budget and ship the banners, merch and prizes; you pick the date and run the night.</p>
-        <ul class="rp-own">
-          <li>The campus group chat — Discord, GroupMe, whatever your school uses</li>
-          <li>A daily ritual post. Morning open, end-of-day, something repeatable</li>
-          <li>Pitching events to us, then actually running them</li>
-          <li>Keeping it a room people want to be in, not a promo channel</li>
-          <li>Merch drops, watch parties, dorm-vs-dorm tournaments</li>
-        </ul>
-        <div class="kv">
-          <div class="kv-row"><span>Realistic size by week 8</span><span>150–250 members</span></div>
-          <div class="kv-row"><span>Events</span><span>you pitch, we fund</span></div>
-          <div class="kv-row"><span>Typical signups per event</span><span>60 – 140</span></div>
-          <div class="kv-row"><span>Converts vs. the feed</span><span>roughly 4×</span></div>
-        </div>
-        <a class="btn btn-p" href="/fomo/apply?role=culture" style="margin-top:26px">apply for this seat →</a>
+        <span class="rp-tag">role 05 &middot; culture</span>
+        <h3>makes the fomo<br>influencer dinners happen.</h3>
+        <a class="btn btn-p" href="/fomo/apply?role=culture" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
-        <div class="phone">
-          <div class="phone-bar"><span># michigan-markets</span><span>412 online</span></div>
-          <div class="post"><div class="post-top"><span class="av"></span><div><b>dev_k</b><br><small>9:04 AM</small></div></div><p>morning open 🔔 futures green, someone explain to me why my portfolio is not</p><div class="post-metrics"><span>😂 31</span><span>🔥 12</span></div></div>
-          <div class="post"><div class="post-top"><span class="av"></span><div><b>priya.s</b><br><small>9:11 AM</small></div></div><p>first trade ever done. terrified. thank u for the walkthrough last night</p><div class="post-metrics"><span>🫡 88</span><span>♥ 40</span></div></div>
-        </div>
-        <div class="rp-grid">
-          <div class="rp-stat"><small>realistic time</small><b>~4 hrs / week</b></div>
-          <div class="rp-stat"><small>rungs you lead</small><b class="pos" data-lt="culture">—</b></div>
-          <div class="rp-stat"><small>paid on</small><b>chat &amp; events</b></div>
-          <div class="rp-stat"><small>event budget</small><b>we fund it</b></div>
-        </div>
         <div class="rp-fit">
           <h5>this suits you if</h5>
           <ul>
-            <li>You're already the person who makes the group chat</li>
-            <li>You'd rather host eighty people than film one video</li>
-            <li>You know which dorms, houses and clubs actually show up</li>
+            <li>You're the most socially plugged-in person on campus</li>
+            <li>You know every creator, DJ, promoter and personality by name &mdash; and they know you</li>
+            <li>You get invited to things</li>
+            <li>You could build a guest list from memory right now</li>
           </ul>
+        </div>
+        <div class="rp-fit nofit">
+          <h5>not a fit</h5>
+          <ul><li>Someone with a big following but no real connections at school.</li></ul>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="career">
+<section id="get">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">03 — your résumé</span>
-      <h2>it goes on<br>your linkedin.</h2>
-      <p>A paid, referenceable role at a venture-backed company — not a volunteer badge or a club officer title. Each of the five seats has a real title behind it, and you leave with your own numbers, a public portfolio, and someone here who will take a reference call.</p>
+      <span class="eyebrow">02 &mdash; what you get out of it</span>
+      <h2>real job experience.</h2>
+      <p>You're running growth, partnerships, content and events for a startup that's raised $75M. Most people don't touch work like this until two years into a real job.</p>
     </div>
 
     <div class="career">
-      <div class="li-card rv">
-        <div class="li-head"><b>Experience</b><span>+ ✎</span></div>
-        <div class="li-row">
-          <span class="li-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>
-          <div class="li-body">
-            <h5 id="liTitle">Content Lead, Campus</h5>
-            <p>fomo · Contract</p>
-            <small>Sep 2026 – Present · 1 mo</small>
-            <small id="liSkills">Skills: Content Strategy · Social Media · Video Production</small>
-          </div>
+      <div class="rv">
+        <div class="gets">
+          <div class="get"><i>&#9673;</i><div><b>Numbers you own</b> &mdash; users, views, partnerships closed. That's what interviews are about.</div></div>
+          <div class="get"><i>&#9678;</i><div><b>A network</b> &mdash; campus creators, org presidents, promoters, and the fomo team.</div></div>
+          <div class="get"><i>&#9670;</i><div><b>Budget and autonomy</b> &mdash; real money for events, dinners and prizes. You decide how to spend it.</div></div>
+          <div class="get"><i>&rarr;</i><div><b>A foot in the door</b> &mdash; top performers get referred internally for internships and full-time roles.</div></div>
         </div>
+
       </div>
 
       <div class="rv">
-        <h3>what you can actually claim</h3>
-        <p style="font-size:.88rem;color:var(--muted);margin-bottom:-8px">The card on the left updates with whichever role you picked in section 02.</p>
-        <div class="career-list">
-          <div class="career-item"><i>◷</i><div><b>Numbers you own</b><p>“Grew a campus channel to 40K followers and drove 200+ signups,” or “closed 10 campus partnerships,” or “ran a five-person team to #1 nationally.” Every seat leaves with a result rather than a responsibility.</p></div></div>
-          <div class="career-item"><i>◎</i><div><b>A portfolio you can show</b><p>The account, the partner list, the event photos, the growth curve — all public, all pullable on your phone in an interview. Almost nobody your age can do that.</p></div></div>
-          <div class="career-item"><i>◈</i><div><b>Real skills, named properly</b><p>Team leadership, growth marketing, business development, content production, community management. Each seat maps onto a different set of words that appear verbatim on entry-level postings in tech, media and finance.</p></div></div>
-          <div class="career-item"><i>§</i><div><b>A reference who picks up</b><p>You work directly with our campus team. We write recommendations, take reference calls, and make intros — for ambassadors at any level, not just the top ones.</p></div></div>
-          <div class="career-item"><i>→</i><div><b>First look at open roles</b><p>We hire from this program, and several ambassadors have already converted their work here into internships and full-time GTM roles.</p></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="earn">
-  <div class="wrap">
-    <div class="shead rv" style="margin-bottom:22px">
-      <span class="eyebrow">04 — the treasure hunt</span>
-      <h2>one hunt.<br>all five of you.</h2>
-      <p style="margin-top:12px">Ten rungs, one chain per campus, worked by the whole team. You unlock them strictly in order — clear the one you're on and the next opens for everyone. Each rung is led by one seat with the rest backing them up, so the hunt only moves as fast as your slowest empty chair. The first three pay in gear rather than cash, and the pot is the campus's, not any one person's.</p>
-    </div>
-
-    <div class="ladder-top rv">
-      <div class="lt-item"><small>rungs on the hunt</small><b id="ltCount">—</b></div>
-      <div class="lt-item"><small>where every campus starts</small><b id="ltFirst">—</b></div>
-      <div class="lt-item"><small>total pot if you clear it all</small><b class="pos" id="ltTotal">—</b></div>
-    </div>
-
-    <div id="ladder" class="ladder rv"></div>
-
-    <div class="mech rv">
-      <div class="mech-item"><span class="mech-ic">◗</span><div><b>Paid twice a month</b><p>Earnings land on the 1st and the 15th via Venmo, PayPal or direct deposit. Bounties are reviewed within 48 hours of submission.</p></div></div>
-      <div class="mech-item"><span class="mech-ic">◎</span><div><b>Proof is straightforward</b><p>Most bounties are tracked automatically. For events and content milestones, you upload a screenshot — reviewed within 48 hours.</p></div></div>
-      <div class="mech-item"><span class="mech-ic">⚠</span><div><b>Real students only</b><p>Bounties tied to signups require unique people who stay active for 7 days. Fake or duplicate accounts void the bounty — we do check.</p></div></div>
-      <div class="mech-item"><span class="mech-ic">§</span><div><b>You’re a contractor</b><p>Paid as a 1099 contractor, not an employee. If you earn over $600 in a year we’ll send tax paperwork in January.</p></div></div>
-      <div class="mech-item"><span class="mech-ic">◆</span><div><b>The pot splits</b><p>Each rung is paid to the campus and split evenly across the seats that were filled and active when it cleared. An empty chair doesn’t take a share.</p></div></div>
-      <div class="mech-item"><span class="mech-ic">▶</span><div><b>Views pay on top</b><p>The hunt is the team’s. The per-view rate in section 05 is yours alone, paid on top of your share.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="views">
-  <div class="wrap">
-    <div class="shead rv">
-      <span class="eyebrow">05 — paid per view</span>
-      <h2>post it. tag us.<br>get paid on views.</h2>
-      <p>Post a video about money, tag @fomo, submit the link — and once it's had 30 days to run, we pay you on what it actually did. Drag the slider to see the rate. There's no follower minimum — about two thirds of the people earning it started under 500 — and no cap on how many you submit. You can do it on a campus team or entirely on your own; both are below the numbers.</p>
-    </div>
-
-    <div class="ppv rv">
-      <div class="calc">
-        <span class="calc-lab">drag to see what a video pays</span>
-        <div class="calc-views" id="cViews">100K views</div>
-        <input type="range" class="sl" id="cSlide" min="0" max="1000" value="606" style="--p:60.6%" aria-label="views on a video">
-        <div class="sl-ends"><span>1K</span><span>2M+</span></div>
-
-        <div class="calc-out">
-          <span class="calc-lab">that video pays you</span>
-          <div class="calc-pay" id="cPay">$210</div>
-          <p class="calc-sub" id="cNote">That works out to about <b>$2.10</b> per 1,000 views. Post five like this in a month and it's <b>$1,050</b>.</p>
-        </div>
-        <p class="calc-flow">post it → submit the link → 30 days → paid</p>
-      </div>
-
-      <div>
-        <div class="rate" id="rateCard">
-          <div class="rate-row" data-t="0"><span>every approved video<small>even if it flops</small></span><b>$10 floor</b></div>
-          <div class="rate-row" data-t="1"><span>up to 100K views<small>the standard rate</small></span><b>$2.00 / 1K</b></div>
-          <div class="rate-row" data-t="2"><span>100K – 500K views<small>the video is running</small></span><b>$3.00 / 1K</b></div>
-          <div class="rate-row" data-t="3"><span>500K+ views<small>top rate</small></span><b>$4.00 / 1K</b></div>
-          <div class="rate-row" data-t="4"><span>ceiling per video<small>one post, one payout</small></span><b>$2,500 max</b></div>
-        </div>
-
-        <div class="ppv-notes">
-          <div class="ppv-note"><i>◷</i><p>Counted at <b>30 days</b> after posting, so a slow burn still gets paid. Views after that don't count toward the same video.</p></div>
-          <div class="ppv-note"><i>◎</i><p>Every platform counts — TikTok, Reels, Shorts. The same video posted to three platforms is <b>one submission</b>, and we add the view counts together.</p></div>
-          <div class="ppv-note"><i>⚠</i><p>It has to tag <b>@fomo</b> and be about money or markets — any account you own, campus channel or not. Bought views void the payout and we check every submission over 50K.</p></div>
-          <div class="ppv-note"><i>§</i><p>It stacks with the campus hunt — a video that helps clear a rung pays the <b>bounty and the view rate</b>, not one or the other.</p></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="paths rv">
-      <div class="path lead">
-        <span class="path-n">option a · the campus team</span>
-        <h3>do it with a team,<br>earn on top of it.</h3>
-        <p>Take one of the five seats at your school. You still earn the per-view rate on everything you post — it just stops being the only thing you're paid for.</p>
-        <ul>
-          <li>The same per-view rate on every video you submit</li>
-          <li>Plus your share of the campus treasure hunt in section 04</li>
-          <li>Plus the gear — mic, tripod, banner, merch — sent to you free</li>
-          <li>Plus everything in section 03 — the title, the numbers, the reference</li>
-          <li>Four other people covering the parts you're bad at</li>
-        </ul>
-        <a class="btn btn-g" href="/fomo/apply">apply for a seat →</a>
-        <div class="path-foot">
-          <small>needs an application · ~4–6 hrs a week</small>
-          <b>views + bounties + gear</b>
-        </div>
-      </div>
-
-      <div class="path">
-        <span class="path-n">option b · on your own</span>
-        <h3>or skip all that<br>and just post.</h3>
-        <p>No team, no application, no seat, no commitment. Make a video about money, tag @fomo, submit the link, get paid on what it does. That's the entire arrangement.</p>
-        <ul>
-          <li>The same per-view rate, the same $2,500 ceiling per video</li>
-          <li>No interview, no onboarding call, no weekly anything</li>
-          <li>Post one video a semester or thirty — nobody chases you</li>
-          <li>You don't need a campus channel or a school we're live at</li>
-          <li>Stop whenever. You keep everything you've already earned</li>
-        </ul>
-        <a class="btn btn-p" href="/fomo/submit">submit a video →</a>
-        <div class="path-foot">
-          <small>needs nothing · sign up and post</small>
-          <b>views only</b>
-        </div>
-      </div>
-    </div>
-
-    <p class="path-note rv">Plenty of people start on the right and switch. Have one video do well on your own, and <b>that clip is the strongest application you can send us</b> for a seat on your campus team.</p>
-  </div>
-</section>
-
-<section id="ideas">
-  <div class="wrap">
-    <div class="shead rv">
-      <span class="eyebrow">06 — what you'd post</span>
-      <h2>you'll never<br>start from blank.</h2>
-      <p>Mostly the Content seat's problem, but anyone on the team can post. These are formats working on finance TikTok right now, rewritten for a campus audience. Each comes with the hook to open on — that first line is most of the job.</p>
-    </div>
-
-    <div class="chips rv" id="chips">
-      <button class="chip on" data-f="all">everything</button>
-      <button class="chip" data-f="street">street interviews</button>
-      <button class="chip" data-f="green">green screen</button>
-      <button class="chip" data-f="series">running series</button>
-      <button class="chip" data-f="story">confessions</button>
-      <button class="chip" data-f="guest">guests &amp; collabs</button>
-    </div>
-
-    <div class="idea-grid" id="ideas-grid">
-
-      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview · wheel</span><h4>answer the question or show your balance</h4><p class="idea-hook">“spin it. answer the question, or show us the account.”</p><p>The format running campus TikTok right now. A spinning wheel of money questions, and the forfeit is showing your banking app. Most people answer, a few show, and the ones who do both are the clip. Bring a cheap wheel and a tripod.</p><div class="idea-foot"><span>40 min · 6–8 clips</span><em>proven format</em></div></article>
-
-      <article class="idea rv" data-t="street"><span class="idea-fmt">street interview</span><h4>how much do you think i make</h4><p class="idea-hook">“guess my salary. you get one try.”</p><p>Ask people to guess the earnings of the person standing next to them, then reveal. The gap between guess and truth is the whole video, and the comments argue about it for days.</p><div class="idea-foot"><span>30 min · 5 clips</span><em>easiest start</em></div></article>
-
-
-
-      <article class="idea rv" data-t="green"><span class="idea-fmt">green screen · reactive</span><h4>react to the chart, not the news</h4><p class="idea-hook">“this happened four hours ago and nobody on this campus knows.”</p><p>Green screen yourself in front of the actual chart or headline and talk over it. It is the highest-trust format in finance because you are showing your source while still being on camera. Speed beats depth here — post inside a few hours.</p><div class="idea-foot"><span>20 min · rides the news</span><em>needs speed</em></div></article>
-
-
-      <article class="idea rv" data-t="green"><span class="idea-fmt">green screen · faceless option</span><h4>the tuition chart</h4><p class="idea-hook">“your tuition versus the s&amp;p, same twenty years.”</p><p>Your school’s tuition over 20 years against the S&amp;P, nothing else on screen. It writes its own outrage and ends up in group chats. Works fully faceless if you are not ready to be on camera yet.</p><div class="idea-foot"><span>15 min · shares beat views</span><em>no face needed</em></div></article>
-
-      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · highest reach</span><h4>$100 to $1,000 — follow along</h4><p class="idea-hook">“day 6 of turning $100 into $1,000. we are down $14.”</p><p>The single highest-reach hook in finance content, because the hook is not a tip, it is a shared journey. People come back for the number, not the advice. Post the losing days — those outperform the wins.</p><div class="idea-foot"><span>10 min/day · builds habit</span><em>best for growth</em></div></article>
-
-      <article class="idea rv" data-t="series"><span class="idea-fmt">running series · monthly</span><h4>the campus price index</h4><p class="idea-hook">“the burrito is up 9% since september. here is the rest.”</p><p>Track five things students actually buy — dining plan, parking pass, that one burrito — against inflation. Repeat monthly until it becomes your signature and people start sending you price changes.</p><div class="idea-foot"><span>1 hr/month · becomes a franchise</span><em>high repeat value</em></div></article>
-
-
-
-
-      <article class="idea rv" data-t="story"><span class="idea-fmt">confession · highest engagement</span><h4>i lost money and here is exactly how</h4><p class="idea-hook">“i lost $400 in one afternoon. here is the screenshot.”</p><p>The confession hook gets roughly double the like-to-view ratio of a tips video. Post the number, post the screenshot, post what you would do differently. It is the fastest trust you can build on a finance account.</p><div class="idea-foot"><span>20 min · trust builder</span><em>highest engagement</em></div></article>
-
-
-
-
-
-
-
-
-
-      <article class="idea rv" data-t="guest"><span class="idea-fmt">guest · on camera</span><h4>put a professor on the record</h4><p class="idea-hook">“i asked someone who teaches this for a living.”</p><p>Ten minutes with a finance or econ professor. Instant credibility, and it makes your channel look like a publication rather than an account. Most will say yes to ten minutes.</p><div class="idea-foot"><span>1 hr · booking support</span><em>medium effort</em></div></article>
-
-
-
-    </div>
-
-    <p class="path-note rv" style="margin-top:30px">Eight of the strongest, to show the shape. <b>100+ more hooks and formats live in the Ambassador Hub</b>, refreshed monthly.</p>
-  </div>
-</section>
-
-<section id="playbook">
-  <div class="wrap">
-    <div class="shead rv">
-      <span class="eyebrow">07 — the playbook</span>
-      <h2>how the good<br>ones do it.</h2>
-      <p>Reverse-engineered from the ambassadors currently doing the best numbers. None of it requires you to be good on camera on day one.</p>
-    </div>
-
-    <div class="pb">
-      <div class="week rv">
-        <h4>your first week</h4>
-        <p>A realistic seven days. Ship all of it and you'll be ahead of most people who start the same month as you.</p>
-        <div class="day"><b>day 1</b><p>Claim your handle on three platforms. Same name everywhere. Write a six-word bio.</p></div>
-        <div class="day"><b>day 2</b><p>Record your first video.</p></div>
-        <div class="day"><b>day 3</b><p>Post #1. Open the group chat. Personally invite 30 people — by DM, not by story.</p></div>
-        <div class="day"><b>day 4</b><p>Post #2. Reply to every comment within an hour. That matters more than the edit.</p></div>
-        <div class="day"><b>day 5</b><p>Put your referral link in your bio and pin it in the chat. First signups land here.</p></div>
-        <div class="day"><b>day 6</b><p>Post #3, and share it in a couple of campus group chats or class threads to reach people outside your first invites.</p></div>
-        <div class="day"><b>day 7</b><p>Check your analytics in the hub. Kill your worst format, double down on your best.</p></div>
-      </div>
-
-      <div class="acc rv" id="acc">
-        <div class="acc-item open">
-          <button class="acc-btn"><span class="acc-n">01</span><span class="acc-t">be local, not "finance"</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div>
-            <p>"Finance content" isn't a channel. "The money desk for Ohio State" is. Your beat is where markets meet one specific campus, and ideally nothing you post could have been posted by someone at another school.</p>
-            <ul><li>Name it like a publication, not a username</li><li>Lead with a number, a stake or a named place — never "hey guys, so today"</li><li>If a national account could post it, rewrite it</li></ul>
-          </div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-n">02</span><span class="acc-t">post like a beat reporter</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div>
-            <p>Consistency beats brilliance. Five decent posts a week outperforms one perfect post a month, because the algorithm rewards frequency and your campus rewards familiarity.</p>
-            <ul><li>Batch it: one shoot day, five outputs</li><li>Same slots every week — people learn your schedule</li><li>Spend 45 minutes in the comments after posting</li><li>Repost your best performer to the other platforms</li></ul>
-          </div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-n">03</span><span class="acc-t">turn attention into signups</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div>
-            <p>Views earn money. Signups win campuses. The bridge between them is always a reason to act right now: a tournament, a challenge, a walkthrough you're running in the chat tonight.</p>
-            <ul><li>One clear ask per week, not per post</li><li>Walk people through their first trade personally</li><li>Your referral link goes everywhere, every time</li><li>Hand your top posts to Growth and let them decide what to keep making</li></ul>
-          </div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-
-
-<section id="hub">
-  <div class="wrap">
-    <div class="shead rv">
-      <span class="eyebrow">08 — inside the hub</span>
-      <h2>your numbers,<br>and everyone else's.</h2>
-      <p>One login. Your own dashboard — referral link, live tracking, every video you've submitted and what it earned, and your next payout — plus the national board showing where your campus sits against every other school.</p>
-    </div>
-
-    <div class="tabs" id="hubtabs">
-      <button class="tab on" data-hub="dash">your dashboard</button>
-      <button class="tab" data-hub="board">national leaderboard</button>
-    </div>
-
-    <div class="hub-panel on" id="hub-dash">
-    <div class="dash rv">
-      <div class="dash-bar">
-        <div class="dots"><i></i><i></i><i></i></div>
-        <span>hub.fomo.family/maya-usc</span>
-        <span class="live"><span class="dot"></span> live</span>
-      </div>
-      <div class="dash-body">
-        <div>
-          <div class="d-hi">
-            <div class="d-av">MR</div>
-            <div><h3>maya r.</h3><small>USC · content lead · @uscfomo</small></div>
-          </div>
-
-          <div class="d-stats">
-            <div class="d-stat"><b data-count="41.2" data-suffix="K" data-dec="1">0</b><small>followers</small><i>+18% wk</i></div>
-            <div class="d-stat"><b data-count="212" data-suffix="">0</b><small>signups</small><i>+31 this wk</i></div>
-            <div class="d-stat"><b data-count="1840" data-prefix="$">0</b><small>earned this sem</small><i>+$341 wk</i></div>
-            <div class="d-stat"><b data-count="612" data-prefix="$">0</b><small>view earnings</small><i>9 videos paid</i></div>
-          </div>
-
-          <div class="ref">
-            <small>your referral link</small>
-            <div class="ref-row">
-              <div class="ref-code" id="refcode">fomo.family/c/uscfomo</div>
-              <button class="copy" id="copybtn">copy</button>
+        <div class="li-card">
+          <div class="li-head"><b>Experience</b><span>+ &#9998;</span></div>
+          <div class="li-row">
+            <span class="li-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>
+            <div class="li-body">
+              <h5 id="liTitle">Campus Content Lead &mdash; Fomo</h5>
+              <p>fomo &middot; Contract</p>
+              <small>Sep 2026 &ndash; Present &middot; 2 mos</small>
+              <small id="liSkills">Skills: Content Strategy &middot; Social Media &middot; Video Production</small>
             </div>
           </div>
-
-          <div class="queue">
-            <h4>this week's checklist</h4>
-            <small>SUGGESTED, NOT REQUIRED — YOU SET YOUR OWN PACE</small>
-            <div style="margin-top:14px">
-              <div class="q-item checked"><span class="q-box">✓</span><span class="q-txt">Post a reel</span><span class="q-time">20 min</span></div>
-              <div class="q-item checked"><span class="q-box">✓</span><span class="q-txt">Story post</span><span class="q-time">5 min</span></div>
-              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Submit last week's videos for view payout</span><span class="q-time">2 min</span></div>
-              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Send Growth your top 3 posts</span><span class="q-time">5 min</span></div>
-              <div class="q-item"><span class="q-box">✓</span><span class="q-txt">Post a chart or data card</span><span class="q-time">15 min</span></div>
-            </div>
-            <div class="prog"><i id="qbar"></i></div>
-          </div>
         </div>
-
-        <div>
-          <div class="ring-card">
-            <div class="ring">
-              <svg width="150" height="150" viewBox="0 0 150 150">
-                <circle cx="75" cy="75" r="64" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="10"/>
-                <circle id="ringp" cx="75" cy="75" r="64" fill="none" stroke="url(#g1)" stroke-width="10" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="402"/>
-                <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#516AF6"/><stop offset="100%" stop-color="#19D97C"/></linearGradient></defs>
-              </svg>
-              <div class="ring-mid"><b>212</b><small>signups</small></div>
-            </div>
-            <p>38 more signups to unlock the next rung on the content ladder.</p>
-          </div>
-
-          <div class="payout">
-            <div style="font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin-bottom:12px">next payout · oct 1</div>
-            <div class="pay-row"><span>Bounties this period</span><span>$437</span></div>
-            <div class="pay-row"><span>Per-view earnings · 9 videos</span><span>$612</span></div>
-            <div class="pay-row"><span>"50k on one video" bounty</span><span>$500</span></div>
-            <div class="pay-row pay-total"><span>Total</span><span>$1,549</span></div>
-          </div>
+        <p class="li-note">The card follows whichever seat you picked above.</p>
+        <div class="li-copy">
+          <h5>the linkedin description</h5>
+          <p>Campus lead for Fomo, a venture-backed prediction markets startup ($75M raised). Ran user acquisition and brand strategy on a <em>[X]</em>,000-student campus as part of a five-person growth team.</p>
+          <ul>
+            <li><em>[400]</em> active users acquired in 60 days</li>
+            <li><em>[3]</em> org partnerships closed, reaching <em>[1,200]</em>+ students</li>
+            <li><em>[100k]</em> views on campus social account</li>
+            <li>Managed <em>[$X]</em> event budget</li>
+          </ul>
         </div>
       </div>
-    </div>
-      <p class="hub-note">↻ every seat gets a version tuned to that role · shown here: a content lead at USC, second semester</p>
-    </div>
-
-    <div class="hub-panel" id="hub-board">
-      <p class="hub-lede">Schools are ranked on verified signups, combining all five seats. There's a board by role too, so a partnerships lead isn't measured against a content lead. Bragging rights mostly — the exception is the $2,000 rung at the top of the hunt, which goes to whichever campus finishes the semester ranked first.</p>
-      <div class="chips" id="lbtabs">
-        <button class="chip on" data-lb="schools">schools</button>
-        <button class="chip" data-lb="ambassadors">by role</button>
-        <button class="chip" data-lb="rising">rising</button>
-      </div>
-    <div class="lb rv">
-      <div class="lb-head"><span>rank</span><span id="lbcol1">campus</span><span id="lbcol2">seats filled</span><span>reach</span><span style="text-align:right">signups</span></div>
-      <div id="lbbody"></div>
-    </div>
-      <p class="hub-note">↻ updated every monday · campus totals combine all five seats at that school</p>
     </div>
   </div>
 </section>
 
-<section id="faq">
+<section id="runs">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">09 — questions</span>
-      <h2>the things<br>everyone asks.</h2>
+      <span class="eyebrow">03 &mdash; how the team runs</span>
+      <h2>the process.</h2>
+      <p>Six rules, all five of you.</p>
     </div>
 
-    <div class="faq rv">
-      <div class="acc" id="faq1">
-        <div class="acc-item open">
-          <button class="acc-btn"><span class="acc-t">what if my school already has a team?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Then you take whichever seat is still open — most campuses are running with three or four of the five filled, and the empty ones are usually partnerships and growth because everyone applies for content. If every seat at your school is genuinely full, we'll put you on the list for next semester, or you can join as a second content lead, which is the one seat that supports two people.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">can i switch roles later?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Once a semester, if the seat you want is open and your president signs off. Nothing resets — the hunt belongs to the campus, so your team keeps every rung it has already cleared and you just start leading different ones. Switching mid-semester is rare and usually means something went wrong, so we'd rather talk about it first.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">do i need to know a lot about finance?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>You need to be interested, not expert. The best-performing content is usually a student learning out loud — asking questions, showing losses, explaining something simply right after working it out themselves. If you're already deep in markets, great, but a finance degree isn't what predicts success here.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">am i giving people financial advice?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>No, and you can't. You're not licensed to. You can share what you're doing, explain concepts and cover markets as a topic — you can't tell people what to buy or suggest returns are guaranteed. We send a one-page compliance guide on day one that spells out the specific lines, and our team will review anything you're unsure about.</p></div></div>
-        </div>
-      </div>
+    <div class="rules rv">
+      <div class="rule"><span>01</span><b>one group chat</b><p>Everything goes in it. No side deals, no silos.</p></div>
+      <div class="rule"><span>02</span><b>sunday team meeting</b><p>Twenty minutes. The president runs it.</p></div>
+      <div class="rule"><span>03</span><b>sunday report to HQ</b><p>The president sends it, using the template.</p></div>
+      <div class="rule"><span>04</span><b>ask before you promise</b><p>Never commit fomo to money, prizes or sponsorships without approval. Never guarantee an org anything HQ hasn't signed off on.</p></div>
+      <div class="rule"><span>05</span><b>post it, don't perfect it</b><p>Speed beats polish every time.</p></div>
+      <div class="rule"><span>06</span><b>pass it across, same day</b><p>Content spots a big creator &rarr; Culture. Culture meets a frat president &rarr; Partnerships. Partnerships lands a 400-person event &rarr; Growth and Content.</p></div>
+    </div>
+  </div>
+</section>
 
-      <div class="acc" id="faq2">
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">what counts as a "verified signup"?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>A unique person who installs the app through your link, finishes creating an account, and is still active seven days later. Duplicate accounts, several accounts on one device, and anyone who deletes immediately don't count. We run fraud checks before every payout — one flagged batch is a conversation, a pattern of them ends the arrangement.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">what's the commitment, and can i quit?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>We ask for one semester so you actually get past the slow first few weeks, but nothing is binding. You can step away whenever you want and you'll be paid for everything you've already earned. The one courtesy we ask is telling your president rather than going quiet, since four other people are planning around your seat. Plenty of people pause over the summer and pick it back up in the fall.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">can i do this alongside an internship or job?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>Most ambassadors do — it's contract work with no set hours, so it fits around a schedule. Two things worth checking yourself: whether your internship has a moonlighting or social media clause, and whether your school requires you to register with student affairs before tabling or hosting events on campus. We'll help with that paperwork if so.</p></div></div>
-        </div>
-        <div class="acc-item">
-          <button class="acc-btn"><span class="acc-t">what happens when i graduate?</span><span class="acc-i">+</span></button>
-          <div class="acc-body"><div><p>The account is yours — you keep it, the audience and the archive. What we ask is that you help fill your seat before you go, since a campus that loses two seats in May usually doesn't recover by September. Plenty of people hand it to a younger student and stay on as an advisor. We're happy to be a reference either way.</p></div></div>
-        </div>
+<section id="map">
+  <div class="wrap">
+    <div class="shead rv">
+      <span class="eyebrow">04 &mdash; the 8-week goal map</span>
+      <h2>sixty days,<br>written down.</h2>
+      <p>Everyone at a glance. Pick a seat in section 01 and its column lights up.</p>
+    </div>
+
+    <div class="map-wrap rv">
+      <table class="map">
+        <colgroup>
+          <col class="c-wk"><col data-c="pres"><col data-c="growth"><col data-c="partner"><col data-c="content"><col data-c="culture">
+        </colgroup>
+        <thead>
+          <tr><th></th><th data-c="pres">campus president</th><th data-c="growth">growth</th><th data-c="partner">partnerships</th><th data-c="content">content</th><th data-c="culture">culture</th></tr>
+        </thead>
+        <tbody id="mapBody"></tbody>
+      </table>
+    </div>
+
+    <p class="path-note rv" style="margin-top:26px">Goals are the bar, not the ceiling. <b>HQ adjusts them per school size.</b></p>
+  </div>
+</section>
+
+<section id="apply">
+  <div class="wrap">
+    <div class="cta rv">
+      <span class="eyebrow" style="justify-content:center">applications open</span>
+      <h2>pick a seat.</h2>
+      <p>One application, one role. Tell us which of the five you want and why you're the person for it.</p>
+      <div class="cta-btns">
+        <a class="btn btn-p" href="/fomo/apply">apply for a seat &rarr;</a>
+        <button class="btn btn-g" data-jump="role" type="button">read the five roles again</button>
       </div>
+      <p class="cta-note">five seats per campus &middot; 60 days</p>
     </div>
   </div>
 </section>
 
 </main>
 
-<div class="modal" id="modal">
-  <div class="modal-card">
-    <button class="modal-x" id="modalx">✕</button>
-    <span class="eyebrow" id="mStage">group 01</span>
-    <h3 id="mTitle">task</h3>
-    <div class="m-pay"><span id="mPay">$20</span><small id="mTime">~1 day</small></div>
-    <p id="mDesc"></p>
-    <div class="proof-box">
-      <small>WHAT COUNTS AS PROOF</small>
-      <ul id="mProof"></ul>
-    </div>
-    <button class="btn btn-g" id="mClose" style="width:100%;justify-content:center">got it</button>
-  </div>
-</div>
-
 <footer>
   <div class="wrap">
     <div class="f-grid">
       <div class="f-brand">
         <button class="logo lg" data-jump="top" type="button"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></button>
-        <p>Where traders become legends — and five students turn a campus into a channel.</p>
+        <p>Where traders become legends — and five students turn a campus into a team.</p>
         <small>© 2026 FOMO LABS INC. · CAMPUS PROGRAM</small>
       </div>
       <div class="f-cols">
         <div>
           <h5>program</h5>
           <button data-jump="role" type="button">the five roles</button>
-          <button data-jump="career" type="button">your résumé</button>
-          <button data-jump="earn" type="button">the campus hunt</button>
-          <button data-jump="faq" type="button">faq</button>
+          <button data-jump="get" type="button">what you get</button>
+          <button data-jump="map" type="button">the 8-week map</button>
         </div>
         <div>
           <h5>get started</h5>
           <a href="/fomo/apply">apply for a seat</a>
-          <a href="/fomo/submit">submit a video</a>
-          <button data-jump="views" type="button">paid per view</button>
+          <button data-jump="runs" type="button">how the team runs</button>
         </div>
         <div>
           <h5>fomo</h5>
@@ -1474,170 +720,43 @@ body::after{display:none}
 const hdr=document.getElementById('hdr');
 addEventListener('scroll',()=>hdr.classList.toggle('stuck',scrollY>20),{passive:true});
 
-(function(){
-  const s=[['UT Austin','412'],['Michigan','388'],['Arizona State','341'],['Florida','322'],['Ohio State','312'],['Penn State','298'],['NYU','287'],['Georgia','271'],['Alabama','266'],['USC','244'],['Indiana','231'],['Wisconsin','219'],['Purdue','204'],['Rutgers','188'],['Clemson','176']];
-  const html=s.map(([a,b])=>`<span>${a} <em>+${b} signups</em></span>`).join('');
-  document.getElementById('tick').innerHTML=html+html;
-})();
-
-const cObs=new IntersectionObserver(es=>es.forEach(e=>{
-  if(!e.isIntersecting)return;cObs.unobserve(e.target);
-  const el=e.target,end=parseFloat(el.dataset.count),dec=+(el.dataset.dec||0),
-    pre=el.dataset.prefix||'',suf=el.dataset.suffix||'';
-  let t0=null;
-  function step(t){if(!t0)t0=t;const p=Math.min((t-t0)/1400,1),v=end*(1-Math.pow(1-p,3));
-    el.textContent=pre+(dec?v.toFixed(dec):Math.round(v).toLocaleString())+suf;
-    if(p<1)requestAnimationFrame(step);}
-  requestAnimationFrame(step);
-}),{threshold:.4});
-document.querySelectorAll('[data-count]').forEach(c=>cObs.observe(c));
-
 const rObs=new IntersectionObserver(es=>es.forEach(e=>{
   if(e.isIntersecting){e.target.classList.add('in');rObs.unobserve(e.target);}
 }),{threshold:0,rootMargin:'0px 0px -120px 0px'});
 document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';rObs.observe(el);});
 
-document.getElementById('chips').addEventListener('click',e=>{
-  const b=e.target.closest('.chip');if(!b)return;
-  document.querySelectorAll('#chips .chip').forEach(c=>c.classList.toggle('on',c===b));
-  const f=b.dataset.f;
-  document.querySelectorAll('#ideas-grid .idea').forEach(card=>{
-    const show=f==='all'||card.dataset.t.includes(f);
-    card.classList.toggle('hidden',!show);
-    if(show){card.style.animation='none';card.offsetHeight;card.style.animation='fade .45s ease';}
-  });
-});
-document.querySelectorAll('.idea').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
-    const r=card.getBoundingClientRect();
-    card.style.setProperty('--mx',(e.clientX-r.left)+'px');
-    card.style.setProperty('--my',(e.clientY-r.top)+'px');
-  });
-});
-
-function wireAcc(id){
-  const acc=document.getElementById(id);if(!acc)return;
-  const setH=i=>{const b=i.querySelector('.acc-body');b.style.maxHeight=i.classList.contains('open')?b.scrollHeight+'px':'0px'};
-  acc.querySelectorAll('.acc-item').forEach(setH);
-  acc.addEventListener('click',e=>{
-    const btn=e.target.closest('.acc-btn');if(!btn)return;
-    const item=btn.parentElement,open=item.classList.contains('open');
-    acc.querySelectorAll('.acc-item').forEach(i=>{i.classList.remove('open');setH(i)});
-    if(!open){item.classList.add('open');setH(item)}
-  });
-  addEventListener('resize',()=>acc.querySelectorAll('.acc-item').forEach(setH));
-}
-['acc','faq1','faq2'].forEach(wireAcc);
-
-/* ── ONE HUNT FOR THE WHOLE CAMPUS ──────────────────────
-   Ten rungs, cleared by the campus team together, in order.
-   `lead` is the seat that owns it — the rest of the team backs them up. */
-const HUNT=[
- {g:'assemble the team',n:'stage 01',t:'claim the campus',pay:0,reward:'free',time:'~1 hour',lead:'pres',tags:['easy','setup'],
-  d:"Your president registers the school, claims the campus handle, and books the onboarding call. Nothing else on the hunt opens until your school is officially yours — this is the lock on the front door.",
-  proof:['School registered in the hub','Campus handle claimed on TikTok and Instagram','Onboarding call attended']},
-
- {t:'all five seats filled',pay:0,reward:'starter kit',time:'~2 weeks',lead:'pres',tags:['easy','team'],
-  d:"Every seat filled and onboarded — president, growth, partnerships, content, culture. It's the single biggest predictor of how a campus finishes the semester, so it's the gate to everything that pays. Clear it and we ship the campus starter kit: banner, merch, interview mic.",
-  proof:['All five leads onboarded and active in the hub','Roles clearly assigned, not shared','Shipping address confirmed']},
-
- {t:'first three videos',pay:0,reward:'camera rig',time:'~1 week',lead:'content',tags:['easy','content'],
-  d:"Content posts the first three videos on the campus channel. Once they're live we ship a tripod and lav mic, so your street interviews stop sounding like phone audio.",
-  proof:['Links to all three published videos','Posted on the campus handle, not a personal one','Each one tags @fomo']},
-
- {g:'first blood',n:'stage 02',t:'open the room',pay:250,time:'~4 days',lead:'culture',tags:['easy','community'],
-  d:"Culture starts the campus group chat and gets fifty real students into it. Name it after the school, not after FOMO. Thirty of those invites go out by DM, not by story.",
-  proof:['Screenshot of the member count at 50+','Three days of real conversation, not just joins','Campus referral link pinned']},
-
- {t:'5k campus views',pay:300,time:'~1 week',lead:'content',tags:['easy','content'],
-  d:"Five thousand total views across the campus channel. Most teams clear this inside their first couple of weeks, and it's the rung that tells you whether your hook is working.",
-  proof:['Analytics screenshots from every platform','Only campus-channel content counts','Posts stay live for at least 30 days']},
-
- {t:'first club closed',pay:350,time:'~2 weeks',lead:'partner',tags:['easy','partnerships'],
-  d:"Partnerships closes the first campus org — finance, business, econ, investing, anything money-adjacent. A co-post, a table at their next meeting, or a spot on the agenda.",
-  proof:['Written confirmation from the club','Something actually shipped: post, table or talk','Club has 40+ members']},
-
- {t:'the first twenty-five',pay:400,time:'~1 week',lead:'growth',tags:['referrals'],
-  d:"Twenty-five students download FOMO through your campus link, create an account and make one trade. Almost every team gets here off their own networks — the interesting part starts when you run out of friends.",
-  proof:['Tracked automatically from the campus link','All 25 still active after 7 days','Team members’ own accounts do not count']},
-
- {g:'a campus that works',n:'stage 03',t:'fill the room',pay:700,time:'~1 event',lead:'culture',tags:['events'],
-  d:"Run an event with a hundred people through the door. Culture runs the night, partnerships finds the venue and the sponsor, content films it, growth works the QR code. This is the rung that genuinely needs all five of you.",
-  proof:['Photos and a headcount at the door','100+ attendees verified','40+ signups traced to the event code']},
-
- {t:'250 campus signups',pay:1000,time:'~6 weeks',lead:'growth',tags:['referrals'],
-  d:"Two hundred and fifty verified signups across the whole campus. By here the number is coming from things you built rather than people you already knew.",
-  proof:['Tracked automatically across every campus code','All still active after 7 days','Standard fraud review']},
-
- {g:'the vault',n:'stage 04',t:'number one campus',pay:2000,time:'one semester',lead:'all',tags:['rare','competitive'],gold:true,
-  lock:'◆ one campus per semester — every school is eligible',
-  d:"Finish the semester as the number one ranked campus in the country. Every other rung on this hunt you clear on your own schedule. This is the only one you have to win outright, and it's the biggest single rung on the hunt — double the next one.",
-  proof:['Number one on the national campus board on the last day of the semester','Ranked on verified signups across the whole semester','Full fraud review before payout']}
+/* ── THE 8-WEEK GOAL MAP ────────────────────────────────
+   One row per week, one column per seat. Straight out of the program doc. */
+const MAP=[
+ ['Team locked, chat live, first meeting','Learn the app cold','Build target list (25 orgs)','Accounts live, first 3 posts','Build creator list (30 names)'],
+ ['First campus opportunity map','25 users','First 10 outreach messages','Mic arrives, first street interviews','First 10 DMs sent'],
+ ['Make sure everyone is working','Group chat blitz','Follow-ups + first meetings','Test 3 formats','Lock relationships, scout venue'],
+ ['Month 1 review with HQ','150 users','1 partnership confirmed','1 video over 10k','Dinner guest list finalised'],
+ ['Coordinate first big activation','Referral competition','Deliver first partnership','Cover the activation','Dinner #1'],
+ ['Double down on what worked','Convert dinner + event traffic','2 more in discussion','Repeat the winning format','Post-dinner follow-up'],
+ ['Push toward the big event','Push toward 400','Lock a major campus event','Biggest content week','Line up dinner #2'],
+ ['60-day report + next quarter plan','400 active users','3 confirmed total','100k+ total views','2 dinners done, roster built']
 ];
-const SEATS={pres:'president leads',growth:'growth leads',partner:'partnerships leads',
-             content:'content leads',culture:'culture leads',all:'all five'};
+const SEATKEYS=['pres','growth','partner','content','culture'];
 const ROLES={
-  pres:{label:'campus president',li:'Campus President, Campus',skills:'Skills: Team Leadership · Operations · Growth Strategy'},
-  growth:{label:'growth',li:'Growth Lead, Campus',skills:'Skills: Growth Marketing · Funnel Analytics · A/B Testing'},
-  partner:{label:'partnerships',li:'Partnerships Lead, Campus',skills:'Skills: Business Development · Partnerships · Negotiation'},
-  content:{label:'content',li:'Content Lead, Campus',skills:'Skills: Content Strategy · Social Media · Video Production'},
-  culture:{label:'culture',li:'Community Lead, Campus',skills:'Skills: Community Management · Event Planning · Brand'}
+  pres:{li:'Campus President \u2014 Fomo',skills:'Skills: Team Leadership \u00b7 Operations \u00b7 Growth Strategy'},
+  growth:{li:'Campus Growth Lead \u2014 Fomo',skills:'Skills: Growth Marketing \u00b7 User Acquisition \u00b7 Funnel Analytics'},
+  partner:{li:'Campus Partnerships Lead \u2014 Fomo',skills:'Skills: Business Development \u00b7 Partnerships \u00b7 Negotiation'},
+  content:{li:'Campus Content Lead \u2014 Fomo',skills:'Skills: Content Strategy \u00b7 Social Media \u00b7 Video Production'},
+  culture:{li:'Campus Culture Lead \u2014 Fomo',skills:'Skills: Community Management \u00b7 Event Planning \u00b7 Brand'}
 };
-const money=n=>'$'+n.toLocaleString();
-const HUNT_TOTAL=HUNT.reduce((t,b)=>t+b.pay,0);
 
-function renderHunt(){
-  const wrap=document.getElementById('ladder');
-  let html='',run=0;
-  HUNT.forEach((b,i)=>{
-    if(b.g){
-      let grpTotal=0;
-      for(let k=i;k<HUNT.length;k++){if(k>i&&HUNT[k].g)break;grpTotal+=HUNT[k].pay;}
-      html+=`<div class="grp"><span>${b.n}</span><h4>${b.g}</h4><span class="tot">${grpTotal?money(grpTotal)+' in this stage':'gear, not cash'}</span></div>`;
-    }
-    run+=b.pay;
-    const first=i===0;
-    const lock=first
-      ? '<span class="b-lock open">◆ start here — unlocked on day one</span>'
-      : b.lock
-        ? `<span class="b-lock open">${b.lock}</span>`
-        : `<span class="b-lock">🔒 the campus unlocks this after "${HUNT[i-1].t}"</span>`;
-    html+=`<div class="rung ${first?'first':''} ${b.gold?'gold':''}">
-      <div class="node">${String(i+1).padStart(2,'0')}</div>
-      <article class="bounty ${b.gold?'gold':''} ${first||b.lock?'':'locked'}" data-i="${i}">
-        <div class="b-top"><h4>${b.t}</h4><span class="b-pay${b.reward?' reward':''}">${b.reward||money(b.pay)}</span></div>
-        <span class="b-lead" data-seat="${b.lead}">${SEATS[b.lead]}</span>
-        <p>${b.d}</p>
-        <div class="b-meta">${b.tags.map(t=>`<span class="${t==='easy'?'easy':t==='rare'?'rare':''}">${t}</span>`).join('')}<span>${b.time}</span></div>
-        <div class="b-proof">${lock}${run?`<div style="margin-top:8px">campus pot to here · <b>${money(run)}</b></div>`:''}</div>
-        <button class="b-btn">see requirements</button>
-      </article>
-    </div>`;
-  });
-  wrap.innerHTML=html;
-}
-renderHunt();
+document.getElementById('mapBody').innerHTML=MAP.map((row,i)=>
+  `<tr><td class="wk">wk ${i+1}</td>`+
+  row.map((cell,k)=>`<td data-c="${SEATKEYS[k]}">${cell}</td>`).join('')+
+  `</tr>`).join('');
 
-document.getElementById('ltCount').textContent=HUNT.length;
-document.getElementById('ltFirst').textContent=HUNT[0].t;
-document.getElementById('ltTotal').textContent=money(HUNT_TOTAL);
-
-/* how many rungs each seat leads — fills the stat in the role panels */
-document.querySelectorAll('[data-lt]').forEach(el=>{
-  const k=el.dataset.lt;
-  const n=HUNT.filter(b=>b.lead===k).length;
-  el.textContent=n+' of '+HUNT.length;
-});
-
-/* picking a role swaps the panel and the résumé card — the hunt is shared */
-let CURROLE='content';
+/* picking a seat swaps the panel, the LinkedIn card and the goal-map column */
 function setRole(key){
   if(!ROLES[key])return;
-  CURROLE=key;
   document.querySelectorAll('#roles .rcard').forEach(c=>c.classList.toggle('on',c.dataset.r===key));
   document.querySelectorAll('.rpanel').forEach(pn=>pn.classList.toggle('on',pn.id==='r-'+key));
-  document.querySelectorAll('#ladder .b-lead').forEach(el=>
-    el.classList.toggle('mine',el.dataset.seat===key));
+  document.querySelectorAll('.map [data-c]').forEach(el=>el.classList.toggle('on',el.dataset.c===key));
   const r=ROLES[key];
   const lt=document.getElementById('liTitle'),ls=document.getElementById('liSkills');
   if(lt){lt.textContent=r.li;ls.textContent=r.skills;}
@@ -1648,160 +767,6 @@ document.getElementById('roles').addEventListener('click',e=>{
   setRole(c.dataset.r);
 });
 setRole('content');
-
-/* bounty detail modal */
-const modal=document.getElementById('modal');
-document.getElementById('ladder').addEventListener('click',e=>{
-  const btn=e.target.closest('.b-btn');if(!btn)return;
-  const i=+btn.closest('.bounty').dataset.i,b=HUNT[i];
-  let gName='';for(let k=i;k>=0;k--){if(HUNT[k].g){gName=HUNT[k].n+' · '+HUNT[k].g;break}}
-  document.getElementById('mStage').textContent='rung '+String(i+1).padStart(2,'0')+' · '+gName+' · '+SEATS[b.lead];
-  document.getElementById('mTitle').textContent=b.t;
-  document.getElementById('mPay').textContent=b.reward?b.reward:money(b.pay);
-  document.getElementById('mTime').textContent=b.time;
-  document.getElementById('mDesc').textContent=b.d;
-  document.getElementById('mProof').innerHTML=b.proof.map(x=>`<li>${x}</li>`).join('');
-  modal.classList.add('on');document.body.style.overflow='hidden';
-});
-function closeModal(){modal.classList.remove('on');document.body.style.overflow=''}
-document.getElementById('modalx').addEventListener('click',closeModal);
-document.getElementById('mClose').addEventListener('click',closeModal);
-modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
-addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('on'))closeModal()});
-
-/* ── pay-per-view calculator ── */
-(function(){
-  const sl=document.getElementById('cSlide'),vEl=document.getElementById('cViews'),
-        pEl=document.getElementById('cPay'),nEl=document.getElementById('cNote'),
-        rows=[...document.querySelectorAll('#rateCard .rate-row')];
-  const CAP=2500, FLOOR=10;
-
-  /* slider position 0-1000 -> views, exponential so the low end is usable */
-  const toViews=t=>{
-    const v=1000*Math.pow(2000,t/1000);      /* 1K → 2M */
-    if(v<10000)  return Math.round(v/500)*500;
-    if(v<100000) return Math.round(v/1000)*1000;
-    if(v<1000000)return Math.round(v/5000)*5000;
-    return Math.round(v/10000)*10000;
-  };
-  const fmt=v=>v>=1e6?(v/1e6).toFixed(v>=1e7?0:2).replace(/\.?0+$/,'')+'M'
-             :v>=1000?(v/1000).toFixed(v>=1e5?0:1).replace(/\.0$/,'')+'K':v;
-
-  function payFor(v){
-    let p=FLOOR;
-    p+=Math.min(v,100000)/1000*2;
-    if(v>100000)  p+=(Math.min(v,500000)-100000)/1000*3;
-    if(v>500000)  p+=(v-500000)/1000*4;
-    return {pay:Math.min(Math.round(p),CAP),capped:p>CAP};
-  }
-
-  function tierOf(v){return v<10000?1:v<100000?1:v<500000?2:3}
-
-  function paint(){
-    const t=+sl.value,v=toViews(t),r=payFor(v);
-    sl.style.setProperty('--p',(t/10)+'%');
-    vEl.textContent=fmt(v)+' views';
-    pEl.textContent='$'+r.pay.toLocaleString();
-    const per=(r.pay/(v/1000));
-    nEl.innerHTML = r.capped
-      ? 'Over the <b>$2,500</b> per-video ceiling. Anything past this is on the house — and a video at this size usually clears a ladder bounty too.'
-      : v<10000
-        ? 'Small ones still pay. Every approved video earns the <b>$10</b> floor plus the rate, so a post that does nothing is never worth $0.'
-        : 'That works out to about <b>$'+per.toFixed(2)+'</b> per 1,000 views. Post five like this in a month and it\'s <b>$'+(r.pay*5).toLocaleString()+'</b>.';
-    const ti=tierOf(v);
-    rows.forEach(rw=>rw.classList.toggle('hot',+rw.dataset.t===ti||(r.capped&&+rw.dataset.t===4)));
-  }
-  sl.addEventListener('input',paint);
-  paint();
-})();
-
-const LB={
- schools:{c1:'campus',c2:'seats filled',rows:[
-  ['UT Austin','austin, tx','5 / 5','412K','1,204'],
-  ['Michigan','ann arbor, mi','5 / 5','388K','1,102'],
-  ['Ohio State','columbus, oh','5 / 5','341K','988'],
-  ['NYU','new york, ny','4 / 5','316K','942'],
-  ['Arizona State','tempe, az','5 / 5','302K','901'],
-  ['Florida','gainesville, fl','4 / 5','288K','870'],
-  ['Penn State','state college, pa','3 / 5','266K','812'],
-  ['Georgia','athens, ga','4 / 5','244K','756']
- ]},
- ambassadors:{c1:'name',c2:'seat',rows:[
-  ['Sofia A.','ut austin','president','412K','1,204'],
-  ['Deven K.','michigan','content','188K','404'],
-  ['Marcus T.','ohio state','growth','76.1K','388'],
-  ['Maya R.','usc','content','141K','212'],
-  ['Priya S.','arizona state','partnerships','38.9K','198'],
-  ['Jules B.','florida','culture','35.2K','176'],
-  ['Ana L.','penn state','growth','21.4K','98'],
-  ['Chris W.','georgia','partnerships','19.8K','86']
- ]},
- rising:{c1:'campus',c2:'seats filled',rows:[
-  ['Rutgers','new brunswick, nj','4 / 5','88K','311'],
-  ['Clemson','clemson, sc','3 / 5','81K','288'],
-  ['Boise State','boise, id','3 / 5','66K','244'],
-  ['Howard','washington, dc','5 / 5','61K','232'],
-  ['UC Santa Barbara','santa barbara, ca','3 / 5','58K','214'],
-  ['Villanova','villanova, pa','2 / 5','52K','196'],
-  ['Tulane','new orleans, la','3 / 5','47K','174'],
-  ['Iowa State','ames, ia','2 / 5','44K','161']
- ]}
-};
-function paintLB(key){
-  const set=LB[key],rows=set.rows,max=parseFloat(rows[0][4].replace(/,/g,''));
-  document.getElementById('lbcol1').textContent=set.c1;
-  document.getElementById('lbcol2').textContent=set.c2;
-  document.getElementById('lbbody').innerHTML=rows.map((r,i)=>`
-    <div class="lb-row">
-      <span class="bar" data-w="${(parseFloat(r[4].replace(/,/g,''))/max*100).toFixed(1)}"></span>
-      <span class="lb-rank">${String(i+1).padStart(2,'0')}</span>
-      <span class="lb-school"><b>${r[0]}</b><small>${r[1]}</small></span>
-      <span class="lb-num">${r[2]}</span>
-      <span class="lb-num">${r[3]}</span>
-      <span class="lb-pts">${r[4]}</span>
-    </div>`).join('');
-  requestAnimationFrame(()=>document.querySelectorAll('#lbbody .bar').forEach((b,i)=>{
-    setTimeout(()=>b.style.width=b.dataset.w+'%',i*60);
-  }));
-}
-paintLB('schools');
-document.getElementById('lbtabs').addEventListener('click',e=>{
-  const b=e.target.closest('.chip');if(!b)return;
-  document.querySelectorAll('#lbtabs .chip').forEach(t=>t.classList.toggle('on',t===b));
-  paintLB(b.dataset.lb);
-});
-
-/* dashboard | national board — one section, two views */
-document.getElementById('hubtabs').addEventListener('click',e=>{
-  const b=e.target.closest('.tab');if(!b)return;
-  document.querySelectorAll('#hubtabs .tab').forEach(t=>t.classList.toggle('on',t===b));
-  document.querySelectorAll('.hub-panel').forEach(pn=>{
-    const on=pn.id==='hub-'+b.dataset.hub;
-    pn.classList.toggle('on',on);
-    /* a panel that was hidden never tripped the reveal observer */
-    if(on)pn.querySelectorAll('.rv').forEach(el=>el.classList.add('in'));
-  });
-});
-
-const copyBtn=document.getElementById('copybtn');
-copyBtn.addEventListener('click',()=>{
-  const t=document.getElementById('refcode').textContent;
-  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.resolve()).finally(()=>{
-    copyBtn.textContent='copied ✓';copyBtn.classList.add('ok');
-    setTimeout(()=>{copyBtn.textContent='copy';copyBtn.classList.remove('ok')},1800);
-  });
-});
-const qItems=[...document.querySelectorAll('.q-item')],qbar=document.getElementById('qbar');
-function qUpdate(){qbar.style.width=(qItems.filter(i=>i.classList.contains('checked')).length/qItems.length*100)+'%'}
-qItems.forEach(i=>i.addEventListener('click',()=>{i.classList.toggle('checked');qUpdate()}));
-const dObs=new IntersectionObserver(es=>es.forEach(e=>{
-  if(!e.isIntersecting)return;dObs.unobserve(e.target);
-  qUpdate();
-  const r=document.getElementById('ringp');
-  r.style.transition='stroke-dashoffset 1.6s cubic-bezier(.2,.8,.3,1)';
-  r.style.strokeDashoffset=402*(1-212/250);
-}),{threshold:.25});
-dObs.observe(document.getElementById('hub'));
 
 /* scrollspy — highlight the section you're currently in */
 (function(){
@@ -1816,8 +781,6 @@ dObs.observe(document.getElementById('hub'));
   },{rootMargin:'-45% 0px -50% 0px'});
   map.forEach((b,el)=>spy.observe(el));
 })();
-
-
 
 /* ── single delegated scroll handler — no URL changes ever ── */
 document.addEventListener('click',function(e){
