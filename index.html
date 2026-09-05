@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>milo messina</title>
+<meta name="description" content="Milo Messina — selected work. A desktop of projects, including Polymarket and fomo.">
+<meta name="theme-color" content="#0E1A24">
+<meta property="og:title" content="milo messina">
+<meta property="og:description" content="Selected work.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23F5F0E6'/%3E%3Ctext x='50' y='67' font-family='Helvetica,Arial,sans-serif' font-size='50' font-weight='700' fill='%2317150F' text-anchor='middle'%3Emm%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/fomo/assets/fonts.css">
+<style>
+:root{
+  --paper:#F6F1E7; --paper-2:#EDE6D8; --paper-3:#E3DACA;
+  --ink:#17150F; --ink-2:#3A352B; --muted:#6E6759; --muted-2:#948C7C;
+  --line:rgba(23,21,15,.13); --line-2:rgba(23,21,15,.26);
+  --red:#E5321E; --blue:#2F5DD8; --violet:#516AF6; --green:#1BA85F;
+  --bar:rgba(20,28,36,.42);
+  --ui:'Aeonik',system-ui,-apple-system,sans-serif;
+  --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  --menu-h:30px; --dock-h:88px;
+  --shadow:0 2px 6px rgba(0,0,0,.18),0 18px 44px -12px rgba(0,0,0,.42),0 40px 90px -30px rgba(0,0,0,.5);
+  --shadow-hi:0 2px 8px rgba(0,0,0,.22),0 26px 60px -12px rgba(0,0,0,.5),0 60px 120px -34px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#0E1A24;color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;overflow:hidden;position:relative}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+::selection{background:rgba(47,93,216,.24)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
+
+/* ── wallpaper ──────────────────────────────────────── */
+#wall{position:fixed;inset:0;z-index:0;width:100%;height:100%;display:block}
+#wall .cloud{animation:drift 90s linear infinite}
+#wall .cloud.b{animation-duration:140s;animation-delay:-40s}
+#wall .cloud.c{animation-duration:190s;animation-delay:-90s}
+@keyframes drift{from{transform:translateX(-22%)}to{transform:translateX(122%)}}
+/* grain over the whole desktop */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.16;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ── menu bar ───────────────────────────────────────── */
+.menubar{position:fixed;top:0;left:0;right:0;height:var(--menu-h);z-index:50;
+  display:flex;align-items:center;gap:20px;padding:0 14px;
+  background:var(--bar);backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  color:#fff;font-size:.8rem;box-shadow:0 1px 0 rgba(255,255,255,.09)}
+.menubar .mm{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:-.02em;font-size:.8rem;line-height:1}
+.menubar .mm i{width:17px;height:17px;border-radius:5px;background:var(--paper);color:var(--ink);
+  display:grid;place-items:center;font-style:normal;font-size:.54rem;font-weight:700;letter-spacing:-.03em}
+.menubar menu{display:flex;gap:4px;list-style:none}
+.menubar menu button{padding:3px 9px;border-radius:6px;opacity:.85;transition:background .15s,opacity .15s}
+.menubar menu button:hover{background:rgba(255,255,255,.16);opacity:1}
+.menubar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-variant-numeric:tabular-nums}
+.menubar .avail{display:flex;align-items:center;gap:6px;opacity:.9}
+.menubar .avail u{width:6px;height:6px;border-radius:50%;background:#4ADE80;display:block;
+  box-shadow:0 0 8px #4ADE80;animation:blip 2.4s infinite}
+@keyframes blip{0%,100%{opacity:1}50%{opacity:.4}}
+@media(max-width:900px){.menubar menu{display:none}}
+
+/* ── stage / windows ────────────────────────────────── */
+#stage{position:fixed;top:var(--menu-h);left:0;right:0;bottom:0;z-index:10}
+
+.win{position:absolute;top:0;left:0;display:flex;flex-direction:column;
+  width:var(--w);height:var(--h);
+  transform:translate3d(var(--x),var(--y),0);
+  background:var(--paper);border-radius:11px;border:1px solid rgba(0,0,0,.28);
+  box-shadow:var(--shadow);overflow:hidden;
+  transition:box-shadow .25s,opacity .18s,scale .18s}
+.win.front{box-shadow:var(--shadow-hi)}
+.win[hidden]{display:none}
+.win.closing{opacity:0;scale:.96}
+.win.zoomed{--x:0px!important;--y:0px!important;width:100%!important;height:100%!important;border-radius:0}
+
+.tbar{height:38px;flex:none;display:flex;align-items:center;gap:10px;padding:0 11px;cursor:grab;
+  background:linear-gradient(180deg,var(--paper-2),var(--paper-3));border-bottom:1px solid var(--line);
+  touch-action:none;user-select:none;-webkit-user-select:none}
+.tbar:active{cursor:grabbing}
+.win.zoomed .tbar{cursor:default}
+.tl{display:flex;gap:7px;flex:none}
+.tl button{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.16);position:relative}
+.tl .c{background:#FF5F57}.tl .m{background:#FEBC2E}.tl .z{background:#28C840}
+.tl button span{position:absolute;inset:0;display:grid;place-items:center;font-size:8px;color:rgba(0,0,0,.55);
+  opacity:0;transition:opacity .15s;font-weight:700;line-height:1}
+.tl:hover button span{opacity:1}
+.crumb{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--muted);
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.crumb b{color:var(--ink-2);font-weight:600}
+.crumb u{width:7px;height:7px;border-radius:50%;display:block;flex:none;text-decoration:none}
+.tbar .tools{margin-left:auto;display:flex;gap:6px;flex:none}
+.tbar .tools a,.tbar .tools button{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid var(--line);color:var(--ink-2);transition:background .15s,border-color .15s}
+.tbar .tools a:hover,.tbar .tools button:hover{background:var(--paper);border-color:var(--line-2)}
+
+.wbody{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;background:var(--paper)}
+.wbody::-webkit-scrollbar{width:9px;height:9px}
+.wbody::-webkit-scrollbar-thumb{background:rgba(23,21,15,.2);border-radius:9px;
+  border:2px solid var(--paper);background-clip:padding-box}
+
+/* ── tabs ───────────────────────────────────────────── */
+.tabstrip{position:sticky;top:0;z-index:3;display:flex;gap:4px;padding:9px 12px 0;
+  background:var(--paper);border-bottom:1px solid var(--line)}
+.tabstrip button{position:relative;padding:8px 15px 10px;border-radius:9px 9px 0 0;font-size:.83rem;
+  font-weight:500;color:var(--muted);display:flex;align-items:center;gap:8px;
+  border:1px solid transparent;border-bottom:0;transition:color .18s,background .18s}
+.tabstrip button u{width:8px;height:8px;border-radius:2.5px;display:block;text-decoration:none;flex:none}
+.tabstrip button:hover{color:var(--ink)}
+.tabstrip button[aria-selected="true"]{background:var(--paper-2);border-color:var(--line);color:var(--ink);font-weight:600}
+.tabstrip button[aria-selected="true"]::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--paper-2)}
+
+.pane{padding:clamp(18px,3vw,30px)}
+.pane[hidden]{display:none}
+.pane-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2)}
+.pane-head b{color:var(--red);font-weight:400}
+.pane h2{font-size:clamp(1.9rem,4.4vw,2.9rem);letter-spacing:-.045em;line-height:.95;margin:12px 0 0;
+  font-weight:700}
+.pane .role{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);margin-top:10px}
+.pane .body{font-family:var(--serif);font-size:1.02rem;line-height:1.62;color:var(--ink-2);
+  max-width:60ch;margin-top:16px}
+.pane .body p+p{margin-top:12px}
+.pane ul{list-style:none;margin-top:16px;display:grid;gap:9px;max-width:60ch}
+.pane ul li{display:flex;gap:10px;font-size:.92rem;color:var(--ink-2);line-height:1.5}
+.pane ul li::before{content:'→';color:var(--red);flex:none}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.tags i{font-style:normal;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:5px 10px;background:var(--paper-2)}
+.pane .cta{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:22px;
+  padding-top:18px;border-top:1px solid var(--line)}
+.btn{display:inline-flex;align-items:center;gap:.5em;padding:10px 17px;border-radius:100px;
+  font-size:.85rem;font-weight:600;transition:transform .2s,background .2s,border-color .2s,box-shadow .2s}
+.btn-p{background:var(--ink);color:var(--paper)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 8px 20px -6px rgba(0,0,0,.5)}
+.btn-g{border:1px solid var(--line-2);color:var(--ink)}
+.btn-g:hover{background:var(--paper-2);transform:translateY(-1px)}
+.btn.soon{opacity:.5;pointer-events:none}
+.cta .note{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
+
+/* project preview strip */
+.shot{margin-top:20px;border:1px solid var(--line);border-radius:10px;overflow:hidden;position:relative;
+  height:200px;background:#0B0A16}
+.shot .fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px;
+  font-weight:700;letter-spacing:-.03em;font-size:1.5rem;color:rgba(255,255,255,.24)}
+.shot.pm .fallback{background:linear-gradient(135deg,#0B1A3A,#16305F 60%,#1F4FA8)}
+.shot.fm .fallback{background:radial-gradient(circle at 50% 20%,rgba(81,106,246,.5),transparent 62%),#0B0A16}
+.shot iframe{position:absolute;top:0;left:0;width:1440px;height:1400px;border:0;pointer-events:none;
+  transform:scale(var(--pv,.34));transform-origin:top left}
+.shot .veil{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,transparent 55%,rgba(11,10,22,.85))}
+
+/* ── notes window ───────────────────────────────────── */
+.notes{padding:20px 22px}
+.notes h3{font-size:1.02rem;letter-spacing:-.02em;margin-bottom:4px}
+.notes .stamp{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted-2);margin-bottom:14px}
+.notes ul{list-style:none;display:grid;gap:11px}
+.notes li{display:flex;gap:9px;font-size:.88rem;line-height:1.5;color:var(--ink-2)}
+.notes li::before{content:'→';color:var(--muted-2);flex:none}
+.notes .kv{margin-top:16px;border-top:1px solid var(--line);padding-top:6px}
+.notes .kv div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:.82rem;
+  border-bottom:1px solid var(--line)}
+.notes .kv div:last-child{border-bottom:0}
+.notes .kv b{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted-2);font-weight:400}
+
+/* ── contact window ─────────────────────────────────── */
+.contact{padding:20px 22px;display:grid;gap:10px}
+.contact p{font-family:var(--serif);font-size:.98rem;color:var(--ink-2)}
+.contact .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+
+/* ── dock ───────────────────────────────────────────── */
+.dock{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:40;
+  display:flex;align-items:flex-end;gap:9px;padding:9px 11px;border-radius:20px;
+  background:var(--bar);backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 18px 40px -12px rgba(0,0,0,.6)}
+.dock button,.dock a{position:relative;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
+  font-weight:700;font-size:.82rem;letter-spacing:-.03em;color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 10px rgba(0,0,0,.3);
+  transition:transform .22s cubic-bezier(.2,.8,.3,1)}
+.dock button:hover,.dock a:hover{transform:translateY(-8px) scale(1.06)}
+.dock .d-work{background:linear-gradient(160deg,#3B6BE8,#1B3FA8)}
+.dock .d-notes{background:linear-gradient(160deg,#F4C64A,#D99A16);color:#3A2A05}
+.dock .d-mail{background:linear-gradient(160deg,#F2F2F2,#C9C9C9);color:#17150F}
+.dock .d-fomo{background:linear-gradient(160deg,#7B8DFF,#3D53E0)}
+.dock .sep{width:1px;height:34px;background:rgba(255,255,255,.22);margin-inline:3px;align-self:center}
+.dock .run{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:4px;height:4px;
+  border-radius:50%;background:rgba(255,255,255,.9);opacity:0;transition:opacity .2s}
+.dock .on .run,.dock button.on .run{opacity:1}
+.dock .tip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
+  background:rgba(20,28,36,.92);color:#fff;font-size:.68rem;font-weight:500;letter-spacing:.02em;
+  padding:4px 9px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s}
+.dock button:hover .tip,.dock a:hover .tip{opacity:1}
+
+/* ── hint ───────────────────────────────────────────── */
+.hint{position:fixed;left:50%;bottom:calc(var(--dock-h) + 10px);transform:translateX(-50%);z-index:39;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,.62);text-shadow:0 1px 6px rgba(0,0,0,.6);pointer-events:none;
+  transition:opacity .5s}
+.hint[hidden]{display:none}
+
+/* ── stacked / mobile ───────────────────────────────── */
+@media(max-width:900px){
+  html,body{height:auto}
+  body{overflow:visible auto}
+  .menubar{position:sticky}
+  /* keep a stacking context here: the wallpaper is fixed at z-index 0 and would
+     otherwise paint over the (unpositioned) window backgrounds. */
+  #stage{position:relative;z-index:10;top:auto;left:auto;right:auto;bottom:auto;
+    padding:16px 14px calc(var(--dock-h) + 26px);display:grid;gap:16px}
+  .win{position:static;transform:none!important;width:auto!important;height:auto!important;
+    max-height:none;box-shadow:0 12px 30px -12px rgba(0,0,0,.5)}
+  .win.zoomed{border-radius:11px}
+  .tbar{cursor:default}
+  .wbody{overflow:visible}
+  .tabstrip{position:static}
+  .shot{height:170px}
+  .dock{gap:7px;padding:8px 9px}
+  .dock button,.dock a{width:42px;height:42px}
+  .hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ── wallpaper ───────────────────────────────────── -->
+<svg id="wall" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#123049"/><stop offset=".42" stop-color="#3D7EA6"/>
+      <stop offset=".68" stop-color="#9FC9D8"/><stop offset=".85" stop-color="#F0C79A"/>
+      <stop offset="1" stop-color="#F6D9B0"/>
+    </linearGradient>
+    <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2B4E68"/><stop offset="1" stop-color="#3E6B84"/></linearGradient>
+    <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1C3A4F"/><stop offset="1" stop-color="#27506A"/></linearGradient>
+    <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#132A3A"/><stop offset="1" stop-color="#0E1A24"/></linearGradient>
+    <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E9C79B"/><stop offset="1" stop-color="#7FA6BC"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#FFE9C4" stop-opacity=".95"/>
+      <stop offset="1" stop-color="#FFE9C4" stop-opacity="0"/></radialGradient>
+    <filter id="soft" x="-30%" y="-120%" width="160%" height="340%">
+      <feGaussianBlur stdDeviation="16"/></filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1120" cy="600" r="300" fill="url(#glow)"/>
+  <circle cx="1120" cy="612" r="74" fill="#FFF1D4"/>
+
+  <g opacity=".42" fill="#fff" filter="url(#soft)">
+    <g class="cloud"><ellipse cx="180" cy="150" rx="120" ry="26"/><ellipse cx="250" cy="136" rx="76" ry="21"/></g>
+    <g class="cloud b" opacity=".7"><ellipse cx="900" cy="230" rx="150" ry="24"/><ellipse cx="980" cy="216" rx="90" ry="19"/></g>
+    <g class="cloud c" opacity=".45"><ellipse cx="500" cy="90" rx="180" ry="20"/></g>
+  </g>
+
+  <path d="M0 640 L210 470 L360 596 L470 520 L640 660 L640 900 L0 900 Z" fill="url(#m2)"/>
+  <path d="M980 660 L1180 452 L1310 570 L1420 500 L1600 640 L1600 900 L980 900 Z" fill="url(#m1)"/>
+  <path d="M560 700 L760 540 L900 668 L1060 560 L1240 720 L1240 900 L560 900 Z" fill="url(#m3)" opacity=".92"/>
+  <rect y="700" width="1600" height="200" fill="url(#lake)" opacity=".55"/>
+  <g fill="#fff" opacity=".22">
+    <rect x="300" y="742" width="180" height="2" rx="1"/><rect x="880" y="790" width="260" height="2" rx="1"/>
+    <rect x="520" y="836" width="150" height="2" rx="1"/><rect x="1180" y="762" width="200" height="2" rx="1"/>
+  </g>
+  <path d="M0 700 L1600 700 L1600 900 L0 900 Z" fill="#0E1A24" opacity=".28"/>
+</svg>
+
+<!-- ── menu bar ────────────────────────────────────── -->
+<div class="menubar">
+  <h1 class="mm"><i>mm</i> milo messina</h1>
+  <menu>
+    <li><button type="button" data-open="win-work" data-tab="tab-pm">Work</button></li>
+    <li><button type="button" data-open="win-notes">About</button></li>
+    <li><button type="button" data-open="win-contact">Contact</button></li>
+  </menu>
+  <span class="right">
+    <span class="avail"><u></u> open to work</span>
+    <span id="clock" aria-label="Current time">—</span>
+  </span>
+</div>
+
+<main id="stage">
+
+  <!-- ── WORK ──────────────────────────────────────── -->
+  <section class="win" id="win-work" style="--x:66px;--y:34px;--w:690px;--h:496px" aria-label="Work">
+    <div class="tbar" data-drag>
+      <span class="tl">
+        <button type="button" class="c" data-act="close" aria-label="Close work window"><span>✕</span></button>
+        <button type="button" class="m" data-act="min"   aria-label="Minimize work window"><span>–</span></button>
+        <button type="button" class="z" data-act="zoom"  aria-label="Zoom work window"><span>+</span></button>
+      </span>
+      <span class="crumb">My Work <b id="crumb-work">/ polymarket</b></span>
+      <span class="tools">
+        <a href="/fomo" aria-label="Open the fomo campus site">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M3 11L11 3M11 3H5.5M11 3v5.5" stroke="currentColor" stroke-width="1.7"
+                  stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </span>
+    </div>
+
+    <div class="wbody">
+      <div class="tabstrip" role="tablist" aria-label="Projects">
+        <button type="button" role="tab" id="tab-pm" aria-controls="pane-pm" aria-selected="true" tabindex="0">
+          <u style="background:var(--blue)"></u> polymarket</button>
+        <button type="button" role="tab" id="tab-fm" aria-controls="pane-fm" aria-selected="false" tabindex="-1">
+          <u style="background:var(--violet)"></u> fomo</button>
+      </div>
+
+      <!-- POLYMARKET -->
+      <div class="pane" role="tabpanel" id="pane-pm" aria-labelledby="tab-pm" tabindex="0">
+        <p class="pane-head"><b>01</b> · polymarket · [year]</p>
+        <h2>polymarket</h2>
+        <p class="role">[your role] · [contract / internship]</p>
+        <!-- TODO(milo): replace the brackets. keeping them stops fake numbers going live. -->
+        <div class="body">
+          <p>
+            Work on the world&rsquo;s largest prediction market. [One or two lines on what
+            the brief actually was &mdash; what you were handed and what you shipped.]
+          </p>
+        </div>
+        <ul>
+          <li>[Thing you built or ran &mdash; the headline one]</li>
+          <li>[A number you own: users, views, signups, volume]</li>
+          <li>[Who you worked with and what you owned end to end]</li>
+        </ul>
+        <div class="tags"><i>[discipline]</i><i>[discipline]</i><i>[year]</i></div>
+        <div class="shot pm">
+          <div class="fallback">polymarket</div>
+          <div class="veil"></div>
+        </div>
+        <div class="cta">
+          <span class="btn btn-p soon" aria-hidden="true">add link</span>
+          <span class="note">drop the live url in when you have it</span>
+        </div>
+      </div>
+
+      <!-- FOMO -->
+      <div class="pane" role="tabpanel" id="pane-fm" aria-labelledby="tab-fm" tabindex="0" hidden>
+        <p class="pane-head"><b>02</b> · fomo · 2026 · live</p>
+        <h2>fomo campus</h2>
+        <p class="role">brand · copy · front-end</p>
+        <div class="body">
+          <p>
+            A recruiting site for fomo&rsquo;s campus program &mdash; a five-person student
+            team inside every school, with an eight-week goal map and the application
+            and weekly-report flows behind it.
+          </p>
+        </div>
+        <ul>
+          <li>Five role pages, each written to filter for a different kind of person</li>
+          <li>An eight-week goal table that reacts to the seat you pick</li>
+          <li>Application, submission and weekly-report forms with live validation</li>
+        </ul>
+        <div class="tags"><i>brand</i><i>copywriting</i><i>front-end</i><i>forms</i><i>2026</i></div>
+        <div class="shot fm">
+          <div class="fallback">fomo /campus</div>
+          <!-- decorative live preview, mounted by JS on wide pointer devices only -->
+          <iframe data-src="/fomo" title="" aria-hidden="true" tabindex="-1" loading="lazy" scrolling="no"></iframe>
+          <div class="veil"></div>
+        </div>
+        <div class="cta">
+          <a class="btn btn-p" href="/fomo">open the site
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.7"
+                    stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <span class="note">milomessina.com/fomo</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── NOTES / ABOUT ─────────────────────────────── -->
+  <section class="win" id="win-notes" style="--x:790px;--y:120px;--w:392px;--h:376px" aria-label="About">
+    <div class="tbar" data-drag>
+      <span class="tl">
+        <button type="button" class="c" data-act="close" aria-label="Close about window"><span>✕</span></button>
+        <button type="button" class="m" data-act="min"   aria-label="Minimize about window"><span>–</span></button>
+        <button type="button" class="z" data-act="zoom"  aria-label="Zoom about window"><span>+</span></button>
+      </span>
+      <span class="crumb">Notes <b>/ about-me</b></span>
+    </div>
+    <div class="wbody">
+      <div class="notes">
+        <h3>about me</h3>
+        <p class="stamp">last edited today</p>
+        <!-- TODO(milo): make these yours. -->
+        <ul>
+          <li>I&rsquo;m Milo &mdash; [what you do, one line].</li>
+          <li>I like work that has to actually perform: a page that converts, a program
+              people apply to, a brand that sounds like a person.</li>
+          <li>Right now: [what you&rsquo;re building or studying].</li>
+          <li>Before that: [the one-line backstory].</li>
+        </ul>
+        <div class="kv">
+          <div><b>based</b><span>[city]</span></div>
+          <div><b>focus</b><span>brand · web · growth</span></div>
+          <div><b>tools</b><span>Figma · HTML/CSS/JS</span></div>
+          <div><b>status</b><span style="color:var(--green);font-weight:600">open to work</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ───────────────────────────────────── -->
+  <section class="win" id="win-contact" style="--x:250px;--y:556px;--w:452px;--h:196px" aria-label="Contact">
+    <div class="tbar" data-drag>
+      <span class="tl">
+        <button type="button" class="c" data-act="close" aria-label="Close contact window"><span>✕</span></button>
+        <button type="button" class="m" data-act="min"   aria-label="Minimize contact window"><span>–</span></button>
+        <button type="button" class="z" data-act="zoom"  aria-label="Zoom contact window"><span>+</span></button>
+      </span>
+      <span class="crumb">Mail <b>/ new message</b></span>
+    </div>
+    <div class="wbody">
+      <div class="contact">
+        <p>Freelance, a role, or something you want built &mdash; send it over.</p>
+        <!-- TODO(milo): swap in the address you want public + your real profile links. -->
+        <div class="row">
+          <a class="btn btn-p" href="mailto:hello@milomessina.com">hello@milomessina.com</a>
+          <a class="btn btn-g" href="#" rel="me">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<p class="hint" id="hint">drag the windows · click a tab</p>
+
+<!-- ── dock ────────────────────────────────────────── -->
+<nav class="dock" aria-label="Open windows">
+  <button type="button" class="d-work on" data-open="win-work">work<span class="run"></span><span class="tip">Work</span></button>
+  <button type="button" class="d-notes on" data-open="win-notes">ab<span class="run"></span><span class="tip">About</span></button>
+  <button type="button" class="d-mail on" data-open="win-contact">@<span class="run"></span><span class="tip">Contact</span></button>
+  <span class="sep" aria-hidden="true"></span>
+  <a class="d-fomo" href="/fomo">fm<span class="tip">fomo campus ↗</span></a>
+</nav>
+
+<script>
+(function(){
+  'use strict';
+  var reduce   = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var stackedQ = matchMedia('(max-width: 900px)');
+  var stacked  = function(){ return stackedQ.matches; };
+  var stage    = document.getElementById('stage');
+  var wins     = [].slice.call(document.querySelectorAll('.win'));
+  var z        = 10;
+
+  /* ── clock ─────────────────────────────────────── */
+  var clock = document.getElementById('clock');
+  function tick(){
+    clock.textContent = new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+  }
+  tick(); setInterval(tick, 20000);
+
+  /* ── focus / open / close ──────────────────────── */
+  function focusWin(w){
+    if (stacked()) return;
+    wins.forEach(function(o){ o.classList.toggle('front', o === w); });
+    w.style.zIndex = ++z;
+  }
+  function dockBtn(id){ return document.querySelector('.dock [data-open="' + id + '"]'); }
+
+  function openWin(id, tabId){
+    var w = document.getElementById(id);
+    if (!w) return;
+    w.hidden = false;
+    w.classList.remove('closing');
+    var b = dockBtn(id); if (b) b.classList.add('on');
+    focusWin(w);
+    if (tabId) selectTab(document.getElementById(tabId));
+    if (stacked()) w.scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'});
+  }
+  function closeWin(w){
+    if (reduce) { w.hidden = true; }
+    else {
+      w.classList.add('closing');
+      setTimeout(function(){ w.hidden = true; w.classList.remove('closing'); }, 180);
+    }
+    var b = dockBtn(w.id); if (b) b.classList.remove('on');
+  }
+
+  wins.forEach(function(w){
+    w.addEventListener('pointerdown', function(){ focusWin(w); }, true);
+
+    w.querySelectorAll('[data-act]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var act = btn.dataset.act;
+        if (act === 'close' || act === 'min') closeWin(w);
+        if (act === 'zoom' && !stacked()) { w.classList.toggle('zoomed'); focusWin(w); }
+      });
+    });
+  });
+
+  document.querySelectorAll('[data-open]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      if (el.tagName === 'A') return;          /* real links keep navigating */
+      e.preventDefault();
+      openWin(el.dataset.open, el.dataset.tab);
+    });
+  });
+
+  /* ── dragging ──────────────────────────────────── */
+  var hint = document.getElementById('hint'), dragged = false;
+
+  wins.forEach(function(w){
+    var bar = w.querySelector('[data-drag]');
+    if (!bar) return;
+
+    bar.addEventListener('pointerdown', function(e){
+      if (stacked() || w.classList.contains('zoomed')) return;
+      if (e.target.closest('.tl') || e.target.closest('.tools')) return;
+      if (e.button !== 0 && e.pointerType === 'mouse') return;
+
+      focusWin(w);
+      var sx = e.clientX, sy = e.clientY;
+      var x0 = parseFloat(w.style.getPropertyValue('--x')) || 0;
+      var y0 = parseFloat(w.style.getPropertyValue('--y')) || 0;
+      try { bar.setPointerCapture(e.pointerId); } catch (err) { /* capture is a bonus */ }
+
+      function move(ev){
+        var maxX = stage.clientWidth  - w.offsetWidth;
+        var maxY = stage.clientHeight - w.offsetHeight;
+        var nx = Math.min(Math.max(x0 + ev.clientX - sx, 0), Math.max(maxX, 0));
+        var ny = Math.min(Math.max(y0 + ev.clientY - sy, 0), Math.max(maxY, 0));
+        w.style.setProperty('--x', nx + 'px');
+        w.style.setProperty('--y', ny + 'px');
+        if (!dragged) { dragged = true; if (hint) hint.hidden = true; }
+      }
+      function up(ev){
+        try { bar.releasePointerCapture(ev.pointerId); } catch (err) { /* already gone */ }
+        removeEventListener('pointermove', move);
+        removeEventListener('pointerup', up);
+        removeEventListener('pointercancel', up);
+      }
+      /* on window, so a fast drag that outruns the cursor still tracks */
+      addEventListener('pointermove', move);
+      addEventListener('pointerup', up);
+      addEventListener('pointercancel', up);
+    });
+  });
+
+  /* keep windows on screen when the desktop resizes */
+  function clampAll(){
+    if (stacked()) return;
+    wins.forEach(function(w){
+      if (w.hidden) return;
+      var maxX = Math.max(stage.clientWidth  - w.offsetWidth,  0);
+      var maxY = Math.max(stage.clientHeight - w.offsetHeight, 0);
+      var x = parseFloat(w.style.getPropertyValue('--x')) || 0;
+      var y = parseFloat(w.style.getPropertyValue('--y')) || 0;
+      w.style.setProperty('--x', Math.min(x, maxX) + 'px');
+      w.style.setProperty('--y', Math.min(y, maxY) + 'px');
+    });
+  }
+  var rt; addEventListener('resize', function(){
+    clearTimeout(rt); rt = setTimeout(function(){ clampAll(); fitPreview(); }, 140);
+  }, {passive:true});
+
+  /* ── tabs ──────────────────────────────────────── */
+  var tabs  = [].slice.call(document.querySelectorAll('[role="tab"]'));
+  var crumb = document.getElementById('crumb-work');
+
+  function selectTab(tab){
+    if (!tab) return;
+    tabs.forEach(function(t){
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (crumb) crumb.textContent = '/ ' + tab.textContent.trim();
+    if (tab.id === 'tab-fm') mountPreview();
+  }
+
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){ selectTab(tab); });
+    tab.addEventListener('keydown', function(e){
+      var i = tabs.indexOf(tab), n = null;
+      if (e.key === 'ArrowRight') n = tabs[(i + 1) % tabs.length];
+      if (e.key === 'ArrowLeft')  n = tabs[(i - 1 + tabs.length) % tabs.length];
+      if (e.key === 'Home')       n = tabs[0];
+      if (e.key === 'End')        n = tabs[tabs.length - 1];
+      if (n) { e.preventDefault(); selectTab(n); n.focus(); }
+    });
+  });
+
+  /* ── live fomo preview ─────────────────────────── */
+  var frame = document.querySelector('.shot iframe');
+  var wantsPreview = !reduce
+    && matchMedia('(pointer:fine)').matches
+    && innerWidth >= 900
+    && !(navigator.connection && navigator.connection.saveData);
+
+  function fitPreview(){
+    if (!frame) return;
+    var box = frame.parentNode;
+    box.style.setProperty('--pv', box.clientWidth / 1440);
+  }
+  function mountPreview(){
+    if (!frame) return;
+    if (!wantsPreview) { frame.remove(); frame = null; return; }
+    fitPreview();
+    if (!frame.src) frame.src = frame.dataset.src;
+  }
+  if (frame && !wantsPreview) { frame.remove(); frame = null; }
+  fitPreview();
+
+  /* ── boot ──────────────────────────────────────── */
+  focusWin(document.getElementById('win-work'));
+  if (hint && !stacked()) setTimeout(function(){ hint.hidden = true; }, 9000);
+})();
+</script>
+</body>
+</html>
