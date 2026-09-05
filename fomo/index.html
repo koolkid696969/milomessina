@@ -96,6 +96,9 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 .h1 .out{-webkit-text-stroke:1.4px var(--violet-hi);color:transparent;paint-order:stroke}
 .h1 .grad{background:linear-gradient(100deg,#fff 10%,#A3B0FF 45%,#19D97C 95%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero p.lede{font-size:clamp(1rem,1.3vw,1.16rem);max-width:56ch;margin:26px auto 0;color:#A9A2CC}
+/* the second sentence gets its own line where there is room for it;
+   narrower than this the lede just wraps on its own */
+@media(max-width:760px){.lede-br{display:none}}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;justify-content:center}
 
 .glance{padding:26px;animation:float 7s ease-in-out infinite}
@@ -423,7 +426,7 @@ body::after{display:none}
     <div class="hero-grid">
       <div>
         <h1 class="h1">own fomo<br>at your campus.</h1>
-        <p class="lede">We hand you the brand, a budget and the playbook, then step away. Sixty days to make fomo spread without us.</p>
+        <p class="lede">We hand you the brand, a budget and the playbook, then step away. <br class="lede-br">Sixty days to make fomo spread without us.</p>
         <div class="hero-cta">
           <button class="btn btn-p" data-jump="role" type="button">see the five roles &rarr;</button>
           <button class="btn btn-g" data-jump="map" type="button">the 8-week map</button>
