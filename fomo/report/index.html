@@ -82,7 +82,7 @@
           <span class="drop" id="drop">
             <input type="file" name="report_file" id="file" required
               accept=".pdf,.csv,.xlsx,.xls,.ods,.numbers,application/pdf">
-            <span class="ic" id="dropIc">&#8681;</span>
+            <span class="ic" id="dropIc">&#8595;</span>
             <b id="dropTxt">drop a file, or click to pick one</b>
             <small id="dropSub">PDF or spreadsheet &middot; up to 10MB</small>
           </span>
@@ -133,7 +133,7 @@
   function show(){
     const f=input.files[0];
     zone.classList.toggle('has',!!f);
-    ic.innerHTML=f?'&#10003;':'&#8681;';
+    ic.innerHTML=f?'&#10003;':'&#8595;';
     txt.textContent=f?f.name:'drop a file, or click to pick one';
     sub.textContent=f?size(f.size)+' · click to swap it':'PDF or spreadsheet · up to 10MB';
   }

@@ -17,7 +17,8 @@
 *{box-sizing:border-box;margin:0;padding:0}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
-input,select,textarea{font:inherit}
+input,select,textarea,option,optgroup{font:inherit}
+::placeholder{font:inherit}
 html{scroll-behavior:smooth}
 body{background:var(--ink);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
@@ -125,7 +126,7 @@ input[aria-invalid=true],textarea[aria-invalid=true],select[aria-invalid=true]{b
 .aside h4{font-family:var(--display);font-size:1.16rem;text-transform:lowercase;letter-spacing:-.035em;margin-bottom:14px}
 .aside ul{list-style:none;display:grid;gap:11px}
 .aside li{display:flex;gap:11px;font-size:.85rem;line-height:1.5;color:#B4ADD4}
-.aside li::before{content:'▸';color:var(--violet-hi);flex:none}
+.aside li::before{content:'▶';font-size:.72em;line-height:1.5;color:var(--violet-hi);flex:none}
 .krow{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-top:1px solid var(--line);font-size:.86rem}
 .krow:first-of-type{border-top:0}
 .krow b{font-family:var(--mono);font-size:.78rem;color:var(--green);text-align:right;white-space:nowrap}

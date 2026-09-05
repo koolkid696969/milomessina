@@ -21,7 +21,7 @@
   --r-m:12px; --r-l:16px; --r-xl:25px;
   --display:'Aeonik',system-ui,sans-serif;
   --body:'Aeonik',system-ui,sans-serif;
-  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  --mono:'Aeonik',ui-monospace,monospace;
   --pad:clamp(20px,5vw,72px); --maxw:1280px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -160,7 +160,8 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 .li-card{background:#fff;border-radius:14px;padding:26px 24px;box-shadow:0 40px 90px -35px rgba(0,0,0,.85);color:#1B1B1F}
 .li-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #E6E6E9;padding-bottom:14px;margin-bottom:18px}
 .li-head b{font-size:1.32rem;font-weight:700;letter-spacing:-.02em;color:#111}
-.li-head span{color:#6B6B72;font-size:1.15rem;letter-spacing:.18em}
+.li-head span{display:inline-flex;align-items:center;gap:.34em;color:#6B6B72;font-size:1.15rem;letter-spacing:.18em}
+.li-head .li-pencil{width:.86em;height:.86em;flex:none}
 .li-row{display:flex;gap:15px;padding:14px 0}
 .li-row+.li-row{border-top:1px solid #EFEFF1}
 .li-logo{width:52px;height:52px;border-radius:11px;background:#0B091F;display:grid;place-items:center;flex:none;color:#EAEDFF;padding:9px}
@@ -233,7 +234,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 .rp-fit h5{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);margin-bottom:13px}
 .rp-fit ul{list-style:none;display:grid;gap:9px}
 .rp-fit li{font-size:.85rem;line-height:1.45;color:#B4ADD4;display:flex;gap:10px}
-.rp-fit li::before{content:'✦';color:var(--rc-txt,var(--violet-hi));font-size:.7rem;margin-top:.25em;flex:none}
+.rp-fit li::before{content:'⬥';color:var(--rc-txt,var(--violet-hi));font-size:.7rem;margin-top:.25em;flex:none}
 .rpanel .kv{display:grid;gap:12px;margin-top:26px}
 .navcta{padding:8px 16px;border-radius:100px;background:var(--text);color:var(--ink);font-weight:600;font-size:.84rem;transition:.25s;white-space:nowrap}
 .navcta:hover{background:var(--violet);color:#fff}
@@ -253,7 +254,7 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
 .path>p{font-size:.93rem;line-height:1.55}
 .path ul{list-style:none;display:grid;gap:10px;margin:22px 0}
 .path li{display:flex;gap:11px;font-size:.87rem;line-height:1.45;color:#B4ADD4}
-.path li::before{content:'▸';color:var(--muted-2);flex:none}
+.path li::before{content:'▶';font-size:.72em;line-height:1.5;color:var(--muted-2);flex:none}
 .path.lead li::before{color:var(--green)}
 
 .path-note{margin-top:22px;font-size:.88rem;color:var(--muted);text-align:center;max-width:70ch;margin-inline:auto}
@@ -458,7 +459,7 @@ body::after{display:none}
 
     <div class="roles rv" id="roles">
       <button class="rcard" data-r="pres" style="--rc:rgba(255,196,107,.26);--rc-txt:#FFC46B;--rc-line:rgba(255,196,107,.55)" type="button">
-        <span class="rc-n">01</span><i class="rc-ic">&#9670;</i>
+        <span class="rc-n">01</span><i class="rc-ic">&#11045;</i>
         <h4>campus president</h4>
         <span class="rc-open">the lead role &rarr;</span>
       </button>
@@ -478,7 +479,7 @@ body::after{display:none}
         <span class="rc-open">most applied for &rarr;</span>
       </button>
       <button class="rcard" data-r="culture" style="--rc:rgba(111,215,255,.24);--rc-txt:#6FD7FF;--rc-line:rgba(111,215,255,.55)" type="button">
-        <span class="rc-n">05</span><i class="rc-ic">&#9678;</i>
+        <span class="rc-n">05</span><i class="rc-ic">&#10687;</i>
         <h4>culture</h4>
         <span class="rc-open">the people role &rarr;</span>
       </button>
@@ -587,7 +588,7 @@ body::after{display:none}
     <div class="li-panel rv">
       <div>
         <div class="li-card">
-          <div class="li-head"><b>Experience</b><span>+ &#9998;</span></div>
+          <div class="li-head"><b>Experience</b><span>+ <svg class="li-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19.5 8.5a2.12 2.12 0 0 0-3-3L5 17v3Z"/><path d="M14.5 6.5l3 3"/></svg></span></div>
           <div class="li-row">
             <span class="li-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>
             <div class="li-body">
