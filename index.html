@@ -395,7 +395,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 <div class="menubar">
   <span class="mm"><i>mm</i> milo messina</span>
   <menu>
-    <li><button type="button" data-open="win-work" data-tab="tab-pm">Work</button></li>
+    <li><button type="button" data-open="win-work" data-tab="tab-fm">Work</button></li>
     <li><button type="button" data-open="win-notes">About</button></li>
     <li><button type="button" data-open="win-contact">Contact</button></li>
   </menu>
@@ -420,7 +420,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         <button type="button" class="m" data-act="min"   aria-label="Minimize work window"><span>–</span></button>
         <button type="button" class="z" data-act="zoom"  aria-label="Zoom work window"><span>+</span></button>
       </span>
-      <span class="crumb">My Work <b id="crumb-work">/ polymarket</b></span>
+      <span class="crumb">My Work <b id="crumb-work">/ fomo</b></span>
       <span class="tools">
         <a href="/fomo" aria-label="Open the fomo campus site">
           <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -432,7 +432,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
     <div class="wbody">
       <div class="tabstrip" role="tablist" aria-label="Projects">
-        <button type="button" role="tab" id="tab-pm" aria-controls="pane-pm" aria-selected="true" tabindex="0">
+        <button type="button" role="tab" id="tab-fm" aria-controls="pane-fm" aria-selected="true" tabindex="0">
+          <!-- fomo's own mark, lifted from the campus site -->
+          <svg viewBox="0 0 100 100" aria-hidden="true" style="color:#516AF6">
+            <path fill="currentColor" d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z"/>
+            <path fill="currentColor" d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z"/>
+          </svg><span>fomo</span></button>
+        <button type="button" role="tab" id="tab-pm" aria-controls="pane-pm" aria-selected="false" tabindex="-1">
           <!-- traced from a low-res screenshot; paste the official svg to make it exact -->
           <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
             <g stroke="#1E5AEA" stroke-width="7" stroke-linejoin="round">
@@ -440,50 +446,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
               <path d="M12 34 L84 88 M84 12 L12 66"/>
             </g>
           </svg><span>polymarket</span></button>
-        <button type="button" role="tab" id="tab-fm" aria-controls="pane-fm" aria-selected="false" tabindex="-1">
-          <!-- fomo's own mark, lifted from the campus site -->
-          <svg viewBox="0 0 100 100" aria-hidden="true" style="color:#516AF6">
-            <path fill="currentColor" d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z"/>
-            <path fill="currentColor" d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z"/>
-          </svg><span>fomo</span></button>
-      </div>
-
-      <!-- POLYMARKET -->
-      <div class="pane" role="tabpanel" id="pane-pm" aria-labelledby="tab-pm" tabindex="0">
-        <p class="pane-head"><b>01</b> · polymarket · [year]</p>
-        <h2>polymarket</h2>
-        <p class="role">sports growth · contract</p>
-        <div class="body">
-          <p>
-            Sports growth contractor at the world&rsquo;s largest prediction market.
-            I ran paid creator partnerships across X, Instagram and YouTube &mdash;
-            finding the accounts worth working with, negotiating the deals, and
-            turning them into volume.
-          </p>
-        </div>
-        <ul>
-          <li>Paid partnerships across X, Instagram and YouTube</li>
-          <li>100M+ views generated</li>
-        </ul>
-        <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
-        <div class="shots">
-          <a href="/assets/pm-nbacentral-warriors.jpg" target="_blank" rel="noopener">
-            <img src="/assets/pm-nbacentral-warriors.jpg" width="1206" height="2019" loading="lazy"
-                 alt="NBACentral paid partnership post carrying a Polymarket market on LeBron's next team, 2.8M views">
-          </a>
-          <a href="/assets/pm-nbacentral-lehistory.jpg" target="_blank" rel="noopener">
-            <img src="/assets/pm-nbacentral-lehistory.jpg" width="1206" height="2071" loading="lazy"
-                 alt="NBACentral paid partnership post carrying a Polymarket market on whether LeBron retires, 1.3M views">
-          </a>
-        </div>
-        <div class="cta">
-          <span class="note">paid partnerships · nbacentral</span>
-        </div>
       </div>
 
       <!-- FOMO -->
-      <div class="pane" role="tabpanel" id="pane-fm" aria-labelledby="tab-fm" tabindex="0" hidden>
-        <p class="pane-head"><b>02</b> · fomo · 2026 · live</p>
+      <div class="pane" role="tabpanel" id="pane-fm" aria-labelledby="tab-fm" tabindex="0">
+        <p class="pane-head"><b>01</b> · fomo · 2026 · live</p>
         <h2>fomo campus</h2>
         <p class="role">brand · copy · front-end</p>
         <div class="body">
@@ -512,6 +479,39 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
                     stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
           <span class="note">milomessina.com/fomo</span>
+        </div>
+      </div>
+
+      <!-- POLYMARKET -->
+      <div class="pane" role="tabpanel" id="pane-pm" aria-labelledby="tab-pm" tabindex="0" hidden>
+        <p class="pane-head"><b>02</b> · polymarket · [year]</p>
+        <h2>polymarket</h2>
+        <p class="role">sports growth · contract</p>
+        <div class="body">
+          <p>
+            Sports growth contractor at the world&rsquo;s largest prediction market.
+            I ran paid creator partnerships across X, Instagram and YouTube &mdash;
+            finding the accounts worth working with, negotiating the deals, and
+            turning them into volume.
+          </p>
+        </div>
+        <ul>
+          <li>Paid partnerships across X, Instagram and YouTube</li>
+          <li>100M+ views generated</li>
+        </ul>
+        <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
+        <div class="shots">
+          <a href="/assets/pm-nbacentral-warriors.jpg" target="_blank" rel="noopener">
+            <img src="/assets/pm-nbacentral-warriors.jpg" width="1206" height="2019" loading="lazy"
+                 alt="NBACentral paid partnership post carrying a Polymarket market on LeBron's next team, 2.8M views">
+          </a>
+          <a href="/assets/pm-nbacentral-lehistory.jpg" target="_blank" rel="noopener">
+            <img src="/assets/pm-nbacentral-lehistory.jpg" width="1206" height="2071" loading="lazy"
+                 alt="NBACentral paid partnership post carrying a Polymarket market on whether LeBron retires, 1.3M views">
+          </a>
+        </div>
+        <div class="cta">
+          <span class="note">paid partnerships · nbacentral</span>
         </div>
       </div>
     </div>
@@ -795,6 +795,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   }
   if (frame && !wantsPreview) { frame.remove(); frame = null; }
   fitPreview();
+  mountPreview();          /* fomo is the tab that opens first */
 
   /* ── boot ──────────────────────────────────────── */
   /* the window positions are authored for a roomy desktop; clamp them on load
