@@ -16,7 +16,7 @@
   --paper:#F6F1E7; --paper-2:#EDE6D8; --paper-3:#E3DACA;
   --ink:#17150F; --ink-2:#3A352B; --muted:#6E6759; --muted-2:#948C7C;
   --line:rgba(23,21,15,.13); --line-2:rgba(23,21,15,.26);
-  --red:#E5321E; --blue:#2F5DD8; --violet:#516AF6; --green:#1BA85F;
+  --red:#E5321E; --blue:#2F5DD8; --violet:#516AF6;
   --ui:'Aeonik',system-ui,-apple-system,sans-serif;
   --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
@@ -140,11 +140,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
 .pane{padding:clamp(18px,3vw,30px)}
 .pane[hidden]{display:none}
-.pane-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;
-  font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2)}
-.pane-head b{color:var(--red);font-weight:400}
-.pane h2{font-size:clamp(1.9rem,4.4vw,2.9rem);letter-spacing:-.045em;line-height:.95;margin:12px 0 0;
+.pane h2{font-size:clamp(1.9rem,4.4vw,2.9rem);letter-spacing:-.045em;line-height:.95;margin:0;
   font-weight:700}
+/* heading row: title left, the project's own lockup parked in the space at the right */
+.pane-title{display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:14px}
+.pane-title h2{margin:0}
+.lockup{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  padding:8px 13px;border-radius:9px;background:#0B0A16;
+  font-size:.95rem;font-weight:700;letter-spacing:-.03em;line-height:1}
+.lockup svg{width:19px;height:19px;flex:none;color:#AFB5D0}
+.lockup b{color:#fff}
+.lockup i{color:#8B90A8;font-style:normal}
 .pane .role{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
   color:var(--muted);margin-top:10px}
 .pane .body{font-family:var(--serif);font-size:1.02rem;line-height:1.62;color:var(--ink-2);
@@ -153,7 +160,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .pane ul{list-style:none;margin-top:16px;display:grid;gap:9px;max-width:60ch}
 .pane ul li{display:flex;gap:10px;font-size:.92rem;color:var(--ink-2);line-height:1.5}
 .pane ul li::before{content:'→';color:var(--red);flex:none}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
 .tags i{font-style:normal;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
   color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:5px 10px;background:var(--paper-2)}
 .pane .cta{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:22px;
@@ -167,11 +174,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .btn.soon{opacity:.5;pointer-events:none}
 .cta .note{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
 
-/* project preview strip */
-.shot{margin-top:20px;border:1px solid var(--line);border-radius:10px;overflow:hidden;position:relative;
-  height:200px;background:#0B0A16}
-.shot .fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px;
-  font-weight:700;letter-spacing:-.03em;font-size:1.5rem;color:rgba(255,255,255,.24)}
 /* proof-of-work screenshots. auto-fit tracks the window width, not the
    viewport, so they go two-up in a wide window and stack in a narrow one. */
 .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:20px}
@@ -180,12 +182,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .shots a:hover{transform:translateY(-3px);border-color:var(--line-2);
   box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
 .shots img{display:block;width:100%;height:auto}
-
-.shot.fm .fallback{background:radial-gradient(circle at 50% 20%,rgba(81,106,246,.5),transparent 62%),#0B0A16}
-.shot iframe{position:absolute;top:0;left:0;width:1440px;height:1400px;border:0;pointer-events:none;
-  transform:scale(var(--pv,.34));transform-origin:top left}
-.shot .veil{position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,transparent 55%,rgba(11,10,22,.85))}
 
 /* ── notes window ───────────────────────────────────── */
 .notes{padding:20px 22px}
@@ -260,7 +256,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   .tbar{cursor:default}
   .wbody{overflow:visible}
   .tabstrip{position:static}
-  .shot{height:170px}
+  .lockup{font-size:.82rem;padding:7px 11px;gap:7px}
+  .lockup svg{width:16px;height:16px}
   .dock{gap:7px;padding:8px 9px}
   .dock button,.dock a{width:42px;height:42px}
   .hint{display:none}
@@ -450,9 +447,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
       <!-- FOMO -->
       <div class="pane" role="tabpanel" id="pane-fm" aria-labelledby="tab-fm" tabindex="0">
-        <p class="pane-head"><b>01</b> · fomo · 2026 · live</p>
-        <h2>fomo campus</h2>
+        <div class="pane-title">
+          <h2>fomo campus</h2>
+          <!-- fomo's lockup, same mark as the tab; decorative, the h2 already says it -->
+          <span class="lockup" aria-hidden="true">
+            <svg viewBox="0 0 100 100">
+              <path fill="currentColor" d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z"/>
+              <path fill="currentColor" d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z"/>
+            </svg><b>fomo</b><i>/campus</i>
+          </span>
+        </div>
         <p class="role">brand · copy · front-end</p>
+        <div class="tags"><i>brand</i><i>copywriting</i><i>front-end</i><i>forms</i><i>2026</i></div>
         <div class="body">
           <p>
             A recruiting site for fomo&rsquo;s campus program &mdash; a five-person student
@@ -465,13 +471,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
           <li>An eight-week goal table that reacts to the seat you pick</li>
           <li>Application, submission and weekly-report forms with live validation</li>
         </ul>
-        <div class="tags"><i>brand</i><i>copywriting</i><i>front-end</i><i>forms</i><i>2026</i></div>
-        <div class="shot fm">
-          <div class="fallback">fomo /campus</div>
-          <!-- decorative live preview, mounted by JS on wide pointer devices only -->
-          <iframe data-src="/fomo" title="" aria-hidden="true" tabindex="-1" loading="lazy" scrolling="no"></iframe>
-          <div class="veil"></div>
-        </div>
         <div class="cta">
           <a class="btn btn-p" href="/fomo">open the site
             <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -484,9 +483,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
       <!-- POLYMARKET -->
       <div class="pane" role="tabpanel" id="pane-pm" aria-labelledby="tab-pm" tabindex="0" hidden>
-        <p class="pane-head"><b>02</b> · polymarket · [year]</p>
         <h2>polymarket</h2>
         <p class="role">sports growth · contract</p>
+        <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
         <div class="body">
           <p>
             Sports growth contractor at the world&rsquo;s largest prediction market.
@@ -499,7 +498,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
           <li>Paid partnerships across X, Instagram and YouTube</li>
           <li>100M+ views generated</li>
         </ul>
-        <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
         <div class="shots">
           <a href="/assets/pm-nbacentral-warriors.jpg" target="_blank" rel="noopener">
             <img src="/assets/pm-nbacentral-warriors.jpg" width="1206" height="2019" loading="lazy"
@@ -532,8 +530,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         <h3>about me</h3>
         <p class="stamp">last edited today</p>
         <ul>
-          <li>I&rsquo;m Milo &mdash; an NYU student working on growth, brand, and culture
-              for early-stage companies.</li>
+          <li>NYU student working on growth, brand, and culture for early-stage
+              companies.</li>
           <li>I like work that has to actually perform: a page that converts, a program
               people apply to, a brand that sounds like a person.</li>
           <li>Right now: I&rsquo;m building Fomo&rsquo;s college growth program and figuring
@@ -544,7 +542,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         <div class="kv">
           <div><b>based</b><span>Soho, NYC</span></div>
           <div><b>focus</b><span>brand · web · growth</span></div>
-          <div><b>status</b><span style="color:var(--green);font-weight:600">open to work</span></div>
         </div>
       </div>
     </div>
@@ -744,7 +741,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     });
   }
   var rt; addEventListener('resize', function(){
-    clearTimeout(rt); rt = setTimeout(function(){ layoutDesktop(); clampAll(); fitPreview(); }, 140);
+    clearTimeout(rt); rt = setTimeout(function(){ layoutDesktop(); clampAll(); }, 140);
   }, {passive:true});
 
   /* ── tabs ──────────────────────────────────────── */
@@ -760,7 +757,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
       document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
     });
     if (crumb) crumb.textContent = '/ ' + tab.textContent.trim();
-    if (tab.id === 'tab-fm') mountPreview();
   }
 
   tabs.forEach(function(tab){
@@ -774,28 +770,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
       if (n) { e.preventDefault(); selectTab(n); n.focus(); }
     });
   });
-
-  /* ── live fomo preview ─────────────────────────── */
-  var frame = document.querySelector('.shot iframe');
-  var wantsPreview = !reduce
-    && matchMedia('(pointer:fine)').matches
-    && innerWidth >= 900
-    && !(navigator.connection && navigator.connection.saveData);
-
-  function fitPreview(){
-    if (!frame) return;
-    var box = frame.parentNode;
-    box.style.setProperty('--pv', box.clientWidth / 1440);
-  }
-  function mountPreview(){
-    if (!frame) return;
-    if (!wantsPreview) { frame.remove(); frame = null; return; }
-    fitPreview();
-    if (!frame.src) frame.src = frame.dataset.src;
-  }
-  if (frame && !wantsPreview) { frame.remove(); frame = null; }
-  fitPreview();
-  mountPreview();          /* fomo is the tab that opens first */
 
   /* ── boot ──────────────────────────────────────── */
   /* the window positions are authored for a roomy desktop; clamp them on load
