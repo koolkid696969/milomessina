@@ -66,7 +66,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 /* ── stage / windows ────────────────────────────────── */
 #stage{position:fixed;top:var(--menu-h);left:0;right:0;bottom:0;z-index:10}
 
-.win{position:absolute;top:0;left:0;display:flex;flex-direction:column;
+/* the name, set into the wallpaper. windows layer over it on purpose —
+   that overlap is what sells the desktop. */
+.brand{position:absolute;left:clamp(20px,4.4vw,62px);bottom:clamp(74px,12vh,122px);z-index:0;
+  pointer-events:none;color:#fff;text-shadow:0 8px 44px rgba(0,0,0,.55)}
+.brand h1{font-size:clamp(2.6rem,7.6vw,7rem);font-weight:700;letter-spacing:-.055em;line-height:.84;
+  text-transform:lowercase}
+.brand h1 span{display:block}
+.brand h1 .l2{-webkit-text-stroke:1.7px rgba(255,255,255,.92);color:transparent;paint-order:stroke}
+.brand p{font-family:var(--mono);font-size:.64rem;letter-spacing:.26em;text-transform:uppercase;
+  color:rgba(255,255,255,.74);margin-top:18px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
+
+.win{position:absolute;top:0;left:0;z-index:1;display:flex;flex-direction:column;
   width:var(--w);height:var(--h);
   transform:translate3d(var(--x),var(--y),0);
   background:var(--paper);border-radius:11px;border:1px solid rgba(0,0,0,.28);
@@ -214,6 +225,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
      otherwise paint over the (unpositioned) window backgrounds. */
   #stage{position:relative;z-index:10;top:auto;left:auto;right:auto;bottom:auto;
     padding:16px 14px calc(var(--dock-h) + 26px);display:grid;gap:16px}
+  /* stacked: the name leads the page instead of sitting in the wallpaper */
+  .brand{position:static;left:auto;bottom:auto;pointer-events:auto;padding:14px 4px 2px}
+  .brand h1{font-size:clamp(2.7rem,14vw,4.4rem)}
+  .brand p{margin-top:13px;font-size:.6rem}
   .win{position:static;transform:none!important;width:auto!important;height:auto!important;
     max-height:none;box-shadow:0 12px 30px -12px rgba(0,0,0,.5)}
   .win.zoomed{border-radius:11px}
@@ -277,7 +292,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
 <!-- ── menu bar ────────────────────────────────────── -->
 <div class="menubar">
-  <h1 class="mm"><i>mm</i> milo messina</h1>
+  <span class="mm"><i>mm</i> milo messina</span>
   <menu>
     <li><button type="button" data-open="win-work" data-tab="tab-pm">Work</button></li>
     <li><button type="button" data-open="win-notes">About</button></li>
@@ -290,6 +305,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 </div>
 
 <main id="stage">
+
+  <!-- ── the name, set into the desktop ────────────── -->
+  <div class="brand">
+    <h1><span>milo</span> <span class="l2">messina</span></h1>
+    <!-- TODO(milo): one short line. what you do, or just "selected work". -->
+    <p>[what you do] &mdash; selected work</p>
+  </div>
 
   <!-- ── WORK ──────────────────────────────────────── -->
   <section class="win" id="win-work" style="--x:66px;--y:34px;--w:690px;--h:496px" aria-label="Work">
@@ -414,7 +436,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   </section>
 
   <!-- ── CONTACT ───────────────────────────────────── -->
-  <section class="win" id="win-contact" style="--x:250px;--y:556px;--w:452px;--h:196px" aria-label="Contact">
+  <section class="win" id="win-contact" style="--x:864px;--y:522px;--w:452px;--h:190px" aria-label="Contact">
     <div class="tbar" data-drag>
       <span class="tl">
         <button type="button" class="c" data-act="close" aria-label="Close contact window"><span>✕</span></button>
