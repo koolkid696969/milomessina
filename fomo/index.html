@@ -459,7 +459,6 @@ body::after{display:none}
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <span class="eyebrow"><span class="dot"></span>&nbsp;five seats open &middot; fall 2026</span>
         <h1 class="h1">own fomo<br>at your campus.</h1>
         <p class="lede">You and four other people run fomo at your school &mdash; president, growth, partnerships, content, culture. It's a real internship at a startup that's raised $75M: we hand you the brand, a budget and the playbook, then get out of the way. Sixty days to make fomo something people bring up when you're not in the room.</p>
         <div class="hero-cta">
@@ -835,12 +834,14 @@ function setRole(key){
 document.getElementById('roles').addEventListener('click',e=>{
   const c=e.target.closest('.rcard');if(!c)return;
   setRole(c.dataset.r);
-  /* stacked on mobile the panel sits a full screen below the cards, so a tap
-     would silently change something you cannot see */
-  const pn=document.getElementById('r-'+c.dataset.r);
-  if(pn){
-    const t=pn.getBoundingClientRect().top;
-    if(t<0||t>innerHeight*.55)pn.scrollIntoView({behavior:'smooth',block:'start'});
+  /* mobile only, at the same width .rpanel itself switches to a single
+     column: cards and panel are stacked a full screen apart there, so a tap
+     would silently change something below the fold. jump straight to the
+     apply button — the point of picking a role — instead of the panel top.
+     desktop shows the cards and panel together, so nothing should move. */
+  if(matchMedia('(max-width:900px)').matches){
+    const btn=document.querySelector('#r-'+c.dataset.r+' .btn-p');
+    if(btn)btn.scrollIntoView({behavior:'smooth',block:'center'});
   }
 });
 setRole('content');
