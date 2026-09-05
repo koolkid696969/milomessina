@@ -160,7 +160,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .pane ul{list-style:none;margin-top:16px;display:grid;gap:9px;max-width:60ch}
 .pane ul li{display:flex;gap:10px;font-size:.92rem;color:var(--ink-2);line-height:1.5}
 .pane ul li::before{content:'→';color:var(--red);flex:none}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
 .tags i{font-style:normal;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
   color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:5px 10px;background:var(--paper-2)}
 .pane .cta{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:22px;
@@ -262,6 +262,23 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   .dock button,.dock a{width:42px;height:42px}
   .hint{display:none}
 }
+/* The layout script steps through these when the tag row would otherwise fall
+   below the fold: first the rhythm, then the type. Class selectors so they beat
+   the base rules whatever the source order. */
+.win.fit-tight .pane{padding:20px 22px}
+.win.fit-tight .pane .role{margin-top:8px}
+.win.fit-tight .pane .body{margin-top:12px}
+.win.fit-tight .pane ul{margin-top:12px;gap:7px}
+.win.fit-tight .tags{margin-top:12px}
+.win.fit-tighter .pane{padding:13px 20px}
+.win.fit-tighter .pane h2{font-size:1.6rem}
+.win.fit-tighter .pane .role{margin-top:6px}
+.win.fit-tighter .pane .body{font-size:.94rem;line-height:1.45}
+.win.fit-tighter .pane ul{gap:5px}
+.win.fit-tighter .pane ul li{font-size:.87rem;line-height:1.45}
+.win.fit-tighter .tags{margin-top:6px}
+.win.fit-tighter .lockup{font-size:.85rem;padding:6px 11px}
+.win.fit-tighter .lockup svg{width:16px;height:16px}
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
@@ -458,7 +475,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
           </span>
         </div>
         <p class="role">brand · copy · front-end</p>
-        <div class="tags"><i>brand</i><i>copywriting</i><i>front-end</i><i>forms</i><i>2026</i></div>
         <div class="body">
           <p>
             A recruiting site for fomo&rsquo;s campus program &mdash; a five-person student
@@ -471,6 +487,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
           <li>An eight-week goal table that reacts to the seat you pick</li>
           <li>Application, submission and weekly-report forms with live validation</li>
         </ul>
+        <div class="tags"><i>brand</i><i>copywriting</i><i>front-end</i><i>forms</i><i>2026</i></div>
         <div class="cta">
           <a class="btn btn-p" href="/fomo">open the site
             <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -485,7 +502,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
       <div class="pane" role="tabpanel" id="pane-pm" aria-labelledby="tab-pm" tabindex="0" hidden>
         <h2>polymarket</h2>
         <p class="role">sports growth · contract</p>
-        <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
         <div class="body">
           <p>
             Sports growth contractor at the world&rsquo;s largest prediction market.
@@ -498,6 +514,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
           <li>Paid partnerships across X, Instagram and YouTube</li>
           <li>100M+ views generated</li>
         </ul>
+        <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
         <div class="shots">
           <a href="/assets/pm-nbacentral-warriors.jpg" target="_blank" rel="noopener">
             <img src="/assets/pm-nbacentral-warriors.jpg" width="1206" height="2019" loading="lazy"
@@ -694,13 +711,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
      breakpoints and overlapping in between. The inline values in the markup
      are the fallback if this never runs. Windows the user has dragged are
      left where they put them. */
-  var GUTTER = 24, TOP = 30, ROW_GAP = 22;
+  var GUTTER = 24, TOP = 30, ROW_GAP = 22, NAME_GAP = 6, MIN_H = 260, AIR = 10;
+  var FIT_STEPS = ['', ' fit-tight', ' fit-tight fit-tighter'];
   function layoutDesktop(){
-    if (stacked()) return;
     var work  = document.getElementById('win-work'),
         notes = document.getElementById('win-notes'),
         mail  = document.getElementById('win-contact');
     if (!work || !notes || !mail) return;
+    if (stacked()) {
+      work.className = work.className.replace(/ ?fit-tight(er)?/g, '');
+      work.style.height = notes.style.height = '';
+      return;
+    }
     if (work.dataset.moved || notes.dataset.moved) return;
 
     var W = stage.clientWidth;
@@ -719,6 +741,28 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     notes.style.setProperty('--w', notesW + 'px');
     notes.style.setProperty('--x', rightX + 'px');
     notes.style.setProperty('--y', TOP + 'px');
+
+    /* The tag row is the last thing that has to clear the fold, so size the
+       windows to it rather than to a fixed step, and stop where the name
+       starts. When the room isn't there, tighten the pane a step at a time
+       instead of guessing viewport breakpoints. offsetTop is measured from
+       the window, so it holds whatever height the window currently has. */
+    var pane = work.querySelector('.pane:not([hidden])'),
+        tags = pane && pane.querySelector('.tags'),
+        name = document.querySelector('.brand');
+    if (tags && name) {
+      var cap  = Math.round(name.offsetTop - TOP - NAME_GAP);
+      var want = 0;
+      for (var s = 0; s < FIT_STEPS.length; s++) {
+        work.className = work.className.replace(/ ?fit-tight(er)?/g, '') + FIT_STEPS[s];
+        want = Math.ceil(tags.offsetTop + tags.offsetHeight +
+                        (parseFloat(getComputedStyle(pane).paddingBottom) || 0)) + AIR;
+        if (want <= cap) break;
+      }
+      var h = Math.max(MIN_H, Math.min(want, cap));
+      work.style.height  = h + 'px';
+      notes.style.height = h + 'px';
+    }
 
     if (!mail.dataset.moved) {
       mail.style.setProperty('--w', notesW + 'px');
@@ -776,6 +820,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
      so nothing starts off the right or bottom edge on a smaller screen. */
   layoutDesktop();
   clampAll();
+  /* the fit above measures text, so it has to be taken again once the real
+     faces are in — on a cold load the first pass runs on the fallbacks */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function(){ layoutDesktop(); clampAll(); });
+  }
   focusWin(document.getElementById('win-work'));
   if (hint && !stacked()) setTimeout(function(){ hint.hidden = true; }, 9000);
 })();
