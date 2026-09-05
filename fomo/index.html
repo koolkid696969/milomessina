@@ -382,6 +382,13 @@ body::after{display:none}
 
 .map-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);
   border-radius:var(--r-l);background:var(--ink-2)}
+/* 03 is a fixed piece of artwork. When the section is taller than the screen,
+   the script pulls the padding in and then scales the whole table as one
+   asset — border, type and spacing together — rather than reflowing it.
+   .map-fit carries the scaled-down footprint so the layout keeps up. */
+.map-fit{--map-s:1}
+.map-fit>.map-wrap{transform:scale(var(--map-s));transform-origin:top center}
+#map.tight{padding-block:clamp(40px,4vw,64px)}
 .map-hint{display:none}
 @media(max-width:940px){
   .map-hint{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;
@@ -611,7 +618,8 @@ body::after{display:none}
     </div>
 
     <p class="map-hint rv">swipe the table sideways &rarr;</p>
-    <div class="map-wrap rv">
+    <div class="map-fit rv">
+      <div class="map-wrap">
       <table class="map">
         <colgroup>
           <col class="c-wk"><col data-c="pres"><col data-c="growth"><col data-c="partner"><col data-c="content"><col data-c="culture">
@@ -621,6 +629,7 @@ body::after{display:none}
         </thead>
         <tbody id="mapBody"></tbody>
       </table>
+      </div>
     </div>
 
     <p class="path-note rv">Goals are the bar, not the ceiling. <b>HQ adjusts them per school size.</b></p>
@@ -733,6 +742,36 @@ document.getElementById('mapBody').innerHTML=MAP.map((row,i)=>
   `<tr><td class="wk">wk ${i+1}</td>`+
   row.map((cell,k)=>`<td data-c="${SEATKEYS[k]}">${cell}</td>`).join('')+
   `</tr>`).join('');
+
+/* ── keep 03 on one screen ──────────────────────────────
+   The table is artwork: don't reflow it to fit. Pull the section's own
+   padding in first, then scale what's left of the overflow away as a single
+   locked-proportion asset, down to a floor where it is still readable. */
+const mapSec=document.getElementById('map'),
+      mapFit=mapSec&&mapSec.querySelector('.map-fit'),
+      mapWrap=mapFit&&mapFit.querySelector('.map-wrap');
+const MAP_MIN=.78, MAP_GAP=10;
+function fitMap(){
+  if(!mapFit||!mapWrap)return;
+  mapFit.style.height='';
+  mapFit.style.setProperty('--map-s',1);
+  mapSec.classList.remove('tight');
+  /* narrow screens keep the sideways swipe — scaling to fit there would
+     shrink the type past reading size */
+  if(matchMedia('(max-width:940px)').matches)return;
+  const natH=mapFit.offsetHeight;
+  if(mapSec.offsetHeight<=innerHeight)return;          /* already on one screen */
+  mapSec.classList.add('tight');                       /* padding first */
+  if(mapSec.offsetHeight<=innerHeight)return;          /* that was enough */
+  const room=innerHeight-(mapSec.offsetHeight-natH)-MAP_GAP;
+  const s=Math.max(MAP_MIN,Math.min(1,room/natH));
+  mapFit.style.setProperty('--map-s',s);
+  mapFit.style.height=Math.ceil(natH*s)+'px';
+}
+fitMap();
+addEventListener('resize',fitMap,{passive:true});
+/* the fit measures rendered text, so take it again once the faces are in */
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitMap);
 
 /* picking a seat swaps the panel, the LinkedIn card and the goal-map column */
 function setRole(key){
