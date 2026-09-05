@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>milo messina</title>
 <meta name="description" content="Milo Messina — selected work. A desktop of projects, including Polymarket and fomo.">
-<meta name="theme-color" content="#0E1A24">
+<meta name="theme-color" content="#0F1A22">
 <meta property="og:title" content="milo messina">
 <meta property="og:description" content="Selected work.">
 <meta property="og:type" content="website">
@@ -17,7 +17,6 @@
   --ink:#17150F; --ink-2:#3A352B; --muted:#6E6759; --muted-2:#948C7C;
   --line:rgba(23,21,15,.13); --line-2:rgba(23,21,15,.26);
   --red:#E5321E; --blue:#2F5DD8; --violet:#516AF6; --green:#1BA85F;
-  --bar:rgba(20,28,36,.42);
   --ui:'Aeonik',system-ui,-apple-system,sans-serif;
   --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
@@ -27,7 +26,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{background:#0E1A24;color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5;
+body{background:#0F1A22;color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5;
   -webkit-font-smoothing:antialiased;overflow:hidden;position:relative}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
@@ -35,27 +34,28 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
 
 /* ── wallpaper ──────────────────────────────────────── */
-#wall{position:fixed;inset:0;z-index:0;width:100%;height:100%;display:block}
-#wall .cloud{animation:drift 90s linear infinite}
-#wall .cloud.b{animation-duration:140s;animation-delay:-40s}
-#wall .cloud.c{animation-duration:190s;animation-delay:-90s}
-@keyframes drift{from{transform:translateX(-22%)}to{transform:translateX(122%)}}
+#wall{position:fixed;inset:0;z-index:0;overflow:hidden;background:#0F1A22}
+#wall .wall-art{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* the photograph. it covers the drawn art beneath, which stays in the file as
+   a fallback if this ever fails to load. */
+#wall .wall-photo{position:absolute;inset:0;
+  background:url('/assets/wallpaper.jpg') center/cover no-repeat}
 /* grain over the whole desktop */
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.16;mix-blend-mode:overlay;
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.11;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* ── menu bar ───────────────────────────────────────── */
 .menubar{position:fixed;top:0;left:0;right:0;height:var(--menu-h);z-index:50;
   display:flex;align-items:center;gap:20px;padding:0 14px;
-  background:var(--bar);backdrop-filter:blur(22px) saturate(160%);
+  background:rgba(16,24,32,.44);backdrop-filter:blur(22px) saturate(160%);
   -webkit-backdrop-filter:blur(22px) saturate(160%);
-  color:#fff;font-size:.8rem;box-shadow:0 1px 0 rgba(255,255,255,.09)}
+  color:#fff;font-size:.8rem;box-shadow:0 1px 0 rgba(255,255,255,.1)}
 .menubar .mm{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:-.02em;font-size:.8rem;line-height:1}
 .menubar .mm i{width:17px;height:17px;border-radius:5px;background:var(--paper);color:var(--ink);
   display:grid;place-items:center;font-style:normal;font-size:.54rem;font-weight:700;letter-spacing:-.03em}
 .menubar menu{display:flex;gap:4px;list-style:none}
 .menubar menu button{padding:3px 9px;border-radius:6px;opacity:.85;transition:background .15s,opacity .15s}
-.menubar menu button:hover{background:rgba(255,255,255,.16);opacity:1}
+.menubar menu button:hover{background:rgba(255,255,255,.18);opacity:1}
 .menubar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-variant-numeric:tabular-nums}
 .menubar .avail{display:flex;align-items:center;gap:6px;opacity:.9}
 .menubar .avail u{width:6px;height:6px;border-radius:50%;background:#4ADE80;display:block;
@@ -69,13 +69,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 /* the name, set into the wallpaper. windows layer over it on purpose —
    that overlap is what sells the desktop. */
 .brand{position:absolute;left:clamp(20px,4.4vw,62px);bottom:clamp(74px,12vh,122px);z-index:0;
-  pointer-events:none;color:#fff;text-shadow:0 8px 44px rgba(0,0,0,.55)}
-.brand h1{font-size:clamp(2.6rem,7.6vw,7rem);font-weight:700;letter-spacing:-.055em;line-height:.84;
-  text-transform:lowercase}
+  pointer-events:none;color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,.5),0 6px 28px rgba(0,0,0,.62)}
+/* San Francisco — the system face. -apple-system resolves to SF Pro on Apple
+   platforms; the rest is the fallback chain for everywhere else. */
+.brand h1{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',
+  'Helvetica Neue',Helvetica,system-ui,sans-serif;
+  font-size:clamp(2.4rem,7.2vw,6.6rem);font-weight:700;
+  letter-spacing:-.022em;line-height:.96;text-transform:lowercase}
 .brand h1 span{display:block}
-.brand h1 .l2{-webkit-text-stroke:1.7px rgba(255,255,255,.92);color:transparent;paint-order:stroke}
-.brand p{font-family:var(--mono);font-size:.64rem;letter-spacing:.26em;text-transform:uppercase;
-  color:rgba(255,255,255,.74);margin-top:18px;text-shadow:0 2px 12px rgba(0,0,0,.7)}
 
 .win{position:absolute;top:0;left:0;z-index:1;display:flex;flex-direction:column;
   width:var(--w);height:var(--h);
@@ -187,8 +189,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
 /* ── dock ───────────────────────────────────────────── */
 .dock{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:40;
-  display:flex;align-items:flex-end;gap:9px;padding:9px 11px;border-radius:20px;
-  background:var(--bar);backdrop-filter:blur(22px) saturate(160%);
+  display:flex;align-items:flex-end;gap:9px;padding:9px 11px;border-radius:16px;
+  background:rgba(16,24,32,.44);backdrop-filter:blur(22px) saturate(160%);
   -webkit-backdrop-filter:blur(22px) saturate(160%);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 18px 40px -12px rgba(0,0,0,.6)}
 .dock button,.dock a{position:relative;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
@@ -212,7 +214,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 /* ── hint ───────────────────────────────────────────── */
 .hint{position:fixed;left:50%;bottom:calc(var(--dock-h) + 10px);transform:translateX(-50%);z-index:39;
   font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(255,255,255,.62);text-shadow:0 1px 6px rgba(0,0,0,.6);pointer-events:none;
+  color:rgba(255,255,255,.66);text-shadow:0 1px 8px rgba(0,0,0,.7);pointer-events:none;
   transition:opacity .5s}
 .hint[hidden]{display:none}
 
@@ -226,9 +228,12 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   #stage{position:relative;z-index:10;top:auto;left:auto;right:auto;bottom:auto;
     padding:16px 14px calc(var(--dock-h) + 26px);display:grid;gap:16px}
   /* stacked: the name leads the page instead of sitting in the wallpaper */
-  .brand{position:static;left:auto;bottom:auto;pointer-events:auto;padding:14px 4px 2px}
-  .brand h1{font-size:clamp(2.7rem,14vw,4.4rem)}
-  .brand p{margin-top:13px;font-size:.6rem}
+  .brand{position:static;left:auto;bottom:auto;pointer-events:auto;padding:14px 4px 4px}
+  .brand h1{font-size:clamp(2.3rem,12.5vw,4rem)}
+  /* stacked, the photo crops to the pale sky behind the name — scrim the top
+     band so the white type keeps its contrast whatever the crop lands on. */
+  #wall::after{content:'';position:absolute;left:0;right:0;top:0;height:360px;
+    background:linear-gradient(180deg,rgba(8,14,20,.66),rgba(8,14,20,.22) 62%,rgba(8,14,20,0))}
   .win{position:static;transform:none!important;width:auto!important;height:auto!important;
     max-height:none;box-shadow:0 12px 30px -12px rgba(0,0,0,.5)}
   .win.zoomed{border-radius:11px}
@@ -248,47 +253,123 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 <body>
 
 <!-- ── wallpaper ───────────────────────────────────── -->
-<svg id="wall" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-  <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#123049"/><stop offset=".42" stop-color="#3D7EA6"/>
-      <stop offset=".68" stop-color="#9FC9D8"/><stop offset=".85" stop-color="#F0C79A"/>
-      <stop offset="1" stop-color="#F6D9B0"/>
-    </linearGradient>
-    <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2B4E68"/><stop offset="1" stop-color="#3E6B84"/></linearGradient>
-    <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1C3A4F"/><stop offset="1" stop-color="#27506A"/></linearGradient>
-    <linearGradient id="m3" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#132A3A"/><stop offset="1" stop-color="#0E1A24"/></linearGradient>
-    <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#E9C79B"/><stop offset="1" stop-color="#7FA6BC"/></linearGradient>
-    <radialGradient id="glow"><stop offset="0" stop-color="#FFE9C4" stop-opacity=".95"/>
-      <stop offset="1" stop-color="#FFE9C4" stop-opacity="0"/></radialGradient>
-    <filter id="soft" x="-30%" y="-120%" width="160%" height="340%">
-      <feGaussianBlur stdDeviation="16"/></filter>
-  </defs>
+<div id="wall" aria-hidden="true">
+  <!-- Stylized stand-in, drawn from scratch. To use a real photograph instead,
+       save it to /assets/wallpaper.jpg and uncomment the one background line
+       in the #wall .wall-photo rule above. -->
+  <svg class="wall-art" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#4A6076"/><stop offset=".3" stop-color="#77909F"/>
+        <stop offset=".62" stop-color="#A9BDC6"/><stop offset=".84" stop-color="#CBD7DA"/>
+        <stop offset="1" stop-color="#DCE3E2"/>
+      </linearGradient>
+      <radialGradient id="glow" cx=".62" cy=".62" r=".5">
+        <stop offset="0" stop-color="#FFCE93" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#FFCE93" stop-opacity="0"/>
+      </radialGradient>
+      <!-- warm alpenglow: hot at the rim, deepening as it falls down the face -->
+      <linearGradient id="lit" x1=".1" y1="0" x2=".45" y2="1">
+        <stop offset="0" stop-color="#FFB067"/><stop offset=".28" stop-color="#EE8340"/>
+        <stop offset=".66" stop-color="#C9542A"/><stop offset="1" stop-color="#93361B"/>
+      </linearGradient>
+      <linearGradient id="litFar" x1=".1" y1="0" x2=".5" y2="1">
+        <stop offset="0" stop-color="#E9955A"/><stop offset=".6" stop-color="#C2643A"/>
+        <stop offset="1" stop-color="#95492C"/>
+      </linearGradient>
+      <linearGradient id="rock" x1=".1" y1="0" x2=".55" y2="1">
+        <stop offset="0" stop-color="#8894A0"/><stop offset=".45" stop-color="#5D6874"/>
+        <stop offset="1" stop-color="#333B45"/>
+      </linearGradient>
+      <linearGradient id="rockFar" x1="0" y1="0" x2=".4" y2="1">
+        <stop offset="0" stop-color="#93A3B0"/><stop offset="1" stop-color="#5A6773"/>
+      </linearGradient>
+      <linearGradient id="snow" x1="0" y1="0" x2=".2" y2="1">
+        <stop offset="0" stop-color="#FBFDFE"/><stop offset=".55" stop-color="#D7E3EB"/>
+        <stop offset="1" stop-color="#A9BECD"/>
+      </linearGradient>
+      <linearGradient id="fir" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#2A3B31"/><stop offset=".5" stop-color="#16211B"/>
+        <stop offset="1" stop-color="#080D0A"/>
+      </linearGradient>
+      <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#AFC2CD" stop-opacity="0"/>
+        <stop offset=".45" stop-color="#AFC2CD" stop-opacity=".34"/>
+        <stop offset="1" stop-color="#BCCDD6" stop-opacity=".46"/>
+      </linearGradient>
+      <linearGradient id="haze2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#A9BECB" stop-opacity="0"/>
+        <stop offset="1" stop-color="#A9BECB" stop-opacity=".26"/>
+      </linearGradient>
+      <filter id="soft" x="-40%" y="-260%" width="180%" height="620%">
+        <feGaussianBlur stdDeviation="30"/></filter>
+      <filter id="softer" x="-40%" y="-260%" width="180%" height="620%">
+        <feGaussianBlur stdDeviation="58"/></filter>
+    </defs>
 
-  <rect width="1600" height="900" fill="url(#sky)"/>
-  <circle cx="1120" cy="600" r="300" fill="url(#glow)"/>
-  <circle cx="1120" cy="612" r="74" fill="#FFF1D4"/>
+    <rect width="1600" height="1000" fill="url(#sky)"/>
+    <ellipse cx="1000" cy="620" rx="620" ry="330" fill="url(#glow)"/>
 
-  <g opacity=".42" fill="#fff" filter="url(#soft)">
-    <g class="cloud"><ellipse cx="180" cy="150" rx="120" ry="26"/><ellipse cx="250" cy="136" rx="76" ry="21"/></g>
-    <g class="cloud b" opacity=".7"><ellipse cx="900" cy="230" rx="150" ry="24"/><ellipse cx="980" cy="216" rx="90" ry="19"/></g>
-    <g class="cloud c" opacity=".45"><ellipse cx="500" cy="90" rx="180" ry="20"/></g>
-  </g>
+    <!-- cloud mass: broad soft bands, heavier to the upper right -->
+    <g filter="url(#softer)">
+      <ellipse cx="1180" cy="120" rx="520" ry="88" fill="#5A6E80" opacity=".55"/>
+      <ellipse cx="620"  cy="60"  rx="480" ry="70" fill="#4E6274" opacity=".5"/>
+    </g>
+    <g filter="url(#soft)">
+      <ellipse cx="1280" cy="196" rx="380" ry="46" fill="#E7EEF2" opacity=".5"/>
+      <ellipse cx="880"  cy="150" rx="330" ry="38" fill="#DCE6EC" opacity=".42"/>
+      <ellipse cx="380"  cy="222" rx="300" ry="34" fill="#CFDCE4" opacity=".3"/>
+      <ellipse cx="1520" cy="330" rx="260" ry="30" fill="#EAF1F4" opacity=".34"/>
+    </g>
 
-  <path d="M0 640 L210 470 L360 596 L470 520 L640 660 L640 900 L0 900 Z" fill="url(#m2)"/>
-  <path d="M980 660 L1180 452 L1310 570 L1420 500 L1600 640 L1600 900 L980 900 Z" fill="url(#m1)"/>
-  <path d="M560 700 L760 540 L900 668 L1060 560 L1240 720 L1240 900 L560 900 Z" fill="url(#m3)" opacity=".92"/>
-  <rect y="700" width="1600" height="200" fill="url(#lake)" opacity=".55"/>
-  <g fill="#fff" opacity=".22">
-    <rect x="300" y="742" width="180" height="2" rx="1"/><rect x="880" y="790" width="260" height="2" rx="1"/>
-    <rect x="520" y="836" width="150" height="2" rx="1"/><rect x="1180" y="762" width="200" height="2" rx="1"/>
-  </g>
-  <path d="M0 700 L1600 700 L1600 900 L0 900 Z" fill="#0E1A24" opacity=".28"/>
-</svg>
+    <!-- far snow peaks -->
+    <path d="M628 706 L700 592 L742 624 L800 528 L836 566 L884 476 L944 560 L988 620 L1046 706 Z" fill="url(#snow)"/>
+    <path d="M884 476 L944 560 L988 620 L1046 706 L962 706 L906 574 Z" fill="#93AABC" opacity=".5"/>
+    <path d="M800 528 L836 566 L800 596 L764 566 Z" fill="#B7C9D6" opacity=".6"/>
+
+    <!-- atmospheric haze washing the distance -->
+    <rect y="300" width="1600" height="700" fill="url(#haze)"/>
+
+    <!-- right ridge -->
+    <path d="M962 720 L1046 552 L1128 470 L1226 440 L1310 512 L1372 476 L1470 508 L1640 596 L1640 1000 L962 1000 Z" fill="url(#rockFar)"/>
+    <path d="M986 640 L1046 552 L1128 470 L1226 440 L1310 512 L1372 476 L1460 506 L1520 540 L1372 590 L1180 574 L1064 606 Z" fill="url(#litFar)"/>
+    <path d="M1226 440 L1310 512 L1256 528 L1210 470 Z" fill="#F0E4DC" opacity=".45"/>
+    <path d="M1470 508 L1640 596 L1640 820 L1500 682 Z" fill="#39424C" opacity=".8"/>
+
+    <!-- light haze in front of the right ridge -->
+    <rect y="380" width="1600" height="620" fill="url(#haze2)"/>
+
+    <!-- el capitan -->
+    <path d="M-40 250 L60 176 L166 132 L286 138 L404 166 L512 214 L566 288 L588 372
+             L582 566 L570 726 L512 812 L392 866 L-40 838 Z" fill="url(#rock)"/>
+    <!-- the sunlit face, cut by the diagonal shadow line running down to the left -->
+    <path d="M-40 250 L60 176 L166 132 L286 138 L404 166 L512 214 L566 288 L584 366
+             L560 470 L396 496 L182 472 L-40 396 Z" fill="url(#lit)"/>
+    <!-- snow along the rim -->
+    <path d="M60 176 L166 132 L286 138 L404 166 L512 214 L486 236 L392 196 L280 168 L170 160 L74 196 Z"
+          fill="#F0F5F8" opacity=".62"/>
+    <!-- vertical fracture lines, softer on the lit face than in shadow -->
+    <g stroke="#2A313A" stroke-width="2.5" opacity=".26" stroke-linecap="round">
+      <path d="M196 512 L206 826"/><path d="M282 506 L292 842"/><path d="M368 500 L378 852"/>
+      <path d="M452 492 L462 840"/><path d="M528 480 L536 806"/>
+    </g>
+    <g stroke="#7A2F16" stroke-width="2" opacity=".2" stroke-linecap="round">
+      <path d="M150 210 L168 460"/><path d="M300 190 L316 480"/><path d="M440 216 L452 486"/>
+    </g>
+    <!-- cloud tearing across the summit -->
+    <g filter="url(#soft)" opacity=".5">
+      <ellipse cx="240" cy="150" rx="240" ry="26" fill="#C9D6DE"/>
+    </g>
+
+    <!-- valley floor, then two foreground slopes -->
+    <path d="M-40 880 L300 786 L640 872 L1000 818 L1360 884 L1640 844 L1640 1060 L-40 1060 Z" fill="url(#fir)"/>
+    <path d="M-40 700 L214 812 L470 946 L642 1060 L-40 1060 Z" fill="#141F19"/>
+    <path d="M-40 700 L214 812 L150 836 L-40 762 Z" fill="#31453A" opacity=".55"/>
+    <path d="M1180 900 L1420 852 L1640 902 L1640 1060 L1180 1060 Z" fill="#0A100C"/>
+
+  </svg>
+  <div class="wall-photo"></div>
+</div>
 
 <!-- ── menu bar ────────────────────────────────────── -->
 <div class="menubar">
@@ -308,9 +389,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
   <!-- ── the name, set into the desktop ────────────── -->
   <div class="brand">
-    <h1><span>milo</span> <span class="l2">messina</span></h1>
-    <!-- TODO(milo): one short line. what you do, or just "selected work". -->
-    <p>[what you do] &mdash; selected work</p>
+    <h1><span>milo</span> <span>messina</span></h1>
   </div>
 
   <!-- ── WORK ──────────────────────────────────────── -->
