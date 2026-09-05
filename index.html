@@ -162,7 +162,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   height:200px;background:#0B0A16}
 .shot .fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px;
   font-weight:700;letter-spacing:-.03em;font-size:1.5rem;color:rgba(255,255,255,.24)}
-.shot.pm .fallback{background:linear-gradient(135deg,#0B1A3A,#16305F 60%,#1F4FA8)}
+/* proof-of-work screenshots. auto-fit tracks the window width, not the
+   viewport, so they go two-up in a wide window and stack in a narrow one. */
+.shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:20px}
+.shots a{display:block;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#000;
+  transition:transform .25s cubic-bezier(.2,.8,.3,1),box-shadow .25s,border-color .25s}
+.shots a:hover{transform:translateY(-3px);border-color:var(--line-2);
+  box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
+.shots img{display:block;width:100%;height:auto}
+.shots span{display:flex;justify-content:space-between;gap:8px;padding:9px 11px;
+  background:var(--paper-2);border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.shots span b{color:var(--ink-2);font-weight:600}
 .shot.fm .fallback{background:radial-gradient(circle at 50% 20%,rgba(81,106,246,.5),transparent 62%),#0B0A16}
 .shot iframe{position:absolute;top:0;left:0;width:1440px;height:1400px;border:0;pointer-events:none;
   transform:scale(var(--pv,.34));transform-origin:top left}
@@ -448,13 +459,20 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
           <li>100M+ views generated</li>
         </ul>
         <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
-        <div class="shot pm">
-          <div class="fallback">polymarket</div>
-          <div class="veil"></div>
+        <div class="shots">
+          <a href="/assets/pm-nbacentral-warriors.jpg" target="_blank" rel="noopener">
+            <img src="/assets/pm-nbacentral-warriors.jpg" width="1206" height="2019" loading="lazy"
+                 alt="NBACentral paid partnership post carrying a Polymarket market on LeBron's next team, 2.8M views">
+            <span>NBACentral <b>2.8M views</b></span>
+          </a>
+          <a href="/assets/pm-nbacentral-lehistory.jpg" target="_blank" rel="noopener">
+            <img src="/assets/pm-nbacentral-lehistory.jpg" width="1206" height="2071" loading="lazy"
+                 alt="NBACentral paid partnership post carrying a Polymarket market on whether LeBron retires, 1.3M views">
+            <span>NBACentral <b>1.3M views</b></span>
+          </a>
         </div>
         <div class="cta">
-          <span class="btn btn-p soon" aria-hidden="true">add link</span>
-          <span class="note">drop the live url in when you have it</span>
+          <span class="note">paid partnerships · nbacentral</span>
         </div>
       </div>
 
@@ -495,7 +513,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   </section>
 
   <!-- ── NOTES / ABOUT ─────────────────────────────── -->
-  <section class="win" id="win-notes" style="--x:790px;--y:120px;--w:392px;--h:376px" aria-label="About">
+  <section class="win" id="win-notes" style="--x:770px;--y:40px;--w:424px;--h:544px" aria-label="About">
     <div class="tbar" data-drag>
       <span class="tl">
         <button type="button" class="c" data-act="close" aria-label="Close about window"><span>✕</span></button>
@@ -508,18 +526,19 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
       <div class="notes">
         <h3>about me</h3>
         <p class="stamp">last edited today</p>
-        <!-- TODO(milo): make these yours. -->
         <ul>
-          <li>I&rsquo;m Milo &mdash; [what you do, one line].</li>
+          <li>I&rsquo;m Milo &mdash; an NYU student working on growth, brand, and culture
+              for early-stage companies.</li>
           <li>I like work that has to actually perform: a page that converts, a program
               people apply to, a brand that sounds like a person.</li>
-          <li>Right now: [what you&rsquo;re building or studying].</li>
-          <li>Before that: [the one-line backstory].</li>
+          <li>Right now: I&rsquo;m building Fomo&rsquo;s college growth program and figuring
+              out how to turn campuses into real distribution channels.</li>
+          <li>Before that: I worked on sports growth at Polymarket and spent most of my
+              time building things, testing ideas, and finding ways to get people to care.</li>
         </ul>
         <div class="kv">
-          <div><b>based</b><span>[city]</span></div>
+          <div><b>based</b><span>Soho, NYC</span></div>
           <div><b>focus</b><span>brand · web · growth</span></div>
-          <div><b>tools</b><span>Figma · HTML/CSS/JS</span></div>
           <div><b>status</b><span style="color:var(--green);font-weight:600">open to work</span></div>
         </div>
       </div>
@@ -527,7 +546,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   </section>
 
   <!-- ── CONTACT ───────────────────────────────────── -->
-  <section class="win" id="win-contact" style="--x:864px;--y:522px;--w:452px;--h:190px" aria-label="Contact">
+  <section class="win" id="win-contact" style="--x:884px;--y:606px;--w:452px;--h:190px" aria-label="Contact">
     <div class="tbar" data-drag>
       <span class="tl">
         <button type="button" class="c" data-act="close" aria-label="Close contact window"><span>✕</span></button>
@@ -539,10 +558,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     <div class="wbody">
       <div class="contact">
         <p>Freelance, a role, or something you want built &mdash; send it over.</p>
-        <!-- TODO(milo): swap in the address you want public + your real profile links. -->
         <div class="row">
-          <a class="btn btn-p" href="mailto:hello@milomessina.com">hello@milomessina.com</a>
-          <a class="btn btn-g" href="#" rel="me">LinkedIn</a>
+          <a class="btn btn-p" href="mailto:mmm10305@nyu.edu">mmm10305@nyu.edu</a>
+          <a class="btn btn-g" href="https://www.linkedin.com/in/milo-messina-3b64b62b2/"
+             target="_blank" rel="me noopener">LinkedIn</a>
         </div>
       </div>
     </div>
@@ -733,6 +752,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   fitPreview();
 
   /* ── boot ──────────────────────────────────────── */
+  /* the window positions are authored for a roomy desktop; clamp them on load
+     so nothing starts off the right or bottom edge on a smaller screen. */
+  clampAll();
   focusWin(document.getElementById('win-work'));
   if (hint && !stacked()) setTimeout(function(){ hint.hidden = true; }, 9000);
 })();
