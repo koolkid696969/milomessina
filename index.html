@@ -89,6 +89,14 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .win[hidden]{display:none}
 .win.closing{opacity:0;scale:.96}
 .win.zoomed{--x:0px!important;--y:0px!important;width:100%!important;height:100%!important;border-radius:0}
+/* on a short screen the work window reaches down over the name. it scrolls
+   internally, so shortening it costs no content and keeps the name clear. */
+/* set `height`, not `--h`: the authored size is an inline style, which a
+   custom property in a stylesheet cannot override. an id rule on the
+   property itself does. */
+@media (min-width:901px) and (max-height:920px){ #win-work{height:430px} #win-notes{height:490px} }
+@media (min-width:901px) and (max-height:800px){ #win-work{height:372px} #win-notes{height:430px} }
+@media (min-width:901px) and (max-height:720px){ #win-work{height:330px} #win-notes{height:380px} }
 
 .tbar{height:38px;flex:none;display:flex;align-items:center;gap:10px;padding:0 11px;cursor:grab;
   background:linear-gradient(180deg,var(--paper-2),var(--paper-3));border-bottom:1px solid var(--line);
