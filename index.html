@@ -281,6 +281,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .win.fit-tighter .tags{margin-top:6px}
 .win.fit-tighter .lockup{font-size:.85rem;padding:6px 11px}
 .win.fit-tighter .lockup svg{width:16px;height:16px}
+/* a fitted window ends just under the tag row: the pane's full bottom
+   padding would sit there as dead space. Last, so it beats the steps above. */
+.win.fitted .pane{padding-bottom:var(--trim,20px)}
+.win.fit-tight{--trim:16px}
+.win.fit-tighter{--trim:12px}
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
@@ -705,7 +710,14 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
      breakpoints and overlapping in between. The inline values in the markup
      are the fallback if this never runs. Windows the user has dragged are
      left where they put them. */
-  var GUTTER = 24, TOP = 30, ROW_GAP = 22, NAME_GAP = 6, MIN_H = 260, AIR = 10;
+  var GUTTER = 24, TOP = 30, ROW_GAP = 22, MIN_H = 260;
+  /* how far above the name to stop: far enough that the drop shadow lands off
+     it too (the front window's reaches ~86px), falling back to just clearing
+     the name's box when the screen is too short to afford that */
+  var SHADOW_GAP = 90, NAME_GAP = 6;
+  /* offsetTop/offsetHeight are integers; a couple of px of slack keeps the
+     rounding from leaving the pane a hair scrollable */
+  var ROUND = 3;
   var FIT_STEPS = ['', ' fit-tight', ' fit-tight fit-tighter'];
   function layoutDesktop(){
     var work  = document.getElementById('win-work'),
@@ -714,6 +726,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     if (!work || !notes || !mail) return;
     if (stacked()) {
       work.className = work.className.replace(/ ?fit-tight(er)?/g, '');
+      work.classList.remove('fitted');
       work.style.height = notes.style.height = '';
       return;
     }
@@ -745,14 +758,18 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         tags = pane && pane.querySelector('.tags'),
         name = document.querySelector('.brand');
     if (tags && name) {
-      var cap  = Math.round(name.offsetTop - TOP - NAME_GAP);
+      work.classList.add('fitted');
+      var cap  = Math.round(name.offsetTop - TOP - SHADOW_GAP);
       var want = 0;
       for (var s = 0; s < FIT_STEPS.length; s++) {
         work.className = work.className.replace(/ ?fit-tight(er)?/g, '') + FIT_STEPS[s];
         want = Math.ceil(tags.offsetTop + tags.offsetHeight +
-                        (parseFloat(getComputedStyle(pane).paddingBottom) || 0)) + AIR;
+                        (parseFloat(getComputedStyle(pane).paddingBottom) || 0)) + ROUND;
         if (want <= cap) break;
       }
+      /* too short to keep the shadow clear as well: take the content over the
+         shadow and go back to stopping at the name's edge */
+      if (want > cap) cap = Math.round(name.offsetTop - TOP - NAME_GAP);
       var h = Math.max(MIN_H, Math.min(want, cap));
       work.style.height  = h + 'px';
       notes.style.height = h + 'px';
