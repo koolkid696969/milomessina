@@ -145,7 +145,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .pane[hidden]{display:none}
 .pane h2{font-size:clamp(1.9rem,4.4vw,2.9rem);letter-spacing:-.045em;line-height:.95;margin:0;
   font-weight:700}
-/* heading row: title left, the project's own lockup parked in the space at the right */
+/* heading row: title left, the project's own lockup out to the right of it */
 .pane-title{display:flex;align-items:center;justify-content:space-between;
   flex-wrap:wrap;gap:14px}
 .pane-title h2{margin:0}
@@ -173,6 +173,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   /* polymarket's list is two lines to fomo's six, so that card is carried by
      the blurb instead: the paragraph takes the wider half there. */
   .pane .split.blurb-led{grid-template-columns:1.35fr .65fr}
+  /* the heading takes the same two tracks, so the lockup starts on the left
+     edge of the column beneath it rather than floating off at the pane's edge */
+  .pane-title{display:grid;grid-template-columns:1fr 1fr;
+    column-gap:clamp(22px,4cqi,40px);align-items:center}
+  .pane-title .lockup{justify-self:start}
   .pane .split>.body,.pane .split>ul{max-width:none;min-width:0}
   /* Beside the bullets the blurb is the deck of the card, so it sets at deck
      size and runs down level with the last bullet instead of stopping two
