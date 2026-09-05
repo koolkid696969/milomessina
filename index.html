@@ -94,9 +94,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 /* set `height`, not `--h`: the authored size is an inline style, which a
    custom property in a stylesheet cannot override. an id rule on the
    property itself does. */
-@media (min-width:901px) and (max-height:920px){ #win-work{height:430px} #win-notes{height:490px} }
-@media (min-width:901px) and (max-height:800px){ #win-work{height:372px} #win-notes{height:430px} }
-@media (min-width:901px) and (max-height:720px){ #win-work{height:330px} #win-notes{height:380px} }
+@media (min-width:901px) and (max-height:920px){ #win-work,#win-notes{height:410px} }
+@media (min-width:901px) and (max-height:800px){ #win-work,#win-notes{height:352px} }
+@media (min-width:901px) and (max-height:720px){ #win-work,#win-notes{height:300px} }
 
 .tbar{height:38px;flex:none;display:flex;align-items:center;gap:10px;padding:0 11px;cursor:grab;
   background:linear-gradient(180deg,var(--paper-2),var(--paper-3));border-bottom:1px solid var(--line);
@@ -413,7 +413,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   </div>
 
   <!-- ── WORK ──────────────────────────────────────── -->
-  <section class="win" id="win-work" style="--x:66px;--y:34px;--w:690px;--h:496px" aria-label="Work">
+  <section class="win" id="win-work" style="--x:56px;--y:30px;--w:648px;--h:470px" aria-label="Work">
     <div class="tbar" data-drag>
       <span class="tl">
         <button type="button" class="c" data-act="close" aria-label="Close work window"><span>✕</span></button>
@@ -518,7 +518,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   </section>
 
   <!-- ── NOTES / ABOUT ─────────────────────────────── -->
-  <section class="win" id="win-notes" style="--x:770px;--y:40px;--w:424px;--h:544px" aria-label="About">
+  <section class="win" id="win-notes" style="--x:728px;--y:30px;--w:496px;--h:470px" aria-label="About">
     <div class="tbar" data-drag>
       <span class="tl">
         <button type="button" class="c" data-act="close" aria-label="Close about window"><span>✕</span></button>
@@ -551,7 +551,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   </section>
 
   <!-- ── CONTACT ───────────────────────────────────── -->
-  <section class="win" id="win-contact" style="--x:884px;--y:606px;--w:452px;--h:190px" aria-label="Contact">
+  <section class="win" id="win-contact" style="--x:728px;--y:522px;--w:496px;--h:168px" aria-label="Contact">
     <div class="tbar" data-drag>
       <span class="tl">
         <button type="button" class="c" data-act="close" aria-label="Close contact window"><span>✕</span></button>
@@ -675,6 +675,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         var ny = Math.min(Math.max(y0 + ev.clientY - sy, 0), Math.max(maxY, 0));
         w.style.setProperty('--x', nx + 'px');
         w.style.setProperty('--y', ny + 'px');
+        w.dataset.moved = '1';
         if (!dragged) { dragged = true; if (hint) hint.hidden = true; }
       }
       function up(ev){
@@ -690,6 +691,45 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     });
   });
 
+  /* Lay the three windows out as one composition: work on the left, notes and
+     mail stacked on the right, tops and bottoms aligned. Sized here rather
+     than in CSS so the widths track the viewport instead of jumping at fixed
+     breakpoints and overlapping in between. The inline values in the markup
+     are the fallback if this never runs. Windows the user has dragged are
+     left where they put them. */
+  var GUTTER = 24, TOP = 30, ROW_GAP = 22;
+  function layoutDesktop(){
+    if (stacked()) return;
+    var work  = document.getElementById('win-work'),
+        notes = document.getElementById('win-notes'),
+        mail  = document.getElementById('win-contact');
+    if (!work || !notes || !mail) return;
+    if (work.dataset.moved || notes.dataset.moved) return;
+
+    var W = stage.clientWidth;
+    var margin = Math.round(Math.min(56, Math.max(20, W * 0.04)));
+    var avail  = W - margin * 2 - GUTTER;
+    var notesW = Math.round(Math.max(300, Math.min(560, avail * 0.42)));
+    var workW  = Math.round(Math.max(360, Math.min(760, avail - notesW)));
+    /* fills the desktop up to the caps, then centres on very wide screens */
+    var left   = Math.max(margin, Math.round((W - (workW + GUTTER + notesW)) / 2));
+    var rightX = left + workW + GUTTER;
+
+    work.style.setProperty('--w', workW + 'px');
+    work.style.setProperty('--x', left + 'px');
+    work.style.setProperty('--y', TOP + 'px');
+
+    notes.style.setProperty('--w', notesW + 'px');
+    notes.style.setProperty('--x', rightX + 'px');
+    notes.style.setProperty('--y', TOP + 'px');
+
+    if (!mail.dataset.moved) {
+      mail.style.setProperty('--w', notesW + 'px');
+      mail.style.setProperty('--x', rightX + 'px');
+      mail.style.setProperty('--y', (TOP + notes.offsetHeight + ROW_GAP) + 'px');
+    }
+  }
+
   /* keep windows on screen when the desktop resizes */
   function clampAll(){
     if (stacked()) return;
@@ -704,7 +744,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     });
   }
   var rt; addEventListener('resize', function(){
-    clearTimeout(rt); rt = setTimeout(function(){ clampAll(); fitPreview(); }, 140);
+    clearTimeout(rt); rt = setTimeout(function(){ layoutDesktop(); clampAll(); fitPreview(); }, 140);
   }, {passive:true});
 
   /* ── tabs ──────────────────────────────────────── */
@@ -759,6 +799,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   /* ── boot ──────────────────────────────────────── */
   /* the window positions are authored for a roomy desktop; clamp them on load
      so nothing starts off the right or bottom edge on a smaller screen. */
+  layoutDesktop();
   clampAll();
   focusWin(document.getElementById('win-work'));
   if (hint && !stacked()) setTimeout(function(){ hint.hidden = true; }, 9000);
