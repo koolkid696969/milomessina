@@ -121,7 +121,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .tabstrip button{position:relative;padding:8px 15px 10px;border-radius:9px 9px 0 0;font-size:.83rem;
   font-weight:500;color:var(--muted);display:flex;align-items:center;gap:8px;
   border:1px solid transparent;border-bottom:0;transition:color .18s,background .18s}
-.tabstrip button u{width:8px;height:8px;border-radius:2.5px;display:block;text-decoration:none;flex:none}
+.tabstrip button svg{width:15px;height:15px;display:block;flex:none;
+  opacity:.62;transition:opacity .18s}
+.tabstrip button[aria-selected="true"] svg{opacity:1}
 .tabstrip button:hover{color:var(--ink)}
 .tabstrip button[aria-selected="true"]{background:var(--paper-2);border-color:var(--line);color:var(--ink);font-weight:600}
 .tabstrip button[aria-selected="true"]::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--paper-2)}
@@ -413,29 +415,39 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     <div class="wbody">
       <div class="tabstrip" role="tablist" aria-label="Projects">
         <button type="button" role="tab" id="tab-pm" aria-controls="pane-pm" aria-selected="true" tabindex="0">
-          <u style="background:var(--blue)"></u> polymarket</button>
+          <!-- traced from a low-res screenshot; paste the official svg to make it exact -->
+          <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <g stroke="#1E5AEA" stroke-width="7" stroke-linejoin="round">
+              <path d="M12 34 L84 12 L84 88 L12 66 Z"/>
+              <path d="M12 34 L84 88 M84 12 L12 66"/>
+            </g>
+          </svg> polymarket</button>
         <button type="button" role="tab" id="tab-fm" aria-controls="pane-fm" aria-selected="false" tabindex="-1">
-          <u style="background:var(--violet)"></u> fomo</button>
+          <!-- fomo's own mark, lifted from the campus site -->
+          <svg viewBox="0 0 100 100" aria-hidden="true" style="color:#516AF6">
+            <path fill="currentColor" d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z"/>
+            <path fill="currentColor" d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z"/>
+          </svg> fomo</button>
       </div>
 
       <!-- POLYMARKET -->
       <div class="pane" role="tabpanel" id="pane-pm" aria-labelledby="tab-pm" tabindex="0">
         <p class="pane-head"><b>01</b> · polymarket · [year]</p>
         <h2>polymarket</h2>
-        <p class="role">[your role] · [contract / internship]</p>
-        <!-- TODO(milo): replace the brackets. keeping them stops fake numbers going live. -->
+        <p class="role">sports growth · contract</p>
         <div class="body">
           <p>
-            Work on the world&rsquo;s largest prediction market. [One or two lines on what
-            the brief actually was &mdash; what you were handed and what you shipped.]
+            Sports growth contractor at the world&rsquo;s largest prediction market.
+            I ran paid creator partnerships across X, Instagram and YouTube &mdash;
+            finding the accounts worth working with, negotiating the deals, and
+            turning them into volume.
           </p>
         </div>
         <ul>
-          <li>[Thing you built or ran &mdash; the headline one]</li>
-          <li>[A number you own: users, views, signups, volume]</li>
-          <li>[Who you worked with and what you owned end to end]</li>
+          <li>Paid partnerships across X, Instagram and YouTube</li>
+          <li>100M+ views generated</li>
         </ul>
-        <div class="tags"><i>[discipline]</i><i>[discipline]</i><i>[year]</i></div>
+        <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
         <div class="shot pm">
           <div class="fallback">polymarket</div>
           <div class="veil"></div>
