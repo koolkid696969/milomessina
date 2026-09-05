@@ -118,7 +118,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   border:1px solid var(--line);color:var(--ink-2);transition:background .15s,border-color .15s}
 .tbar .tools a:hover,.tbar .tools button:hover{background:var(--paper);border-color:var(--line-2)}
 
-.wbody{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;background:var(--paper)}
+/* the pane is measured against the window it lives in, not the viewport:
+   the windows are sized by script and a dragged one keeps its own width. */
+.wbody{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;background:var(--paper);
+  container-type:inline-size}
 .wbody::-webkit-scrollbar{width:9px;height:9px}
 .wbody::-webkit-scrollbar-thumb{background:rgba(23,21,15,.2);border-radius:9px;
   border:2px solid var(--paper);background-clip:padding-box}
@@ -160,6 +163,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   max-width:60ch;margin-top:16px}
 .pane .body p+p{margin-top:12px}
 .pane ul{list-style:none;margin-top:16px;display:grid;gap:9px;max-width:60ch}
+/* A wide card ran the blurb and the bullets down a single 60ch column and left
+   the right-hand third of the paper blank under the lockup. Past this width the
+   two sit side by side instead, so the card fills the width it was given. They
+   carry the same top margin, so they stay aligned through the steps below. */
+@container (min-width:620px){
+  .pane .split{display:grid;grid-template-columns:1.08fr .92fr;
+    column-gap:clamp(22px,4cqi,40px);align-items:start}
+  .pane .split>.body,.pane .split>ul{max-width:none;min-width:0}
+}
 .pane ul li{display:flex;gap:10px;font-size:.92rem;color:var(--ink-2);line-height:1.5}
 .pane ul li::before{content:'→';color:var(--red);flex:none}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
@@ -482,18 +494,20 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
           </a>
         </div>
         <p class="role">brand · copy · front-end</p>
-        <div class="body">
-          <p>
-            A recruiting site for fomo&rsquo;s campus program &mdash; a five-person student
-            team inside every school, with an eight-week goal map and the application
-            and weekly-report flows behind it.
-          </p>
+        <div class="split">
+          <div class="body">
+            <p>
+              A recruiting site for fomo&rsquo;s campus program &mdash; a five-person student
+              team inside every school, with an eight-week goal map and the application
+              and weekly-report flows behind it.
+            </p>
+          </div>
+          <ul>
+            <li>Five role pages, each written to filter for a different kind of person</li>
+            <li>An eight-week goal table that reacts to the seat you pick</li>
+            <li>Application, submission and weekly-report forms with live validation</li>
+          </ul>
         </div>
-        <ul>
-          <li>Five role pages, each written to filter for a different kind of person</li>
-          <li>An eight-week goal table that reacts to the seat you pick</li>
-          <li>Application, submission and weekly-report forms with live validation</li>
-        </ul>
         <div class="tags"><i>brand</i><i>copywriting</i><i>front-end</i><i>forms</i><i>2026</i></div>
       </div>
 
@@ -501,18 +515,20 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
       <div class="pane" role="tabpanel" id="pane-pm" aria-labelledby="tab-pm" tabindex="0" hidden>
         <h2>polymarket</h2>
         <p class="role">sports growth · contract</p>
-        <div class="body">
-          <p>
-            Sports growth contractor at the world&rsquo;s largest prediction market.
-            I ran paid creator partnerships across X, Instagram and YouTube &mdash;
-            finding the accounts worth working with, negotiating the deals, and
-            turning them into volume.
-          </p>
+        <div class="split">
+          <div class="body">
+            <p>
+              Sports growth contractor at the world&rsquo;s largest prediction market.
+              I ran paid creator partnerships across X, Instagram and YouTube &mdash;
+              finding the accounts worth working with, negotiating the deals, and
+              turning them into volume.
+            </p>
+          </div>
+          <ul>
+            <li>Paid partnerships across X, Instagram and YouTube</li>
+            <li>100M+ views generated</li>
+          </ul>
         </div>
-        <ul>
-          <li>Paid partnerships across X, Instagram and YouTube</li>
-          <li>100M+ views generated</li>
-        </ul>
         <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
         <div class="shots">
           <a href="/assets/pm-nbacentral-warriors.jpg" target="_blank" rel="noopener">
