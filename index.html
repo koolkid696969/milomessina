@@ -159,8 +159,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .lockup i{color:#8B90A8;font-style:normal}
 .pane .role{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
   color:var(--muted);margin-top:10px}
-.pane .body{font-family:var(--serif);font-size:1.02rem;line-height:1.62;color:var(--ink-2);
-  max-width:60ch;margin-top:16px}
+.pane .body{font-family:var(--serif);font-size:var(--body-fs,1.02rem);
+  line-height:var(--body-lh,1.62);color:var(--ink-2);max-width:60ch;margin-top:16px}
 .pane .body p+p{margin-top:12px}
 .pane ul{list-style:none;margin-top:16px;display:grid;gap:9px;max-width:60ch}
 /* A wide card ran the blurb and the bullets down a single 60ch column and left
@@ -168,9 +168,17 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
    two sit side by side instead, so the card fills the width it was given. They
    carry the same top margin, so they stay aligned through the steps below. */
 @container (min-width:620px){
-  .pane .split{display:grid;grid-template-columns:1.08fr .92fr;
+  .pane .split{display:grid;grid-template-columns:1fr 1fr;
     column-gap:clamp(22px,4cqi,40px);align-items:start}
+  /* polymarket's list is two lines to fomo's six, so that card is carried by
+     the blurb instead: the paragraph takes the wider half there. */
+  .pane .split.blurb-led{grid-template-columns:1.35fr .65fr}
   .pane .split>.body,.pane .split>ul{max-width:none;min-width:0}
+  /* Beside the bullets the blurb is the deck of the card, so it sets at deck
+     size and runs down level with the last bullet instead of stopping two
+     lines short. Declared on the element, so it takes precedence over the
+     step's inherited value without having to out-specify it. */
+  .pane .split>.body{--body-fs:var(--deck,1.18rem);--body-lh:1.5}
 }
 .pane ul li{display:flex;gap:10px;font-size:.92rem;color:var(--ink-2);line-height:1.5}
 .pane ul li::before{content:'→';color:var(--red);flex:none}
@@ -287,7 +295,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .win.fit-tighter .pane{padding:13px 20px}
 .win.fit-tighter .pane h2{font-size:1.6rem}
 .win.fit-tighter .pane .role{margin-top:6px}
-.win.fit-tighter .pane .body{font-size:.94rem;line-height:1.45}
+/* the blurb's step, set on the pane so the split above can take the deck size
+   off it: --body-fs is the one-column size, --deck the two-column one */
+.win.fit-tighter .pane{--body-fs:.94rem;--body-lh:1.45;--deck:1.1rem}
 .win.fit-tighter .pane ul{gap:5px}
 .win.fit-tighter .pane ul li{font-size:.87rem;line-height:1.45}
 .win.fit-tighter .tags{margin-top:6px}
@@ -515,7 +525,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
       <div class="pane" role="tabpanel" id="pane-pm" aria-labelledby="tab-pm" tabindex="0" hidden>
         <h2>polymarket</h2>
         <p class="role">sports growth · contract</p>
-        <div class="split">
+        <div class="split blurb-led">
           <div class="body">
             <p>
               Sports growth contractor at the world&rsquo;s largest prediction market.
