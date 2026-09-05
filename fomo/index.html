@@ -45,7 +45,7 @@ h2{font-size:clamp(2.4rem,6.2vw,5rem)}
 h3{font-size:clamp(1.5rem,2.6vw,2.2rem);letter-spacing:-.03em}
 p{color:var(--muted)}
 .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--pad)}
-section{padding-block:clamp(80px,11vw,150px);position:relative;scroll-margin-top:84px}
+section{padding-block:clamp(64px,8vw,112px);position:relative;scroll-margin-top:84px}
 .eyebrow{font-family:var(--mono);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
   color:var(--violet-hi);display:inline-flex;align-items:center;gap:.6em}
 .eyebrow::before{content:'';width:22px;height:1px;background:var(--violet)}
@@ -108,8 +108,8 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 
 @keyframes slide{to{transform:translateX(-50%)}}
 
-.shead{max-width:760px;margin-bottom:clamp(40px,5vw,64px)}
-.shead h2{margin:16px 0 18px}
+.shead{max-width:760px;margin-bottom:clamp(30px,3.6vw,48px)}
+.shead h2{margin:16px 0 0}
 .shead p{font-size:1.04rem}
 
 .tab.on{background:var(--text);color:var(--ink);border-color:var(--text);font-weight:600}
@@ -166,12 +166,10 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 .li-body p{font-size:.95rem;color:#1B1B1F;font-weight:500;margin:0}
 .li-body small{display:block;font-size:.88rem;color:#6B6B72;margin-top:2px}
 
-.cta{text-align:center;border-radius:var(--r-xl);border:1px solid rgba(81,106,246,.34);padding:clamp(38px,5vw,58px) clamp(20px,4vw,46px);
-  background:radial-gradient(circle at 50% 0%,rgba(81,106,246,.28),transparent 62%),linear-gradient(180deg,rgba(255,255,255,.05),transparent)}
+.cta{text-align:center}
 .cta h2{margin:18px auto}
 .cta p{max-width:54ch;margin:0 auto 32px}
 .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-.cta-note{font-family:var(--mono);font-size:.65rem;color:var(--muted-2);margin-top:22px;letter-spacing:.06em}
 
 footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp(60px,9vw,120px)}
 .f-grid{display:grid;grid-template-columns:1fr;gap:34px}
@@ -190,25 +188,28 @@ footer{border-top:1px solid var(--line);padding-block:56px 40px;margin-top:clamp
   .roles{grid-template-columns:1fr;gap:8px}
   /* five full-width cards is ~800px of scroll before the panel, so tighten
      them here — .roles .rcard to out-specify the base rule defined below */
-  .roles .rcard{padding:14px 18px 13px;gap:3px}
+  .roles .rcard{padding:14px 18px 13px;row-gap:3px}
   .roles .rcard .rc-ic{font-size:.95rem}
   .roles .rcard .rc-open{padding-top:5px}
 }
+/* icon and title read as one line — the glyph sits in its own column beside
+   the name, with the index above and the open-link pinned to the bottom */
 .rcard{position:relative;overflow:hidden;text-align:left;padding:22px 20px 20px;border-radius:var(--r-m);
-  border:1px solid var(--line);background:var(--surface);transition:.32s cubic-bezier(.2,.8,.3,1);display:flex;flex-direction:column;gap:9px}
+  border:1px solid var(--line);background:var(--surface);transition:.32s cubic-bezier(.2,.8,.3,1);
+  display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto 1fr;column-gap:10px;row-gap:9px}
 .rcard::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:.32s;
   background:radial-gradient(120% 90% at 50% 0%,var(--rc,rgba(81,106,246,.3)),transparent 62%)}
 .rcard:hover{transform:translateY(-4px);border-color:var(--line-2)}
 .rcard:hover::after{opacity:.45}
 .rcard.on{border-color:var(--rc-line,var(--violet));background:rgba(255,255,255,.05);transform:translateY(-4px)}
 .rcard.on::after{opacity:1}
-.rcard .rc-n{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:var(--muted-2);position:relative;z-index:1}
+.rcard .rc-n{grid-column:1/-1;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:var(--muted-2);position:relative;z-index:1}
 .rcard.on .rc-n{color:var(--rc-txt,var(--violet-hi))}
-.rcard .rc-ic{font-style:normal;font-size:1.15rem;line-height:1;position:relative;z-index:1;color:var(--rc-txt,var(--violet-hi));margin-bottom:2px}
-.rcard h4{font-family:var(--display);font-size:1.16rem;font-weight:700;letter-spacing:-.035em;text-transform:lowercase;
-  line-height:1.05;position:relative;z-index:1}
+.rcard .rc-ic{grid-column:1;align-self:center;font-style:normal;font-size:1.15rem;line-height:1;position:relative;z-index:1;color:var(--rc-txt,var(--violet-hi))}
+.rcard h4{grid-column:2;align-self:center;font-family:var(--display);font-size:1.16rem;font-weight:700;letter-spacing:-.035em;
+  text-transform:lowercase;line-height:1.05;position:relative;z-index:1}
 .rcard p{font-size:.8rem;line-height:1.45;color:var(--muted);position:relative;z-index:1}
-.rcard .rc-open{margin-top:auto;padding-top:10px;font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;
+.rcard .rc-open{grid-column:1/-1;align-self:end;padding-top:10px;font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted-2);position:relative;z-index:1;transition:.3s}
 .rcard.on .rc-open{color:var(--rc-txt,var(--violet-hi))}
 
@@ -295,11 +296,10 @@ p{font-weight:500}
 .chip.on{background:rgba(81,106,246,.2);border-color:var(--violet);color:#fff}
 
 /* surfaces — opaque cards, no glass, no drop shadows */
-.card-glass,.dash,.modal-card,.phone,.lb,.week,.vs-old,.vs-new,.cta,.calc,.bounty.gold,.tier.legend{
+.card-glass,.dash,.modal-card,.phone,.lb,.week,.vs-old,.vs-new,.calc,.bounty.gold,.tier.legend{
   background:var(--ink-2);backdrop-filter:none;box-shadow:none}
 .glance{animation:none}
 
-.cta{border-color:var(--line)}
 
 .rung.first .node{box-shadow:none;background:var(--violet);border-color:var(--violet)}
 
@@ -339,57 +339,24 @@ body::after{display:none}
 .job span{font-size:.9rem;color:var(--muted)}
 
 
-.report{display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;
-  margin-top:clamp(20px,3vw,30px);padding:26px 28px;border:1px solid rgba(81,106,246,.4);
-  border-radius:var(--r-l);background:var(--ink-2)}
-.report b{display:block;font-family:var(--display);font-size:1.25rem;font-weight:500;letter-spacing:-.03em;
-  text-transform:lowercase;margin-bottom:6px}
-.report p{font-size:.88rem;max-width:56ch}
-.report .btn{flex:none}
 
-/* ── 03 · the process: a rail, not a grid — the six rules are very
-   different lengths and a grid stretched the short ones into voids */
-.rail{border-top:1px solid var(--line)}
-.rule{display:grid;grid-template-columns:54px minmax(190px,270px) 1fr;gap:clamp(14px,2.4vw,30px);
-  align-items:baseline;padding:22px 6px;border-bottom:1px solid var(--line);transition:background .25s}
-.rule:hover{background:rgba(255,255,255,.022)}
-.rule span{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--violet);letter-spacing:.04em}
-.rule b{font-family:var(--display);font-size:1.2rem;font-weight:500;letter-spacing:-.03em;text-transform:lowercase;
-  line-height:1.15;color:var(--text)}
-.rule p{font-size:.9rem;line-height:1.55;max-width:62ch}
-@media(max-width:820px){
-  .rule{grid-template-columns:44px 1fr;row-gap:7px;padding:20px 4px}
-  .rule p{grid-column:2}
-}
+/* ── 02 · the four takeaways run as a rail, scaled up: hairline rows,
+   display type, a violet index — nothing to read but the point */
+.gets{border-top:1px solid var(--line)}
+.get{display:grid;grid-template-columns:auto 1fr;align-items:baseline;
+  gap:clamp(13px,1.5vw,20px);padding:clamp(15px,1.9vw,21px) 4px;
+  border-bottom:1px solid var(--line);transition:background .25s}
+.get:hover{background:rgba(255,255,255,.022)}
+.get i{font-style:normal;font-family:var(--mono);font-size:.72rem;font-weight:700;
+  color:var(--violet);letter-spacing:.04em}
+.get b{font-family:var(--display);font-size:clamp(1.3rem,2vw,1.7rem);font-weight:500;
+  letter-spacing:-.03em;text-transform:lowercase;line-height:1.05;color:var(--text)}
 
-/* ── 02 · four equal cards on one row, matching the role cards in 01 */
-.gets{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:1040px){.gets{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:540px){.gets{grid-template-columns:1fr}}
-.get{padding:24px 22px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface);transition:.3s}
-.get:hover{border-color:var(--line-2);transform:translateY(-3px)}
-.get i{font-style:normal;width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
-  background:rgba(81,106,246,.14);border:1px solid rgba(81,106,246,.3);font-size:.85rem;color:var(--violet-hi);
-  margin-bottom:16px}
-.get b{display:block;font-size:.96rem;font-weight:500;color:var(--text);margin-bottom:7px}
-.get p{font-size:.85rem;line-height:1.5}
-
-/* the card and its copy share one container so they stop reading as two
-   unrelated blocks sitting next to each other */
-.li-panel{display:grid;grid-template-columns:.92fr 1.08fr;gap:clamp(22px,3.4vw,44px);align-items:center;
-  margin-top:12px;padding:clamp(24px,3.2vw,38px);border:1px solid var(--line);
-  border-radius:var(--r-l);background:var(--ink-2)}
+/* the linkedin card is the point of the section; the rail sits next to it */
+.li-panel{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);
+  gap:clamp(28px,4vw,54px);align-items:center;margin-top:clamp(24px,3vw,36px)}
 @media(max-width:880px){.li-panel{grid-template-columns:1fr}}
-.li-side h5{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted-2);font-weight:500;margin-bottom:16px}
-.li-side p{font-size:.92rem;line-height:1.6;color:#C9CCDA}
-.li-side ul{list-style:none;display:grid;gap:9px;margin-top:16px}
-.li-side li{font-size:.89rem;color:#B4ADD4;display:flex;gap:10px}
-.li-side li::before{content:'\2022';color:var(--violet-hi);flex:none}
-.li-side em{font-style:normal;font-family:var(--mono);font-size:.86em;color:var(--violet-hi);
-  background:rgba(81,106,246,.14);border-radius:5px;padding:1px 5px}
 
-.li-note{font-family:var(--mono);font-size:.7rem;letter-spacing:.05em;color:var(--muted-2);margin-top:14px;text-align:center}
 
 /* hero stat band */
 .hero-stats{display:flex;flex-wrap:wrap;justify-content:center;margin-top:clamp(34px,5vw,50px);
@@ -409,10 +376,6 @@ body::after{display:none}
 }
 
 /* apply: quick links so the CTA isn't mostly empty space */
-.seatlinks{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:28px}
-.seatlink{padding:9px 15px;border-radius:8px;border:1px solid var(--line);font-family:var(--mono);font-size:.7rem;
-  letter-spacing:.06em;text-transform:uppercase;color:var(--muted);transition:.22s}
-.seatlink:hover{border-color:var(--violet);background:rgba(81,106,246,.16);color:#fff}
 
 .map-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);
   border-radius:var(--r-l);background:var(--ink-2)}
@@ -432,6 +395,7 @@ body::after{display:none}
 .map col.on{background:rgba(81,106,246,.1)}
 .map th.on{color:var(--violet)}
 .map td.on{color:var(--text)}
+
 </style>
 </head>
 <body>
@@ -445,7 +409,6 @@ body::after{display:none}
     <div class="nav-links">
       <button data-jump="role" type="button">the five roles</button>
       <button data-jump="get" type="button">what you get</button>
-      <button data-jump="runs" type="button">how it runs</button>
       <button data-jump="map" type="button">the 8 weeks</button>
       <a class="navcta" href="/fomo/apply">apply &rarr;</a>
     </div>
@@ -481,7 +444,6 @@ body::after{display:none}
     <div class="shead rv">
       <span class="eyebrow">01 &mdash; who fits each role</span>
       <h2>read all five.<br>apply to one.</h2>
-      <p>You apply to one seat, not a general pool. Each one says who tends to be good at it.</p>
     </div>
 
     <div class="roles rv" id="roles">
@@ -610,14 +572,6 @@ body::after{display:none}
     <div class="shead rv">
       <span class="eyebrow">02 &mdash; what you get out of it</span>
       <h2>real job experience.</h2>
-      <p>You're running growth, partnerships, content and events for a startup that's raised $75M. Most people don't touch work like this until two years into a real job.</p>
-    </div>
-
-    <div class="gets rv">
-      <div class="get"><i>&#9673;</i><b>Numbers you own</b><p>Users, views, partnerships closed. That's what interviews are about.</p></div>
-      <div class="get"><i>&#9678;</i><b>A network</b><p>Campus creators, org presidents, promoters, and the fomo team.</p></div>
-      <div class="get"><i>&#9670;</i><b>Budget and autonomy</b><p>Real money for events, dinners and prizes. You decide how to spend it.</p></div>
-      <div class="get"><i>&rarr;</i><b>A foot in the door</b><p>Top performers get referred internally for internships and full-time roles.</p></div>
     </div>
 
     <div class="li-panel rv">
@@ -634,38 +588,14 @@ body::after{display:none}
             </div>
           </div>
         </div>
-        <p class="li-note">Follows whichever seat you picked above.</p>
       </div>
 
-      <div class="li-side">
-        <h5>the description &mdash; swap the brackets for your numbers</h5>
-        <p>Campus lead for Fomo, a venture-backed prediction markets startup ($75M raised). Ran user acquisition and brand strategy on a <em>[X]</em>,000-student campus as part of a five-person growth team.</p>
-        <ul>
-          <li><em>[400]</em> active users acquired in 60 days</li>
-          <li><em>[3]</em> org partnerships closed, reaching <em>[1,200]</em>+ students</li>
-          <li><em>[100k]</em> views on campus social account</li>
-          <li>Managed <em>[$X]</em> event budget</li>
-        </ul>
+      <div class="gets">
+        <div class="get"><i>01</i><b>numbers you own</b></div>
+        <div class="get"><i>02</i><b>a network</b></div>
+        <div class="get"><i>03</i><b>budget and autonomy</b></div>
+        <div class="get"><i>04</i><b>a foot in the door</b></div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section id="runs">
-  <div class="wrap">
-    <div class="shead rv">
-      <span class="eyebrow">03 &mdash; how the team runs</span>
-      <h2>the process.</h2>
-      <p>Six rules, all five of you.</p>
-    </div>
-
-    <div class="rail rv">
-      <div class="rule"><span>01</span><b>one group chat</b><p>Everything goes in it. No side deals, no silos.</p></div>
-      <div class="rule"><span>02</span><b>sunday team meeting</b><p>Twenty minutes. The president runs it.</p></div>
-      <div class="rule"><span>03</span><b>sunday report to HQ</b><p>The president sends it, using the template.</p></div>
-      <div class="rule"><span>04</span><b>ask before you promise</b><p>Never commit fomo to money, prizes or sponsorships without approval. Never guarantee an org anything HQ hasn't signed off on.</p></div>
-      <div class="rule"><span>05</span><b>post it, don't perfect it</b><p>Speed beats polish every time.</p></div>
-      <div class="rule"><span>06</span><b>pass it across, same day</b><p>Content spots a big creator &rarr; Culture. Culture meets a frat president &rarr; Partnerships. Partnerships lands a 400-person event &rarr; Growth and Content.</p></div>
     </div>
   </div>
 </section>
@@ -673,9 +603,8 @@ body::after{display:none}
 <section id="map">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">04 &mdash; the 8-week goal map</span>
+      <span class="eyebrow">03 &mdash; the 8-week goal map</span>
       <h2>sixty days,<br>written down.</h2>
-      <p>Everyone at a glance. Pick a seat in section 01 and its column lights up.</p>
     </div>
 
     <p class="map-hint rv">swipe the table sideways &rarr;</p>
@@ -691,15 +620,7 @@ body::after{display:none}
       </table>
     </div>
 
-    <p class="path-note rv" style="margin-top:26px">Goals are the bar, not the ceiling. <b>HQ adjusts them per school size.</b></p>
-
-    <div class="report rv">
-      <div>
-        <b>the sunday report</b>
-        <p>Every Sunday, drop your report in as a PDF or a spreadsheet. That's the whole thing.</p>
-      </div>
-      <a class="btn btn-p" href="/fomo/report">file this week's report &rarr;</a>
-    </div>
+    <p class="path-note rv">Goals are the bar, not the ceiling. <b>HQ adjusts them per school size.</b></p>
   </div>
 </section>
 
@@ -713,14 +634,6 @@ body::after{display:none}
         <a class="btn btn-p" href="/fomo/apply">apply for a seat &rarr;</a>
         <button class="btn btn-g" data-jump="role" type="button">read the five roles again</button>
       </div>
-      <div class="seatlinks">
-        <a class="seatlink" href="/fomo/apply?role=pres">campus president</a>
-        <a class="seatlink" href="/fomo/apply?role=growth">growth</a>
-        <a class="seatlink" href="/fomo/apply?role=partner">partnerships</a>
-        <a class="seatlink" href="/fomo/apply?role=content">content</a>
-        <a class="seatlink" href="/fomo/apply?role=culture">culture</a>
-      </div>
-      <p class="cta-note">five seats per campus &middot; 60 days</p>
     </div>
   </div>
 </section>
@@ -745,8 +658,6 @@ body::after{display:none}
         <div>
           <h5>get started</h5>
           <a href="/fomo/apply">apply for a seat</a>
-          <button data-jump="runs" type="button">how the team runs</button>
-          <a href="/fomo/report">file a weekly report</a>
         </div>
         <div>
           <h5>fomo</h5>
