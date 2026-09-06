@@ -325,13 +325,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   padding:4px 9px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s}
 .dock button:hover .tip,.dock a:hover .tip{opacity:1}
 
-/* ── hint ───────────────────────────────────────────── */
-.hint{position:fixed;left:50%;bottom:calc(var(--dock-h) + 10px);transform:translateX(-50%);z-index:39;
-  font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(255,255,255,.66);text-shadow:0 1px 8px rgba(0,0,0,.7);pointer-events:none;
-  transition:opacity .5s}
-.hint[hidden]{display:none}
-
 /* ── stacked / mobile ───────────────────────────────── */
 @media(max-width:900px){
   html,body{height:auto}
@@ -365,7 +358,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   .mail .fl{padding-top:1px}
   .mail .fv{white-space:normal}
   .note{padding:12px 18px 20px}
-  .hint{display:none}
 }
 /* The layout script steps through these when the tag row would otherwise fall
    below the fold: first the rhythm, then the type. Class selectors so they beat
@@ -770,8 +762,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
 </main>
 
-<p class="hint" id="hint">drag the windows · click a tab</p>
-
 <!-- ── dock ────────────────────────────────────────── -->
 <nav class="dock" aria-label="Open windows">
   <button type="button" class="d-work on" data-open="win-work">work<span class="run"></span><span class="tip">Work</span></button>
@@ -864,8 +854,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   });
 
   /* ── dragging ──────────────────────────────────── */
-  var hint = document.getElementById('hint'), dragged = false;
-
   wins.forEach(function(w){
     var bar = w.querySelector('[data-drag]');
     if (!bar) return;
@@ -889,7 +877,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         w.style.setProperty('--x', nx + 'px');
         w.style.setProperty('--y', ny + 'px');
         w.dataset.moved = '1';
-        if (!dragged) { dragged = true; if (hint) hint.hidden = true; }
       }
       function up(ev){
         try { bar.releasePointerCapture(ev.pointerId); } catch (err) { /* already gone */ }
@@ -1050,7 +1037,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     document.fonts.ready.then(function(){ layoutDesktop(); clampAll(); });
   }
   focusWin(document.getElementById('win-work'));
-  if (hint && !stacked()) setTimeout(function(){ hint.hidden = true; }, 9000);
 })();
 </script>
 </body>
