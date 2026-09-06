@@ -4,32 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Photos — milo messina</title>
-<meta name="description" content="Photos, left out on the desktop.">
+<meta name="description" content="Photographs, sitting on the desktop.">
 <meta name="theme-color" content="#0F1A22">
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23F5F0E6'/%3E%3Ctext x='50' y='67' font-family='Helvetica,Arial,sans-serif' font-size='50' font-weight='700' fill='%2317150F' text-anchor='middle'%3Emm%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="/fomo/assets/fonts.css">
 <style>
 :root{
-  --paper:#F6F1E7; --ink:#17150F;
+  --paper:#F6F1E7; --ink:#17150F; --blue:#2F5DD8;
   --ui:'Aeonik',system-ui,-apple-system,sans-serif;
-  --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  /* the icon labels are the system's, not the site's */
+  --sf:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',Helvetica,system-ui,sans-serif;
   --menu-h:30px;
+  /* one grid cell: a 68px icon, then room for two lines of name */
+  --cell-w:98px; --cell-h:118px; --icon:68px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{background:#0F1A22;color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5;
   -webkit-font-smoothing:antialiased;overflow:hidden;position:relative}
 a{color:inherit;text-decoration:none}
-:focus-visible{outline:2px solid #2F5DD8;outline-offset:2px;border-radius:4px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
 
 /* ── wallpaper ──────────────────────────────────────── */
 #wall{position:fixed;inset:0;z-index:0;overflow:hidden;
   background:linear-gradient(180deg,#4A6076,#A9BDC6 62%,#DCE3E2)}
 #wall .wall-photo{position:absolute;inset:0;
   background:url('/assets/wallpaper.jpg') center/cover no-repeat}
-/* the prints read as paper against a slightly settled desktop */
-#wall::after{content:'';position:absolute;inset:0;background:rgba(8,14,20,.24)}
 /* grain over the whole desktop */
 body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.11;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -48,33 +49,34 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .menubar a.mm{border-radius:6px;padding:2px 6px;margin-left:-6px;transition:background .15s}
 .menubar a.mm:hover{background:rgba(255,255,255,.18)}
 
-/* ── the desktop the prints are strewn on ───────────── */
+/* ── the desktop, and the files on it ───────────────── */
 #desk{position:fixed;top:var(--menu-h);left:0;right:0;bottom:0;z-index:10}
 
-/* a print: white mat, a name under it the way a file on the desktop carries
-   one. --l/--t place it, --k sets the width in vw, --r is the tilt. */
-.shot{position:absolute;left:var(--l);top:var(--t);z-index:1;
-  /* sized against the short side too, so a laptop with little vertical room
-     shrinks the prints instead of pushing the bottom row off the desk */
-  width:clamp(120px,min(calc(var(--k) * 1vw),calc(var(--k) * 1.55vh)),268px);
-  transform:translate3d(var(--x,0px),var(--y,0px),0) rotate(var(--r));
-  transform-origin:50% 50%;touch-action:none;cursor:grab;
-  transition:filter .2s,scale .2s}
-.shot:active{cursor:grabbing}
-.shot:hover{filter:drop-shadow(0 16px 26px rgba(0,0,0,.42));scale:1.02}
-.shot.front{z-index:30}
-.shot figure{margin:0;background:#FBF8F2;padding:7px;border-radius:3px;
-  box-shadow:0 1px 2px rgba(0,0,0,.3),0 14px 30px -10px rgba(0,0,0,.55)}
-.shot img{display:block;width:100%;height:auto;border-radius:1px;
-  background:#241F19;-webkit-user-drag:none;user-select:none}
-/* the name rides under the print on the wallpaper, the way a file on the
-   desktop carries one — not on the mat, where it would go white on cream */
-.shot .name{display:block;margin-top:7px;text-align:center;font-family:var(--mono);font-size:.62rem;
-  letter-spacing:.04em;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 14px rgba(0,0,0,.6);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file{position:absolute;left:0;top:0;width:var(--cell-w);
+  transform:translate3d(var(--x,0px),var(--y,0px),0);
+  display:grid;justify-items:center;gap:5px;padding:7px 3px 0;
+  touch-action:none;cursor:default;user-select:none;-webkit-user-select:none}
+.file.dragging{z-index:40;opacity:.85}
+.file .thumb{width:var(--icon);height:var(--icon);display:grid;place-items:center}
+/* pinned to the icon box in px: a percentage max resolves against a grid area
+   the image itself is sizing, so it never bites and portraits run tall */
+.file img{max-width:var(--icon);max-height:var(--icon);width:auto;height:auto;display:block;border-radius:2px;
+  border:.5px solid rgba(255,255,255,.55);
+  box-shadow:0 1px 3px rgba(0,0,0,.45),0 4px 10px -3px rgba(0,0,0,.4);
+  -webkit-user-drag:none}
+.file .name{max-width:100%;font-family:var(--sf);font-size:11.5px;line-height:1.24;
+  text-align:center;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 10px rgba(0,0,0,.5);
+  padding:1px 5px 2px;border-radius:8px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  overflow-wrap:anywhere}
+/* selected, the way Finder does it: the icon dims, the name takes the pill */
+.file.sel img{filter:brightness(.86)}
+.file.sel .name{background:var(--blue);text-shadow:none}
+.file:focus-visible{outline:none}
+.file:focus-visible .name{box-shadow:0 0 0 2px rgba(255,255,255,.85)}
 
 /* ── quick look ─────────────────────────────────────── */
-#ql{position:fixed;inset:0;z-index:70;display:grid;place-items:center;gap:0;padding:38px 30px;
+#ql{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:38px 30px;
   background:rgba(10,14,18,.82);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   opacity:0;transition:opacity .2s}
 #ql[hidden]{display:none}
@@ -83,37 +85,31 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 /* the files are 820px wide — don't blow them up past what's there */
 #ql img{max-width:min(820px,92vw);max-height:78vh;width:auto;height:auto;display:block;border-radius:3px;
   box-shadow:0 30px 80px -20px rgba(0,0,0,.8)}
-#ql figcaption{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
-  color:rgba(255,255,255,.7)}
+#ql figcaption{font-family:var(--sf);font-size:.72rem;letter-spacing:.04em;color:rgba(255,255,255,.72)}
 #ql .x{position:fixed;top:calc(var(--menu-h) + 14px);right:18px;width:30px;height:30px;border-radius:50%;
   border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);color:#fff;
   font:inherit;font-size:.9rem;line-height:1;cursor:pointer}
 #ql .x:hover{background:rgba(255,255,255,.2)}
 
 /* ── hint ───────────────────────────────────────────── */
-.hint{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:39;
-  font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(255,255,255,.6);text-shadow:0 1px 8px rgba(0,0,0,.7);pointer-events:none;
-  transition:opacity .5s}
+.hint{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:39;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.6rem;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(255,255,255,.6);text-shadow:0 1px 8px rgba(0,0,0,.7);
+  pointer-events:none;transition:opacity .5s}
 .hint[hidden]{display:none}
 
-/* ── stacked / mobile: the scatter becomes a stack ──── */
+/* ── stacked / mobile: the grid flows instead ───────── */
 @media(max-width:900px){
   html,body{height:auto}
   body{overflow:visible auto}
   .menubar{position:sticky}
-  #wall::after{display:none}
   #desk{position:relative;top:auto;left:auto;right:auto;bottom:auto;z-index:10;
-    display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px 18px 34px}
-  /* stacked, the tilt is a hint rather than a scatter — a big rotation just
-     eats the gutters */
-  .shot{position:static;width:auto!important;transform:rotate(calc(var(--r) * .4));cursor:default}
-  .shot .name{font-size:.66rem}
-  .shot:hover{scale:1}
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--cell-w),1fr));
+    justify-content:start;gap:10px 4px;padding:18px 12px 40px}
+  .file{position:static;transform:none!important;width:auto}
   .hint{display:none}
 }
-@media(max-width:520px){ #desk{grid-template-columns:1fr} }
-@media(prefers-reduced-motion:reduce){ .shot,#ql{transition:none} }
+@media(prefers-reduced-motion:reduce){ #ql{transition:none} }
 </style>
 </head>
 <body>
@@ -132,72 +128,72 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   </span>
 </div>
 
-<!-- ── prints, left out on the desktop ─────────────── -->
+<!-- ── the photographs, sitting on the desktop as files ── -->
 <main id="desk" aria-label="Photographs">
 
-  <div class="shot" style="--l:2.5%;--t:6%;--k:17;--r:-3deg">
-    <figure><img src="/assets/photos/lambo.jpg" alt="The front end of a light blue Lamborghini, close in" loading="eager"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/lambo.jpg" alt="The front end of a light blue Lamborghini, close in" loading="eager"></span>
     <span class="name">lambo front end.jpg</span>
   </div>
 
-  <div class="shot" style="--l:21%;--t:3%;--k:18;--r:2deg">
-    <figure><img src="/assets/photos/who.jpg" alt="A figure sitting alone on a headland above the ocean" loading="eager"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/who.jpg" alt="A figure sitting alone on a headland above the ocean" loading="eager"></span>
     <span class="name">who do you wanna be.jpg</span>
   </div>
 
-  <div class="shot" style="--l:42%;--t:6%;--k:12;--r:-2deg">
-    <figure><img src="/assets/photos/crossing.jpg" alt="Black and white street scene, people crossing in bright sun" loading="eager"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/crossing.jpg" alt="Black and white street scene, people crossing in bright sun" loading="eager"></span>
     <span class="name">crossing.jpg</span>
   </div>
 
-  <div class="shot" style="--l:56%;--t:3%;--k:17;--r:3deg">
-    <figure><img src="/assets/photos/bamboo.jpg" alt="A path running through a dense bamboo grove" loading="eager"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/bamboo.jpg" alt="A path running through a dense bamboo grove" loading="eager"></span>
     <span class="name">bamboo.jpg</span>
   </div>
 
-  <div class="shot" style="--l:78%;--t:7%;--k:12;--r:-2deg">
-    <figure><img src="/assets/photos/redwoods.jpg" alt="Light falling between redwood trunks" loading="eager"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/redwoods.jpg" alt="Light falling between redwood trunks" loading="eager"></span>
     <span class="name">redwoods.jpg</span>
   </div>
 
-  <div class="shot" style="--l:5%;--t:41%;--k:12.5;--r:3deg">
-    <figure><img src="/assets/photos/night-lights.jpg" alt="Two figures on a street at night, lit by police lights" loading="lazy"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/night-lights.jpg" alt="Two figures on a street at night, lit by police lights" loading="eager"></span>
     <span class="name">night lights.jpg</span>
   </div>
 
-  <div class="shot" style="--l:20%;--t:45%;--k:16;--r:-2deg">
-    <figure><img src="/assets/photos/hog.jpg" alt="A hog standing in dry brush" loading="lazy"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/hog.jpg" alt="A hog standing in dry brush" loading="lazy"></span>
     <span class="name">hog.jpg</span>
   </div>
 
-  <div class="shot" style="--l:41%;--t:38%;--k:18;--r:2deg">
-    <figure><img src="/assets/photos/headlight.jpg" alt="A car headlight burning yellow against the dark" loading="lazy"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/headlight.jpg" alt="A car headlight burning yellow against the dark" loading="lazy"></span>
     <span class="name">headlight.jpg</span>
   </div>
 
-  <div class="shot" style="--l:64%;--t:43%;--k:15.5;--r:-3deg">
-    <figure><img src="/assets/photos/desert-road.jpg" alt="An empty desert road under a pale sky" loading="lazy"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/desert-road.jpg" alt="An empty desert road under a pale sky" loading="lazy"></span>
     <span class="name">desert road.jpg</span>
   </div>
 
-  <div class="shot" style="--l:13%;--t:73%;--k:17;--r:-2deg">
-    <figure><img src="/assets/photos/bike-wall.jpg" alt="A rider on a small motorbike passing a bright blue wall" loading="lazy"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/bike-wall.jpg" alt="A rider on a small motorbike passing a bright blue wall" loading="lazy"></span>
     <span class="name">blue wall.jpg</span>
   </div>
 
-  <div class="shot" style="--l:40%;--t:73%;--k:16.5;--r:3deg">
-    <figure><img src="/assets/photos/sign.jpg" alt="A yellow sign reading everything is a sign when you are lost" loading="lazy"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/sign.jpg" alt="A yellow sign reading everything is a sign when you are lost" loading="lazy"></span>
     <span class="name">a sign when you are lost.jpg</span>
   </div>
 
-  <div class="shot" style="--l:80%;--t:57%;--k:11;--r:2deg">
-    <figure><img src="/assets/photos/hedge.jpg" alt="A walkway between clipped hedges and a line of trees" loading="lazy"></figure>
+  <div class="file">
+    <span class="thumb"><img src="/assets/photos/hedge.jpg" alt="A walkway between clipped hedges and a line of trees" loading="lazy"></span>
     <span class="name">hedge walk.jpg</span>
   </div>
 
 </main>
 
-<p class="hint" id="hint">drag them around · click one to look</p>
+<p class="hint" id="hint">double-click to open · drag to rearrange</p>
 
 <!-- ── quick look ──────────────────────────────────── -->
 <div id="ql" hidden role="dialog" aria-modal="true" aria-label="Photo">
@@ -212,8 +208,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   var stackedQ = matchMedia('(max-width: 900px)');
   var stacked  = function(){ return stackedQ.matches; };
   var desk     = document.getElementById('desk');
-  var shots    = [].slice.call(document.querySelectorAll('.shot'));
-  var z        = 30;
+  var files    = [].slice.call(document.querySelectorAll('.file'));
 
   /* ── clock ─────────────────────────────────────── */
   var clock = document.getElementById('clock');
@@ -222,15 +217,61 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   }
   tick(); setInterval(tick, 20000);
 
+  /* ── the grid the icons snap to ────────────────────
+     Finder fills a column top to bottom, then starts the next one to its
+     right. slots[] holds which file is in which grid slot; everything else
+     is arithmetic on the cell size. */
+  var PAD_X = 22, PAD_Y = 8;
+  var cellW = 98, cellH = 118, rows = 1;
+  var slots = files.map(function(f, i){ return i; });   /* slot index -> file index */
+
+  function readCell(){
+    var cs = getComputedStyle(document.documentElement);
+    cellW = parseFloat(cs.getPropertyValue('--cell-w')) || 98;
+    cellH = parseFloat(cs.getPropertyValue('--cell-h')) || 118;
+  }
+  function place(){
+    if (stacked()) {                    /* the media query lays them out instead */
+      files.forEach(function(f){ f.style.removeProperty('--x'); f.style.removeProperty('--y'); });
+      return;
+    }
+    readCell();
+    rows = Math.max(1, Math.floor((desk.clientHeight - PAD_Y) / cellH));
+    slots.forEach(function(fi, slot){
+      var f = files[fi];
+      if (!f) return;
+      f.style.setProperty('--x', (PAD_X + Math.floor(slot / rows) * cellW) + 'px');
+      f.style.setProperty('--y', (PAD_Y + (slot % rows) * cellH) + 'px');
+    });
+  }
+  function slotAt(x, y){
+    var col = Math.round((x - PAD_X) / cellW);
+    var row = Math.round((y - PAD_Y) / cellH);
+    var cols = Math.max(1, Math.ceil(files.length / rows));
+    col = Math.min(Math.max(col, 0), Math.max(cols - 1, Math.floor((desk.clientWidth - PAD_X) / cellW) - 1));
+    row = Math.min(Math.max(row, 0), rows - 1);
+    return col * rows + row;
+  }
+  place();
+  addEventListener('resize', place);
+
+  /* ── selection ─────────────────────────────────── */
+  function select(f){
+    files.forEach(function(o){ o.classList.toggle('sel', o === f); });
+  }
+  desk.addEventListener('pointerdown', function(e){
+    if (!e.target.closest('.file')) select(null);
+  });
+
   /* ── quick look ────────────────────────────────── */
   var ql = document.getElementById('ql'), qlImg = ql.querySelector('img'),
       qlCap = ql.querySelector('figcaption'), opener = null;
-  function open(shot){
-    var img = shot.querySelector('img');
+  function open(f){
+    var img = f.querySelector('img');
     qlImg.src = img.src;
     qlImg.alt = img.alt;
-    qlCap.textContent = shot.querySelector('.name').textContent;
-    opener = shot;
+    qlCap.textContent = f.querySelector('.name').textContent;
+    opener = f;
     ql.hidden = false;
     requestAnimationFrame(function(){ ql.classList.add('in'); });
     ql.querySelector('.x').focus();
@@ -242,57 +283,63 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     if (opener) { opener.focus(); opener = null; }
   }
   ql.addEventListener('click', close);
-  addEventListener('keydown', function(e){ if (e.key === 'Escape' && !ql.hidden) close(); });
+  addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && !ql.hidden) { close(); return; }
+    /* space is Quick Look on a Mac; enter opens too */
+    var sel = document.querySelector('.file.sel');
+    if (!sel || !ql.hidden) return;
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); open(sel); }
+  });
 
-  /* ── drag, and a click that survives it ────────── */
-  var hint = document.getElementById('hint'), moved = false;
+  /* ── click to select, double-click to open, drag to move ── */
+  var hint = document.getElementById('hint');
 
-  shots.forEach(function(shot){
-    shot.tabIndex = 0;
-    shot.setAttribute('role', 'button');
+  files.forEach(function(f, i){
+    f.tabIndex = 0;
+    f.setAttribute('role', 'button');
+    f.addEventListener('dblclick', function(){ open(f); });
 
-    shot.addEventListener('keydown', function(e){
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(shot); }
-    });
-
-    shot.addEventListener('pointerdown', function(e){
+    f.addEventListener('pointerdown', function(e){
       if (e.button !== 0 && e.pointerType === 'mouse') return;
-      shots.forEach(function(o){ o.classList.remove('front'); });
-      shot.classList.add('front');
-      shot.style.zIndex = ++z;
+      select(f);
       if (stacked()) return;
 
       var sx = e.clientX, sy = e.clientY, slid = false;
-      var x0 = parseFloat(shot.style.getPropertyValue('--x')) || 0;
-      var y0 = parseFloat(shot.style.getPropertyValue('--y')) || 0;
-      try { shot.setPointerCapture(e.pointerId); } catch (err) { /* capture is a bonus */ }
+      var x0 = parseFloat(f.style.getPropertyValue('--x')) || 0;
+      var y0 = parseFloat(f.style.getPropertyValue('--y')) || 0;
+      try { f.setPointerCapture(e.pointerId); } catch (err) { /* capture is a bonus */ }
 
       function move(ev){
         var dx = ev.clientX - sx, dy = ev.clientY - sy;
         if (!slid && Math.abs(dx) + Math.abs(dy) < 4) return;   /* a click can wobble */
-        slid = true;
-        /* keep at least a corner of the print on the desk */
-        var w = shot.offsetWidth, h = shot.offsetHeight;
-        var minX = -shot.offsetLeft - w + 60, maxX = desk.clientWidth  - shot.offsetLeft - 60;
-        var minY = -shot.offsetTop  - h + 60, maxY = desk.clientHeight - shot.offsetTop  - 60;
-        shot.style.setProperty('--x', Math.min(Math.max(x0 + dx, minX), maxX) + 'px');
-        shot.style.setProperty('--y', Math.min(Math.max(y0 + dy, minY), maxY) + 'px');
-        if (!moved) { moved = true; if (hint) hint.hidden = true; }
+        if (!slid) { slid = true; f.classList.add('dragging'); if (hint) hint.hidden = true; }
+        f.style.setProperty('--x', (x0 + dx) + 'px');
+        f.style.setProperty('--y', (y0 + dy) + 'px');
       }
       function up(ev){
-        try { shot.releasePointerCapture(ev.pointerId); } catch (err) { /* already gone */ }
+        try { f.releasePointerCapture(ev.pointerId); } catch (err) { /* already gone */ }
         removeEventListener('pointermove', move);
         removeEventListener('pointerup', up);
         removeEventListener('pointercancel', up);
-        if (!slid) open(shot);          /* a press that never travelled is a click */
+        if (!slid) return;
+        f.classList.remove('dragging');
+        /* snap to the nearest slot, trading places with whoever is there */
+        var was  = slots.indexOf(i);
+        var want = slotAt(parseFloat(f.style.getPropertyValue('--x')),
+                          parseFloat(f.style.getPropertyValue('--y')));
+        while (slots.length <= want) slots.push(undefined);
+        var other = slots[want];
+        slots[want] = i;
+        slots[was]  = other;
+        place();
       }
       addEventListener('pointermove', move);
       addEventListener('pointerup', up);
       addEventListener('pointercancel', up);
     });
 
-    /* stacked, there is no dragging — the tap just opens the photo */
-    shot.addEventListener('click', function(){ if (stacked()) open(shot); });
+    /* stacked, a tap just opens the photo */
+    f.addEventListener('click', function(){ if (stacked()) open(f); });
   });
 })();
 </script>
