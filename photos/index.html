@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photos — milo messina</title>
+<meta name="description" content="Photos.">
+<meta name="theme-color" content="#0F1A22">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23F5F0E6'/%3E%3Ctext x='50' y='67' font-family='Helvetica,Arial,sans-serif' font-size='50' font-weight='700' fill='%2317150F' text-anchor='middle'%3Emm%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/fomo/assets/fonts.css">
+<style>
+:root{
+  --paper:#F6F1E7; --ink:#17150F;
+  --ui:'Aeonik',system-ui,-apple-system,sans-serif;
+  --menu-h:30px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:#0F1A22;color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;overflow:hidden;position:relative}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid #2F5DD8;outline-offset:2px;border-radius:4px}
+
+/* ── wallpaper ──────────────────────────────────────── */
+/* same desktop as the home page, with nothing set on it */
+#wall{position:fixed;inset:0;z-index:0;overflow:hidden;
+  background:linear-gradient(180deg,#4A6076,#A9BDC6 62%,#DCE3E2)}
+#wall .wall-photo{position:absolute;inset:0;
+  background:url('/assets/wallpaper.jpg') center/cover no-repeat}
+/* grain over the whole desktop */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.11;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ── menu bar ───────────────────────────────────────── */
+.menubar{position:fixed;top:0;left:0;right:0;height:var(--menu-h);z-index:50;
+  display:flex;align-items:center;gap:20px;padding:0 14px;
+  background:rgba(16,24,32,.44);backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  color:#fff;font-size:.8rem;box-shadow:0 1px 0 rgba(255,255,255,.1)}
+.menubar .mm{display:flex;align-items:center;gap:8px;font-weight:700;letter-spacing:-.02em;font-size:.8rem;line-height:1}
+.menubar .mm i{width:17px;height:17px;border-radius:5px;background:var(--paper);color:var(--ink);
+  display:grid;place-items:center;font-style:normal;font-size:.54rem;font-weight:700;letter-spacing:-.03em}
+.menubar .app{font-weight:600;opacity:.95}
+.menubar .right{margin-left:auto;display:flex;align-items:center;gap:14px;font-variant-numeric:tabular-nums}
+.menubar a.mm{border-radius:6px;padding:2px 6px;margin-left:-6px;transition:background .15s}
+.menubar a.mm:hover{background:rgba(255,255,255,.18)}
+</style>
+</head>
+<body>
+
+<!-- ── wallpaper ───────────────────────────────────── -->
+<div id="wall" aria-hidden="true">
+  <div class="wall-photo"></div>
+</div>
+
+<!-- ── menu bar ────────────────────────────────────── -->
+<div class="menubar">
+  <a class="mm" href="/" aria-label="Back to the desktop"><i>mm</i> milo messina</a>
+  <span class="app">Photos</span>
+  <span class="right">
+    <span id="clock" aria-label="Current time">—</span>
+  </span>
+</div>
+
+<!-- an empty desktop: no windows, no dock, nothing open -->
+
+<script>
+(function(){
+  'use strict';
+  var clock = document.getElementById('clock');
+  function tick(){
+    clock.textContent = new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+  }
+  tick(); setInterval(tick, 20000);
+})();
+</script>
+</body>
+</html>

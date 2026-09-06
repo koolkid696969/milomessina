@@ -245,6 +245,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .dock .d-notes{background:linear-gradient(160deg,#F4C64A,#D99A16);color:#3A2A05}
 .dock .d-mail{background:linear-gradient(160deg,#F2F2F2,#C9C9C9);color:#17150F}
 .dock .d-fomo{background:linear-gradient(160deg,#7B8DFF,#3D53E0)}
+/* Photos: the pinwheel sits on white, the way the real icon does */
+.dock .d-photos{background:linear-gradient(180deg,#FFFFFF,#EDEDED)}
+.dock .d-photos svg{width:31px;height:31px;display:block}
 .dock .sep{width:1px;height:34px;background:rgba(255,255,255,.22);margin-inline:3px;align-self:center}
 .dock .run{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:4px;height:4px;
   border-radius:50%;background:rgba(255,255,255,.9);opacity:0;transition:opacity .2s}
@@ -627,6 +630,21 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   <button type="button" class="d-mail on" data-open="win-contact">@<span class="run"></span><span class="tip">Contact</span></button>
   <span class="sep" aria-hidden="true"></span>
   <a class="d-fomo" href="/fomo">fm<span class="tip">fomo campus ↗</span></a>
+  <a class="d-photos" href="/photos" aria-label="Photos">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <g style="isolation:isolate;mix-blend-mode:multiply" opacity=".9">
+        <ellipse cx="50" cy="30.5" rx="11.5" ry="19.5" fill="#F7C61A" transform="rotate(0 50 50)"/>
+        <ellipse cx="50" cy="30.5" rx="11.5" ry="19.5" fill="#F0912B" transform="rotate(45 50 50)"/>
+        <ellipse cx="50" cy="30.5" rx="11.5" ry="19.5" fill="#E8503A" transform="rotate(90 50 50)"/>
+        <ellipse cx="50" cy="30.5" rx="11.5" ry="19.5" fill="#D9459A" transform="rotate(135 50 50)"/>
+        <ellipse cx="50" cy="30.5" rx="11.5" ry="19.5" fill="#8B57C9" transform="rotate(180 50 50)"/>
+        <ellipse cx="50" cy="30.5" rx="11.5" ry="19.5" fill="#3B72D9" transform="rotate(225 50 50)"/>
+        <ellipse cx="50" cy="30.5" rx="11.5" ry="19.5" fill="#2FA8C7" transform="rotate(270 50 50)"/>
+        <ellipse cx="50" cy="30.5" rx="11.5" ry="19.5" fill="#4FB553" transform="rotate(315 50 50)"/>
+      </g>
+    </svg>
+    <span class="tip">Photos</span>
+  </a>
 </nav>
 
 <script>
