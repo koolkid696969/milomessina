@@ -120,13 +120,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   padding:4px 9px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s}
 .dock a:hover .tip{opacity:1}
 
-/* ── hint ───────────────────────────────────────────── */
-.hint{position:fixed;left:50%;bottom:calc(var(--dock-h) + 10px);transform:translateX(-50%);z-index:39;
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.6rem;letter-spacing:.16em;
-  text-transform:uppercase;color:rgba(255,255,255,.6);text-shadow:0 1px 8px rgba(0,0,0,.7);
-  pointer-events:none;transition:opacity .5s}
-.hint[hidden]{display:none}
-
 /* ── stacked / mobile: the grid flows instead ───────── */
 @media(max-width:900px){
   html,body{height:auto}
@@ -138,7 +131,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   .file{position:static;transform:none!important;width:auto}
   .dock{gap:7px;padding:8px 9px}
   .dock a{width:42px;height:42px}
-  .hint{display:none}
 }
 @media(prefers-reduced-motion:reduce){ #ql{transition:none} }
 </style>
@@ -578,8 +570,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
 </main>
 
-<p class="hint" id="hint">double-click to open · drag to rearrange</p>
-
 <!-- ── dock ────────────────────────────────────────── -->
 <nav class="dock" aria-label="Applications">
   <a class="d-work" href="/">work<span class="tip">Work</span></a>
@@ -703,8 +693,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   });
 
   /* ── click to select, double-click to open, drag to move ── */
-  var hint = document.getElementById('hint');
-
   files.forEach(function(f, i){
     f.tabIndex = 0;
     f.setAttribute('role', 'button');
@@ -723,7 +711,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
       function move(ev){
         var dx = ev.clientX - sx, dy = ev.clientY - sy;
         if (!slid && Math.abs(dx) + Math.abs(dy) < 4) return;   /* a click can wobble */
-        if (!slid) { slid = true; f.classList.add('dragging'); if (hint) hint.hidden = true; }
+        if (!slid) { slid = true; f.classList.add('dragging'); }
         f.style.setProperty('--x', (x0 + dx) + 'px');
         f.style.setProperty('--y', (y0 + dy) + 'px');
       }
