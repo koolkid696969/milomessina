@@ -967,18 +967,22 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
                         (parseFloat(getComputedStyle(pane).paddingBottom) || 0)) + ROUND;
         if (want <= cap) break;
       }
-      /* the two windows share a height, so the pair has to clear whichever of
-         them is taller — otherwise notes loses its last rows off the bottom */
-      var nbar = notes.querySelector('.tbar'), nbody = notes.querySelector('.wbody');
-      if (nbody) {
-        want = Math.max(want, (nbar ? nbar.offsetHeight : 0) + nbody.scrollHeight + ROUND);
+      /* each window ends where its own content ends: sharing a height left
+         whichever of the two had less to say sitting over a band of empty
+         paper. They still start level at the top. */
+      /* measured with the height off: the note's pane fills whatever height it
+         is given, so measuring it inside a sized window would just hand back
+         the size it already has — a hair taller every pass */
+      var nwant = 0;
+      if (notes.querySelector('.wbody')) {
+        notes.style.height = 'auto';
+        nwant = notes.offsetHeight + ROUND;
       }
       /* too short to keep the shadow clear as well: take the content over the
          shadow and go back to stopping at the name's edge */
-      if (want > cap) cap = Math.round(name.offsetTop - TOP - NAME_GAP);
-      var h = Math.max(MIN_H, Math.min(want, cap));
-      work.style.height  = h + 'px';
-      notes.style.height = h + 'px';
+      if (Math.max(want, nwant) > cap) cap = Math.round(name.offsetTop - TOP - NAME_GAP);
+      work.style.height  = Math.max(MIN_H, Math.min(want,  cap)) + 'px';
+      if (nwant) notes.style.height = Math.max(MIN_H, Math.min(nwant, cap)) + 'px';
     }
 
     if (!mail.dataset.moved) {
@@ -1018,6 +1022,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
       document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
     });
     if (crumb) crumb.textContent = '/ ' + tab.textContent.trim();
+    /* the window ends at its content now, and the two projects don't run to
+       the same length — so it is re-measured against whichever is showing */
+    layoutDesktop();
   }
 
   tabs.forEach(function(tab){
