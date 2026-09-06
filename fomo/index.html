@@ -385,6 +385,7 @@ body::after{display:none}
 .map-fit{--map-s:1}
 .map-fit>.map-wrap{transform:scale(var(--map-s));transform-origin:top center}
 #map.tight{padding-block:clamp(40px,4vw,64px)}
+#map.tighter{padding-block:12px}
 .map-hint{display:none}
 @media(max-width:940px){
   .map-hint{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;
@@ -633,8 +634,8 @@ body::after{display:none}
       <h2>sixty days,<br>written down.</h2>
     </div>
 
-    <p class="map-hint rv">swipe the table sideways &rarr;</p>
-    <div class="map-fit rv">
+    <p class="map-hint rv" data-core>swipe the table sideways &rarr;</p>
+    <div class="map-fit rv" data-core>
       <div class="map-wrap">
       <table class="map">
         <colgroup>
@@ -748,15 +749,25 @@ function fitMap(){
   if(!mapFit||!mapWrap)return;
   mapFit.style.height='';
   mapFit.style.setProperty('--map-s',1);
-  mapSec.classList.remove('tight');
+  mapSec.classList.remove('tight','tighter');
   /* narrow screens keep the sideways swipe — scaling to fit there would
      shrink the type past reading size */
   if(matchMedia('(max-width:940px)').matches)return;
   const natH=mapFit.offsetHeight;
-  if(mapSec.offsetHeight<=innerHeight)return;          /* already on one screen */
+  /* the sticky bar covers the top of the screen, so that is not room */
+  const hdrEl=document.getElementById('hdr'),
+        bar=hdrEl&&getComputedStyle(hdrEl).position==='sticky'?hdrEl.offsetHeight:0,
+        screen=innerHeight-bar;
+  if(mapSec.offsetHeight<=screen)return;               /* already on one screen */
   mapSec.classList.add('tight');                       /* padding first */
-  if(mapSec.offsetHeight<=innerHeight)return;          /* that was enough */
-  const room=innerHeight-(mapSec.offsetHeight-natH)-MAP_GAP;
+  if(mapSec.offsetHeight<=screen)return;               /* that was enough */
+  let room=screen-(mapSec.offsetHeight-natH)-MAP_GAP;
+  /* short laptop screens: the floor alone leaves it hanging off the bottom,
+     so give the padding back to the table rather than crop a week off */
+  if(room/natH<MAP_MIN){
+    mapSec.classList.add('tighter');
+    room=screen-(mapSec.offsetHeight-natH)-MAP_GAP;
+  }
   const s=Math.max(MAP_MIN,Math.min(1,room/natH));
   mapFit.style.setProperty('--map-s',s);
   mapFit.style.height=Math.ceil(natH*s)+'px';
@@ -835,6 +846,29 @@ setRole('content');
 })();
 
 /* ── single delegated scroll handler — no URL changes ever ── */
+/* a section that fits gets centred in the space under the bar, so nothing
+   sits behind the header or hangs off the bottom edge; anything taller
+   still lands top-first, just clear of the header */
+function jumpTo(el){
+  const h=document.getElementById('hdr'),
+        bar=h&&getComputedStyle(h).position==='sticky'?h.offsetHeight:0,
+        room=innerHeight-bar,
+        r=el.getBoundingClientRect();
+  let top=r.top,height=r.height;
+  /* a section too tall for the screen falls back to the part that has to be
+     read whole — the goal map itself — rather than cutting the last weeks */
+  if(height>room){
+    /* the first core still on the page: the swipe hint where it shows,
+       the table itself where it doesn't */
+    const core=[...el.querySelectorAll('[data-core]')].find(n=>n.offsetHeight);
+    if(core){
+      const c=core.getBoundingClientRect(),ch=r.bottom-c.top;
+      if(ch<=room){top=c.top;height=ch;}   /* only if that part fits whole */
+    }
+  }
+  const slack=height<=room?(room-height)/2:12;
+  window.scrollTo({top:Math.max(0,scrollY+top-bar-slack),behavior:'smooth'});
+}
 document.addEventListener('click',function(e){
   const btn=e.target.closest('[data-jump]');
   if(!btn)return;
@@ -842,7 +876,7 @@ document.addEventListener('click',function(e){
   const id=btn.dataset.jump;
   if(id==='top'){window.scrollTo({top:0,behavior:'smooth'});return;}
   const el=document.getElementById(id);
-  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  if(el)jumpTo(el);
 });
 /* kill any accidental hash changes */
 window.addEventListener('hashchange',function(e){
