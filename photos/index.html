@@ -54,19 +54,23 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 /* a print: white mat, a name under it the way a file on the desktop carries
    one. --l/--t place it, --k sets the width in vw, --r is the tilt. */
 .shot{position:absolute;left:var(--l);top:var(--t);z-index:1;
-  width:clamp(132px,calc(var(--k) * 1vw),268px);
+  /* sized against the short side too, so a laptop with little vertical room
+     shrinks the prints instead of pushing the bottom row off the desk */
+  width:clamp(120px,min(calc(var(--k) * 1vw),calc(var(--k) * 1.55vh)),268px);
   transform:translate3d(var(--x,0px),var(--y,0px),0) rotate(var(--r));
   transform-origin:50% 50%;touch-action:none;cursor:grab;
   transition:filter .2s,scale .2s}
 .shot:active{cursor:grabbing}
 .shot:hover{filter:drop-shadow(0 16px 26px rgba(0,0,0,.42));scale:1.02}
 .shot.front{z-index:30}
-.shot figure{margin:0;background:#FBF8F2;padding:7px 7px 8px;border-radius:3px;
+.shot figure{margin:0;background:#FBF8F2;padding:7px;border-radius:3px;
   box-shadow:0 1px 2px rgba(0,0,0,.3),0 14px 30px -10px rgba(0,0,0,.55)}
 .shot img{display:block;width:100%;height:auto;border-radius:1px;
   background:#241F19;-webkit-user-drag:none;user-select:none}
-.shot figcaption{margin-top:7px;text-align:center;font-family:var(--mono);font-size:.62rem;
-  letter-spacing:.04em;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.85);
+/* the name rides under the print on the wallpaper, the way a file on the
+   desktop carries one — not on the mat, where it would go white on cream */
+.shot .name{display:block;margin-top:7px;text-align:center;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.04em;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9),0 0 14px rgba(0,0,0,.6);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ── quick look ─────────────────────────────────────── */
@@ -76,7 +80,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 #ql[hidden]{display:none}
 #ql.in{opacity:1}
 #ql figure{margin:0;display:grid;gap:12px;justify-items:center;max-height:100%}
-#ql img{max-width:min(1100px,92vw);max-height:78vh;width:auto;height:auto;display:block;border-radius:3px;
+/* the files are 820px wide — don't blow them up past what's there */
+#ql img{max-width:min(820px,92vw);max-height:78vh;width:auto;height:auto;display:block;border-radius:3px;
   box-shadow:0 30px 80px -20px rgba(0,0,0,.8)}
 #ql figcaption{font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
   color:rgba(255,255,255,.7)}
@@ -86,7 +91,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 #ql .x:hover{background:rgba(255,255,255,.2)}
 
 /* ── hint ───────────────────────────────────────────── */
-.hint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:39;
+.hint{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:39;
   font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;
   color:rgba(255,255,255,.6);text-shadow:0 1px 8px rgba(0,0,0,.7);pointer-events:none;
   transition:opacity .5s}
@@ -99,8 +104,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   .menubar{position:sticky}
   #wall::after{display:none}
   #desk{position:relative;top:auto;left:auto;right:auto;bottom:auto;z-index:10;
-    display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px 14px 34px}
-  .shot{position:static;width:auto!important;transform:rotate(var(--r));cursor:default}
+    display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:18px 18px 34px}
+  /* stacked, the tilt is a hint rather than a scatter — a big rotation just
+     eats the gutters */
+  .shot{position:static;width:auto!important;transform:rotate(calc(var(--r) * .4));cursor:default}
+  .shot .name{font-size:.66rem}
   .shot:hover{scale:1}
   .hint{display:none}
 }
@@ -128,63 +136,63 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 <main id="desk" aria-label="Photographs">
 
   <div class="shot" style="--l:2.5%;--t:6%;--k:17;--r:-3deg">
-    <figure><img src="/assets/photos/lambo.jpg" alt="The front end of a light blue Lamborghini, close in" loading="eager">
-    <figcaption>lambo front end.jpg</figcaption></figure>
+    <figure><img src="/assets/photos/lambo.jpg" alt="The front end of a light blue Lamborghini, close in" loading="eager"></figure>
+    <span class="name">lambo front end.jpg</span>
   </div>
 
   <div class="shot" style="--l:21%;--t:3%;--k:18;--r:2deg">
-    <figure><img src="/assets/photos/who.jpg" alt="A figure sitting alone on a headland above the ocean" loading="eager">
-    <figcaption>who do you wanna be.jpg</figcaption></figure>
+    <figure><img src="/assets/photos/who.jpg" alt="A figure sitting alone on a headland above the ocean" loading="eager"></figure>
+    <span class="name">who do you wanna be.jpg</span>
   </div>
 
   <div class="shot" style="--l:42%;--t:6%;--k:12;--r:-2deg">
-    <figure><img src="/assets/photos/crossing.jpg" alt="Black and white street scene, people crossing in bright sun" loading="eager">
-    <figcaption>crossing.jpg</figcaption></figure>
+    <figure><img src="/assets/photos/crossing.jpg" alt="Black and white street scene, people crossing in bright sun" loading="eager"></figure>
+    <span class="name">crossing.jpg</span>
   </div>
 
   <div class="shot" style="--l:56%;--t:3%;--k:17;--r:3deg">
-    <figure><img src="/assets/photos/bamboo.jpg" alt="A path running through a dense bamboo grove" loading="eager">
-    <figcaption>bamboo.jpg</figcaption></figure>
+    <figure><img src="/assets/photos/bamboo.jpg" alt="A path running through a dense bamboo grove" loading="eager"></figure>
+    <span class="name">bamboo.jpg</span>
   </div>
 
-  <div class="shot" style="--l:77%;--t:7%;--k:17;--r:-2deg">
-    <figure><img src="/assets/photos/redwoods.jpg" alt="Light falling between redwood trunks" loading="eager">
-    <figcaption>redwoods.jpg</figcaption></figure>
+  <div class="shot" style="--l:78%;--t:7%;--k:12;--r:-2deg">
+    <figure><img src="/assets/photos/redwoods.jpg" alt="Light falling between redwood trunks" loading="eager"></figure>
+    <span class="name">redwoods.jpg</span>
   </div>
 
   <div class="shot" style="--l:5%;--t:41%;--k:12.5;--r:3deg">
-    <figure><img src="/assets/photos/night-lights.jpg" alt="Two figures on a street at night, lit by police lights" loading="lazy">
-    <figcaption>night lights.jpg</figcaption></figure>
+    <figure><img src="/assets/photos/night-lights.jpg" alt="Two figures on a street at night, lit by police lights" loading="lazy"></figure>
+    <span class="name">night lights.jpg</span>
   </div>
 
   <div class="shot" style="--l:20%;--t:45%;--k:16;--r:-2deg">
-    <figure><img src="/assets/photos/hog.jpg" alt="A hog standing in dry brush" loading="lazy">
-    <figcaption>hog.jpg</figcaption></figure>
+    <figure><img src="/assets/photos/hog.jpg" alt="A hog standing in dry brush" loading="lazy"></figure>
+    <span class="name">hog.jpg</span>
   </div>
 
   <div class="shot" style="--l:41%;--t:38%;--k:18;--r:2deg">
-    <figure><img src="/assets/photos/headlight.jpg" alt="A car headlight burning yellow against the dark" loading="lazy">
-    <figcaption>headlight.jpg</figcaption></figure>
+    <figure><img src="/assets/photos/headlight.jpg" alt="A car headlight burning yellow against the dark" loading="lazy"></figure>
+    <span class="name">headlight.jpg</span>
   </div>
 
   <div class="shot" style="--l:64%;--t:43%;--k:15.5;--r:-3deg">
-    <figure><img src="/assets/photos/desert-road.jpg" alt="An empty desert road under a pale sky" loading="lazy">
-    <figcaption>desert road.jpg</figcaption></figure>
+    <figure><img src="/assets/photos/desert-road.jpg" alt="An empty desert road under a pale sky" loading="lazy"></figure>
+    <span class="name">desert road.jpg</span>
   </div>
 
   <div class="shot" style="--l:13%;--t:73%;--k:17;--r:-2deg">
-    <figure><img src="/assets/photos/bike-wall.jpg" alt="A rider on a small motorbike passing a bright blue wall" loading="lazy">
-    <figcaption>blue wall.jpg</figcaption></figure>
+    <figure><img src="/assets/photos/bike-wall.jpg" alt="A rider on a small motorbike passing a bright blue wall" loading="lazy"></figure>
+    <span class="name">blue wall.jpg</span>
   </div>
 
-  <div class="shot" style="--l:40%;--t:75%;--k:16.5;--r:3deg">
-    <figure><img src="/assets/photos/sign.jpg" alt="A yellow sign reading everything is a sign when you are lost" loading="lazy">
-    <figcaption>a sign when you are lost.jpg</figcaption></figure>
+  <div class="shot" style="--l:40%;--t:73%;--k:16.5;--r:3deg">
+    <figure><img src="/assets/photos/sign.jpg" alt="A yellow sign reading everything is a sign when you are lost" loading="lazy"></figure>
+    <span class="name">a sign when you are lost.jpg</span>
   </div>
 
-  <div class="shot" style="--l:68%;--t:71%;--k:15;--r:2deg">
-    <figure><img src="/assets/photos/hedge.jpg" alt="Steps running along a clipped hedge, in black and white" loading="lazy">
-    <figcaption>hedge.jpg</figcaption></figure>
+  <div class="shot" style="--l:80%;--t:57%;--k:11;--r:2deg">
+    <figure><img src="/assets/photos/hedge.jpg" alt="A walkway between clipped hedges and a line of trees" loading="lazy"></figure>
+    <span class="name">hedge walk.jpg</span>
   </div>
 
 </main>
@@ -221,7 +229,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     var img = shot.querySelector('img');
     qlImg.src = img.src;
     qlImg.alt = img.alt;
-    qlCap.textContent = shot.querySelector('figcaption').textContent;
+    qlCap.textContent = shot.querySelector('.name').textContent;
     opener = shot;
     ql.hidden = false;
     requestAnimationFrame(function(){ ql.classList.add('in'); });
