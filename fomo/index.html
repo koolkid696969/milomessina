@@ -347,14 +347,32 @@ body::after{display:none}
 /* ── 02 · the four takeaways run as a rail, scaled up: hairline rows,
    display type, a violet index — nothing to read but the point */
 .gets{border-top:1px solid var(--line)}
-.get{display:grid;grid-template-columns:auto 1fr;align-items:baseline;
+.get{border-bottom:1px solid var(--line);transition:background .25s}
+.get:hover,.get.on{background:rgba(255,255,255,.022)}
+/* the row itself is the control — a full-width button that keeps the rail's
+   grid: mono index, display title, and a plus that turns into a close mark */
+.get-t{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;width:100%;
   gap:clamp(13px,1.5vw,20px);padding:clamp(15px,1.9vw,21px) 4px;
-  border-bottom:1px solid var(--line);transition:background .25s}
-.get:hover{background:rgba(255,255,255,.022)}
+  background:none;border:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.get-t:focus-visible{outline:2px solid var(--violet-hi);outline-offset:-3px;border-radius:4px}
 .get i{font-style:normal;font-family:var(--mono);font-size:.72rem;font-weight:700;
   color:var(--violet);letter-spacing:.04em}
 .get b{font-family:var(--display);font-size:clamp(1.3rem,2vw,1.7rem);font-weight:500;
   letter-spacing:-.03em;text-transform:lowercase;line-height:1.05;color:var(--text)}
+.get-x{position:relative;flex:none;width:13px;height:13px;align-self:center;
+  color:var(--muted-2);transition:transform .35s cubic-bezier(.4,0,.2,1),color .25s}
+.get-x::before,.get-x::after{content:'';position:absolute;inset:50% 0 auto 0;height:1.5px;
+  background:currentColor;transform:translateY(-50%)}
+.get-x::after{transform:translateY(-50%) rotate(90deg)}
+.get-t:hover .get-x{color:var(--muted)}
+.get.on .get-x{color:var(--violet-hi);transform:rotate(135deg)}
+/* 0fr → 1fr keeps the open/close animated without measuring heights in js */
+.get-d{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.4,0,.2,1)}
+.get.on .get-d{grid-template-rows:1fr}
+.get-d>div{overflow:hidden}
+.get-d p{max-width:52ch;font-size:.88rem;line-height:1.5;color:#B4ADD4;
+  padding:0 4px clamp(16px,1.9vw,21px) calc(clamp(13px,1.5vw,20px) + 18px)}
+@media(max-width:520px){.get-d p{padding-left:4px}}
 
 /* the linkedin card is the point of the section; the rail sits next to it */
 .li-panel{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);
@@ -601,11 +619,31 @@ body::after{display:none}
         </div>
       </div>
 
-      <div class="gets">
-        <div class="get"><i>01</i><b>numbers you own</b></div>
-        <div class="get"><i>02</i><b>a network</b></div>
-        <div class="get"><i>03</i><b>budget and autonomy</b></div>
-        <div class="get"><i>04</i><b>a foot in the door</b></div>
+      <div class="gets" id="gets">
+        <div class="get">
+          <button class="get-t" type="button" aria-expanded="false" aria-controls="get-d-01">
+            <i>01</i><b>numbers you own</b><span class="get-x" aria-hidden="true"></span>
+          </button>
+          <div class="get-d" id="get-d-01"><div><p>Downloads, signups, events run, revenue at your school &mdash; tracked weekly.</p></div></div>
+        </div>
+        <div class="get">
+          <button class="get-t" type="button" aria-expanded="false" aria-controls="get-d-02">
+            <i>02</i><b>a network</b><span class="get-x" aria-hidden="true"></span>
+          </button>
+          <div class="get-d" id="get-d-02"><div><p>HQ, the campus teams at other schools, and everyone you close in your city.</p></div></div>
+        </div>
+        <div class="get">
+          <button class="get-t" type="button" aria-expanded="false" aria-controls="get-d-03">
+            <i>03</i><b>budget and autonomy</b><span class="get-x" aria-hidden="true"></span>
+          </button>
+          <div class="get-d" id="get-d-03"><div><p>Real money behind events and creators, spent without asking first.</p></div></div>
+        </div>
+        <div class="get">
+          <button class="get-t" type="button" aria-expanded="false" aria-controls="get-d-04">
+            <i>04</i><b>a foot in the door</b><span class="get-x" aria-hidden="true"></span>
+          </button>
+          <div class="get-d" id="get-d-04"><div><p>First look at internships and full-time seats at fomo.</p></div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -799,6 +837,19 @@ document.getElementById('roles').addEventListener('click',e=>{
   }
 });
 setRole('content');
+
+/* ── 02 · the takeaway rail opens one row at a time, like the role cards ── */
+(function(){
+  const gets=document.getElementById('gets');if(!gets)return;
+  gets.addEventListener('click',e=>{
+    const t=e.target.closest('.get-t');if(!t)return;
+    const row=t.parentElement, open=!row.classList.contains('on');
+    gets.querySelectorAll('.get').forEach(g=>{
+      g.classList.toggle('on',g===row&&open);
+      g.querySelector('.get-t').setAttribute('aria-expanded',String(g===row&&open));
+    });
+  });
+})();
 
 /* ── mobile menu — the burger had no handler at all ── */
 (function(){
