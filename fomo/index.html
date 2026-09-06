@@ -334,8 +334,8 @@ body::after{display:none}
 .get{border-bottom:1px solid var(--line);transition:background .25s}
 .get:hover,.get.on{background:rgba(255,255,255,.022)}
 /* the row itself is the control — a full-width button that keeps the rail's
-   grid: mono index, display title, and a plus that turns into a close mark */
-.get-t{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;width:100%;
+   grid: mono index, then the display title */
+.get-t{display:grid;grid-template-columns:auto 1fr;align-items:baseline;width:100%;
   gap:clamp(13px,1.5vw,20px);padding:clamp(15px,1.9vw,21px) 4px;
   background:none;border:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
 .get-t:focus-visible{outline:2px solid var(--violet-hi);outline-offset:-3px;border-radius:4px}
@@ -343,13 +343,6 @@ body::after{display:none}
   color:var(--violet);letter-spacing:.04em}
 .get b{font-family:var(--display);font-size:clamp(1.3rem,2vw,1.7rem);font-weight:500;
   letter-spacing:-.03em;text-transform:lowercase;line-height:1.05;color:var(--text)}
-.get-x{position:relative;flex:none;width:13px;height:13px;align-self:center;
-  color:var(--muted-2);transition:transform .35s cubic-bezier(.4,0,.2,1),color .25s}
-.get-x::before,.get-x::after{content:'';position:absolute;inset:50% 0 auto 0;height:1.5px;
-  background:currentColor;transform:translateY(-50%)}
-.get-x::after{transform:translateY(-50%) rotate(90deg)}
-.get-t:hover .get-x{color:var(--muted)}
-.get.on .get-x{color:var(--violet-hi);transform:rotate(135deg)}
 /* 0fr → 1fr keeps the open/close animated without measuring heights in js */
 .get-d{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.4,0,.2,1)}
 .get.on .get-d{grid-template-rows:1fr}
@@ -606,25 +599,25 @@ body::after{display:none}
       <div class="gets" id="gets">
         <div class="get">
           <button class="get-t" type="button" aria-expanded="false" aria-controls="get-d-01">
-            <i>01</i><b>numbers you own</b><span class="get-x" aria-hidden="true"></span>
+            <i>01</i><b>numbers you own</b>
           </button>
           <div class="get-d" id="get-d-01"><div><p>views, signups, revenue at your school</p></div></div>
         </div>
         <div class="get">
           <button class="get-t" type="button" aria-expanded="false" aria-controls="get-d-02">
-            <i>02</i><b>a network</b><span class="get-x" aria-hidden="true"></span>
+            <i>02</i><b>a network</b>
           </button>
           <div class="get-d" id="get-d-02"><div><p>influencers, ambassadors, and businesses</p></div></div>
         </div>
         <div class="get">
           <button class="get-t" type="button" aria-expanded="false" aria-controls="get-d-03">
-            <i>03</i><b>budget and autonomy</b><span class="get-x" aria-hidden="true"></span>
+            <i>03</i><b>budget and autonomy</b>
           </button>
           <div class="get-d" id="get-d-03"><div><p>real money behind events and creators</p></div></div>
         </div>
         <div class="get">
           <button class="get-t" type="button" aria-expanded="false" aria-controls="get-d-04">
-            <i>04</i><b>a foot in the door</b><span class="get-x" aria-hidden="true"></span>
+            <i>04</i><b>a foot in the door</b>
           </button>
           <div class="get-d" id="get-d-04"><div><p>real experience, real responsibility</p></div></div>
         </div>
