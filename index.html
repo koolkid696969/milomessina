@@ -20,6 +20,7 @@
   --ui:'Aeonik',system-ui,-apple-system,sans-serif;
   --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+  --sf:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',Helvetica,system-ui,sans-serif;
   --menu-h:30px; --dock-h:88px;
   --shadow:0 2px 6px rgba(0,0,0,.18),0 18px 44px -12px rgba(0,0,0,.42),0 40px 90px -30px rgba(0,0,0,.5);
   --shadow-hi:0 2px 8px rgba(0,0,0,.22),0 26px 60px -12px rgba(0,0,0,.5),0 60px 120px -34px rgba(0,0,0,.6);
@@ -207,19 +208,58 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
 .shots img{display:block;width:100%;height:auto}
 
-/* ── notes window ───────────────────────────────────── */
-.notes{padding:20px 22px}
-/* the heading carries the gap the date line used to hold open */
-.notes h3{font-size:1.02rem;letter-spacing:-.02em;margin-bottom:14px}
-.notes ul{list-style:none;display:grid;gap:11px}
-.notes li{display:flex;gap:9px;font-size:.88rem;line-height:1.5;color:var(--ink-2)}
-.notes li::before{content:'→';color:var(--muted-2);flex:none}
-.notes .kv{margin-top:16px;border-top:1px solid var(--line);padding-top:6px}
-.notes .kv div{display:flex;justify-content:space-between;gap:12px;padding:7px 0;font-size:.82rem;
-  border-bottom:1px solid var(--line)}
-.notes .kv div:last-child{border-bottom:0}
-.notes .kv b{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--muted-2);font-weight:400}
+/* ── notes window ───────────────────────────────────────
+   This one is dressed as Notes itself rather than as the site: the app's
+   own greys and yellow, the system face, a note list beside the note. */
+#win-notes{
+  --nt-paper:#FFFFFF; --nt-list:#EFEEEB; --nt-line:rgba(0,0,0,.11);
+  --nt-ink:#1D1D1F; --nt-dim:#86868B; --nt-yellow:#FFD84B;
+  font-family:var(--sf)}
+#win-notes .tbar{background:linear-gradient(180deg,#F8F7F5,#EDECEA);border-bottom:1px solid var(--nt-line)}
+#win-notes .crumb{color:var(--nt-dim);letter-spacing:-.01em}
+#win-notes .crumb b{color:var(--nt-ink);font-weight:590}
+#win-notes .wbody{background:var(--nt-paper)}
+#win-notes .wbody::-webkit-scrollbar-thumb{background:rgba(0,0,0,.22);border-color:var(--nt-paper)}
+/* the app's own icon in the title bar, carrying its own squircle */
+.app-icon{width:16px;height:16px;flex:none;display:block;
+  filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.24))}
+/* the toolbar's icons are scenery — they sit outside .tools so the bar
+   still drags from here */
+#win-notes .ntools{margin-left:auto;display:flex;align-items:center;gap:11px;flex:none;color:#5C5C60}
+#win-notes .ntools svg{width:14px;height:14px;display:block;flex:none}
+#win-notes .search{display:flex;align-items:center;gap:5px;height:19px;padding:0 7px;border-radius:5px;
+  background:rgba(0,0,0,.06);color:#8A8A8E;font-size:.66rem;letter-spacing:-.01em;line-height:1}
+#win-notes .search svg{width:10px;height:10px}
+
+.notes{display:flex;align-items:stretch;min-height:100%}
+
+/* the note list, grouped by day the way Notes groups it. Measured against the
+   window, not the viewport: a narrow card would rather spend its width on the
+   note than on the list beside it. */
+.note-list{display:none;flex:none;width:154px;padding:7px 6px;
+  background:var(--nt-list);border-right:1px solid var(--nt-line)}
+@container (min-width:430px){ .note-list{display:block} }
+.nl-group{font-size:.66rem;font-weight:700;letter-spacing:-.01em;color:var(--nt-ink);padding:2px 7px 5px}
+.nl-row{padding:7px 8px 8px;border-radius:6px;background:var(--nt-yellow)}
+.nl-row .t{font-size:.74rem;font-weight:600;letter-spacing:-.01em;color:var(--nt-ink);line-height:1.25}
+.nl-row .s{margin-top:2px;font-size:.68rem;line-height:1.3;color:rgba(0,0,0,.62);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nl-row .s time{color:var(--nt-ink);font-variant-numeric:tabular-nums}
+
+/* the note itself */
+.note{flex:1;min-width:0;padding:14px 22px 22px;color:var(--nt-ink)}
+.note .stamp{text-align:center;font-size:.66rem;color:var(--nt-dim);letter-spacing:-.01em}
+.note h3{font-size:1.02rem;font-weight:700;letter-spacing:-.02em;margin:12px 0 10px}
+.note ul{list-style:none;display:grid;gap:9px}
+.note li{display:flex;gap:8px;font-size:.82rem;line-height:1.45;color:var(--nt-ink)}
+.note li::before{content:'•';flex:none;color:var(--nt-ink)}
+/* Notes draws its tables as a hairline grid, so these two rows do too */
+.note .kv{margin-top:16px;border:1px solid var(--nt-line);border-radius:5px;overflow:hidden}
+.note .kv div{display:flex;font-size:.78rem;border-bottom:1px solid var(--nt-line)}
+.note .kv div:last-child{border-bottom:0}
+.note .kv b{flex:none;width:88px;padding:7px 10px;font-weight:400;color:var(--nt-dim);
+  border-right:1px solid var(--nt-line)}
+.note .kv span{padding:7px 10px}
 
 /* ── contact window ─────────────────────────────────── */
 .contact{padding:20px 22px;display:grid;gap:10px}
@@ -238,7 +278,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   transition:transform .22s cubic-bezier(.2,.8,.3,1)}
 .dock button:hover,.dock a:hover{transform:translateY(-8px) scale(1.06)}
 .dock .d-work{background:linear-gradient(160deg,#3B6BE8,#1B3FA8)}
-.dock .d-notes{background:linear-gradient(160deg,#F4C64A,#D99A16);color:#3A2A05}
+.dock .d-notes{background:none;box-shadow:none;border-radius:0;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.34))}
+.dock .d-notes svg{width:100%;height:100%;display:block}
 .dock .d-mail{background:linear-gradient(160deg,#F2F2F2,#C9C9C9);color:#17150F}
 .dock .d-fomo{background:linear-gradient(160deg,#7B8DFF,#3D53E0)}
 /* Photos: the app's own icon, which brings its own squircle — so no tile
@@ -288,6 +330,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   .lockup svg{width:16px;height:16px}
   .dock{gap:7px;padding:8px 9px}
   .dock button,.dock a{width:42px;height:42px}
+  /* the note fills the card on its own once the window is the page */
+  #win-notes .search{display:none}
+  .note{padding:12px 18px 20px}
   .hint{display:none}
 }
 /* The layout script steps through these when the tag row would otherwise fall
@@ -318,6 +363,22 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 </style>
 </head>
 <body>
+
+<!-- ── icons drawn once, used where they're needed ── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="ic-notes" viewBox="0 0 100 100">
+    <linearGradient id="ic-notes-y" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE072"/><stop offset="1" stop-color="#FDC016"/>
+    </linearGradient>
+    <rect x=".5" y=".5" width="99" height="99" rx="23" fill="#fff"/>
+    <path d="M0 23A23 23 0 0 1 23 0h54a23 23 0 0 1 23 23v6H0z" fill="url(#ic-notes-y)"/>
+    <path d="M0 29h100" stroke="rgba(0,0,0,.08)" stroke-width="1.4"/>
+    <g stroke="#E2E0DB" stroke-width="6" stroke-linecap="round">
+      <path d="M19 47h62M19 63h62M19 79h40"/>
+    </g>
+    <rect x=".5" y=".5" width="99" height="99" rx="23" fill="none" stroke="rgba(0,0,0,.14)"/>
+  </symbol>
+</svg>
 
 <!-- ── wallpaper ───────────────────────────────────── -->
 <div id="wall" aria-hidden="true">
@@ -566,25 +627,54 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         <button type="button" class="m" data-act="min"   aria-label="Minimize about window"><span>–</span></button>
         <button type="button" class="z" data-act="zoom"  aria-label="Zoom about window"><span>+</span></button>
       </span>
+      <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true"><use href="#ic-notes"/></svg>
       <span class="crumb">Notes <b>/ about-me</b></span>
+      <span class="ntools" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="3.4" cy="4" r="2.4"/><path d="M2.4 4l.8.8L4.5 3.2M7.6 4H14"/>
+          <circle cx="3.4" cy="11.6" r="2.4"/><path d="M7.6 11.6H14"/>
+        </svg>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13.4 2.6a1.6 1.6 0 0 1 0 2.3L7.6 10.7 5 11.4l.7-2.6 5.8-5.8a1.6 1.6 0 0 1 2.3 0z"/>
+          <path d="M12.6 8.4V13a1.4 1.4 0 0 1-1.4 1.4H3.4A1.4 1.4 0 0 1 2 13V5.2a1.4 1.4 0 0 1 1.4-1.4H8"/>
+        </svg>
+        <span class="search">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"
+               stroke-linecap="round"><circle cx="7" cy="7" r="4.6"/><path d="M10.6 10.6L14.5 14.5"/></svg>
+          Search
+        </span>
+      </span>
     </div>
     <div class="wbody">
       <div class="notes">
-        <h3>about me</h3>
-        <ul>
-          <li>NYU student working on growth, brand, and culture for early-stage
-              companies.</li>
-          <li>I like work that has to actually perform: a page that converts, a program
-              people apply to, a brand that sounds like a person.</li>
-          <li>Right now: I&rsquo;m building Fomo&rsquo;s college growth program and figuring
-              out how to turn campuses into real distribution channels.</li>
-          <li>Before that: I worked on sports growth at Polymarket and spent most of my
-              time building things, testing ideas, and finding ways to get people to care.</li>
-        </ul>
-        <div class="kv">
-          <div><b>based</b><span>Soho, NYC</span></div>
-          <div><b>focus</b><span>brand · web · growth</span></div>
-        </div>
+        <aside class="note-list" aria-hidden="true">
+          <p class="nl-group">Today</p>
+          <div class="nl-row">
+            <p class="t">about me</p>
+            <p class="s"><time id="note-time">—</time> NYU student working on growth, brand,
+              and culture for early-stage companies.</p>
+          </div>
+        </aside>
+        <article class="note">
+          <p class="stamp" id="note-stamp">—</p>
+          <h3>about me</h3>
+          <ul>
+            <li>NYU student working on growth, brand, and culture for early-stage
+                companies.</li>
+            <li>I like work that has to actually perform: a page that converts, a program
+                people apply to, a brand that sounds like a person.</li>
+            <li>Right now: I&rsquo;m building Fomo&rsquo;s college growth program and figuring
+                out how to turn campuses into real distribution channels.</li>
+            <li>Before that: I worked on sports growth at Polymarket and spent most of my
+                time building things, testing ideas, and finding ways to get people to care.</li>
+          </ul>
+          <div class="kv">
+            <div><b>based</b><span>Soho, NYC</span></div>
+            <div><b>focus</b><span>brand · web · growth</span></div>
+          </div>
+        </article>
       </div>
     </div>
   </section>
@@ -618,7 +708,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 <!-- ── dock ────────────────────────────────────────── -->
 <nav class="dock" aria-label="Open windows">
   <button type="button" class="d-work on" data-open="win-work">work<span class="run"></span><span class="tip">Work</span></button>
-  <button type="button" class="d-notes on" data-open="win-notes">ab<span class="run"></span><span class="tip">About</span></button>
+  <button type="button" class="d-notes on" data-open="win-notes">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#ic-notes"/></svg>
+    <span class="run"></span><span class="tip">About</span></button>
   <button type="button" class="d-mail on" data-open="win-contact">@<span class="run"></span><span class="tip">Contact</span></button>
   <span class="sep" aria-hidden="true"></span>
   <a class="d-fomo" href="/fomo">fm<span class="tip">fomo campus ↗</span></a>
@@ -640,8 +732,17 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
   /* ── clock ─────────────────────────────────────── */
   var clock = document.getElementById('clock');
+  /* Notes stamps a note with when it was last edited, and lists it by time —
+     here that is now, since the note is written into the page. */
+  var noteStamp = document.getElementById('note-stamp'),
+      noteTime  = document.getElementById('note-time');
   function tick(){
-    clock.textContent = new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+    var now  = new Date();
+    var time = now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+    clock.textContent = time;
+    if (noteTime)  noteTime.textContent = time;
+    if (noteStamp) noteStamp.textContent =
+      now.toLocaleDateString([], {month:'long', day:'numeric', year:'numeric'}) + ' at ' + time;
   }
   tick(); setInterval(tick, 20000);
 
