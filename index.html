@@ -261,10 +261,36 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   border-right:1px solid var(--nt-line)}
 .note .kv span{padding:7px 10px}
 
-/* ── contact window ─────────────────────────────────── */
-.contact{padding:20px 22px;display:grid;gap:10px}
-.contact p{font-family:var(--serif);font-size:.98rem;color:var(--ink-2)}
-.contact .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+/* ── contact window ─────────────────────────────────────
+   Dressed as Mail's compose window, the way the one above it is dressed
+   as Notes: header fields over a hairline, then the message. */
+#win-contact{
+  --ml-paper:#FFFFFF; --ml-line:rgba(0,0,0,.11);
+  --ml-ink:#1D1D1F; --ml-dim:#86868B; --ml-blue:#0A6CFF;
+  font-family:var(--sf)}
+#win-contact .tbar{background:linear-gradient(180deg,#F8F7F5,#EDECEA);border-bottom:1px solid var(--ml-line)}
+#win-contact .crumb{color:var(--ml-dim);letter-spacing:-.01em}
+#win-contact .crumb b{color:var(--ml-ink);font-weight:590}
+#win-contact .wbody{background:var(--ml-paper)}
+#win-contact .wbody::-webkit-scrollbar-thumb{background:rgba(0,0,0,.22);border-color:var(--ml-paper)}
+#win-contact .ntools{margin-left:auto;display:flex;align-items:center;gap:12px;flex:none;color:#5C5C60}
+#win-contact .ntools svg{width:14px;height:14px;display:block;flex:none}
+
+.mail{color:var(--ml-ink)}
+/* the header fields: grey label, value, hairline under each row */
+.mail .fr{display:flex;align-items:center;gap:9px;min-height:26px;padding:3px 16px;
+  border-bottom:1px solid var(--ml-line);font-size:.78rem}
+.mail .fl{flex:none;width:50px;color:var(--ml-dim)}
+.mail .fv{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* an addressed recipient, the way Mail tokenises one */
+.mail .token{display:inline-block;padding:2px 7px;border-radius:5px;
+  background:rgba(10,108,255,.13);color:var(--ml-ink);
+  transition:background .15s}
+.mail .token:hover{background:rgba(10,108,255,.24)}
+/* the message body, and the signature under it */
+.mail .msg{padding:12px 17px 10px;font-size:.82rem;line-height:1.5}
+.mail .sig{margin-top:9px;color:var(--ml-dim)}
+.mail .sig a{color:var(--ml-blue);text-decoration:underline;text-underline-offset:2px}
 
 /* ── dock ───────────────────────────────────────────── */
 .dock{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:40;
@@ -281,7 +307,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .dock .d-notes{background:none;box-shadow:none;border-radius:0;
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.34))}
 .dock .d-notes svg{width:100%;height:100%;display:block}
-.dock .d-mail{background:linear-gradient(160deg,#F2F2F2,#C9C9C9);color:#17150F}
+.dock .d-mail{background:none;box-shadow:none;border-radius:0;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.34))}
+.dock .d-mail svg{width:100%;height:100%;display:block}
 .dock .d-fomo{background:linear-gradient(160deg,#7B8DFF,#3D53E0)}
 /* Photos: the app's own icon, which brings its own squircle — so no tile
    behind it, and a drop shadow that follows the artwork's edge */
@@ -332,6 +360,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   .dock button,.dock a{width:42px;height:42px}
   /* the note fills the card on its own once the window is the page */
   #win-notes .search{display:none}
+  /* and the subject has the room to run on rather than ellipsing */
+  .mail .fr{align-items:flex-start}
+  .mail .fl{padding-top:1px}
+  .mail .fv{white-space:normal}
   .note{padding:12px 18px 20px}
   .hint{display:none}
 }
@@ -376,6 +408,16 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     <g stroke="#E2E0DB" stroke-width="6" stroke-linecap="round">
       <path d="M19 47h62M19 63h62M19 79h40"/>
     </g>
+    <rect x=".5" y=".5" width="99" height="99" rx="23" fill="none" stroke="rgba(0,0,0,.14)"/>
+  </symbol>
+  <symbol id="ic-mail" viewBox="0 0 100 100">
+    <linearGradient id="ic-mail-b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3FB9FF"/><stop offset="1" stop-color="#0A64F5"/>
+    </linearGradient>
+    <rect x=".5" y=".5" width="99" height="99" rx="23" fill="url(#ic-mail-b)"/>
+    <rect x="17" y="30" width="66" height="40" rx="7" fill="#fff"/>
+    <path d="M20 34l30 22 30-22" fill="none" stroke="#4FA9FF" stroke-width="5.5"
+          stroke-linecap="round" stroke-linejoin="round"/>
     <rect x=".5" y=".5" width="99" height="99" rx="23" fill="none" stroke="rgba(0,0,0,.14)"/>
   </symbol>
 </svg>
@@ -687,15 +729,38 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         <button type="button" class="m" data-act="min"   aria-label="Minimize contact window"><span>–</span></button>
         <button type="button" class="z" data-act="zoom"  aria-label="Zoom contact window"><span>+</span></button>
       </span>
+      <svg class="app-icon" viewBox="0 0 100 100" aria-hidden="true"><use href="#ic-mail"/></svg>
       <span class="crumb">Mail <b>/ new message</b></span>
+      <span class="ntools" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.4 1.6L7.3 8.7M14.4 1.6l-4.6 12.8-2.5-5.7-5.7-2.5z"/>
+        </svg>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 7.4l-5.6 5.7a3.2 3.2 0 0 1-4.6-4.5l6-6a2.1 2.1 0 0 1 3 3l-6 6a1 1 0 0 1-1.5-1.4l5.3-5.4"/>
+        </svg>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1.6 13.4L5.4 3.1l3.8 10.3M2.9 10.2h5M14.4 8.2v5.2M14.4 9.7a2.6 2.6 0 1 0 0 3.7"/>
+        </svg>
+      </span>
     </div>
     <div class="wbody">
-      <div class="contact">
-        <p>Freelance, a role, or something you want built &mdash; send it over.</p>
-        <div class="row">
-          <a class="btn btn-p" href="mailto:mmm10305@nyu.edu">mmm10305@nyu.edu</a>
-          <a class="btn btn-g" href="https://www.linkedin.com/in/milo-messina-3b64b62b2/"
-             target="_blank" rel="me noopener">LinkedIn</a>
+      <div class="mail">
+        <div class="fr">
+          <span class="fl">To:</span>
+          <a class="token" href="mailto:mmm10305@nyu.edu">mmm10305@nyu.edu</a>
+        </div>
+        <div class="fr">
+          <span class="fl">Subject:</span>
+          <span class="fv">Freelance, a role, or something you want built</span>
+        </div>
+        <div class="msg">
+          Send it over.
+          <p class="sig">milo messina &middot;
+            <a href="https://www.linkedin.com/in/milo-messina-3b64b62b2/"
+               target="_blank" rel="me noopener">LinkedIn</a></p>
         </div>
       </div>
     </div>
@@ -711,7 +776,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   <button type="button" class="d-notes on" data-open="win-notes">
     <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#ic-notes"/></svg>
     <span class="run"></span><span class="tip">About</span></button>
-  <button type="button" class="d-mail on" data-open="win-contact">@<span class="run"></span><span class="tip">Contact</span></button>
+  <button type="button" class="d-mail on" data-open="win-contact">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#ic-mail"/></svg>
+    <span class="run"></span><span class="tip">Contact</span></button>
   <span class="sep" aria-hidden="true"></span>
   <a class="d-fomo" href="/fomo">fm<span class="tip">fomo campus ↗</span></a>
   <a class="d-photos" href="/photos">
