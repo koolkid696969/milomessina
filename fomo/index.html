@@ -386,11 +386,37 @@ body::after{display:none}
 .map-fit>.map-wrap{transform:scale(var(--map-s));transform-origin:top center}
 #map.tight{padding-block:clamp(40px,4vw,64px)}
 #map.tighter{padding-block:12px}
-.map-hint{display:none}
+/* ── the map on a phone ─────────────────────────────────
+   940px is where the table stops fitting, and swiping a five-column grid
+   sideways on a phone reads as badly as it sounds. Below that the same data
+   becomes one seat's eight weeks, with chips to change seat or lay all five
+   out under each week — one column, one direction of scroll. */
+.map-m{display:none}
 @media(max-width:940px){
-  .map-hint{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;
-    color:var(--muted-2);margin-bottom:10px}
+  .map-fit{display:none}
+  /* capped and left-aligned so it sits under the heading rather than
+     floating in the middle of a tablet width */
+  .map-m{display:block;max-width:560px}
 }
+.mm-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.mm-chip{font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:8px 13px;border:1px solid var(--line);border-radius:100px;color:var(--muted);
+  transition:color .22s,border-color .22s,background .22s}
+.mm-chip[aria-pressed="true"]{color:var(--c,var(--violet-hi));border-color:var(--c,var(--violet));
+  background:rgba(255,255,255,.05)}
+.mm-list{list-style:none;border:1px solid var(--line);border-radius:var(--r-l);background:var(--ink-2);overflow:hidden}
+.mm-row{display:flex;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.mm-row:last-child,.mm-blk:last-child{border-bottom:none}
+.mm-wk{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.04em;
+  color:var(--c,var(--violet));flex:none;width:42px;padding-top:3px}
+.mm-goal{font-size:.9rem;line-height:1.45;color:#C9CCDA;font-weight:500}
+/* all five at once: the week label heads its own block of five lines */
+.mm-blk{padding:14px 16px;border-bottom:1px solid var(--line)}
+.mm-blk .mm-wk{display:block;width:auto;padding-top:0;margin-bottom:10px}
+.mm-seats{list-style:none;display:grid;gap:9px}
+.mm-seats li{font-size:.86rem;line-height:1.4;color:#C9CCDA;font-weight:500}
+.mm-seats b{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;
+  text-transform:uppercase;font-weight:500;margin-bottom:1px}
 .map{width:100%;min-width:940px;border-collapse:collapse}
 .map th,.map td{padding:12px 18px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);
   font-size:.85rem;line-height:1.4}
@@ -634,7 +660,10 @@ body::after{display:none}
       <h2>sixty days,<br>written down.</h2>
     </div>
 
-    <p class="map-hint rv" data-core>swipe the table sideways &rarr;</p>
+    <div class="map-m rv" data-core>
+      <div class="mm-chips" id="mmChips"></div>
+      <ol class="mm-list" id="mmList"></ol>
+    </div>
     <div class="map-fit rv" data-core>
       <div class="map-wrap">
       <table class="map">
@@ -737,6 +766,44 @@ document.getElementById('mapBody').innerHTML=MAP.map((row,i)=>
   row.map((cell,k)=>`<td data-c="${SEATKEYS[k]}">${cell}</td>`).join('')+
   `</tr>`).join('');
 
+/* ── the same eight weeks, built for a phone ────────────
+   seat names come off the table head and seat colours off the role cards, so
+   there is still one place to change either. mmSeat follows the seat picked
+   anywhere on the page; 'all' lays every seat out under each week. */
+const mmChips=document.getElementById('mmChips'),mmList=document.getElementById('mmList');
+const SEATNAME={},SEATCOL={};
+document.querySelectorAll('.map thead th[data-c]').forEach(th=>SEATNAME[th.dataset.c]=th.textContent.trim());
+document.querySelectorAll('#roles .rcard').forEach(c=>SEATCOL[c.dataset.r]=c.style.getPropertyValue('--rc-txt').trim());
+let mmSeat='content';
+
+function mmPaint(){
+  if(!mmList)return;
+  const all=mmSeat==='all',col=SEATKEYS.indexOf(mmSeat);
+  mmList.style.setProperty('--c',all?'var(--violet)':SEATCOL[mmSeat]);
+  mmList.innerHTML=all
+    ? MAP.map((row,i)=>`<li class="mm-blk"><span class="mm-wk">wk ${i+1}</span><ul class="mm-seats">`+
+        row.map((cell,k)=>`<li><b style="color:${SEATCOL[SEATKEYS[k]]}">${SEATNAME[SEATKEYS[k]]}</b>${cell}</li>`).join('')+
+        `</ul></li>`).join('')
+    : MAP.map((row,i)=>
+        `<li class="mm-row"><span class="mm-wk">wk ${i+1}</span><span class="mm-goal">${row[col]}</span></li>`).join('');
+  [...mmChips.children].forEach(b=>b.setAttribute('aria-pressed',b.dataset.s===mmSeat));
+}
+
+if(mmChips){
+  /* the chips sit on one line each: 'campus president' is the column head,
+     'president' is the chip */
+  mmChips.innerHTML=SEATKEYS.map(k=>
+    `<button class="mm-chip" type="button" data-s="${k}" style="--c:${SEATCOL[k]}" aria-pressed="false">${SEATNAME[k].replace(/^campus /,'')}</button>`
+  ).join('')+`<button class="mm-chip" type="button" data-s="all" aria-pressed="false">all five</button>`;
+  mmChips.addEventListener('click',e=>{
+    const b=e.target.closest('.mm-chip');if(!b)return;
+    /* a seat goes through setRole so the cards, the panel and the desktop
+       table stay in step with what the phone list is showing */
+    if(b.dataset.s==='all'){mmSeat='all';mmPaint();}else setRole(b.dataset.s);
+  });
+  mmPaint();
+}
+
 /* ── keep 03 on one screen ──────────────────────────────
    The table is artwork: don't reflow it to fit. Pull the section's own
    padding in first, then scale what's left of the overflow away as a single
@@ -786,6 +853,7 @@ function setRole(key){
   const r=ROLES[key];
   const lt=document.getElementById('liTitle'),ls=document.getElementById('liSkills');
   if(lt){lt.textContent=r.li;ls.textContent=r.skills;}
+  mmSeat=key;mmPaint();
   document.querySelectorAll('.rpanel.on .rv,.rpanel.on').forEach(el=>el.classList.add('in'));
 }
 document.getElementById('roles').addEventListener('click',e=>{
