@@ -27,14 +27,13 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 
 /* ── the head ───────────────────────────────────────── */
 .top{text-align:center;padding-block:clamp(40px,7vw,76px) clamp(30px,4vw,44px)}
-.top .h1{font-size:clamp(2.2rem,5.6vw,3.9rem);margin-top:20px}
+.top .h1{font-size:clamp(2.2rem,5.6vw,3.9rem);margin-top:0}
 .top p{color:#A9A2CC;font-size:clamp(1rem,1.3vw,1.1rem);max-width:46ch;margin:20px auto 0}
 
 /* ── the form as one rail, the way the campus page stacks its rows ── */
 .rail{border-top:1px solid var(--line);padding-bottom:clamp(50px,8vw,90px)}
 .step{border-bottom:1px solid var(--line);padding-block:clamp(26px,3.6vw,40px)}
-.step > .eyebrow{margin-bottom:20px}
-.step h3{font-size:clamp(1.35rem,2.4vw,1.75rem);font-weight:500;letter-spacing:-.03em;margin:6px 0 20px}
+.step h3{font-size:clamp(1.35rem,2.4vw,1.75rem);font-weight:500;letter-spacing:-.03em;margin:0 0 20px}
 .step p.say{font-size:.88rem;line-height:1.5;color:var(--muted);max-width:56ch;margin:-10px 0 20px}
 .fset{margin:0}
 legend{display:none}
@@ -66,7 +65,6 @@ legend{display:none}
 <div class="wrap">
 
   <div class="top rv">
-    <span class="eyebrow" id="ey">applications open</span>
     <h1 class="h1" id="hd">apply for<br><span class="grad">a seat.</span></h1>
     <p id="sub">one seat, five minutes. we read every application and reply either way.</p>
   </div>
@@ -75,7 +73,6 @@ legend{display:none}
     <div class="banner"></div>
 
     <section class="step rv">
-      <span class="eyebrow">01 &mdash; the seat</span>
       <h3>which one do you want?</h3>
       <fieldset class="fset">
         <legend>the seat you want</legend>
@@ -92,7 +89,6 @@ legend{display:none}
     </section>
 
     <section class="step rv">
-      <span class="eyebrow">02 &mdash; you</span>
       <h3>who's applying.</h3>
       <fieldset class="fset">
         <legend>who you are</legend>
@@ -120,7 +116,6 @@ legend{display:none}
     </section>
 
     <section class="step rv">
-      <span class="eyebrow">03 &mdash; your links</span>
       <h3>where you post.</h3>
       <p class="say">All optional. No following is required for any seat.</p>
       <fieldset class="fset">
@@ -138,7 +133,6 @@ legend{display:none}
     </section>
 
     <section class="step rv">
-      <span class="eyebrow">04 &mdash; in your words</span>
       <h3>the part we actually read.</h3>
       <fieldset class="fset">
         <legend>the part we actually read</legend>
@@ -162,7 +156,6 @@ legend{display:none}
     </section>
 
     <section class="step rv">
-      <span class="eyebrow">05 &mdash; send it</span>
       <h3>two boxes, then you're done.</h3>
       <fieldset class="fset">
         <legend>before you send it</legend>
@@ -170,7 +163,7 @@ legend{display:none}
           <label class="chk"><input type="checkbox" name="confirm_student" required>
             <span>I'm currently enrolled at the university above.</span><span class="err"></span></label>
           <label class="chk"><input type="checkbox" name="confirm_advice" required>
-            <span>I understand ambassadors don't give financial advice, and that I'd be a 1099 contractor rather than an employee.</span><span class="err"></span></label>
+            <span>I understand ambassadors don't give financial advice.</span><span class="err"></span></label>
         </div>
       </fieldset>
 
@@ -203,32 +196,27 @@ legend{display:none}
 /* one entry per seat: the line under the picker, the question we ask for it,
    and how to answer it. everything else about the role lives on /fomo. */
 const SEATS={
- pres:{name:'campus president',ey:'applying · campus president',
-   h:'apply to run<br><span class="grad">your campus.</span>',
+ pres:{name:'campus president',h:'apply to run<br><span class="grad">your campus.</span>',
    note:'<b>One per campus.</b> You run the other four seats and you\'re the line to HQ.',
    q:'Name something you\'ve run before — a club, a team, a house — and tell us what went wrong with it.',
    qh:'What went wrong and what you did about it matters more than the thing succeeding.',
    ph:'What it was, what broke, what you did.'},
- growth:{name:'growth',ey:'applying · growth',
-   h:'apply to own<br><span class="grad">the number.</span>',
+ growth:{name:'growth',h:'apply to own<br><span class="grad">the number.</span>',
    note:'<b>One per campus.</b> Content brings people to the edge; you get them over it.',
    q:'A video gets 50,000 views and 2 downloads. What do you check first, and what do you change?',
    qh:"There's no single right answer — we want to see how you think about a funnel.",
    ph:'Walk us through it the way you\'d actually work it out.'},
- partner:{name:'partnerships',ey:'applying · partnerships',
-   h:'apply to close<br><span class="grad">the rooms.</span>',
-   note:'<b>One per campus.</b> Clubs, chapters and local businesses — none of it is yours yet.',
+ partner:{name:'partnerships',h:'apply to close<br><span class="grad">the rooms.</span>',
+   note:'<b>One per campus.</b> Clubs, chapters and local businesses.',
    q:'Which three orgs or businesses on your campus would you go after first, and do you know anyone at them?',
    qh:'Name them. "The finance club" is weaker than "AKPsi, and my roommate is on their exec board".',
    ph:'Three names, and your way in to each.'},
- content:{name:'content',ey:'applying · content',
-   h:'apply to run<br><span class="grad">the feed.</span>',
+ content:{name:'content',h:'apply to run<br><span class="grad">the feed.</span>',
    note:'<b>The most applied-for seat</b>, and the only one that can take two people at a campus.',
    q:'Give us one hook for a video about money at your school. Just the first line.',
    qh:'The opening line is most of the job, so this is the closest thing we have to a work sample.',
    ph:'One line. The thing you\'d say in the first three seconds.'},
- culture:{name:'culture',ey:'applying · culture',
-   h:'apply to own<br><span class="grad">the room.</span>',
+ culture:{name:'culture',h:'apply to own<br><span class="grad">the room.</span>',
    note:'<b>One per campus.</b> fomo pays for the dinners; you decide who\'s at the table.',
    q:'Name three creators, DJs or promoters at your school you could get to a dinner — and how you know them.',
    qh:'Name them. "Some campus influencers" is weaker than three names and how you\'d text each one.',
@@ -241,7 +229,6 @@ let seat=SEATS[q.get('role')]?q.get('role'):'content';
 function paint(){
   const s=SEATS[seat];
   document.getElementById('seatInput').value=seat;
-  document.getElementById('ey').textContent=s.ey;
   document.getElementById('hd').innerHTML=s.h;
   document.getElementById('seatNote').innerHTML=s.note;
   document.getElementById('qLabel').innerHTML=s.q+' <span class="count" data-count-for="roleq"></span>';
