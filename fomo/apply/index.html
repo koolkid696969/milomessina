@@ -5,11 +5,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>apply — fomo campus</title>
 <meta name="description" content="Apply for one of the five seats on your campus team: president, growth, partnerships, content or culture.">
-<meta name="theme-color" content="#08070F">
+<meta name="theme-color" content="#060510">
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/fomo/assets/base.css">
+<style>
+/* the campus page's own palette and radii, so this reads as the same site */
+:root{
+  --ink:#060510; --ink-2:#12111A; --ink-3:#1A1926;
+  --text:#F7F7F7; --muted:#9899A3; --muted-2:#6B6F7B;
+  --line:rgba(203,208,235,.1); --line-2:rgba(203,208,235,.2);
+  --surface:#12111A; --surface-2:rgba(255,255,255,.12);
+  --violet-hi:#8A9BFF; --glow-v:none;
+  --r-m:12px; --r-l:16px; --r-xl:25px;
+  --maxw:820px;
+}
+header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150%);border-bottom-color:var(--line)}
+@media(max-width:620px){header{position:static}header.stuck{background:none;backdrop-filter:none;border-bottom-color:transparent}}
+.nav .back{margin:0 0 0 auto;font-size:.8rem;letter-spacing:.14em;white-space:nowrap}
+@media(max-width:520px){.nav .back .long{display:none}}
 
+/* ── the head ───────────────────────────────────────── */
+.top{text-align:center;padding-block:clamp(40px,7vw,76px) clamp(30px,4vw,44px)}
+.top .h1{font-size:clamp(2.2rem,5.6vw,3.9rem);margin-top:20px}
+.top p{color:#A9A2CC;font-size:clamp(1rem,1.3vw,1.1rem);max-width:46ch;margin:20px auto 0}
+
+/* ── the form as one rail, the way the campus page stacks its rows ── */
+.rail{border-top:1px solid var(--line);padding-bottom:clamp(50px,8vw,90px)}
+.step{border-bottom:1px solid var(--line);padding-block:clamp(26px,3.6vw,40px)}
+.step > .eyebrow{margin-bottom:20px}
+.step h3{font-size:clamp(1.35rem,2.4vw,1.75rem);font-weight:500;letter-spacing:-.03em;margin:6px 0 20px}
+.step p.say{font-size:.88rem;line-height:1.5;color:var(--muted);max-width:56ch;margin:-10px 0 20px}
+.fset{margin:0}
+legend{display:none}
+
+/* the seat row keeps the rail's proportions rather than base.css's boxes */
+.seat{background:transparent}
+.seat.on{background:rgba(81,106,246,.16)}
+#seatNote{display:block;margin-top:12px;font-size:.86rem;line-height:1.5;color:#B4ADD4}
+#seatNote b{color:var(--text);font-weight:600}
+
+.actions{border-top:0;padding-top:0;margin-top:22px}
+.done{margin-block:clamp(40px,7vw,80px)}
+@media(max-width:620px){.top{text-align:left}.top p{margin-inline:0}}
+</style>
 </head>
 <body>
 
@@ -19,165 +58,141 @@
 <header id="hdr">
   <nav class="nav">
     <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
+    <a class="back" href="/fomo">&larr; <span class="long">back to </span>campus</a>
   </nav>
 </header>
 
 <main>
-
 <div class="wrap">
-  <div class="pagehead rv">
-    <a class="back" href="/fomo">← back to the campus page</a>
-    <span class="eyebrow" id="ey">apply · one seat</span>
+
+  <div class="top rv">
+    <span class="eyebrow" id="ey">applications open</span>
     <h1 class="h1" id="hd">apply for<br><span class="grad">a seat.</span></h1>
-    <p id="sub">Five seats per campus, and you're applying to exactly one of them. It takes about five minutes. We read everything and reply either way, usually inside a week.</p>
+    <p id="sub">one seat, five minutes. we read every application and reply either way.</p>
   </div>
 
-  <div class="formwrap">
-    <form id="applyForm" novalidate>
-      <div class="banner"></div>
+  <form id="applyForm" class="rail" novalidate>
+    <div class="banner"></div>
 
-      <div class="card">
-        <fieldset class="fset">
-          <legend>the seat you want</legend>
-          <div class="seatpick" id="seatpick">
-            <button type="button" class="seat" data-s="pres"><b>president</b><small>lead the campus</small></button>
-            <button type="button" class="seat" data-s="growth"><b>growth</b><small>own the number</small></button>
-            <button type="button" class="seat" data-s="partner"><b>partnerships</b><small>close the rooms</small></button>
-            <button type="button" class="seat" data-s="content"><b>content</b><small>run the feed</small></button>
-            <button type="button" class="seat" data-s="culture"><b>culture</b><small>own the room</small></button>
-          </div>
-          <input type="hidden" name="seat" id="seatInput" value="content" required>
-          <span class="hint" id="seatHint"></span>
-        </fieldset>
-      </div>
-
-      <div class="card">
-        <fieldset class="fset">
-          <legend>who you are</legend>
-          <div class="frow">
-            <label class="f"><span>Full name</span>
-              <input type="text" name="full_name" required autocomplete="name" placeholder="Maya Rodriguez">
-              <span class="err"></span></label>
-            <label class="f"><span>Email</span>
-              <input type="email" name="email" required autocomplete="email" placeholder="you@school.edu">
-              <span class="err"></span></label>
-          </div>
-          <div class="frow">
-            <label class="f"><span>University</span>
-              <input type="text" name="university" required placeholder="University of Michigan">
-              <span class="err"></span></label>
-            <label class="f"><span>Graduating in</span>
-              <select name="grad_year" required>
-                <option value="">select a year</option>
-                <option>2026</option><option>2027</option><option>2028</option>
-                <option>2029</option><option>2030</option><option>Other</option>
-              </select>
-              <span class="err"></span></label>
-          </div>
-          <label class="f"><span>Phone <em>— optional, only used if you're moving to an interview</em></span>
-            <input type="tel" name="phone" autocomplete="tel" placeholder="+1 555 000 0000"></label>
-        </fieldset>
-      </div>
-
-      <div class="card">
-        <fieldset class="fset">
-          <legend>where you already post</legend>
-          <p class="hint" style="margin:-8px 0 16px">No following is required for any seat — we ask so we know what you're comfortable with, not to filter you out.</p>
-          <div class="frow">
-            <label class="f"><span>TikTok handle <em>— optional</em></span>
-              <input type="text" name="tiktok" placeholder="@yourhandle"></label>
-            <label class="f"><span>Instagram handle <em>— optional</em></span>
-              <input type="text" name="instagram" placeholder="@yourhandle"></label>
-          </div>
-          <label class="f"><span>Something you've made <em>— optional</em></span>
-            <input type="url" name="portfolio" placeholder="link to a post, a club you ran, anything">
-            <span class="hint">A single link. A video, a newsletter, an event you organised — whatever makes the case best.</span>
-            <span class="err"></span></label>
-        </fieldset>
-      </div>
-
-      <div class="card">
-        <fieldset class="fset">
-          <legend>the part we actually read</legend>
-          <label class="f"><span>Why this seat, and why you? <span class="count" data-count-for="why"></span></span>
-            <textarea id="why" name="why_you" required maxlength="600"
-              placeholder="Three or four honest sentences beats a paragraph of buzzwords."></textarea>
-            <span class="err"></span></label>
-          <label class="f"><span id="qLabel">Role question</span>
-            <textarea id="roleq" name="role_answer" required maxlength="600" placeholder=""></textarea>
-            <span class="hint" id="qHint"></span>
-            <span class="err"></span></label>
-          <label class="f"><span>Hours a week you can genuinely commit</span>
-            <select name="hours" required>
-              <option value="">pick one</option>
-              <option>2–4 hours</option><option>4–6 hours</option>
-              <option>6–8 hours</option><option>8+ hours</option>
-            </select>
-            <span class="hint">Be honest here. Under-promising and delivering is how campuses finish the sixty days.</span>
-            <span class="err"></span></label>
-        </fieldset>
-      </div>
-
-      <div class="card">
-        <fieldset class="fset">
-          <legend>before you send it</legend>
-          <div class="checks">
-            <label class="chk"><input type="checkbox" name="confirm_student" required>
-              <span>I'm currently enrolled at the university above.</span><span class="err"></span></label>
-            <label class="chk"><input type="checkbox" name="confirm_advice" required>
-              <span>I understand ambassadors don't give financial advice, and that I'd be a 1099 contractor rather than an employee.</span><span class="err"></span></label>
-            <label class="chk"><input type="checkbox" name="confirm_contact">
-              <span>You can text me about this application. <em style="color:var(--muted-2)">Optional.</em></span></label>
-          </div>
-        </fieldset>
-
-        <div class="actions">
-          <button class="btn btn-p" type="submit">send my application →</button>
-          <span class="note">takes ~5 min · we reply either way</span>
+    <section class="step rv">
+      <span class="eyebrow">01 &mdash; the seat</span>
+      <h3>which one do you want?</h3>
+      <fieldset class="fset">
+        <legend>the seat you want</legend>
+        <div class="seatpick" id="seatpick">
+          <button type="button" class="seat" data-s="pres"><b>president</b><small>lead the campus</small></button>
+          <button type="button" class="seat" data-s="growth"><b>growth</b><small>own the number</small></button>
+          <button type="button" class="seat" data-s="partner"><b>partnerships</b><small>close the rooms</small></button>
+          <button type="button" class="seat" data-s="content"><b>content</b><small>run the feed</small></button>
+          <button type="button" class="seat" data-s="culture"><b>culture</b><small>own the room</small></button>
         </div>
-      </div>
-    </form>
+        <input type="hidden" name="seat" id="seatInput" value="content" required>
+        <span id="seatNote"></span>
+      </fieldset>
+    </section>
 
-    <aside>
-      <div class="card aside">
-        <h4 id="asideTitle">what this seat does</h4>
-        <ul id="asideList"></ul>
+    <section class="step rv">
+      <span class="eyebrow">02 &mdash; you</span>
+      <h3>who's applying.</h3>
+      <fieldset class="fset">
+        <legend>who you are</legend>
+        <div class="frow">
+          <label class="f"><span>Full name</span>
+            <input type="text" name="full_name" required autocomplete="name" placeholder="Maya Rodriguez">
+            <span class="err"></span></label>
+          <label class="f"><span>Email</span>
+            <input type="email" name="email" required autocomplete="email" placeholder="you@school.edu">
+            <span class="err"></span></label>
+        </div>
+        <div class="frow">
+          <label class="f"><span>University</span>
+            <input type="text" name="university" required placeholder="University of Michigan">
+            <span class="err"></span></label>
+          <label class="f"><span>Graduating in</span>
+            <select name="grad_year" required>
+              <option value="">select a year</option>
+              <option>2026</option><option>2027</option><option>2028</option>
+              <option>2029</option><option>2030</option><option>Other</option>
+            </select>
+            <span class="err"></span></label>
+        </div>
+      </fieldset>
+    </section>
+
+    <section class="step rv">
+      <span class="eyebrow">03 &mdash; your links</span>
+      <h3>where you post.</h3>
+      <p class="say">All optional. No following is required for any seat.</p>
+      <fieldset class="fset">
+        <legend>where you already post</legend>
+        <div class="frow">
+          <label class="f"><span>TikTok</span>
+            <input type="text" name="tiktok" placeholder="@yourhandle"></label>
+          <label class="f"><span>Instagram</span>
+            <input type="text" name="instagram" placeholder="@yourhandle"></label>
+        </div>
+        <label class="f"><span>Something you've made</span>
+          <input type="url" name="portfolio" placeholder="a post, a club, an event — one link">
+          <span class="err"></span></label>
+      </fieldset>
+    </section>
+
+    <section class="step rv">
+      <span class="eyebrow">04 &mdash; in your words</span>
+      <h3>the part we actually read.</h3>
+      <fieldset class="fset">
+        <legend>the part we actually read</legend>
+        <label class="f"><span>Why this seat, and why you? <span class="count" data-count-for="why"></span></span>
+          <textarea id="why" name="why_you" required maxlength="600"
+            placeholder="Three or four honest sentences beats a paragraph of buzzwords."></textarea>
+          <span class="err"></span></label>
+        <label class="f"><span id="qLabel">Role question</span>
+          <textarea id="roleq" name="role_answer" required maxlength="600" placeholder=""></textarea>
+          <span class="hint" id="qHint"></span>
+          <span class="err"></span></label>
+        <label class="f"><span>Hours a week you can genuinely commit</span>
+          <select name="hours" required>
+            <option value="">pick one</option>
+            <option>2–4 hours</option><option>4–6 hours</option>
+            <option>6–8 hours</option><option>8+ hours</option>
+          </select>
+          <span class="hint">Under-promising and delivering is how campuses finish the sixty days.</span>
+          <span class="err"></span></label>
+      </fieldset>
+    </section>
+
+    <section class="step rv">
+      <span class="eyebrow">05 &mdash; send it</span>
+      <h3>two boxes, then you're done.</h3>
+      <fieldset class="fset">
+        <legend>before you send it</legend>
+        <div class="checks">
+          <label class="chk"><input type="checkbox" name="confirm_student" required>
+            <span>I'm currently enrolled at the university above.</span><span class="err"></span></label>
+          <label class="chk"><input type="checkbox" name="confirm_advice" required>
+            <span>I understand ambassadors don't give financial advice, and that I'd be a 1099 contractor rather than an employee.</span><span class="err"></span></label>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button class="btn btn-p" type="submit">send my application &rarr;</button>
       </div>
-      <div class="card aside">
-        <h4>what you'd get</h4>
-        <div class="krow"><span>Budget for events, dinners and prizes</span><b>fomo funds it</b></div>
-        <div class="krow"><span>Gear — mic, tripod, banner, merch</span><b>free</b></div>
-        <div class="krow"><span>Numbers you own for your résumé</span><b>yes</b></div>
-        <div class="krow"><span>Cost to you</span><b>$0, ever</b></div>
-        <div class="krow"><span>Programme length</span><b>60 days</b></div>
-      </div>
-      <div class="card aside">
-        <h4>one seat, not five</h4>
-        <p style="font-size:.87rem;line-height:1.55;color:#B4ADD4">Apply to the role you actually want. If it's taken at your school we'll tell you which of the other four are open rather than reassigning you.</p>
-      </div>
-    </aside>
-  </div>
+    </section>
+  </form>
 
   <div class="done">
     <div class="tick">✓</div>
     <h2>application in.</h2>
-    <p class="msg">We read every one and reply either way, usually inside a week. If your campus already has the seat filled we'll tell you what else is open rather than leaving you hanging.</p>
+    <p class="msg">We reply either way, usually inside a week. If your campus already has the seat filled we'll tell you what else is open.</p>
     <div class="dump" style="display:none"></div>
   </div>
-</div>
 
+</div>
 </main>
 
 <footer>
   <div class="wrap">
-    <div class="f-grid">
-      <div>
-        <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
-        <p>Where traders become legends — and five students turn a campus into a channel.</p>
-      </div>
-    </div>
     <div class="f-bot">
-      <span>© 2026 FOMO LABS INC. · CAMPUS PROGRAM</span>
       <span>TRADING INVOLVES RISK. CAMPUS TEAMS DO NOT PROVIDE FINANCIAL ADVICE.</span>
     </div>
   </div>
@@ -185,47 +200,39 @@
 
 <script src="/fomo/assets/form.js?v=2"></script>
 <script>
+/* one entry per seat: the line under the picker, the question we ask for it,
+   and how to answer it. everything else about the role lives on /fomo. */
 const SEATS={
- pres:{name:'campus president',ey:'apply · campus president',
+ pres:{name:'campus president',ey:'applying · campus president',
    h:'apply to run<br><span class="grad">your campus.</span>',
-   sub:"One president per school. You run the other four seats and you're the main line to fomo HQ — the Sunday meeting, the Sunday report, and the call when it's going well and when it isn't.",
-   hint:'One seat per campus. If yours is taken we\'ll tell you which of the other four are open.',
-   q:'Name something you\'ve run before — a club, a team, a house, a group project — and tell us what went wrong with it.',
-   qh:'We care far more about what went wrong and what you did about it than about the thing succeeding.',
-   ph:'What it was, what broke, what you did.',
-   own:['One group chat, and everything goes in it','A 20-minute Sunday meeting you run','The Sunday report to HQ, sent without being chased','The month one review and the 60-day report','Filling a seat when someone steps back']},
- growth:{name:'growth',ey:'apply · growth',
+   note:'<b>One per campus.</b> You run the other four seats and you\'re the line to HQ.',
+   q:'Name something you\'ve run before — a club, a team, a house — and tell us what went wrong with it.',
+   qh:'What went wrong and what you did about it matters more than the thing succeeding.',
+   ph:'What it was, what broke, what you did.'},
+ growth:{name:'growth',ey:'applying · growth',
    h:'apply to own<br><span class="grad">the number.</span>',
-   sub:'Content brings people to the edge; you get them over it. Downloads are easy — the number on your seat is people still using the app after they signed up.',
-   hint:'One seat per campus. Usually the last one filled, which makes it the easiest to get.',
+   note:'<b>One per campus.</b> Content brings people to the edge; you get them over it.',
    q:'A video gets 50,000 views and 2 downloads. What do you check first, and what do you change?',
-   qh:"There's no single right answer. We want to see how you think about a funnel.",
-   ph:'Walk us through it the way you\'d actually work it out.',
-   own:['Knowing the app cold before you sell it to anyone','The campus group-chat blitz','Walking new people through their first trade','The week five referral competition','Converting the traffic the dinners and events bring in']},
- partner:{name:'partnerships',ey:'apply · partnerships',
+   qh:"There's no single right answer — we want to see how you think about a funnel.",
+   ph:'Walk us through it the way you\'d actually work it out.'},
+ partner:{name:'partnerships',ey:'applying · partnerships',
    h:'apply to close<br><span class="grad">the rooms.</span>',
-   sub:"The finance club has 200 members. The frat has a listserv. The café by the library has a window. None of it is yours yet, and getting it is a different skill from making videos.",
-   hint:'One seat per campus. Often open even at schools with a full team.',
+   note:'<b>One per campus.</b> Clubs, chapters and local businesses — none of it is yours yet.',
    q:'Which three orgs or businesses on your campus would you go after first, and do you know anyone at them?',
-   qh:'Name them specifically. "The finance club" is weaker than "AKPsi, and my roommate is on their exec board".',
-   ph:'Three names, and your way in to each.',
-   own:['Club and org partnerships','Greek chapter deals and house-wide pushes','Local business co-promos','Collabs with the biggest creators on your campus','Sponsors and venues for the events Culture runs']},
- content:{name:'content',ey:'apply · content',
+   qh:'Name them. "The finance club" is weaker than "AKPsi, and my roommate is on their exec board".',
+   ph:'Three names, and your way in to each.'},
+ content:{name:'content',ey:'applying · content',
    h:'apply to run<br><span class="grad">the feed.</span>',
-   sub:"The school's fomo IG and TikTok are yours, mic in hand. Short, fast, local — you already know what's going viral at your school. Funny beats polished, and posted beats perfect.",
-   hint:'The most applied-for seat, and the only one that can take two people at a campus.',
+   note:'<b>The most applied-for seat</b>, and the only one that can take two people at a campus.',
    q:'Give us one hook for a video about money at your school. Just the first line.',
-   qh:"The opening line is most of the job, so this is the closest thing we have to a work sample. Numbers, stakes and named places tend to land.",
-   ph:'One line. The thing you\'d say in the first three seconds.',
-   own:['The campus accounts, live in week one','Street interviews once the mic lands','Three formats tested by week three, then repeat the winner','Covering the activation, the dinners and the big event','Killing your worst format weekly, doubling the best']},
- culture:{name:'culture',ey:'apply · culture',
+   qh:'The opening line is most of the job, so this is the closest thing we have to a work sample.',
+   ph:'One line. The thing you\'d say in the first three seconds.'},
+ culture:{name:'culture',ey:'applying · culture',
    h:'apply to own<br><span class="grad">the room.</span>',
-   sub:'You make the fomo influencer dinners happen — the list, the DMs, the venue and the night itself. fomo pays for it; you decide who\'s at the table.',
-   hint:'One seat per campus. The one that decides whether the right people show up.',
+   note:'<b>One per campus.</b> fomo pays for the dinners; you decide who\'s at the table.',
    q:'Name three creators, DJs or promoters at your school you could get to a dinner — and how you know them.',
-   qh:'Name them specifically. "Some campus influencers" is weaker than three names and how you\'d text each one.',
-   ph:'Three names, and your way in to each.',
-   own:['A list of thirty campus creators in week one','The first ten DMs by week two','Locking relationships and scouting the venue','Dinner one in week five, dinner two by week eight','The follow-up after, which is where it pays off']}
+   qh:'Name them. "Some campus influencers" is weaker than three names and how you\'d text each one.',
+   ph:'Three names, and your way in to each.'}
 };
 
 const q=new URLSearchParams(location.search);
@@ -236,15 +243,13 @@ function paint(){
   document.getElementById('seatInput').value=seat;
   document.getElementById('ey').textContent=s.ey;
   document.getElementById('hd').innerHTML=s.h;
-  document.getElementById('sub').textContent=s.sub;
-  document.getElementById('seatHint').textContent=s.hint;
+  document.getElementById('seatNote').innerHTML=s.note;
   document.getElementById('qLabel').innerHTML=s.q+' <span class="count" data-count-for="roleq"></span>';
   document.getElementById('qHint').textContent=s.qh;
   document.getElementById('roleq').placeholder=s.ph;
-  document.getElementById('asideTitle').textContent='what '+s.name+' does';
-  document.getElementById('asideList').innerHTML=s.own.map(o=>'<li>'+o+'</li>').join('');
   document.querySelectorAll('#seatpick .seat').forEach(b=>b.classList.toggle('on',b.dataset.s===seat));
   document.title='apply · '+s.name+' — fomo campus';
+  /* the label is rewritten above, so its counter has to be re-wired each time */
   const c=document.querySelector('[data-count-for="roleq"]');
   if(c){const t=document.getElementById('roleq');
     const u=()=>c.textContent=t.value.length+'/600';t.addEventListener('input',u);u();}
