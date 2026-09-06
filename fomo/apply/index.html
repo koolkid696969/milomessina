@@ -29,6 +29,8 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 .top{text-align:center;padding-block:clamp(40px,7vw,76px) clamp(30px,4vw,44px)}
 .top .h1{font-size:clamp(2.2rem,5.6vw,3.9rem);margin-top:0}
 .top .lock{white-space:nowrap}
+/* the word is short, so start the ramp in colour rather than in white */
+.top .h1 .grad{background-image:linear-gradient(100deg,#A3B0FF 0%,#7FA0FF 34%,#19D97C 100%)}
 .top p{color:#A9A2CC;font-size:clamp(1rem,1.3vw,1.1rem);max-width:46ch;margin:20px auto 0}
 
 /* ── the form as one rail, the way the campus page stacks its rows ── */
@@ -197,15 +199,15 @@ legend{display:none}
 /* one entry per seat: the line under the picker, the question we ask for it,
    and how to answer it. everything else about the role lives on /fomo. */
 const SEATS={
- pres:{name:'campus president',note:'<b>One per campus.</b> You run the other four seats and you\'re the line to HQ.',
+ pres:{name:'campus president',note:'You run the other four seats and you\'re the line to HQ.',
    q:'Name something you\'ve run before — a club, a team, a house — and tell us what went wrong with it.',
    qh:'What went wrong and what you did about it matters more than the thing succeeding.',
    ph:'What it was, what broke, what you did.'},
- growth:{name:'growth',note:'<b>One per campus.</b> Content brings people to the edge; you get them over it.',
+ growth:{name:'growth',note:'Content brings people to the edge; you get them over it.',
    q:'A video gets 50,000 views and 2 downloads. What do you check first, and what do you change?',
    qh:"There's no single right answer — we want to see how you think about a funnel.",
    ph:'Walk us through it the way you\'d actually work it out.'},
- partner:{name:'partnerships',note:'<b>One per campus.</b> Clubs, chapters and local businesses.',
+ partner:{name:'partnerships',note:'Clubs, chapters and local businesses.',
    q:'Which three orgs or businesses on your campus would you go after first, and do you know anyone at them?',
    qh:'Name them. "The finance club" is weaker than "AKPsi, and my roommate is on their exec board".',
    ph:'Three names, and your way in to each.'},
@@ -213,7 +215,7 @@ const SEATS={
    q:'Give us one hook for a video about money at your school. Just the first line.',
    qh:'The opening line is most of the job, so this is the closest thing we have to a work sample.',
    ph:'One line. The thing you\'d say in the first three seconds.'},
- culture:{name:'culture',note:'<b>One per campus.</b> fomo pays for the dinners; you decide who\'s at the table.',
+ culture:{name:'culture',note:'fomo pays for the dinners; you decide who\'s at the table.',
    q:'Name three creators, DJs or promoters at your school you could get to a dinner — and how you know them.',
    qh:'Name them. "Some campus influencers" is weaker than three names and how you\'d text each one.',
    ph:'Three names, and your way in to each.'}
