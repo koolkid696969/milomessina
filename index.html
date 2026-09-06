@@ -187,9 +187,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 }
 .pane ul li{display:flex;gap:10px;font-size:.92rem;color:var(--ink-2);line-height:1.5}
 .pane ul li::before{content:'→';color:var(--red);flex:none}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
-.tags i{font-style:normal;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted);border:1px solid var(--line);border-radius:100px;padding:5px 10px;background:var(--paper-2)}
 .pane .cta{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:22px;
   padding-top:18px;border-top:1px solid var(--line)}
 .btn{display:inline-flex;align-items:center;gap:.5em;padding:10px 17px;border-radius:100px;
@@ -212,9 +209,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 
 /* ── notes window ───────────────────────────────────── */
 .notes{padding:20px 22px}
-.notes h3{font-size:1.02rem;letter-spacing:-.02em;margin-bottom:4px}
-.notes .stamp{font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--muted-2);margin-bottom:14px}
+/* the heading carries the gap the date line used to hold open */
+.notes h3{font-size:1.02rem;letter-spacing:-.02em;margin-bottom:14px}
 .notes ul{list-style:none;display:grid;gap:11px}
 .notes li{display:flex;gap:9px;font-size:.88rem;line-height:1.5;color:var(--ink-2)}
 .notes li::before{content:'→';color:var(--muted-2);flex:none}
@@ -301,7 +297,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .win.fit-tight .pane .role{margin-top:8px}
 .win.fit-tight .pane .body{margin-top:12px}
 .win.fit-tight .pane ul{margin-top:12px;gap:7px}
-.win.fit-tight .tags{margin-top:12px}
 .win.fit-tighter .pane{padding:13px 20px}
 .win.fit-tighter .pane h2{font-size:1.6rem}
 .win.fit-tighter .pane .role{margin-top:6px}
@@ -310,7 +305,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .win.fit-tighter .pane{--body-fs:.94rem;--body-lh:1.45;--deck:1.1rem}
 .win.fit-tighter .pane ul{gap:5px}
 .win.fit-tighter .pane ul li{font-size:.87rem;line-height:1.45}
-.win.fit-tighter .tags{margin-top:6px}
 .win.fit-tighter .lockup{font-size:.85rem;padding:6px 11px}
 .win.fit-tighter .lockup svg{width:16px;height:16px}
 /* a fitted window ends just under the tag row: the pane's full bottom
@@ -513,7 +507,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
             </svg><b>fomo</b><i>/campus</i>
           </a>
         </div>
-        <p class="role">brand · copy · front-end</p>
         <div class="split">
           <div class="body">
             <p>
@@ -528,7 +521,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
             <li>Application, submission and weekly-report forms with live validation</li>
           </ul>
         </div>
-        <div class="tags"><i>brand</i><i>copywriting</i><i>front-end</i><i>forms</i><i>2026</i></div>
       </div>
 
       <!-- POLYMARKET -->
@@ -549,7 +541,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
             <li>100M+ views generated</li>
           </ul>
         </div>
-        <div class="tags"><i>sports growth</i><i>paid partnerships</i><i>creator deals</i><i>[year]</i></div>
         <div class="shots">
           <a href="/assets/pm-nbacentral-warriors.jpg" target="_blank" rel="noopener">
             <img src="/assets/pm-nbacentral-warriors.jpg" width="1206" height="2019" loading="lazy"
@@ -580,7 +571,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     <div class="wbody">
       <div class="notes">
         <h3>about me</h3>
-        <p class="stamp">last edited today</p>
         <ul>
           <li>NYU student working on growth, brand, and culture for early-stage
               companies.</li>
@@ -789,23 +779,29 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     notes.style.setProperty('--x', rightX + 'px');
     notes.style.setProperty('--y', TOP + 'px');
 
-    /* The tag row is the last thing that has to clear the fold, so size the
-       windows to it rather than to a fixed step, and stop where the name
+    /* Whatever ends the pane is the last thing that has to clear the fold, so
+       size the windows to it rather than to a fixed step, and stop where the name
        starts. When the room isn't there, tighten the pane a step at a time
        instead of guessing viewport breakpoints. offsetTop is measured from
        the window, so it holds whatever height the window currently has. */
     var pane = work.querySelector('.pane:not([hidden])'),
-        tags = pane && pane.querySelector('.tags'),
+        tail = pane && pane.lastElementChild,
         name = document.querySelector('.brand');
-    if (tags && name) {
+    if (tail && name) {
       work.classList.add('fitted');
       var cap  = Math.round(name.offsetTop - TOP - SHADOW_GAP);
       var want = 0;
       for (var s = 0; s < FIT_STEPS.length; s++) {
         work.className = work.className.replace(/ ?fit-tight(er)?/g, '') + FIT_STEPS[s];
-        want = Math.ceil(tags.offsetTop + tags.offsetHeight +
+        want = Math.ceil(tail.offsetTop + tail.offsetHeight +
                         (parseFloat(getComputedStyle(pane).paddingBottom) || 0)) + ROUND;
         if (want <= cap) break;
+      }
+      /* the two windows share a height, so the pair has to clear whichever of
+         them is taller — otherwise notes loses its last rows off the bottom */
+      var nbar = notes.querySelector('.tbar'), nbody = notes.querySelector('.wbody');
+      if (nbody) {
+        want = Math.max(want, (nbar ? nbar.offsetHeight : 0) + nbody.scrollHeight + ROUND);
       }
       /* too short to keep the shadow clear as well: take the content over the
          shadow and go back to stopping at the name's edge */
