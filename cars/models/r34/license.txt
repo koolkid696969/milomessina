@@ -1,0 +1,6 @@
+{
+  "author": "Ddiaz Design (https://sketchfab.com/ddiaz-design)",
+  "license": "CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)",
+  "source": "https://sketchfab.com/3d-models/2005-nismo-nissan-skyline-r34-gtr-z-tune-6a0e311f8c404fbaad783ed587014c1d",
+  "title": "2005 Nismo Nissan Skyline R34 GTR Z Tune"
+}

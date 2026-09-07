@@ -1,0 +1,6 @@
+{
+  "author": "Ddiaz Design (https://sketchfab.com/ddiaz-design)",
+  "license": "CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)",
+  "source": "https://sketchfab.com/3d-models/1969-ford-mustang-mach-1-428-cobra-jet-679cdf81b9854759860b0afe9d1e4012",
+  "title": "1969 Ford Mustang Mach-1 428 Cobra Jet"
+}

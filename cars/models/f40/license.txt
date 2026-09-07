@@ -1,0 +1,6 @@
+1989 Ferrari F40 LM by Ddiaz Design
+https://sketchfab.com/3d-models/1989-ferrari-f40-lm-8f67f3c0bbcc4e7084ee7f49cab9c7db
+Creative Commons Attribution 4.0: https://creativecommons.org/licenses/by/4.0/
+Source credits: Real Racing 3; https://www.vertex-warehouse.com/models
+Modified for this scene: duplicate hood/camera meshes and opaque inner windows removed; Draco geometry compression; silver paint and physical material adjustments.
+Ron’s vehicle is an F40 with a period LM conversion, not a factory LM. This asset is an approximation.

@@ -1,0 +1,6 @@
+{
+  "author": "Ddiaz Design (https://sketchfab.com/ddiaz-design)",
+  "license": "CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)",
+  "source": "https://sketchfab.com/3d-models/1994-toyota-supra-mk-iv-bomex-fast-furious-126c185845724e0eadb35229677ba44b",
+  "title": "1994 Toyota Supra MK IV Bomex Fast & Furious"
+}
