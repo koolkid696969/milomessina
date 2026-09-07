@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pick your poison — fomo campus</title>
+<meta name="description" content="Four ways into fomo at your school: campus wars, a seat on the campus team, hosting a dinner, or posting for pay. One map, every page.">
+<meta name="theme-color" content="#08070F">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/fomo/assets/base.css">
+<style>
+/* base.css carries the palette, the type and the shell. everything below
+   is the map and nothing else — this page is a junction, not a landing. */
+header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150%);border-bottom-color:var(--line)}
+@media(max-width:620px){header{position:static}header.stuck{background:none;backdrop-filter:none;border-bottom-color:transparent}}
+
+.head{padding-block:clamp(46px,7vw,84px) clamp(28px,4vw,44px);text-align:center}
+.head .h1{font-size:clamp(2.7rem,7.4vw,5.4rem);margin-top:20px}
+.head .lede{font-size:clamp(1rem,1.3vw,1.14rem);max-width:52ch;margin:24px auto 0;color:#A9A2CC}
+
+/* ── the map ─────────────────────────────────────────
+   one root, four branches. the rail is drawn per lane: each lane paints a
+   hairline across its own width plus half a gutter either side, and the two
+   end lanes paint only their inner half, so the four pieces meet as one
+   line running centre to centre. */
+.map{padding-bottom:clamp(56px,8vw,96px)}
+.stem{display:flex;justify-content:center;position:relative;padding-bottom:42px}
+.stem::after{content:'';position:absolute;left:calc(50% - .5px);bottom:0;width:1px;height:42px;background:var(--line-2)}
+
+.root{display:inline-flex;align-items:center;gap:13px;padding:15px 22px 15px 16px;border-radius:100px;
+  border:1px solid rgba(81,106,246,.45);background:linear-gradient(165deg,rgba(81,106,246,.16),rgba(81,106,246,.05));
+  box-shadow:var(--glow-v);transition:transform .28s cubic-bezier(.2,.8,.3,1),box-shadow .28s,border-color .28s}
+.root:hover{transform:translateY(-2px);border-color:var(--violet);
+  box-shadow:0 0 0 1px rgba(81,106,246,.55),0 26px 70px -18px rgba(81,106,246,.75)}
+.root .logo-mark{width:30px;height:30px}
+.root b{font-family:var(--display);font-weight:700;font-size:1.12rem;letter-spacing:-.045em}
+.root b i{font-style:normal;color:var(--muted-2)}
+.root small{font-family:var(--mono);font-size:.63rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--violet-hi);padding-left:13px;border-left:1px solid rgba(255,255,255,.14)}
+
+.lanes{--g:clamp(12px,1.5vw,22px);display:grid;grid-template-columns:repeat(4,1fr);gap:var(--g);align-items:start}
+.lane{position:relative;padding-top:26px}
+.lane::before{content:'';position:absolute;top:0;left:calc(var(--g) / -2);right:calc(var(--g) / -2);height:1px;background:var(--line-2)}
+.lane:first-child::before{left:calc(50% - .5px)}
+.lane:last-child::before{right:50%}
+.lane::after{content:'';position:absolute;top:0;left:calc(50% - .5px);width:1px;height:26px;background:var(--line-2)}
+.lane-tag{display:block;text-align:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--a);margin-bottom:14px}
+
+/* the card is a div so the seat links inside it stay valid markup; the title
+   link stretches over the whole card to keep the big click target */
+.node{position:relative;border:1px solid var(--line);border-radius:var(--r-m);padding:20px;
+  background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
+  transition:transform .28s cubic-bezier(.2,.8,.3,1),border-color .28s,box-shadow .28s,background .28s}
+.node .go{display:flex;align-items:flex-start;gap:10px}
+.node .go::after{content:'';position:absolute;inset:0;border-radius:inherit}
+.node h2{font-size:1.24rem;letter-spacing:-.04em;flex:1}
+.node .arr{font-size:.9rem;color:var(--muted-2);transition:color .28s,transform .28s;flex:none;line-height:1.3}
+.node p{font-size:.85rem;line-height:1.5;color:var(--muted);margin-top:9px}
+.node:has(a.go:hover),.node:has(a.go:focus-visible){transform:translateY(-3px);border-color:var(--a);
+  background:linear-gradient(165deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  box-shadow:0 24px 60px -26px color-mix(in srgb,var(--a) 70%,transparent)}
+.node:has(a.go:hover) .arr,.node:has(a.go:focus-visible) .arr{color:var(--a);transform:translate(2px,-2px)}
+.node .go:focus-visible{outline:none}
+
+/* not open yet: dashed, quieter, and it goes nowhere */
+.node.soon{border-style:dashed;background:rgba(255,255,255,.018)}
+.node.soon h2{color:var(--muted)}
+.node.soon p{color:var(--muted-2)}
+
+.stat{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;
+  text-transform:uppercase;padding:5px 10px;border-radius:100px;border:1px solid var(--line-2);color:var(--a);
+  border-color:color-mix(in srgb,var(--a) 40%,transparent);
+  background:color-mix(in srgb,var(--a) 10%,transparent)}
+.stat.off{border-color:var(--line-2);color:var(--muted-2);background:none}
+
+/* children hang off a rail down the left. each child paints its own slice of
+   that rail — the gap above it plus its own height — so the last one can stop
+   at its tick instead of running on to the bottom of the card. */
+.kids{position:relative;display:grid;gap:10px;margin-top:12px;padding-left:24px}
+.kid{position:relative}
+.kid::before{content:'';position:absolute;left:-15px;top:-10px;bottom:0;width:1px;background:var(--line-2)}
+.kid:first-child::before{top:-12px}
+.kid:last-child::before{bottom:auto;height:34px}
+.kid::after{content:'';position:absolute;left:-15px;top:24px;width:15px;height:1px;background:var(--line-2)}
+.kid .node{padding:16px 17px}
+.kid .node h2{font-size:1.02rem}
+.kid .node p{font-size:.81rem;margin-top:6px}
+.kid .stat{margin-top:11px}
+
+.seats{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:13px}
+.seats a{font-family:var(--mono);font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;
+  padding:6px 9px;border-radius:100px;border:1px solid var(--line);color:var(--muted);transition:.22s}
+.seats a:hover{border-color:var(--a);color:var(--text);background:color-mix(in srgb,var(--a) 12%,transparent)}
+
+.legend{display:flex;justify-content:center;align-items:center;gap:22px;flex-wrap:wrap;
+  margin-top:clamp(30px,4vw,46px);font-family:var(--mono);font-size:.63rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted-2)}
+.legend span{display:inline-flex;align-items:center;gap:9px}
+.legend i{width:20px;height:0;border-top:1px solid var(--line-2);display:block}
+.legend i.d{border-top-style:dashed}
+
+@media(max-width:1080px){
+  .lanes{grid-template-columns:1fr 1fr;gap:clamp(14px,2.4vw,22px)}
+  .lane{padding-top:0}
+  .lane::before,.lane::after{display:none}
+  .stem{padding-bottom:28px}
+  .stem::after{height:28px}
+  .lane-tag{text-align:left}
+}
+@media(max-width:640px){
+  .lanes{grid-template-columns:1fr}
+  .head{text-align:left}
+  .head .lede{margin-inline:0}
+  .legend{justify-content:flex-start}
+}
+/* :has drives every hover state above; without it the cards simply sit still */
+@supports not selector(:has(a)){
+  .node:hover{transform:translateY(-3px);border-color:var(--a)}
+  .node.soon:hover{transform:none;border-color:var(--line)}
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="aurora"><i></i><i></i><i></i></div>
+
+<header id="hdr">
+  <nav class="nav">
+    <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
+  </nav>
+</header>
+
+<main>
+<div class="wrap">
+
+  <section class="head rv">
+    <span class="eyebrow">fomo campus</span>
+    <h1 class="h1">pick your<br><span class="grad">poison.</span></h1>
+    <p class="lede">four ways into fomo at your school &mdash; from one video on your phone to running the whole campus. take the one you'd actually do.</p>
+  </section>
+
+  <div class="map rv">
+
+    <div class="stem">
+      <a class="root" href="/fomo">
+        <span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>
+        <b>fomo<i>/campus</i></b>
+        <small>what this is &rarr;</small>
+      </a>
+    </div>
+
+    <div class="lanes">
+
+      <div class="lane" style="--a:var(--orange)">
+        <span class="lane-tag">compete</span>
+        <div class="node soon">
+          <div class="go"><h2>campus wars</h2></div>
+          <p>your school against every other school, on one board.</p>
+          <span class="stat off">opening soon</span>
+        </div>
+      </div>
+
+      <div class="lane" style="--a:var(--violet-hi)">
+        <span class="lane-tag">run it</span>
+        <div class="node">
+          <a class="go" href="/fomo"><h2>campus team</h2><span class="arr">&#8599;</span></a>
+          <p>five seats, sixty days. you get the brand, a budget and the playbook &mdash; then we step back.</p>
+          <span class="stat">five seats per school</span>
+        </div>
+        <div class="kids">
+          <div class="kid">
+            <div class="node">
+              <a class="go" href="/fomo/apply"><h2>apply for a seat</h2><span class="arr">&#8599;</span></a>
+              <p>one form, ten minutes. or jump straight to a seat:</p>
+              <div class="seats">
+                <a href="/fomo/apply?role=pres">president</a>
+                <a href="/fomo/apply?role=growth">growth</a>
+                <a href="/fomo/apply?role=partner">partnerships</a>
+                <a href="/fomo/apply?role=content">content</a>
+                <a href="/fomo/apply?role=culture">culture</a>
+              </div>
+            </div>
+          </div>
+          <div class="kid">
+            <div class="node">
+              <a class="go" href="/fomo/report"><h2>weekly report</h2><span class="arr">&#8599;</span></a>
+              <p>sundays, straight to HQ.</p>
+              <span class="stat off">team only</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lane" style="--a:var(--pink)">
+        <span class="lane-tag">host</span>
+        <div class="node soon">
+          <div class="go"><h2>host a dinner</h2></div>
+          <p>get your people around one table, and make it the night everyone hears about.</p>
+          <span class="stat off">opening soon</span>
+        </div>
+      </div>
+
+      <div class="lane" style="--a:var(--green)">
+        <span class="lane-tag">post</span>
+        <div class="node">
+          <a class="go" href="/fomo/submit"><h2>post &amp; get paid</h2><span class="arr">&#8599;</span></a>
+          <p>post about money, tag @fomo, send us the link. you get paid on views.</p>
+          <span class="stat">no team needed</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="legend">
+      <span><i></i> open now</span>
+      <span><i class="d"></i> not open yet</span>
+    </p>
+
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
+        <p>Where traders become legends &mdash; and five students turn a campus into a team.</p>
+      </div>
+    </div>
+    <div class="f-bot">
+      <span>&copy; 2026 FOMO LABS INC. &middot; CAMPUS PROGRAM</span>
+      <span>TRADING INVOLVES RISK. CAMPUS TEAMS DO NOT PROVIDE FINANCIAL ADVICE.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/fomo/assets/form.js?v=2"></script>
+</body>
+</html>
