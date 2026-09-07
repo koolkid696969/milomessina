@@ -80,7 +80,9 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
   color:var(--muted-2);font-weight:500;margin-bottom:20px}
 .krow{font-size:.92rem;padding:14px 0}
 .krow b{font-size:.86rem}
-.calc-lab{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2)}
+/* sits where the rates card's heading sits, so the two cards line up */
+.calc-lab{display:block;font-family:var(--mono);font-size:.62rem;line-height:.94;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted-2)}
 .calc-views{font-family:var(--display);font-size:clamp(1.4rem,2.2vw,1.8rem);font-weight:500;letter-spacing:-.04em;margin-top:6px}
 .calc-pay{font-family:var(--display);font-size:clamp(2.6rem,5.4vw,3.6rem);font-weight:500;letter-spacing:-.05em;
   line-height:1;margin-top:18px;
@@ -227,12 +229,11 @@ footer{margin-top:0}
       </div>
 
       <div class="paycard">
-        <h4>what that looks like</h4>
         <span class="calc-lab">if this video lands at</span>
         <div class="calc-views" id="eV">100K views</div>
         <input type="range" class="sl" id="eS" min="0" max="1000" value="606" style="--p:60.6%" aria-label="estimated views">
         <div class="sl-ends"><span>1K</span><span>2M+</span></div>
-        <span class="calc-lab" style="display:block;margin-top:20px">you get</span>
+        <span class="calc-lab" style="margin-top:20px">you get</span>
         <div class="calc-pay" id="eP">$210</div>
         <p class="calc-note">Drag it. Estimate only &mdash; we pay on the real count when we check it.</p>
       </div>
