@@ -52,6 +52,12 @@ legend{display:none}
 
 .actions{border-top:0;padding-top:0;margin-top:22px}
 .done{margin-block:clamp(40px,7vw,80px)}
+/* the page ends on the submit button, so the rules that used to fence off
+   the footer just stack up as three empty lines under it */
+.step:last-of-type{border-bottom:0}
+footer{border-top:0}
+.f-bot{margin-top:0;padding-top:0;border-top:0}
+
 @media(max-width:620px){.top{text-align:left}.top p{margin-inline:0}}
 </style>
 </head>
