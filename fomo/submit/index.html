@@ -132,6 +132,34 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 
 footer{margin-top:0}
 </style>
+<script>
+/* Safari restores the last scroll position on reload, and an in-page link
+   leaves its #hash in the URL — either one reopens the page half way down
+   instead of on the hero. Opt out of both, and place the page ourselves
+   rather than leaving it to the browser, so a shared #send link still lands
+   on the form. */
+(function(){
+  if('scrollRestoration' in history)history.scrollRestoration='manual';
+  function place(){
+    var h=document.documentElement,b=h.style.scrollBehavior,el=null;
+    if(location.hash){try{el=document.querySelector(location.hash)}catch(e){}}
+    h.style.scrollBehavior='auto';
+    if(el){
+      /* the section's own scroll-margin-top is what keeps it clear of the
+         sticky header, so take it off the target rather than hard-coding */
+      var m=parseFloat(getComputedStyle(el).scrollMarginTop)||0;
+      window.scrollTo(0,Math.max(0,el.getBoundingClientRect().top+window.pageYOffset-m));
+    }else window.scrollTo(0,0);
+    h.style.scrollBehavior=b;
+  }
+  addEventListener('DOMContentLoaded',place);
+  addEventListener('load',place);
+  /* only when a hash arrives — clearing one is this page's own tidy-up after
+     an in-page click, and must not drag the reader back to the top */
+  addEventListener('hashchange',function(){if(location.hash)place()});
+  addEventListener('pageshow',function(e){if(e.persisted)place()});
+})();
+</script>
 </head>
 <body>
 
@@ -371,6 +399,16 @@ wireForm(document.getElementById('subForm'),{
     }
     return null;
   }
+});
+
+/* let the browser make the jump itself — it already honours the smooth
+   scrolling and the section's scroll-margin — then drop the hash so a
+   reload opens on the hero rather than back on that section */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(){
+    if(!document.querySelector(a.getAttribute('href')))return;
+    setTimeout(function(){history.replaceState(null,'',location.pathname)},0);
+  });
 });
 </script>
 </body>
