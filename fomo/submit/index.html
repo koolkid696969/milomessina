@@ -28,7 +28,10 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 
 .hero{padding-top:clamp(50px,8vw,90px);padding-bottom:clamp(56px,7vw,96px);text-align:center}
 .hero .inner{max-width:880px;margin-inline:auto}
-.hero .h1{font-size:clamp(2.4rem,6.1vw,4.9rem);margin:22px 0 0}
+.hero .h1{font-size:clamp(2.4rem,6.1vw,4.9rem);margin:0;
+  /* base.css sets .88, which drops the p of "paid" into the f and the i-dot
+     of "for views" on the line below */
+  line-height:1}
 .lede{font-size:clamp(1rem,1.3vw,1.16rem);max-width:56ch;margin:26px auto 0;color:#A9A2CC}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;justify-content:center}
 .hero-stats{display:flex;flex-wrap:wrap;justify-content:center;margin-top:clamp(34px,5vw,50px);
@@ -120,7 +123,6 @@ footer{margin-top:0}
 <section class="hero">
   <div class="wrap">
     <div class="inner">
-      <span class="eyebrow">open to anyone &middot; no campus team needed</span>
       <h1 class="h1">get paid<br><span class="grad">for views.</span></h1>
       <p class="lede">post a video about money with your face in it, tag <b>@fomo</b>, send us the link. we approve it, then we pay you on what it actually did.</p>
       <div class="hero-cta">
