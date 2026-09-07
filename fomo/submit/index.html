@@ -51,9 +51,13 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
   background:linear-gradient(100deg,#fff 6%,#A3B0FF 42%,#19D97C 94%);
   -webkit-background-clip:text;background-clip:text;color:transparent}
 @media(max-height:820px){.bignum b{font-size:clamp(3.4rem,8vw,6.4rem)}.bignum{margin-top:26px}}
-.shead{max-width:760px;margin-bottom:clamp(24px,2.8vw,38px)}
+/* every section head sits on the page's centre line, like the hero and the
+   form head above and below them */
+.shead{max-width:760px;margin:0 auto clamp(24px,2.8vw,38px);text-align:center}
+.shead .eyebrow{justify-content:center}
 .shead h2{margin:16px 0 0}
-.shead p{font-size:clamp(1rem,1.3vw,1.14rem);color:rgba(209,216,255,.6);margin-top:18px}
+.shead p{font-size:clamp(1rem,1.3vw,1.14rem);color:rgba(209,216,255,.6);
+  margin:18px auto 0;max-width:56ch}
 
 /* ── what your video needs ───────────────────────────
    five cards, numbered, read top to bottom in a glance */
@@ -67,7 +71,7 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 .req b{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--green);margin-bottom:16px}
 .req h4{font-size:1.12rem;letter-spacing:-.035em;margin-bottom:8px}
 .req p{font-size:.84rem;line-height:1.5}
-.req-note{margin-top:20px;padding:18px 20px;border-radius:var(--r-m);border:1px solid rgba(255,196,107,.28);
+.req-note{margin-top:20px;text-align:center;padding:18px 20px;border-radius:var(--r-m);border:1px solid rgba(255,196,107,.28);
   background:rgba(255,196,107,.06);font-size:.9rem;line-height:1.55;color:#EBD9BC}
 .req-note b{color:#FFC46B;font-weight:600}
 
