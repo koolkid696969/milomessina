@@ -101,6 +101,24 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 .sl-ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;color:var(--muted-2)}
 .calc-note{font-size:.8rem;color:var(--muted-2);margin-top:18px;line-height:1.5}
 
+/* ── video ideas ──────────────────────────────────
+   the point of this section is that someone lifts one and films it today,
+   so each card carries the lines themselves rather than a description of them */
+.ideas{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,1.6vw,18px);align-items:stretch}
+@media(max-width:900px){.ideas{grid-template-columns:1fr}}
+.idea{display:flex;flex-direction:column;padding:clamp(22px,2.4vw,30px);border-radius:var(--r-l);
+  border:1px solid var(--line);background:linear-gradient(170deg,rgba(255,255,255,.05),transparent);
+  transition:border-color .3s,transform .3s cubic-bezier(.2,.8,.3,1)}
+.idea:hover{border-color:var(--line-2);transform:translateY(-3px)}
+.idea .tag{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green)}
+.idea h4{font-size:1.22rem;letter-spacing:-.04em;margin:14px 0 8px}
+.idea p{font-size:.86rem;line-height:1.55;margin-bottom:18px}
+/* the lines sit under a rule so they read as the script, not as more copy */
+.idea ul{list-style:none;margin-top:auto;padding-top:18px;display:grid;gap:10px;border-top:1px solid var(--line)}
+.idea li{font-size:.87rem;line-height:1.5;color:#C9CEF0;padding-left:13px;border-left:2px solid rgba(81,106,246,.6)}
+.idea li b{color:#fff;font-weight:600}
+.ideas-note{margin-top:20px;text-align:center;font-size:.86rem;color:var(--muted-2)}
+
 /* ── the form ─────────────────────────────────────────
    a form you have to scroll to reach the button loses people, so this
    section is tuned tighter than the two above it and lands in one screen */
@@ -176,6 +194,7 @@ footer{margin-top:0}
     <div class="nav-links">
       <a href="#needs">what counts</a>
       <a href="#pays">what it pays</a>
+      <a href="#ideas">ideas</a>
       <a class="btn btn-p btn-sm navcta" href="#send">send a link &rarr;</a>
     </div>
   </nav>
@@ -273,10 +292,53 @@ footer{margin-top:0}
 </section>
 
 
+<section id="ideas">
+  <div class="wrap">
+    <div class="shead rv">
+      <span class="eyebrow">03 &mdash; ideas to steal</span>
+      <h2>three that<br>already work.</h2>
+      <p>you don't have to use these. but if you're staring at your phone with no idea what to film, start here.</p>
+    </div>
+
+    <div class="ideas rv">
+      <div class="idea">
+        <span class="tag">mirror / makeup</span>
+        <h4>GRWM for a date with a crypto guy</h4>
+        <p>You getting ready, talking to the camera about him. The bit writes itself.</p>
+        <ul>
+          <li>&ldquo;He said he trades full time so I genuinely have no idea if he's unemployed or rich.&rdquo;</li>
+        </ul>
+      </div>
+
+      <div class="idea">
+        <span class="tag">street / dorm</span>
+        <h4>girls guessing crypto terms</h4>
+        <p>Hand someone a word they've never heard and film the guess. Real answers beat anything you could script.</p>
+        <ul>
+          <li>&ldquo;What do you think <b>rugged</b> means?&rdquo;</li>
+          <li>&ldquo;What is a <b>whale</b>?&rdquo;</li>
+          <li>&ldquo;What does <b>cooked</b> mean?&rdquo;</li>
+        </ul>
+      </div>
+
+      <div class="idea">
+        <span class="tag">phone call</span>
+        <h4>girl calls her dad</h4>
+        <p>One question, one real reaction, no second take. Don't warn him it's for a video.</p>
+        <ul>
+          <li>&ldquo;Dad, what would you say if I dated a memecoin trader?&rdquo;</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="ideas-note rv">Same five rules apply &mdash; your face in it, someone else in frame, and the tag.</p>
+  </div>
+</section>
+
 <section id="send">
   <div class="wrap">
     <div class="subhead rv">
-      <span class="eyebrow">03 &mdash; send it in</span>
+      <span class="eyebrow">04 &mdash; send it in</span>
       <h2>drop the link.</h2>
     </div>
 
