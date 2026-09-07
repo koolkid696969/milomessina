@@ -1,17 +1,24 @@
 /* ─────────────────────────────────────────────────────────────
    Where submissions go.
 
-   This is the ONLY line you need to change to take these forms
-   live. Paste an endpoint that accepts a POST — Formspree, Basin,
-   Web3Forms, Getform and a Vercel serverless function all work:
+   These two lines are the only ones you need to change to take
+   the forms live. ENDPOINT is the /exec URL of the Apps Script
+   web app that writes into your Google Sheet — the whole setup
+   is nine steps in fomo/setup/README.md.
 
-     const ENDPOINT = 'https://formspree.io/f/xxxxxxxx';
+     const ENDPOINT = 'https://script.google.com/macros/s/AKfy.../exec';
 
-   Until it is set, nothing is silently swallowed: the form
-   validates, then hands the applicant their answers and tells them
-   plainly that submissions are not connected yet.
+   FORM_KEY is optional. If you set one here it has to match
+   SHARED_SECRET in the Apps Script, and random POSTs to the
+   endpoint get turned away. It travels in the page source, so
+   it stops drive-by junk, not a determined person.
+
+   Until ENDPOINT is set, nothing is silently swallowed: the form
+   validates, then hands the applicant their answers and tells
+   them plainly that submissions are not connected yet.
    ───────────────────────────────────────────────────────────── */
-const ENDPOINT = '';
+const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxDR-3zqJEQgFEY0a-f7RR_Kze-NPXF3_7mTM2txaZ1IL-z25syVX95AH8taHEYx7Ba1g/exec';
+const FORM_KEY = '';
 
 /* starfield + aurora, same as the campus page */
 (function(){
@@ -68,10 +75,14 @@ function wireForm(form,opts){
 
   function validate(){
     let bad=null;
-    form.querySelectorAll('[required]').forEach(el=>{
+    /* the optional link and email fields are checked too when they're filled in,
+       so a half-typed handle never lands in the sheet as data we can't use */
+    form.querySelectorAll('[required],input[type=url],input[type=email]').forEach(el=>{
       const v=(el.type==='checkbox')?el.checked:el.value.trim();
-      if(!v){showErr(el,el.type==='checkbox'?'You need to confirm this to submit.'
-        :el.type==='file'?'Pick a file to upload.':'This one is required.');bad=bad||el;return}
+      if(!v){
+        if(!el.hasAttribute('required')){clearErr(el);return}
+        showErr(el,el.type==='checkbox'?'You need to confirm this to submit.'
+          :el.type==='file'?'Pick a file to upload.':'This one is required.');bad=bad||el;return}
       if(el.type==='file'&&el.files[0]&&el.files[0].size>10*1024*1024){
         showErr(el,'That file is over 10MB. Export it smaller, or send it to the campus team directly.');bad=bad||el;return}
       if(el.type==='email'&&!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(el.value.trim())){
@@ -97,6 +108,9 @@ function wireForm(form,opts){
       bad.focus();bad.scrollIntoView({behavior:'smooth',block:'center'});
       return;
     }
+    /* Apps Script wants a plain string body: that keeps this a "simple"
+       CORS request, so the browser never fires a preflight Google
+       cannot answer. Files ride along as base64 in the same payload. */
     const fileInput=form.querySelector('input[type=file]');
     const data=Object.fromEntries([...new FormData(form).entries()]
       .map(([k,v])=>[k,v instanceof File?v.name:v]));
@@ -128,17 +142,18 @@ function wireForm(form,opts){
     const label=submitBtn.textContent;
     submitBtn.textContent='sending…';
     try{
-      let res;
-      if(fileInput){
-        /* multipart, so the browser sets its own boundary — never set Content-Type here */
-        const fd=new FormData(form);
-        fd.append('_page',data._page);fd.append('_submitted',data._submitted);
-        res=await fetch(ENDPOINT,{method:'POST',headers:{'Accept':'application/json'},body:fd});
-      }else{
-        res=await fetch(ENDPOINT,{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},
-          body:JSON.stringify(data)});
+      if(FORM_KEY)data._key=FORM_KEY;
+      if(fileInput&&fileInput.files[0]){
+        submitBtn.textContent='uploading…';
+        data._file=await readFile(fileInput.files[0]);
       }
-      if(!res.ok)throw new Error('HTTP '+res.status);
+      const res=await fetch(ENDPOINT,{method:'POST',body:JSON.stringify(data)});
+      if(!res.ok)throw new Error('the sheet answered HTTP '+res.status);
+      let out=null;
+      try{out=JSON.parse(await res.text())}catch(_){}
+      if(!out)throw new Error('the endpoint answered, but not with a confirmation. '+
+        'Its deployment access is probably not set to "Anyone"');
+      if(out.ok!==true)throw new Error(out.error||'the sheet turned it away');
       form.style.display='none';
       done.classList.add('on');
       done.scrollIntoView({behavior:'smooth',block:'center'});
@@ -148,5 +163,16 @@ function wireForm(form,opts){
       banner.textContent="That didn't send — "+err.message+'. Check your connection and try again; nothing was lost.';
       banner.scrollIntoView({behavior:'smooth',block:'center'});
     }
+  });
+}
+
+/* a file has to become text to travel inside the JSON payload */
+function readFile(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res({name:file.name,type:file.type||'application/octet-stream',
+      size:file.size,data:String(r.result).split(',')[1]});
+    r.onerror=()=>rej(new Error('that file could not be read off your disk'));
+    r.readAsDataURL(file);
   });
 }

@@ -130,6 +130,9 @@ input[aria-invalid=true],textarea[aria-invalid=true],select[aria-invalid=true]{b
 .krow{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-top:1px solid var(--line);font-size:.86rem}
 .krow:first-of-type{border-top:0}
 .krow b{font-family:var(--mono);font-size:.78rem;color:var(--green);text-align:right;white-space:nowrap}
+/* the honeypot: a real applicant never sees it, so anything typed in it
+   came from a bot and the sheet drops the row */
+.hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
 .banner{border-radius:14px;padding:16px 18px;font-size:.86rem;line-height:1.55;margin-bottom:22px;display:none}
 .banner.on{display:block}
 .banner.warn{border:1px solid rgba(255,164,107,.4);background:rgba(255,164,107,.1);color:#FFD2AE}
