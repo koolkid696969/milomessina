@@ -280,13 +280,10 @@ footer{margin-top:0}
                 <span class="err"></span></label>
             </div>
             <div class="frow">
-              <label class="f"><span>Pay me on</span>
-                <select name="payout_method" required>
-                  <option value="">pick one</option>
-                  <option>Venmo</option><option>PayPal</option>
-                </select>
+              <label class="f"><span>School</span>
+                <input type="text" id="school" name="school" required placeholder="University of Michigan">
                 <span class="err"></span></label>
-              <label class="f"><span>Your username there</span>
+              <label class="f"><span>Venmo or PayPal</span>
                 <input type="text" name="payout_handle" required placeholder="@your-venmo">
                 <span class="hint">Just the username &mdash; never a card or bank number.</span>
                 <span class="err"></span></label>
@@ -334,6 +331,7 @@ footer{margin-top:0}
   </div>
 </footer>
 
+<script src="/fomo/assets/schools.js?v=1"></script>
 <script src="/fomo/assets/form.js?v=2"></script>
 <script>
 /* payout estimate — same maths as the rate table above it */
@@ -355,6 +353,10 @@ footer{margin-top:0}
     v.textContent=fmt(x)+' views';p.textContent='$'+pay(x).toLocaleString();}
   sl.addEventListener('input',paint);paint();
 })();
+
+/* same list and same matching the apply page uses, so a school types out
+   into the sheet as the one string every other submission used */
+wireSchoolField(document.getElementById('school'));
 
 wireForm(document.getElementById('subForm'),{
   extra(showErr){
