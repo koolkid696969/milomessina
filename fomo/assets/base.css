@@ -148,3 +148,17 @@ input[aria-invalid=true],textarea[aria-invalid=true],select[aria-invalid=true]{b
 .done .dump{text-align:left;margin:26px auto 0;max-width:560px;font-family:var(--mono);font-size:.72rem;
   color:var(--muted);background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:18px;
   max-height:280px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+
+/* ── UNIVERSITY AUTOCOMPLETE ─────────────────────────
+   the suggestion list hangs off a .f, so the label it sits in becomes
+   the positioning context and the list floats over the row below */
+.ac-field{position:relative}
+.ac-list{position:absolute;z-index:40;left:0;right:0;margin-top:6px;padding:6px;list-style:none;
+  max-height:262px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  border:1px solid var(--line-2);border-radius:12px;background:#141322;
+  box-shadow:0 18px 40px rgba(0,0,0,.55)}
+.ac-list li{padding:10px 12px;border-radius:8px;font-size:.88rem;line-height:1.35;color:#D8D6E8;cursor:pointer}
+.ac-list li:hover,.ac-list li.on{background:rgba(81,106,246,.2);color:var(--text)}
+.ac-note b{color:var(--text);font-weight:500}
+.ac-undo{background:none;border:0;padding:0;font:inherit;color:var(--violet-hi);
+  text-decoration:underline;text-underline-offset:2px;cursor:pointer}

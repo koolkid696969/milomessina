@@ -115,7 +115,7 @@ footer{border-top:0}
         </div>
         <div class="frow">
           <label class="f"><span>University</span>
-            <input type="text" name="university" required placeholder="University of Michigan">
+            <input type="text" id="university" name="university" required placeholder="University of Michigan">
             <span class="err"></span></label>
           <label class="f"><span>Graduating in</span>
             <select name="grad_year" required>
@@ -204,6 +204,7 @@ footer{border-top:0}
   </div>
 </footer>
 
+<script src="/fomo/assets/schools.js?v=1"></script>
 <script src="/fomo/assets/form.js?v=2"></script>
 <script>
 /* one entry per seat: the line under the picker, the question we ask for it,
@@ -254,6 +255,7 @@ document.getElementById('seatpick').addEventListener('click',e=>{
   history.replaceState(null,'','?role='+seat);
 });
 paint();
+wireSchoolField(document.getElementById('university'));
 wireForm(document.getElementById('applyForm'));
 </script>
 </body>
