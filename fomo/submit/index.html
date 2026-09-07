@@ -214,16 +214,14 @@ footer{margin-top:0}
     <div class="shead rv">
       <span class="eyebrow">02 &mdash; what it pays</span>
       <h2>paid on views,<br>not on promises.</h2>
-      <p>every approved video earns something. the better it does, the higher the rate goes.</p>
+      <p>one rate, however far it goes. every approved video earns something on top of it.</p>
     </div>
 
     <div class="pay rv">
       <div class="paycard">
         <h4>the rates</h4>
         <div class="krow"><span>Every approved video</span><b>$10 floor</b></div>
-        <div class="krow"><span>Up to 100K views</span><b>$2.00 / 1K</b></div>
-        <div class="krow"><span>100K &ndash; 500K views</span><b>$3.00 / 1K</b></div>
-        <div class="krow"><span>500K+ views</span><b>$4.00 / 1K</b></div>
+        <div class="krow"><span>Every 1,000 views</span><b>$2.00</b></div>
         <div class="krow"><span>Most we'll pay on one video</span><b>$5,000</b></div>
         <div class="krow"><span>Videos you can send</span><b>no cap</b></div>
       </div>
@@ -231,8 +229,8 @@ footer{margin-top:0}
       <div class="paycard">
         <span class="calc-lab">if this video lands at</span>
         <div class="calc-views" id="eV">100K views</div>
-        <input type="range" class="sl" id="eS" min="0" max="1000" value="606" style="--p:60.6%" aria-label="estimated views">
-        <div class="sl-ends"><span>1K</span><span>2M+</span></div>
+        <input type="range" class="sl" id="eS" min="0" max="1000" value="575" style="--p:57.5%" aria-label="estimated views">
+        <div class="sl-ends"><span>1K</span><span>3M+</span></div>
         <span class="calc-lab" style="margin-top:20px">you get</span>
         <div class="calc-pay" id="eP">$210</div>
         <p class="calc-note">Drag it. Estimate only &mdash; we pay on the real count when we check it.</p>
@@ -343,17 +341,15 @@ footer{margin-top:0}
 /* payout estimate — same maths as the rate table above it */
 (function(){
   const sl=document.getElementById('eS'),v=document.getElementById('eV'),p=document.getElementById('eP');
-  const toViews=t=>{const x=1000*Math.pow(2000,t/1000);
+  const toViews=t=>{const x=1000*Math.pow(3000,t/1000);
     if(x<10000)return Math.round(x/500)*500;
     if(x<100000)return Math.round(x/1000)*1000;
     if(x<1000000)return Math.round(x/5000)*5000;
     return Math.round(x/10000)*10000;};
   const fmt=x=>x>=1e6?(x/1e6).toFixed(x>=1e7?0:2).replace(/\.?0+$/,'')+'M'
            :x>=1000?(x/1000).toFixed(x>=1e5?0:1).replace(/\.0$/,'')+'K':x;
-  function pay(x){let t=10;t+=Math.min(x,100000)/1000*2;
-    if(x>100000)t+=(Math.min(x,500000)-100000)/1000*3;
-    if(x>500000)t+=(x-500000)/1000*4;
-    return Math.min(Math.round(t),5000);}
+  /* one flat rate, plus the floor, up to the ceiling */
+  function pay(x){return Math.min(Math.round(10+x/1000*2),5000);}
   function paint(){const t=+sl.value,x=toViews(t);
     sl.style.setProperty('--p',(t/10)+'%');
     v.textContent=fmt(x)+' views';p.textContent='$'+pay(x).toLocaleString();}
