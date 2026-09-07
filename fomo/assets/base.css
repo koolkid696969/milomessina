@@ -92,7 +92,15 @@ input[type=text],input[type=email],input[type=url],input[type=tel],input[type=da
   width:100%;padding:13px 15px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);
   color:var(--text);font-family:var(--body);font-size:.92rem;transition:.24s;-webkit-appearance:none;appearance:none}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E93B5' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 15px center;background-size:12px;padding-right:40px}
+  background-repeat:no-repeat;background-position:right 15px center;background-size:12px;padding-right:40px;
+  /* macOS draws the open list itself and ignores our colours, so it comes out
+     dark either way. Windows draws it in the browser off the light system
+     scheme and off the select's own colours — a see-through white background
+     under near-white text — so the list lands unreadable there. Ask for the
+     dark scheme and paint the rows opaquely. */
+  color-scheme:dark}
+select option,select optgroup{background-color:var(--ink-2);color:var(--text)}
+select option:disabled{color:var(--muted-2)}
 textarea{min-height:104px;resize:vertical;line-height:1.55}
 input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.5;cursor:pointer}
 input[type=date]::-webkit-calendar-picker-indicator:hover{opacity:.9}
