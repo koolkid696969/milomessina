@@ -34,6 +34,19 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
   line-height:1}
 .lede{font-size:clamp(1rem,1.3vw,1.16rem);max-width:56ch;margin:26px auto 0;color:#A9A2CC}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;justify-content:center}
+.bignum{position:relative;margin-top:clamp(30px,4.2vw,52px)}
+/* a wash behind the figure so it reads as lit rather than as a large word */
+.bignum::before{content:'';position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:-1;
+  width:min(760px,92%);height:min(340px,60vw);border-radius:50%;filter:blur(70px);opacity:.5;
+  background:radial-gradient(circle,rgba(81,106,246,.5),rgba(25,217,124,.16) 52%,transparent 72%)}
+.bignum .lab,.bignum .sub{display:block;font-family:var(--mono);letter-spacing:.24em;text-transform:uppercase}
+.bignum .lab{font-size:.68rem;color:var(--muted-2)}
+.bignum .sub{font-size:.7rem;color:var(--muted)}
+.bignum b{display:block;font-family:var(--display);font-weight:700;letter-spacing:-.055em;line-height:.84;
+  font-size:clamp(4.2rem,12vw,9.5rem);margin:12px 0 14px;
+  background:linear-gradient(100deg,#fff 6%,#A3B0FF 42%,#19D97C 94%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-height:820px){.bignum b{font-size:clamp(3.4rem,8vw,6.4rem)}.bignum{margin-top:26px}}
 .shead{max-width:760px;margin-bottom:clamp(24px,2.8vw,38px)}
 .shead h2{margin:16px 0 0}
 .shead p{font-size:clamp(1rem,1.3vw,1.14rem);color:rgba(209,216,255,.6);margin-top:18px}
@@ -135,7 +148,13 @@ footer{margin-top:0}
   <div class="wrap">
     <div class="inner">
       <h1 class="h1">get paid<br><span class="grad">for views.</span></h1>
-      <p class="lede">post a video about money with your face in it, tag <b>@fomo</b>, send us the link. we approve it, then we pay you on what it actually did &mdash; <b>up to $5,000</b> on one video.</p>
+      <p class="lede">post a video about money with your face in it, tag <b>@fomo</b>, send us the link. we approve it, then we pay you on what it actually did.</p>
+      <div class="bignum">
+        <span class="lab">up to</span>
+        <b>$5,000</b>
+        <span class="sub">on one video</span>
+      </div>
+
       <div class="hero-cta">
         <a class="btn btn-p" href="#send">send a link &rarr;</a>
         <a class="btn btn-g" href="#pays">what it pays</a>
