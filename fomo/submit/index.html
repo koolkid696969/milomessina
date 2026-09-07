@@ -72,7 +72,8 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 .req-note b{color:#FFC46B;font-weight:600}
 
 /* ── what it pays ────────────────────────────────────── */
-.pay{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,22px);align-items:start}
+/* stretch, not start, so the two cards match height whatever is in them */
+.pay{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px,2vw,22px);align-items:stretch}
 @media(max-width:900px){.pay{grid-template-columns:1fr}}
 .paycard{border:1px solid var(--line);border-radius:var(--r-l);padding:clamp(24px,3vw,34px);
   background:linear-gradient(170deg,rgba(255,255,255,.05),transparent)}
