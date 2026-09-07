@@ -42,8 +42,12 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 .bignum .lab,.bignum .sub{display:block;font-family:var(--mono);letter-spacing:.24em;text-transform:uppercase}
 .bignum .lab{font-size:.68rem;color:var(--muted-2)}
 .bignum .sub{font-size:.7rem;color:var(--muted)}
-.bignum b{display:block;font-family:var(--display);font-weight:700;letter-spacing:-.055em;line-height:.84;
-  font-size:clamp(4.2rem,12vw,9.5rem);margin:12px 0 14px;
+/* background-clip:text paints the gradient only inside the padding box, so a
+   line-height under the font's own ascent+descent shears the $ and the comma
+   off. Give the box room for the glyphs rather than for the line — the extra
+   padding is at the bottom because it is the comma that hangs. */
+.bignum b{display:block;font-family:var(--display);font-weight:700;letter-spacing:-.055em;line-height:1.06;
+  font-size:clamp(4.2rem,12vw,9.5rem);padding-block:.04em .18em;margin:2px 0 0;
   background:linear-gradient(100deg,#fff 6%,#A3B0FF 42%,#19D97C 94%);
   -webkit-background-clip:text;background-clip:text;color:transparent}
 @media(max-height:820px){.bignum b{font-size:clamp(3.4rem,8vw,6.4rem)}.bignum{margin-top:26px}}
