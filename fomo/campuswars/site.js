@@ -12,6 +12,60 @@
   let selectedId = 'sigma-chi-sdsu';
   const text = (id, value) => { document.getElementById(id).textContent = value; };
 
+  // Crowds are generated from the exact same records as the chapter counters.
+  const street = document.getElementById('house-track');
+  const partyToggle = document.getElementById('party-toggle');
+  let partyPaused = reducedMotion;
+  let streetVisible = false;
+  function syncPartyMotion() {
+    street.classList.toggle('party-running', streetVisible && !partyPaused && !document.hidden);
+  }
+  cards.forEach(card => {
+    const chapter = byId.get(card.dataset.chapter);
+    if (!chapter) return;
+    const crowd = document.createElement('span');
+    crowd.className = 'party-crowd';
+    crowd.setAttribute('aria-hidden', 'true');
+    crowd.dataset.count = String(chapter.joined);
+    const people = document.createDocumentFragment();
+    FomoCrowd.positionsForMembers(chapter.joined, chapter.house).forEach(position => {
+      const person = document.createElement('span');
+      person.className = 'party-person';
+      person.dataset.member = String(position.member);
+      person.style.left = `${position.x}%`;
+      person.style.top = `${position.y}%`;
+      person.style.zIndex = String(position.layer);
+      person.style.setProperty('--person-scale', String(position.scale));
+      person.style.setProperty('--party-delay', `${position.delay}s`);
+      person.style.setProperty('--party-duration', `${position.duration}s`);
+      const sprite = document.createElement('span');
+      sprite.className = 'party-sprite';
+      sprite.style.backgroundPosition = `${(position.sprite % 6) * 20}% ${Math.floor(position.sprite / 6) * 100}%`;
+      person.append(sprite);
+      people.append(person);
+    });
+    crowd.append(people);
+    card.querySelector('.house-visual').append(crowd);
+    card.setAttribute('aria-label', `${chapter.name}, ${chapter.school}: ${chapter.joined} of ${chapter.active} onboarded, represented by ${chapter.joined} people outside.`);
+  });
+  partyToggle.hidden = reducedMotion;
+  partyToggle.addEventListener('click', () => {
+    partyPaused = !partyPaused;
+    partyToggle.textContent = partyPaused ? 'Play party' : 'Pause party';
+    partyToggle.setAttribute('aria-pressed', String(partyPaused));
+    syncPartyMotion();
+  });
+  document.addEventListener('visibilitychange', syncPartyMotion);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      streetVisible = entry.isIntersecting;
+      syncPartyMotion();
+    }, {threshold: 0}).observe(neighborhood);
+  } else {
+    streetVisible = true;
+    syncPartyMotion();
+  }
+
   function selectChapter(id, { writeHash = true, scroll = false } = {}) {
     const chapter = byId.get(id);
     if (id !== 'empty' && !chapter) return;

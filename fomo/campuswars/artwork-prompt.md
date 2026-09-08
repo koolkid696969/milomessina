@@ -1,19 +1,26 @@
-Built-in image generation; exactly one replacement panorama, no retries or variants.
+Built-in image generation, one request per asset, no retries or variants. Asset A uses three user-provided architectural reference images.
+
+## Asset A: collegiate chapter row
 
 Use case: ads-marketing
-Asset type: exactly one clean standalone panorama bitmap for a website hero. Not a website mockup.
-Primary request: a photographed handcrafted architectural scale model of FIVE genuinely DISTINCT modest lived-in American fraternity homes plus an empty lot: SIX equal-width lots in one continuous horizontal street. Wide 3:1 composition, ideally 3072x1024, uniform near-black #060510 backdrop.
-Camera and light: all buildings seen at the same camera distance and same plausible scale. Front view slightly elevated with a small right-side reveal. Consistent overcast blue-hour soft light. Tactile believable handcrafted materials, restrained grain. Real scale-model photography, no glossy fantasy render.
-STRICT COMPOSITION: Six equal-width lots with centers EXACTLY at x=8.33%, 25%, 41.67%, 58.33%, 75%, and 91.67%. Each house fits fully within its own sixth of the image width with no clipping and no overlapping lots. Every house fully visible with breathing room. ALL architectural content AND all pavement fit within central vertical band y=25% to75%, leaving ample empty near-black margin in top quarter and bottom quarter. Houses are modest two to three stories.
-Six lots from LEFT TO RIGHT:
-1. Sun-faded off-white stucco Californian Spanish Revival home, terracotta roof, arched porch.
-2. Weathered pale-blue clapboard coastal house, wide timber porch, simple railing.
-3. Restrained red-brick Greek Revival home with exactly FOUR simple white columns and an aged slate roof.
-4. Irregular tan-stone Tudor house, one front gable, dark wood framing.
-5. Warm-cream Craftsman home, broad eaves, deep porch.
-6. Undeveloped gravel lot with modest blank timber stake and subtle periwinkle #606AF7 property outline. NO wireframe mansion or building on this lot.
-Every home has a different distinctive silhouette and facade. Five distinct houses total, no extra buildings.
-Human details varied and understated across the homes: a bicycle against one porch, mismatched porch chairs, worn front steps, a basketball beside one path, a crooked mailbox, slightly overgrown neutral-brown planting, warm light in SOME windows while others are dark, uneven shutters, weathered siding. Slight natural imperfections and material variation create human charm without gross decay.
-Street: shared straight sidewalk and continuous asphalt street at the SAME baseline across all six lots. No raised platforms under individual houses, no seams or divisions in pavement. Quiet cohesive color treatment with restrained periwinkle accents and warm lights. Background entirely near-black #060510 with empty margins.
-Avoid: people, faces, words, Greek letters, logos, signage text, luxury symmetry, enormous identical mansions, glowing windows everywhere, neon glow except the restrained periwinkle empty-lot boundary, green lawns, lime, floating islands, cartoon rocks, ornate decorations, wireframe houses, UI, labels, typography, glossy AI fantasy imagery.
-Generate exactly ONE replacement original panorama.
+Asset type: one original architectural panorama for an interactive chapter competition website. Create a new original asset using attached images as architectural reference images only, NOT edit targets. Match their LARGE substantial collegiate fraternity-house scale and proportions.
+Input image 1 reference: classical red-brick chapter house with imposing paired two-story white columns and pediment, upper balcony.
+Input image 2 reference: very wide substantial red-brick house with six-column white full-width portico and broad front steps.
+Input image 3 reference: large campus chapter house, central body and side wings, big hipped roofs, broad facade, white two-story columns, well-maintained lawn.
+Primary request: WIDE 3:1 panorama, ideally 3072x1024, FIVE large richly distinct collegiate red-brick/white-column fraternity houses followed by an EMPTY sixth lot. Six equal-width lots in one continuous street, centers exactly x=8.33%,25%,41.67%,58.33%,75%,91.67%. All complete buildings visible within own sixth with no clipping or overlap.
+Camera and scale: one coherent slightly elevated, nearly frontal camera with subtle right-side reveal. Each house a substantial two-to-three-story fraternity chapter mansion with large shared living capacity, broad central body, side wings, imposing TWO-STORY white columns, grand porticoes, broad lawns and steps. These are not small single-family homes.
+Five house designs LEFT TO RIGHT within a cohesive Georgian/classical fraternity architectural family: 1 red brick with four-column pediment and upper balcony; 2 red brick with six-column full-width portico; 3 red brick hipped-roof central mansion with broad side wings and imposing columned central entry; 4 white classical facade with balcony and large lateral wings; 5 darker brick three-story fraternity house with white pilasters and a wide porch. Each silhouette and facade is distinctive. Sixth lot is empty undeveloped lawn or gravel with a subtle periwinkle #606AF7 boundary outline and a small blank stake, NO wireframe or building.
+Landscape: clean well-maintained collegiate landscaping, a few plain flags without symbols or text, upper balconies, big shared lawns. Foreground lawn must be relatively deep and CLEAR for people to be overlaid later. One continuous straight sidewalk and asphalt street at same baseline, no separate floating platforms.
+Composition: ALL roofs through pavement fit within vertical central band y=20% to80%. Houses occupy y=20% to60%, crowd-friendly unobstructed lawn occupies y=60% to78%. Generous blank near-black margins top and bottom.
+Style and light: photoreal editorial photographed architectural scale-model look, tactile materials and realistic proportions, soft afternoon-to-bluehour light. Well-kept active collegiate community. Uniform near-black #060510 background, fading into same near-black top and bottom. Sophisticated restrained color, warm light in some windows.
+Constraints: ABSOLUTELY NO PEOPLE baked into this asset. NO TEXT, Greek letters, words, numbers, signage text, logos, labels, typography. NO cottages, Craftsman or Tudor houses, no decay, abandonment, boarded windows, no fantasy cartoon, no empty-lot wireframe. Only five substantial distinct collegiate fraternity houses and one empty outlined lot.
+
+## Asset B: student atlas
+
+Use case: ads-marketing
+Asset type: one transparent photographic character sprite atlas for a website game scene.
+Primary request: EXACTLY TWELVE individual adult college students age21+, photoreal tiny-game crowd sprites. TRUE TRANSPARENT background with real alpha channel, not white or black, not a checkerboard baked into image.
+Layout: canvas exactly1536x1024, perfect SIX COLUMNS BY TWO ROWS, total12 distinct separate people. Each invisible cell is256x512 pixels. Each person centered in their own cell, whole head-to-feet body visible, fill75–85% of cell height and remain within80% of cell width. No overlaps, no touching adjacent cells, no limbs crossing cells, no shadows outside cell, no cropped heads or feet. No gridlines, borders or labels.
+Subjects: varied men8 and women4, all adults age21+, varied skin tones. College casual plain tees, jerseys, shorts, hoodies, baseball caps, casual trainers. Different outfit each person, restrained blue/cream/red/neutral colors. Small celebratory poses appropriate outdoor fraternity gathering: some hands raised but inside cell, talking gestures, casual dancing, waving, cheerful standing. Natural individual poses and anatomy, legible faces at small size, no recognizable people.
+Camera and medium: real photoreal people from front/slightly top-down camera to match a realistic slightly elevated miniature campus street scene. Consistent soft afternoon-to-bluehour light across all twelve. Full bodies suitable for cutting each person from equal atlas cells. Premium realistic photography, not cartoon or illustration.
+Constraints: exactly12 people in6x2 layout, eight men and four women. No background or ground, real transparent alpha. No logos, text, words, numbers, drinks, drugs, UI, contact-sheet gridlines, watermarks, or second person within any cell. Generate one sprite atlas only.

@@ -20,12 +20,16 @@ This page does not claim to register a chapter or create a join link itself. Exi
 
 Palette and Aeonik typography match fomo.family: near-black #060510, soft white #EAEDFF, periwinkle #606AF7. Font files were extracted from this repository's existing fomo font stylesheet.
 
-`assets/frat-row-human.jpg` is one original architectural panorama created with built-in image generation, used as a continuous background under six interactive lots. Five unique homes share a single sidewalk and consistent scale/light: Spanish Revival stucco, coastal clapboard, brick Greek Revival, stone Tudor, and Craftsman. No facades repeat. Selection changes labels and progress styling without lifting pieces of the street. The homes are visual representations, not authenticated photographs of the named chapters.
+`assets/frat-row-columns.jpg` is an original architectural panorama used as one continuous background under six interactive lots. Five substantial chapter houses share a sidewalk, consistent scale and lighting: brick pediment and balcony, a six-column portico, a mansion with broad wings, a white classical facade, and a taller dark-brick house. The sixth lot remains empty. These are visual representations, not authenticated photographs of the named chapters.
 
-Artwork brief: photograph-like handcrafted scale-model street, near-black backdrop, overcast blue-hour lighting, warm light in selected windows, modest 2–3-story homes with weathered material, porch furniture, bicycle, uneven planting and a basketball. A sixth gravel lot has a simple stake and restrained periwinkle outline. No people, text, logos, glossy mansions or wireframe house. Central band composition for responsive cropping. Generated once with no retries, 2172×724. JPEG delivery asset. Exact prompt archived in `artwork-prompt.md`.
+Architecture follows the user's three reference photos and primary references from [Maryland's Georgian fraternity row](https://fsl.umd.edu/about/history), [Maryland's House 7](https://drf.umd.edu/facilities/residence-halls-communities/house-7), and [Alabama's Kappa Sigma building plans](https://buildingbama.ua.edu/wp-content/uploads/2022/09/Kappa-Sigma-Stage-3.pdf). Tall white columns, substantial brick facades, porticoes, balconies, side wings and broad lawns replace the earlier small residential houses.
+
+`assets/party-people.png` is a transparent 6×2 atlas of twelve original adult student sprites. `crowd.js` produces deterministic positions for exactly one person per joined member. `site.js` creates 60, 34, 21, 2 and 0 sprites directly from the same records used for chapter counters: 117 total, without decorative extras or people baked into the panorama. Updating the snapshot updates the crowds on page load. Motion pauses offscreen, in hidden tabs, via the Pause party button, and for reduced-motion preferences. The empty lot has no people.
+
+Both assets were generated once without retries. Exact prompts are archived in `artwork-prompt.md`.
 
 `assets/trophy.jpg` was generated using the built-in image tool as a chrome championship trophy on a deep cobalt background with metallic confetti and no text. It is campaign imagery.
 
 ## Validation
 
-The page has no dependency install or compilation step. JavaScript syntax, local file references, unique HTML IDs, navigation anchors, and all five qualification targets were checked. The data is checked against the supplied screenshot. No test registrations were submitted.
+The page has no dependency install or compilation step. JavaScript syntax, local file references, unique HTML IDs, navigation anchors, and all five qualification targets were checked. The data is checked against the supplied screenshot. Crowd layout checks verify exact counts, unique member positions, deterministic output, sprite bounds and invalid-count rejection. No test registrations were submitted.
