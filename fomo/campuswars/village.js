@@ -7,6 +7,8 @@ const viewport=document.getElementById('village-viewport');
 const loading=document.getElementById('village-loading');
 const chapters=JSON.parse(document.getElementById('chapters-data').textContent).chapters;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+// Opening composition calibrated from the supplied street-level reference.
+const openingView={target:[1.808,2,-8.101],theta:2.956047,phi:.224457,radius:46.627674};
 let renderer;
 try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});}catch(error){
   loading.textContent='Your chapter standings are below. This device can’t open the 3D village.';
@@ -31,10 +33,9 @@ function startVillage(){
   document.addEventListener('pointerdown',takeControl,{once:true,capture:true});
   document.addEventListener('village:artwork',()=>{viewDirty=true;wake();});
   let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastActivity=0,lastRender=0,viewDirty=true,shadowX=NaN,shadowZ=NaN;
-  const target=new THREE.Vector3(0,0,0),wantedTarget=new THREE.Vector3(0,0,0),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
-  let theta=.68,phi=.38,radius=95,wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
-  function overviewRadius(){return viewport.clientWidth<650?145:viewport.clientWidth<1000?112:95;}
-  function resetView(){wantedTarget.set(0,0,0);wantedRadius=overviewRadius();wantedPhi=.38;wantedTheta=.68;wake();}
+  const target=new THREE.Vector3(...openingView.target),wantedTarget=new THREE.Vector3(...openingView.target),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+  let {theta,phi,radius}=openingView;let wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
+  function resetView(){wantedTarget.set(...openingView.target);wantedRadius=openingView.radius;wantedPhi=openingView.phi;wantedTheta=openingView.theta;wake();}
   function choose(id,focus=false){
     const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
     village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);
@@ -107,7 +108,7 @@ function startVillage(){
     const settling=target.distanceTo(wantedTarget)>.01||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     if(visible&&!document.hidden&&(!paused||settling))wake();
   }
-  wantedRadius=radius=overviewRadius();resize();resetView();
+  resize();resetView();
   const initial=new URLSearchParams(location.hash.slice(1)).get('chapter');choose(village.anchors.some(a=>a.id===initial)?initial:selected,false);
   loading.hidden=true;shell.classList.add('village-ready');wake();
 }
