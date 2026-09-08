@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js';
+import {createVillage} from './village-world.js?v=14';
 import {createDistricts} from './village-districts.js';
 
 const shell=document.getElementById('village');
@@ -24,21 +24,14 @@ function startVillage(){
   const fill=new THREE.DirectionalLight(0x788eff,.8);fill.position.set(30,15,-25);scene.add(fill);
   const village=createVillage(THREE,chapters);scene.add(village.world);
   const districts=createDistricts(THREE);scene.add(districts.root);
-  const labelLayer=document.getElementById('village-labels');
-  const labels=village.anchors.map(anchor=>{
-    const chapter=chapters.find(c=>c.id===anchor.id),button=document.createElement('button');button.type='button';button.className='village-pin';button.dataset.id=anchor.id;
-    if(chapter){button.innerHTML=`<span class="pin-letters">${chapter.letters}<small>${chapter.shortSchool}</small></span><span class="pin-count">${chapter.joined}<small> / ${chapter.active} in</small></span><span class="pin-progress"><i style="width:${Math.min(100,chapter.joined/chapter.active*100)}%"></i><b></b></span>`;button.setAttribute('aria-label',`${chapter.name}: ${chapter.joined} of ${chapter.active} onboarded. Explore this house.`);}
-    else{button.classList.add('pin-empty');button.innerHTML='<span class="pin-letters">Your house?<small>Claim this lot ↗</small></span>';button.setAttribute('aria-label','Explore the empty lot and claim your chapter');}
-    button.addEventListener('click',()=>choose(anchor.id,true));labelLayer.append(button);return {anchor,button};
-  });
-  let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastActivity=0,lastRender=0,labelsDirty=true,viewWidth=1,viewHeight=1,shadowX=NaN,shadowZ=NaN;
-  const target=new THREE.Vector3(0,0,0),wantedTarget=new THREE.Vector3(0,0,0),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(),projected=new THREE.Vector3();
+  let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastActivity=0,lastRender=0,viewDirty=true,shadowX=NaN,shadowZ=NaN;
+  const target=new THREE.Vector3(0,0,0),wantedTarget=new THREE.Vector3(0,0,0),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
   let theta=.68,phi=.79,radius=95,wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
   function overviewRadius(){return viewport.clientWidth<650?145:viewport.clientWidth<1000?112:95;}
   function resetView(){wantedTarget.set(0,0,0);wantedRadius=overviewRadius();wantedPhi=.79;wantedTheta=.68;wake();}
   function choose(id,focus=false){
-    const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;labelsDirty=true;
-    village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);labels.forEach(l=>{l.button.classList.toggle('active',l.anchor.id===id);l.button.setAttribute('aria-pressed',String(l.anchor.id===id));});
+    const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
+    village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);
     if(focus){wantedTarget.set(anchor.lot.x*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=anchor.lot.x<0?1.08:-1.08;}
     document.dispatchEvent(new CustomEvent('village:select',{detail:{id}}));wake();
   }
@@ -72,7 +65,7 @@ function startVillage(){
   });
   function releasePointer(){drag=null;}
   canvas.addEventListener('blur',releasePointer);addEventListener('blur',releasePointer);
-  function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;if(!w||!h)return;viewWidth=w;viewHeight=h;labelsDirty=true;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}
+  function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;if(!w||!h)return;viewDirty=true;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}
   new ResizeObserver(resize).observe(viewport);
   new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(!visible)releasePointer();wake();},{rootMargin:'80px'}).observe(shell);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)releasePointer();lastTime=0;wake();});
@@ -82,7 +75,7 @@ function startVillage(){
     raf=0;
     const cameraMoving=target.distanceToSquared(wantedTarget)>.0001||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     // Idle scenery needs fewer frames; camera input keep full responsiveness.
-    if(!cameraMoving&&!drag&&!labelsDirty&&now-lastRender<1000/30){wake();return;}
+    if(!cameraMoving&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
     const dt=lastTime?Math.min((now-lastTime)/1000,.05):0;lastTime=now;
     const ease=reduced?1:1-Math.exp(-dt*7);target.lerp(wantedTarget,ease);theta+=(wantedTheta-theta)*ease;phi+=(wantedPhi-phi)*ease;radius+=(wantedRadius-radius)*ease;
     camera.position.set(target.x+Math.sin(theta)*Math.cos(phi)*radius,target.y+Math.sin(phi)*radius,target.z+Math.cos(theta)*Math.cos(phi)*radius);
@@ -99,16 +92,7 @@ function startVillage(){
       }
     }
     renderer.render(scene,camera);lastRender=now;
-    if(cameraMoving||labelsDirty){
-    const occupied=[];const rect={width:viewWidth,height:viewHeight};
-    [...labels].sort((a,b)=>(b.anchor.id===selected?1:0)-(a.anchor.id===selected?1:0)||camera.position.distanceTo(a.anchor.point)-camera.position.distanceTo(b.anchor.point)).forEach(({anchor,button})=>{
-      projected.copy(anchor.point).project(camera);const x=(projected.x*.5+.5)*rect.width,y=(-projected.y*.5+.5)*rect.height,w=rect.width<650?104:126;
-      let show=projected.z<1&&projected.z>-1&&x>w/2+6&&x<rect.width-w/2-6&&y>104&&y<rect.height-112;
-      if(show&&occupied.some(r=>Math.abs(r.x-x)<w+8&&Math.abs(r.y-y)<86))show=false;
-      button.hidden=!show;if(show){button.style.transform=`translate(${x}px,${y}px) translate(-50%,-100%)`;occupied.push({x,y});}
-    });
-    labelsDirty=false;
-    }
+    viewDirty=false;
     const settling=target.distanceTo(wantedTarget)>.01||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     if(visible&&!document.hidden&&(!paused||settling))wake();
   }

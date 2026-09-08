@@ -1,5 +1,6 @@
 import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js';
 import {createStreetNetwork} from './village-streets.js';
+import {createChapterBanner} from './village-banners.js';
 
 export function createVillage(THREE,chapters){
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
@@ -80,6 +81,12 @@ export function createVillage(THREE,chapters){
     if(index!==1)roof(group,0,colHeight+1.25,4.7,porchWidth+1,2.65,1.3,0xe8dfc9,false);
     sign(group,chapter.letters,0,colHeight+.98,6.02,porchWidth*.65,.46);
     if(index===0||index===3){box(group,0,3.98,4.7,5.8,.15,1.8,0xded7c7);box(group,0,4.8,5.54,5.8,.09,.09,0x3a3a42);for(let x=-2.8;x<=2.8;x+=.35)box(group,x,4.4,5.54,.04,.8,.04,0x3a3a42);}
+    const bannerWidth=Math.min(8,porchWidth-.65),bannerTop=colHeight+.65;
+    const banner=createChapterBanner(THREE,chapter,bannerWidth);
+    banner.position.set(0,bannerTop-1.275,6.18);group.add(banner);pickables.push(banner);
+    // A rail and two short straps attach the banner to the porch beam.
+    box(group,0,bannerTop+.04,6.18,bannerWidth+.3,.07,.07,0xc3b997);
+    [-1,1].forEach(side=>box(group,side*(bannerWidth/2-.12),bannerTop+.17,6.18,.045,.32,.045,0xc3b997));
     [-4.8,4.8].forEach(x=>{ball(group,x,.6,5.8,.65,0x4a5757);box(group,x,.27,5.8,1.3,.25,1.3,0x918a7d);});
     // Chapter pennant, porch chairs, a table and speakers.
     cylinder(group,-6.1,2.4,6.1,.045,4.8,0xc3b997);const flag=box(group,-5.52,4.3,6.1,1.15,.65,.045,[0x6976d2,0x873f3e,0x5f7792,0xbc9959,0x934843][index]);flags.push(flag);

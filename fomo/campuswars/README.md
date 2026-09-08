@@ -24,7 +24,7 @@ The primary experience is a real Three.js scene rendered with WebGL. `village-di
 
 `village-layout.js` creates one articulated 3D partygoer for each joined member: 60, 34, 21, 2, and 0. The visitor avatar is visually separate and does not contribute to these counts. 112 members stand in conversation circles, facing their group, with one speaker at a time and low-key arm gestures, head nods and breathing. Five members stroll around their chapter lawns; no members jump or hold both hands overhead. Repeated architecture and body parts are instanced to limit draw calls. Old photographic panorama and crowd sprites are no longer used.
 
-`village.js` handles orbiting, zoom, projected chapter markers, house picking, view reset, Shift-drag panning, arrow-key camera rotation, fullscreen, and synchronization with the chapter detail panel and deep links. The visitor avatar, walk mode, movement controls, ground destinations, pathfinding, minimap, place shortcuts and status/instruction overlay have been removed. The hero action links and village population subtitle were also removed. Existing chapter registration links elsewhere on the page remain available.
+`village.js` handles orbiting, zoom, house-mounted membership banners, house picking, view reset, Shift-drag panning, arrow-key camera rotation, fullscreen, and synchronization with the chapter detail panel and deep links. The visitor avatar, walk mode, movement controls, ground destinations, pathfinding, minimap, place shortcuts and status/instruction overlay have been removed. The hero action links and village population subtitle were also removed. Existing chapter registration links elsewhere on the page remain available.
 
 Village activity can be paused. Animation stops offscreen and when the document is hidden, and reduced-motion preferences suppress idle activity. The chapter roster and registration links remain usable if WebGL or the module cannot load.
 
@@ -38,7 +38,7 @@ Run `node --test fomo/campuswars/tests/village.test.mjs` for member counts, repr
 
 ## Rendering budget
 
-Fog density is 0.0035, reduced from 0.0085. Rendering uses a maximum pixel ratio of 1.25 (1 on touch devices), cached 1024px shadows refreshed on neighborhood/light-region changes, cheaper background materials, fixed architectural transforms and bounded crowd culling. Ambient activity updates at most 24 times per second and only near the viewer; idle rendering targets 30 frames per second while camera input can render at the display cadence. House marker positions only update when the camera or selection changes. Actual browser frame rates have not been measured.
+Fog density is 0.0035, reduced from 0.0085. Rendering uses a maximum pixel ratio of 1.25 (1 on touch devices), cached 1024px shadows refreshed on neighborhood/light-region changes, cheaper background materials, fixed architectural transforms and bounded crowd culling. Ambient activity updates at most 24 times per second and only near the viewer; idle rendering targets 30 frames per second while camera input can render at the display cadence. Chapter names and membership totals are printed on 3D cloth banners attached beneath the porch beams; they use normal scene depth and perspective instead of floating screen overlays. Banners are selectable, and the accessible chapter roster remains below the scene. Actual browser frame rates have not been measured.
 
 ## Street surface stability
 
