@@ -1,13 +1,13 @@
 import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js';
 import {createStreetNetwork} from './village-streets.js?v=17';
 import {createCampusFloorLogo} from './village-floor-logo.js?v=18';
-import {createChapterBanner} from './village-banners.js?v=15';
+import {createChapterBanner} from './village-banners.js?v=20';
 
 export function createVillage(THREE,chapters){
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
   const materials=new Map();
-  function mat(color,emissive=0){const key=color+':'+emissive;if(!materials.has(key))materials.set(key,new THREE.MeshStandardMaterial({color,roughness:.84,emissive,emissiveIntensity:emissive?1.4:0}));return materials.get(key);}
-  const boxGeometry=new THREE.BoxGeometry(1,1,1),sphereGeometry=new THREE.SphereGeometry(1,10,7),cylinderGeometry=new THREE.CylinderGeometry(1,1,1,10);
+  function mat(color,emissive=0){const key=color+':'+emissive;if(!materials.has(key))materials.set(key,new THREE.MeshStandardMaterial({color,roughness:.84,emissive,emissiveIntensity:emissive?.45:0}));return materials.get(key);}
+  const boxGeometry=new THREE.BoxGeometry(1,1,1),sphereGeometry=new THREE.SphereGeometry(1,14,10),cylinderGeometry=new THREE.CylinderGeometry(1,1,1,20);
   function box(parent,x,y,z,w,h,d,color){const mesh=new THREE.Mesh(boxGeometry,typeof color==='object'?color:mat(color));mesh.position.set(x,y,z);mesh.scale.set(w,h,d);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
   function cylinder(parent,x,y,z,r,h,color){const m=new THREE.Mesh(cylinderGeometry,mat(color));m.position.set(x,y,z);m.scale.set(r,h,r);m.castShadow=true;parent.add(m);return m;}
   function ball(parent,x,y,z,r,color){const m=new THREE.Mesh(sphereGeometry,mat(color));m.position.set(x,y,z);m.scale.setScalar(r);m.castShadow=true;parent.add(m);return m;}
@@ -20,8 +20,8 @@ export function createVillage(THREE,chapters){
   }
   const brick=typeof document!=='undefined'?document.createElement('canvas'):null;
   let brickMap;
-  if(brick){brick.width=256;brick.height=256;const c=brick.getContext('2d');c.fillStyle='#89786e';c.fillRect(0,0,256,256);for(let y=0;y<16;y++)for(let x=-1;x<5;x++){const value=175+((x*19+y*7)%30);c.fillStyle=`rgb(${value},${value-15},${value-22})`;c.fillRect(x*64+(y%2)*32+1,y*16+1,62,14);}brickMap=new THREE.CanvasTexture(brick);brickMap.wrapS=brickMap.wrapT=THREE.RepeatWrapping;brickMap.repeat.set(2,1.5);brickMap.colorSpace=THREE.SRGBColorSpace;}
-  function facade(color){return new THREE.MeshStandardMaterial({color,...(brickMap?{map:brickMap}:{}),roughness:.95});}
+  if(brick){brick.width=256;brick.height=256;const c=brick.getContext('2d');c.fillStyle='#89786e';c.fillRect(0,0,256,256);for(let y=0;y<16;y++)for(let x=-1;x<5;x++){const value=175+((x*19+y*7)%30);c.fillStyle=`rgb(${value},${value-15},${value-22})`;c.fillRect(x*64+(y%2)*32+1,y*16+1,62,14);}brickMap=new THREE.CanvasTexture(brick);brickMap.wrapS=brickMap.wrapT=THREE.RepeatWrapping;brickMap.repeat.set(8,4);brickMap.anisotropy=16;brickMap.colorSpace=THREE.SRGBColorSpace;}
+  function facade(color){return new THREE.MeshStandardMaterial({color,...(brickMap?{map:brickMap,bumpMap:brickMap,bumpScale:.022}:{}),roughness:.92});}
   function roof(parent,x,y,z,w,d,height,color,hip=true){
     let positions,indices;
     if(hip){positions=[-w/2,0,-d/2,w/2,0,-d/2,w/2,0,d/2,-w/2,0,d/2,-w*.26,height,0,w*.26,height,0];indices=[0,1,5,0,5,4,1,2,5,2,3,4,2,4,5,3,0,4];}
@@ -37,7 +37,12 @@ export function createVillage(THREE,chapters){
   const floorLogo=createCampusFloorLogo(THREE);if(floorLogo)world.add(floorLogo);
 
   // Street lamps, paths, trees and furniture give the village a lived-in scale.
-  function tree(x,z,size=1){const group=new THREE.Group();group.position.set(x,0,z);world.add(group);cylinder(group,0,1.1,0,.14,2.2,0x655143);for(let k=0;k<4;k++){const leaf=ball(group,Math.sin(k*2)*.6,2.4+k*.3,Math.cos(k*2)*.5,1.15,0x475862);leaf.scale.y*=1.1;}group.scale.setScalar(size);}
+  function tree(x,z,size=1){
+    const group=new THREE.Group();group.position.set(x,0,z);world.add(group);cylinder(group,0,1.6,0,.13,3.2,0x6b5947);
+    const seed=Math.abs(x+z),colors=[0x526b50,0x667a55,0x7b885d];
+    for(let k=0;k<7;k++){const angle=k*2.399+seed,r=k?1:0;const leaf=ball(group,Math.sin(angle)*r,3.5+(k%3)*.28,Math.cos(angle)*r,1.15+(k%2)*.2,colors[k%3]);leaf.scale.y*=1.15;}
+    group.scale.setScalar(size);
+  }
   [-1,1].forEach(side=>{
     [-31,-10,10,31].forEach(z=>{const x=side*7.6;cylinder(world,x,2,z,.07,4,0x3b3a46);box(world,x,4.1,z,.55,.12,.55,0x353444);const glow=box(world,x,3.82,z,.34,.45,.34,mat(0xffdea0,0xffbb55));glow.castShadow=false;const pool=new THREE.Mesh(new THREE.CircleGeometry(1.3,20),new THREE.MeshBasicMaterial({color:0xffd196,transparent:true,opacity:.07,depthWrite:false}));pool.rotation.x=-Math.PI/2;pool.position.set(x,.19,z);world.add(pool);});
     [-33,-9,10,33].forEach(z=>tree(side*29,z,.85+Math.abs(z)%3*.1));
@@ -153,6 +158,9 @@ export function createVillage(THREE,chapters){
     const roofline=5.6+10*(1-Math.exp(-chapter.joined/50));
     const depthScale=.78+.22*(1-Math.exp(-chapter.joined/40));
     house.scale.set(footprint/(width+1),roofline/(height+2.82),depthScale);
+    // Preserve the banner's proportions when the house grows taller.
+    banner.scale.y=house.scale.x/house.scale.y;
+    banner.position.y=bannerTop-banner.geometry.parameters.height*banner.scale.y/2;
     house.position.z=6.2*(1-depthScale); // Keep the porch steps at the same lawn entrance.
     house.userData={chapter:id,joined:chapter.joined,footprint,roofline};
     anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot});

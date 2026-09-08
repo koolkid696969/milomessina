@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=19';
-import {createDistricts} from './village-districts.js?v=17';
+import {createVillage} from './village-world.js?v=20';
+import {createDistricts} from './village-districts.js?v=20';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
@@ -14,14 +14,16 @@ try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference
 }
 if(renderer)startVillage();
 function startVillage(){
-  renderer.setPixelRatio(Math.min(devicePixelRatio,matchMedia('(pointer: coarse)').matches?1:1.25));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
+  const coarse=matchMedia('(pointer: coarse)').matches;
+  let renderScale=Math.min(devicePixelRatio,coarse?1.5:2),slowFrames=0;
+  renderer.setPixelRatio(renderScale);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   viewport.prepend(renderer.domElement);const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','3D Greek village. Drag to rotate, shift-drag to pan, or select a house. Arrow keys rotate the view; Escape resets it.');
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0x98a7ba);scene.fog=new THREE.FogExp2(0x98a7ba,.0035);
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0x98a7ba);scene.fog=new THREE.FogExp2(0x98a7ba,.0025);
   const camera=new THREE.PerspectiveCamera(48,1,1,450);
-  scene.add(new THREE.HemisphereLight(0xc2d5ff,0x74675b,2.1));
-  const sun=new THREE.DirectionalLight(0xffdcb6,3.0);sun.position.set(-35,55,30);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:150});sun.shadow.normalBias=.05;sun.shadow.bias=-.00015;scene.add(sun);scene.add(sun.target);
-  const fill=new THREE.DirectionalLight(0x788eff,.8);fill.position.set(30,15,-25);scene.add(fill);
+  scene.add(new THREE.HemisphereLight(0xd4e2ed,0x857768,1.55));
+  const sun=new THREE.DirectionalLight(0xffe5c6,2.6);sun.position.set(-35,55,30);sun.castShadow=true;sun.shadow.mapSize.set(coarse?1024:2048,coarse?1024:2048);sun.shadow.radius=1.4;Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:150});sun.shadow.normalBias=.05;sun.shadow.bias=-.00015;scene.add(sun);scene.add(sun.target);
+  const fill=new THREE.DirectionalLight(0xc4d2e0,.5);fill.position.set(30,15,-25);scene.add(fill);
   const village=createVillage(THREE,chapters);scene.add(village.world);
   const districts=createDistricts(THREE);scene.add(districts.root);
   let autoOrbit=!reduced;
@@ -81,6 +83,9 @@ function startVillage(){
     const cameraMoving=target.distanceToSquared(wantedTarget)>.0001||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     // Idle scenery needs fewer frames; camera input keep full responsiveness.
     if((!cameraMoving||autoOrbit)&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
+    // Start sharp; reduce only pixel density if sustained slow frames appear.
+    if(visible&&!document.hidden&&lastRender&&now-lastRender>55)slowFrames++;else slowFrames=Math.max(0,slowFrames-1);
+    if(slowFrames>24&&renderScale>(coarse?1:1.25)){renderScale=Math.max(coarse?1:1.25,renderScale-.25);renderer.setPixelRatio(renderScale);slowFrames=0;}
     const dt=lastTime?Math.min((now-lastTime)/1000,.05):0;lastTime=now;
     if(autoOrbit&&!paused&&visible&&!document.hidden)wantedTheta+=dt*.06;
     const ease=reduced?1:1-Math.exp(-dt*7);target.lerp(wantedTarget,ease);theta+=(wantedTheta-theta)*ease;phi+=(wantedPhi-phi)*ease;radius+=(wantedRadius-radius)*ease;

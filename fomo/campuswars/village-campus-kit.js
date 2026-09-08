@@ -10,7 +10,7 @@ export function createCampusKit(T){
     ctx.fillStyle=kind==='brick'?'#b7a696':'#d8d4c9';ctx.fillRect(0,0,256,256);
     if(kind==='brick')for(let y=0;y<16;y++)for(let x=-1;x<5;x++){const value=173+(x*17+y*13+256)%40;ctx.fillStyle=`rgb(${value},${value-9},${value-15})`;ctx.fillRect(x*64+(y%2)*32+1,y*16+1,62,14);}
     else for(let i=0;i<1500;i++){ctx.fillStyle=i%2?'#bdbdb322':'#ffffff22';ctx.fillRect((i*71)%256,(i*113)%256,1+(i%3),1);}
-    const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.wrapS=map.wrapT=T.RepeatWrapping;map.repeat.set(kind==='brick'?4:2,kind==='brick'?3:2);map.anisotropy=4;maps.set(kind,map);return map;
+    const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.wrapS=map.wrapT=T.RepeatWrapping;map.repeat.set(kind==='brick'?24:3,kind==='brick'?8:3);map.anisotropy=8;maps.set(kind,map);return map;
   }
   function material(color,kind=''){const key=color+kind;if(!materials.has(key)){const map=kind?texture(kind):null;materials.set(key,new T.MeshLambertMaterial({color,...(map?{map}:{})}));}return materials.get(key);}
   function mesh(p,geo,x,y,z,sx,sy,sz,color,kind=''){const m=new T.Mesh(typeof geo==='string'?geometries[geo]:geo,typeof color==='object'?color:material(color,kind));m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.castShadow=true;m.receiveShadow=true;p.add(m);return m;}
@@ -20,7 +20,7 @@ export function createCampusKit(T){
   function sign(p,words,x,y,z,w,h){
     if(typeof document==='undefined'||!words)return;
     const c=document.createElement('canvas');c.width=1024;c.height=128;const ctx=c.getContext('2d');ctx.fillStyle='#e4ddc9';ctx.fillRect(0,0,1024,128);ctx.fillStyle='#323c46';ctx.font='600 57px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(words,512,67,955);
-    const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.anisotropy=4;const m=mesh(p,new T.PlaneGeometry(w,h),x,y,z,1,1,1,new T.MeshLambertMaterial({map}));m.userData.ownedTexture=true;return m;
+    const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.anisotropy=8;const m=mesh(p,new T.PlaneGeometry(w,h),x,y,z,1,1,1,new T.MeshLambertMaterial({map}));m.userData.ownedTexture=true;return m;
   }
   function roof(p,w,d,y,height=3){
     const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute([-w/2,0,-d/2,w/2,0,-d/2,w/2,0,d/2,-w/2,0,d/2,-w*.28,height,0,w*.28,height,0],3));g.setIndex([0,1,5,0,5,4,1,2,5,2,3,4,2,4,5,3,0,4]);g.computeVertexNormals();const mat=material(0x414b54).clone();mat.side=T.DoubleSide;const m=mesh(p,g,0,y,0,1,1,1,mat);m.userData.ownedGeometry=true;return m;

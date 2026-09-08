@@ -61,3 +61,9 @@ The main headline and homepage share title are `$500,000 committed`, as supplied
 The ground marking reuses the original fomo symbol and lowercase `fomo /campus` lockup from `/fomo/`, with Aeonik loaded before the texture is refreshed. The initial overview slowly orbits while visible and unpaused; the first pointer interaction, keyboard input or house focus hands over control permanently for that visit. Reduced-motion preferences suppress the automatic orbit.
 
 Chapters with 0–14 onboarded members display a concrete foundation, exposed timber framing, scaffolding, ladders and staged materials instead of a finished house. Their membership banner remains on the construction frontage. A finished house appears at 15 members. The starting overview is 0.38 radians above the horizon (about 22 degrees) and orbits at 0.06 radians per second before interaction.
+
+## Banner and rendering quality
+
+Banners use 2048-pixel-wide textures sized to their physical aspect ratio, with an ivory woven field, a Greek-letter panel, Aeonik chapter names and member counts, stitched borders and modeled metal eyelets. The banner is counter-scaled vertically as its house grows so the lettering keeps its proportions. Fonts trigger a texture refresh when ready. A subtle fabric bump and sheen provide cloth detail without adding animation cost.
+
+The renderer starts at up to 2× pixel density on desktop and 1.5× on touch devices, stepping down if slow frames persist. Desktop shadows use a cached 2048px map; touch retains 1024px. Softer neutral fill light, lower exposure, less haze, smoother foreground columns and tree canopies, and finer brick courses improve close-up quality. Browser frame rates and visual interaction testing have not been measured/performed.
