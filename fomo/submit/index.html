@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>get paid for views — fomo campus</title>
-<meta name="description" content="Post a video about fomo, tag @fomo, send us the link. $10 on any approved video, up to $5,000 on one. Anyone with 1,000 followers can do it.">
+<meta name="description" content="Post a video about fomo, tag @fomo, send us the link. Every approved video earns $10 plus $2 per 1,000 qualifying views, up to $5,000 per video. Anyone with 1,000 followers can do it.">
 <meta name="theme-color" content="#08070F">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/fomo/assets/base.css">
@@ -32,7 +32,7 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
   /* base.css sets .88, which drops the p of "paid" into the f and the i-dot
      of "for views" on the line below */
   line-height:1}
-.lede{font-size:clamp(1rem,1.3vw,1.16rem);max-width:56ch;margin:26px auto 0;color:#A9A2CC}
+.lede{font-size:clamp(1rem,1.3vw,1.16rem);max-width:56ch;margin:26px auto 0;color:#B5BADA}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px;justify-content:center}
 .bignum{position:relative;margin-top:clamp(30px,4.2vw,52px)}
 /* a wash behind the figure so it reads as lit rather than as a large word */
@@ -70,7 +70,8 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 .req b{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--green);margin-bottom:16px}
 .req h4{font-size:1.12rem;letter-spacing:-.035em;margin-bottom:8px}
 .req p{font-size:.84rem;line-height:1.5}
-.req-terms{margin-top:20px;text-align:center;font-size:.8rem;color:var(--muted-2);line-height:1.5}
+.req-terms{margin-top:20px;text-align:center;font-size:.84rem;line-height:1.55}
+.req-terms a{color:var(--violet-hi);text-decoration:underline;text-underline-offset:3px}
 
 /* ── what it pays ────────────────────────────────────── */
 /* stretch, not start, so the two cards match height whatever is in them */
@@ -82,6 +83,8 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
   color:var(--muted-2);font-weight:500;margin-bottom:20px}
 .krow{font-size:.92rem;padding:14px 0}
 .krow b{font-size:.86rem}
+.pay-eg{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);font-size:.84rem;line-height:1.55;color:#A7ADD0}
+.pay-eg b{color:var(--text);font-weight:600;white-space:nowrap}
 /* sits where the rates card's heading sits, so the two cards line up */
 .calc-lab{display:block;font-family:var(--mono);font-size:.62rem;line-height:.94;letter-spacing:.16em;
   text-transform:uppercase;color:var(--muted-2)}
@@ -89,14 +92,39 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 .calc-pay{font-family:var(--display);font-size:clamp(2.6rem,5.4vw,3.6rem);font-weight:500;letter-spacing:-.05em;
   line-height:1;margin-top:18px;
   background:linear-gradient(100deg,#fff 8%,#A3B0FF 44%,#19D97C 96%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sl{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:100px;margin:20px 0 8px;
-  background:linear-gradient(90deg,var(--green) var(--p,60%),rgba(255,255,255,.12) var(--p,60%));cursor:pointer}
+/* the fill has to survive focus: base.css gives every focused input the
+   text-field wash, and that background shorthand replaces this gradient the
+   moment the thumb is dragged, leaving a flat violet bar. Its 3px ring is
+   dropped with it — on a 4px track it reads as a glow, not as focus — so
+   keyboard focus gets a real outline instead. */
+.sl,.sl:focus{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:100px;margin:20px 0 8px;
+  background:linear-gradient(90deg,var(--green) var(--p,60%),rgba(255,255,255,.12) var(--p,60%));
+  box-shadow:none;cursor:pointer}
+.sl:focus-visible{outline:2px solid var(--violet-hi);outline-offset:8px}
 .sl::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;
   border:3px solid var(--green);box-shadow:0 0 18px -2px var(--green);cursor:grab}
 .sl::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--green);
   box-shadow:0 0 18px -2px var(--green);cursor:grab}
 .sl-ends{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.6rem;color:var(--muted-2)}
 .calc-note{font-size:.8rem;color:var(--muted-2);margin-top:18px;line-height:1.5}
+
+/* ── what happens next ────────────────────────────────
+   a sequence, so the four cards carry the clock as well as the step */
+.steps{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:stretch}
+@media(max-width:1000px){.steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.steps{grid-template-columns:1fr}}
+.step{display:flex;flex-direction:column;padding:22px 20px;border-radius:var(--r-m);
+  border:1px solid var(--line);background:var(--surface);
+  transition:border-color .3s,background .3s,transform .3s cubic-bezier(.2,.8,.3,1)}
+.step:hover{border-color:var(--line-2);background:var(--surface-2);transform:translateY(-3px)}
+.step>b{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;color:var(--green);margin-bottom:16px}
+.step h4{font-size:1.12rem;letter-spacing:-.035em;margin-bottom:8px}
+.step p{font-size:.84rem;line-height:1.55;color:#A7ADD0}
+.step p b{color:var(--text);font-weight:600}
+/* the timing sits on its own line at the foot of the card, so the four
+   clocks line up however long the copy above them runs */
+.step .when{margin-top:auto;padding-top:16px;font-family:var(--mono);font-size:.62rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hi)}
 
 /* ── video ideas ──────────────────────────────────
    the point of this section is that someone lifts one and films it today,
@@ -114,6 +142,10 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 .idea ul{list-style:none;margin-top:auto;padding-top:18px;display:grid;gap:10px;border-top:1px solid var(--line)}
 .idea li{font-size:.87rem;line-height:1.5;color:#C9CEF0;padding-left:13px;border-left:2px solid rgba(81,106,246,.6)}
 .idea li b{color:#fff;font-weight:600}
+.consent{margin-top:20px;text-align:center;padding:18px 20px;border-radius:var(--r-m);
+  border:1px solid rgba(163,176,255,.28);background:rgba(81,106,246,.08);
+  font-size:.86rem;line-height:1.6;color:#CDD2F2}
+.consent b{color:#fff;font-weight:600}
 
 /* ── the form ─────────────────────────────────────────
    a form you have to scroll to reach the button loses people, so this
@@ -122,6 +154,8 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 .subhead{text-align:center;margin-bottom:clamp(18px,2.2vw,26px)}
 .subhead h2{margin:0;font-size:clamp(2.1rem,4.4vw,3.2rem)}
 .chk b{color:var(--text);font-weight:600}
+.presubmit{margin-top:15px;font-size:.82rem;line-height:1.55;color:#A7ADD0}
+.presubmit b{color:var(--text);font-weight:600}
 #send{padding-block:clamp(30px,3.4vw,44px) clamp(34px,4vw,54px)}
 #send .card{padding:clamp(22px,2.4vw,28px)}
 #send .fset{margin-bottom:15px}
@@ -153,6 +187,16 @@ footer{margin-top:0}
    never the 700 that base.css sets */
 h1,h2,h3,h4{font-weight:500}
 .h1{font-weight:500}
+
+/* ── contrast ─────────────────────────────────────────
+   base.css sets --muted-2 (#5C6182) for hints and small print, which lands
+   near 3:1 on this background — under AA for anything you have to read.
+   Every one of these carries a detail about money or eligibility, so they
+   move up to ~7:1. The uppercase mono labels are excluded on purpose. */
+.f .hint,.calc-note,.req-terms,.actions .note{color:#A7ADD0}
+.req p,.idea p{color:#A7ADD0}
+.shead p{color:rgba(216,221,255,.82)}
+input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
 </style>
 <script>
 /* Safari restores the last scroll position on reload, and an in-page link
@@ -193,7 +237,8 @@ h1,h2,h3,h4{font-weight:500}
     <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
     <div class="nav-links">
       <a href="#needs">what counts</a>
-      <a href="#pays">what it pays</a>
+      <a href="#pays">what you earn</a>
+      <a href="#next">what happens next</a>
       <a href="#ideas">ideas</a>
       <a class="btn btn-p btn-sm navcta" href="#send">send a link &rarr;</a>
     </div>
@@ -206,7 +251,7 @@ h1,h2,h3,h4{font-weight:500}
   <div class="wrap">
     <div class="inner">
       <h1 class="h1">get paid<br><span class="grad">for views.</span></h1>
-      <p class="lede">post a video about fomo, tag <b>@fomo</b>, send us the link. we approve it, then we pay you on what it actually did.</p>
+      <p class="lede">Post a video about fomo, tag <b>@fomo</b>, send us the link. We review it within five business days and pay on the view count 30 days after you send it.</p>
       <div class="bignum">
         <span class="lab">up to</span>
         <b>$5,000</b>
@@ -215,7 +260,7 @@ h1,h2,h3,h4{font-weight:500}
 
       <div class="hero-cta">
         <a class="btn btn-p" href="#send">send a link &rarr;</a>
-        <a class="btn btn-g" href="#pays">what it pays</a>
+        <a class="btn btn-g" href="#pays">what you earn</a>
       </div>
     </div>
   </div>
@@ -224,8 +269,8 @@ h1,h2,h3,h4{font-weight:500}
 <section id="needs">
   <div class="wrap">
     <div class="shead rv">
-      <h2>make campus content.</h2>
-      <p>Create original videos about what your campus is talking about on fomo. Once approved, qualifying views count toward your payout.</p>
+      <h2>what your video needs.</h2>
+      <p>Create original videos about what your campus is talking about on fomo. We check every video by hand against these five, then qualifying views count toward your payout.</p>
     </div>
 
     <div class="reqs rv">
@@ -256,24 +301,25 @@ h1,h2,h3,h4{font-weight:500}
       </div>
     </div>
 
-    <p class="req-terms rv">Approved posts earn based on qualifying views. Rates, limits, and payment timing follow the current program terms.</p>
+    <p class="req-terms rv">Miss one of the five and we'll tell you which, so you can fix it and send the post again. What an approved video pays is set out in full below &mdash; <a href="#pays">$10 plus $2 per 1,000 qualifying views</a>, capped at $5,000.</p>
   </div>
 </section>
 
 <section id="pays">
   <div class="wrap">
     <div class="shead rv">
-      <h2>paid on views,<br>not on promises.</h2>
-      <p>one rate, however far it goes. every approved video earns something on top of it.</p>
+      <h2>how much you'll earn.</h2>
+      <p>One rate, however far it goes: <b>$10 for every approved video</b>, plus <b>$2 for every 1,000 qualifying views</b>, up to <b>$5,000</b> on a single video.</p>
     </div>
 
     <div class="pay rv">
       <div class="paycard">
         <h4>the rates</h4>
-        <div class="krow"><span>Every approved video</span><b>$10 floor</b></div>
-        <div class="krow"><span>Every 1,000 views</span><b>$2.00</b></div>
-        <div class="krow"><span>Most we'll pay on one video</span><b>$5,000</b></div>
+        <div class="krow"><span>Base, on every approved video</span><b>$10</b></div>
+        <div class="krow"><span>Plus, per 1,000 qualifying views</span><b>$2.00</b></div>
+        <div class="krow"><span>Most one video can earn, all in</span><b>$5,000</b></div>
         <div class="krow"><span>Videos you can send</span><b>no cap</b></div>
+        <p class="pay-eg">The $10 is paid on top of the views, not instead of them. A video at 100,000 views earns <b>$10 + $200 = $210</b>.</p>
       </div>
 
       <div class="paycard">
@@ -283,12 +329,48 @@ h1,h2,h3,h4{font-weight:500}
         <div class="sl-ends"><span>1K</span><span>3M+</span></div>
         <span class="calc-lab" style="margin-top:20px">you get</span>
         <div class="calc-pay" id="eP">$210</div>
-        <p class="calc-note">Drag it. Estimate only &mdash; we pay on the real count when we check it.</p>
+        <p class="calc-note">Drag it. An estimate &mdash; we pay on the real count we read 30 days after you send the video in.</p>
       </div>
     </div>
   </div>
 </section>
 
+
+<section id="next">
+  <div class="wrap">
+    <div class="shead rv">
+      <h2>what happens next.</h2>
+      <p>Four steps, and you hear from us at every one of them. Nothing here depends on you chasing us.</p>
+    </div>
+
+    <ol class="steps rv">
+      <li class="step">
+        <b>01</b>
+        <h4>you send the link</h4>
+        <p>The form confirms it on screen straight away. Keep the post public and leave the <b>@fomo</b> tag on it &mdash; if it goes private or the tag comes off, we can't count it.</p>
+        <span class="when">same minute</span>
+      </li>
+      <li class="step">
+        <b>02</b>
+        <h4>we review it by hand</h4>
+        <p>We email you a decision within <b>five business days</b>. If something small is off &mdash; a missing tag, the wrong account &mdash; we tell you exactly what to change, and a fixed video can be sent again with no penalty.</p>
+        <span class="when">within 5 business days</span>
+      </li>
+      <li class="step">
+        <b>03</b>
+        <h4>we count the views</h4>
+        <p>Thirty days after you submit, we read the post's <b>total view count</b> &mdash; including the views it had before you sent it in. That number is what you're paid on, and we send it to you with the decision.</p>
+        <span class="when">day 30</span>
+      </li>
+      <li class="step">
+        <b>04</b>
+        <h4>you get paid</h4>
+        <p>The video lands in the <b>next payout after day 30</b>, on the 1st or the 15th, sent to the payment account you gave us and itemised so you can see what this video earned.</p>
+        <span class="when">1st or 15th</span>
+      </li>
+    </ol>
+  </div>
+</section>
 
 <section id="ideas">
   <div class="wrap">
@@ -328,6 +410,7 @@ h1,h2,h3,h4{font-weight:500}
       </div>
     </div>
 
+    <p class="consent rv"><b>Ask before you post.</b> Get a clear yes from anyone you film &mdash; the easiest way is to ask them on camera, so the permission is in the footage. If they say no afterwards, don't post it; we'd rather lose the video than put someone up who didn't agree to it.</p>
   </div>
 </section>
 
@@ -351,11 +434,12 @@ h1,h2,h3,h4{font-weight:500}
               <span class="err"></span></label>
             <div class="frow">
               <label class="f"><span>Platform</span>
-                <select name="platform" required>
+                <select name="platform" id="plat" required>
                   <option value="">pick one</option>
                   <option>TikTok</option><option>Instagram Reels</option>
-                  <option>YouTube Shorts</option><option>Other</option>
+                  <option>YouTube Shorts</option>
                 </select>
+                <span class="hint" id="platHint">These three are the eligible platforms.</span>
                 <span class="err"></span></label>
               <label class="f"><span>The account it's on</span>
                 <input type="text" name="handle" required placeholder="@yourhandle">
@@ -377,9 +461,17 @@ h1,h2,h3,h4{font-weight:500}
               <label class="f"><span>School</span>
                 <input type="text" id="school" name="school" required placeholder="University of Michigan">
                 <span class="err"></span></label>
-              <label class="f"><span>Venmo or PayPal</span>
+              <label class="f"><span>Pay me with</span>
+                <select name="payout_method" required>
+                  <option value="">pick one</option>
+                  <option>Venmo</option><option>PayPal</option>
+                </select>
+                <span class="err"></span></label>
+            </div>
+            <div class="frow">
+              <label class="f"><span>Your username on it</span>
                 <input type="text" name="payout_handle" required placeholder="@your-venmo">
-                <span class="hint">Just the username &mdash; never a card or bank number.</span>
+                <span class="hint">The username only &mdash; never a card, account or routing number.</span>
                 <span class="err"></span></label>
             </div>
           </fieldset>
@@ -388,6 +480,8 @@ h1,h2,h3,h4{font-weight:500}
             <label class="chk"><input type="checkbox" name="c_rules" required>
               <span>It's <b>my own video</b> on an account I control, it <b>tags @fomo</b>, I <b>haven't bought views</b>, and I'll <b>keep it public</b> until you've counted it.</span><span class="err"></span></label>
           </div>
+
+          <p class="presubmit">When you send this, you'll see a confirmation on screen right away, and we email you a decision within <b>five business days</b>. If the video needs a change &mdash; a missing tag, the wrong account &mdash; that email tells you exactly what to fix, and you can send the corrected post back with no penalty and no lost place in the queue.</p>
 
           <div class="actions">
             <button class="btn btn-p" type="submit">send this video &rarr;</button>
@@ -399,7 +493,7 @@ h1,h2,h3,h4{font-weight:500}
       <div class="done">
         <div class="tick">&#10003;</div>
         <h2>video sent.</h2>
-        <p class="msg">We'll approve it or come back to you, then count the views 30 days from now. It lands in the next payout on the 1st or the 15th, itemised so you can see what this one earned.</p>
+        <p class="msg">We email you a decision within <b>five business days</b>. Thirty days from today we read the post's total view count &mdash; including the views it already had &mdash; and that video lands in the next payout on the 1st or the 15th, itemised so you can see what this one earned.</p>
         <p style="font-family:var(--mono);font-size:.7rem;color:var(--muted-2)">
           Got another one? <a href="/fomo/submit" style="color:var(--violet-hi);text-decoration:underline">send it too</a> &mdash; there's no cap.</p>
         <div class="dump" style="display:none"></div>
@@ -433,7 +527,7 @@ h1,h2,h3,h4{font-weight:500}
     return Math.round(x/10000)*10000;};
   const fmt=x=>x>=1e6?(x/1e6).toFixed(x>=1e7?0:2).replace(/\.?0+$/,'')+'M'
            :x>=1000?(x/1000).toFixed(x>=1e5?0:1).replace(/\.0$/,'')+'K':x;
-  /* one flat rate, plus the floor, up to the ceiling */
+  /* the $10 base, plus $2 per 1,000 views, capped at $5,000 */
   function pay(x){return Math.min(Math.round(10+x/1000*2),5000);}
   function paint(){const t=+sl.value,x=toViews(t);
     sl.style.setProperty('--p',(t/10)+'%');
@@ -444,6 +538,29 @@ h1,h2,h3,h4{font-weight:500}
 /* same list and same matching the apply page uses, so a school types out
    into the sheet as the one string every other submission used */
 wireSchoolField(document.getElementById('school'));
+
+/* the link already says which platform it is, so the select fills itself in.
+   It stays a real field: we only touch it while it is empty or still holds a
+   value we put there, so a deliberate choice is never overwritten. */
+(function(){
+  const url=document.getElementById('vurl'),sel=document.getElementById('plat'),
+        hint=document.getElementById('platHint');
+  const rest='These three are the eligible platforms.';
+  let ours='';
+  const read=u=>/tiktok\.com/i.test(u)?'TikTok'
+    :/instagram\.com/i.test(u)?'Instagram Reels'
+    :/youtube\.com|youtu\.be/i.test(u)?'YouTube Shorts':'';
+  url.addEventListener('input',()=>{
+    const found=read(url.value.trim());
+    if(!found)return;
+    if(sel.value&&sel.value!==ours)return;
+    sel.value=found;ours=found;
+    hint.textContent='Read from your link. Change it if that\u2019s wrong.';
+    sel.dispatchEvent(new Event('input',{bubbles:true}));
+  });
+  /* a hand on the select takes it back for good */
+  sel.addEventListener('change',()=>{ours='';hint.textContent=rest});
+})();
 
 wireForm(document.getElementById('subForm'),{
   extra(showErr){
