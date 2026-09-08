@@ -8,7 +8,7 @@ Static landing page for `https://milomessina.com/fomo/campuswars/`, following th
 
 The row is explicitly marked as a registration snapshot, not live data. Qualification is `ceil(active * 0.8)`; onboarding bars divide joined members by the full active roster. The 80% mark is shown separately. The five records total 117 joined out of 369 active members.
 
-Campus selection filters the real snapshot. Clicking a house updates its target panel. Mouse dragging, native touch scrolling, arrow controls, and keyboard arrows/Home/End navigate the row. The empty lot opens the claim panel. Chapter share links use `#chapter=...` and restore selection. Native sharing falls back to clipboard, then to a selectable URL.
+Clicking a house updates its target panel. Mouse dragging, native touch scrolling, and keyboard arrows/Home/End navigate the row. The empty lot opens the claim panel. Chapter share links use `#chapter=...` and restore selection. Native sharing falls back to clipboard, then to a selectable URL.
 
 ## Registration
 

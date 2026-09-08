@@ -4,7 +4,6 @@
   const byId = new Map(chapters.map(chapter => [chapter.id, chapter]));
   const neighborhood = document.getElementById('neighborhood');
   const cards = [...document.querySelectorAll('.house-card')];
-  const campus = document.getElementById('campus');
   const panel = document.getElementById('chapter-panel');
   const panelShare = document.getElementById('panel-share');
   const panelClaim = document.getElementById('panel-claim');
@@ -42,33 +41,13 @@
       panelShare.setAttribute('aria-label', `Share ${chapter.name}’s Campus Wars progress`);
     } else {
       text('panel-letters', '+');
-      text('panel-school', campus.value !== 'all' && campus.value !== 'unlisted' ? campus.value.toUpperCase() : 'YOUR HOUSE BELONGS HERE');
+      text('panel-school', 'YOUR HOUSE BELONGS HERE');
       text('panel-name', 'Your letters. Your clan.');
       text('panel-target', 'Be the one who starts it.');
       text('panel-detail', 'Register your chapter. Get the link. Rally the house.');
     }
     if (writeHash) history.replaceState(null, '', `${location.pathname}${location.search}#chapter=${encodeURIComponent(id)}`);
   }
-
-  function updateArrows() {
-    document.getElementById('row-prev').disabled = neighborhood.scrollLeft <= 2;
-    document.getElementById('row-next').disabled = neighborhood.scrollLeft >= neighborhood.scrollWidth - neighborhood.clientWidth - 2;
-  }
-  function filterCampus({ writeHash = true } = {}) {
-    const selectedSchool = campus.value;
-    const visible = chapters.filter(chapter => selectedSchool === 'all' || chapter.school === selectedSchool);
-    cards.forEach(card => {
-      card.hidden = card.dataset.chapter !== 'empty' && !visible.some(chapter => chapter.id === card.dataset.chapter);
-    });
-    text('chapter-count', `${visible.length} ${visible.length === 1 ? 'chapter' : 'chapters'}`);
-    text('member-count', `${visible.reduce((sum, chapter) => sum + chapter.joined, 0)} members in`);
-    document.getElementById('house-track').classList.toggle('filtered', selectedSchool !== 'all');
-    const stillVisible = visible.some(chapter => chapter.id === selectedId);
-    selectChapter(stillVisible ? selectedId : (visible[0]?.id || 'empty'), {writeHash});
-    neighborhood.scrollLeft = 0;
-    updateArrows();
-  }
-  campus.addEventListener('change', filterCampus);
 
   let drag = null;
   let dragged = false;
@@ -111,10 +90,6 @@
       selectChapter(visible[next].dataset.chapter, {scroll: true});
     });
   });
-  neighborhood.addEventListener('scroll', updateArrows, {passive: true});
-  addEventListener('resize', updateArrows, {passive: true});
-  document.getElementById('row-prev').addEventListener('click', () => neighborhood.scrollBy({left: -400, behavior: reducedMotion ? 'instant' : 'smooth'}));
-  document.getElementById('row-next').addEventListener('click', () => neighborhood.scrollBy({left: 400, behavior: reducedMotion ? 'instant' : 'smooth'}));
 
   const toast = document.querySelector('.toast');
   let toastTimer;
@@ -155,15 +130,12 @@
   function readHash() {
     const id = new URLSearchParams(location.hash.slice(1)).get('chapter');
     if (id && (id === 'empty' || byId.has(id))) {
-      campus.value = 'all';
-      filterCampus({writeHash: false});
       selectChapter(id, {writeHash: false, scroll: true});
     }
   }
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false});
   readHash();
-  updateArrows();
   if ('IntersectionObserver' in window) {
     const dock = document.querySelector('.mobile-dock');
     new IntersectionObserver(([entry]) => dock.classList.toggle('visible', !entry.isIntersecting), {threshold:0}).observe(document.querySelector('.hero'));
