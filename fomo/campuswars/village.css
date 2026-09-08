@@ -8,13 +8,11 @@
 
 .village-reset{pointer-events:auto;border:1px solid #8998c93b;background:#121929db;backdrop-filter:blur(16px);color:#dce1f2;border-radius:8px;padding:10px 14px;font-size:12px;min-height:38px}.village-reset:hover{background:#29334e}.village-bottom{justify-content:flex-end}@media(max-width:700px){.village-reset{font-size:10px;padding:8px 11px;min-height:32px}}
 
-/* Put the village's invitation first while keeping the funding prominent. */
-.village-hero.hero{align-items:center;text-align:left;padding-top:26px;padding-bottom:35px;gap:45px}
-.village-hero h1{font-size:clamp(42px,5.3vw,77px);line-height:.98;letter-spacing:-.055em;margin-top:17px}
-.village-intro>p:last-child{font-size:15px;color:#a3acc2;line-height:1.6;margin-top:19px}
-.village-funding{display:flex;flex-direction:column;flex-shrink:0;align-items:flex-start;padding-left:40px;border-left:1px solid var(--line)}
-.funding-value{font-size:clamp(60px,7vw,101px);letter-spacing:-.07em;font-weight:700;line-height:1.1;padding-bottom:.08em;background:linear-gradient(145deg,#fff,#b4bfff);background-clip:text;-webkit-background-clip:text;color:transparent}
-.village-funding>strong{font-size:26px;letter-spacing:-.03em;line-height:1.15;font-weight:500}
-.village-funding>span:last-child{color:#8892ae;font-size:12px;margin-top:16px}
-@media(max-width:1000px){.village-hero.hero{gap:30px}.village-funding{padding-left:25px}.funding-value{font-size:70px}.village-funding>strong{font-size:22px}.village-intro>p:last-child{font-size:13px}}
-@media(max-width:700px){.village-hero.hero{display:grid;grid-template-columns:1fr;padding:19px var(--pad) 23px;gap:22px;text-align:left}.village-hero .season{justify-content:flex-start;font-size:9px;letter-spacing:.08em}.village-hero h1{font-size:clamp(39px,10.8vw,65px);margin-top:13px}.village-intro>p:last-child{font-size:13px;margin-top:13px;line-height:1.5}.village-funding{border-left:0;border-top:1px solid var(--line);padding:14px 0 0;display:flex;flex-direction:row;align-items:baseline;gap:11px}.funding-value{font-size:clamp(39px,11vw,57px);line-height:1.05;padding-bottom:.05em}.village-funding>strong{font-size:18px}.village-funding>span:last-child{display:none}.village-roster-heading>span:last-child{font-size:9px;max-width:170px;text-align:right}.header>.button{font-size:12px}.village-rally .copy-fallback{margin-left:0}}
+/* The village leads; the campaign headline sits directly beneath it. */
+.row-section{padding-top:10px}
+.village-payoff{display:flex;align-items:center;justify-content:space-between;gap:40px;padding:32px 0 29px;border-bottom:1px solid var(--line)}
+.village-payoff h1{font-size:clamp(35px,4.5vw,65px);line-height:1.04;letter-spacing:-.045em;margin:0;max-width:570px}
+.village-payoff>p{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0}
+.village-payoff>p>span{font-size:clamp(56px,6.6vw,95px);line-height:1.12;letter-spacing:-.07em;font-weight:700;padding-bottom:.05em;background:linear-gradient(145deg,#fff,#b4bfff);background-clip:text;-webkit-background-clip:text;color:transparent}
+.village-payoff strong{font-size:22px;font-weight:500;line-height:1.2;letter-spacing:-.025em}
+@media(max-width:700px){.row-section{padding-top:4px}.village-payoff{flex-direction:column;align-items:flex-start;gap:15px;padding:25px 10px}.village-payoff h1{font-size:clamp(31px,8.3vw,49px)}.village-payoff>p{align-items:baseline;flex-direction:row;gap:12px;flex-wrap:wrap}.village-payoff>p>span{font-size:clamp(43px,12.3vw,65px)}.village-payoff strong{font-size:18px}.village-roster-heading>span:last-child{font-size:9px;max-width:170px;text-align:right}.header>.button{font-size:12px}.village-rally .copy-fallback{margin-left:0}}

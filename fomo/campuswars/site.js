@@ -122,7 +122,7 @@
     const target = chapter ? Math.ceil(chapter.active * 0.8) : 0;
     const url = chapter ? `${canonicalUrl}#chapter=${encodeURIComponent(chapter.id)}` : canonicalUrl;
     const data = {
-      title: chapter ? `${chapter.letters} — fomo Campus Wars` : 'Your house belongs here — fomo Campus Wars',
+      title: chapter ? `${chapter.letters} — fomo Campus Wars` : 'Get your frat paid — fomo Campus Wars',
       text: chapter ? `${chapter.name}: ${chapter.joined} in, ${Math.max(0, target - chapter.joined)} more to hit 80% in this registration snapshot. Let’s get the house on fomo.` : 'There’s an empty lot for our chapter in the Greek village. $500,000 committed. Who’s getting our house on the map?',
       url
     };
@@ -161,6 +161,6 @@
   });
   if ('IntersectionObserver' in window) {
     const dock = document.querySelector('.mobile-dock');
-    new IntersectionObserver(([entry]) => dock.classList.toggle('visible', !entry.isIntersecting), {threshold:0}).observe(document.querySelector('.hero'));
+    new IntersectionObserver(([entry]) => dock.classList.toggle('visible', !entry.isIntersecting), {threshold:0}).observe(document.getElementById('village'));
   }
 })();
