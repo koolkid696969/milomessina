@@ -4,7 +4,7 @@ import {BLOCK,districtSpecs,districtAt} from './village-district-layout.js';
 export function createDistricts(THREE){
   const root=new THREE.Group(),chunks=new Map(),materials=new Map();
   const cube=new THREE.BoxGeometry(1,1,1),sphere=new THREE.SphereGeometry(1,8,6),roofGeometry=new THREE.ConeGeometry(1,1,4),ringGeometry=new THREE.TorusGeometry(.32,.045,5,12);
-  function material(color){if(!materials.has(color))materials.set(color,new THREE.MeshStandardMaterial({color,roughness:.92}));return materials.get(color);}
+  function material(color){if(!materials.has(color))materials.set(color,new THREE.MeshLambertMaterial({color}));return materials.get(color);}
   function mesh(parent,geometry,x,y,z,sx,sy,sz,color,turn=0){const m=new THREE.Mesh(geometry,material(color));m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.rotation.y=turn;m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
   const box=(p,x,y,z,w,h,d,c)=>mesh(p,cube,x,y,z,w,h,d,c);
   function tree(parent,x,z,seed){box(parent,x,1.5,z,.24,3,.24,0x71604c);mesh(parent,sphere,x,3.3,z,1.8,2.3,1.6,[0x536555,0x606e5b,0x71806b][seed%3]);}
@@ -61,7 +61,7 @@ export function createDistricts(THREE){
     const population=core?20:8,people=[];
     for(let i=0;i<population;i++)people.push({phase:i*1.67+cx+cz,side:i%2?1:-1,walking:!core||i<8});
     const bodies=new THREE.InstancedMesh(cube,material(0xc6bda9),population),heads=new THREE.InstancedMesh(sphere,material(0xc59370),population),legs=new THREE.InstancedMesh(cube,material(0x4b5660),population*2);
-    for(const m of [bodies,heads,legs]){m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);m.frustumCulled=false;p.add(m);}
+    for(const m of [bodies,heads,legs]){m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);m.frustumCulled=true;m.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,1,0),62);p.add(m);}
     const dummy=new THREE.Object3D();
     function pose(instance,index,x,y,z,sx,sy,sz,angle=0){dummy.position.set(x,y,z);dummy.rotation.set(0,angle,0);dummy.scale.set(sx,sy,sz);dummy.updateMatrix();instance.setMatrixAt(index,dummy.matrix);}
     function animate(t){people.forEach((person,i)=>{
@@ -79,15 +79,16 @@ export function createDistricts(THREE){
       if(meshes.length<2)continue;const first=meshes[0],batch=new THREE.InstancedMesh(first.geometry,first.material,meshes.length);batch.castShadow=true;batch.receiveShadow=true;
       meshes.forEach((m,i)=>{matrix.multiplyMatrices(inverse,m.matrixWorld);batch.setMatrixAt(i,matrix);m.removeFromParent();});batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();p.add(batch);
     }
+    p.updateMatrixWorld(true);p.traverse(object=>object.matrixAutoUpdate=false);
     return {group:p,animate,colliders};
   }
   let lastKey='';
-  function update(x,z){const center=districtAt(x,z),key=`${center.x},${center.z}`;if(key===lastKey)return;lastKey=key;const wanted=new Set();
+  function update(x,z){const center=districtAt(x,z),key=`${center.x},${center.z}`;if(key===lastKey)return false;lastKey=key;const wanted=new Set();
     for(let dx=-1;dx<=1;dx++)for(let dz=-1;dz<=1;dz++){const a=center.x+dx,b=center.z+dz,id=`${a},${b}`;wanted.add(id);if(!chunks.has(id))chunks.set(id,makeChunk(a,b));}
     for(const [id,chunk] of chunks)if(!wanted.has(id)){chunk.group.removeFromParent();chunk.group.traverse(m=>{if(m.isInstancedMesh)m.dispose();if(m.isMesh){if(m.material.map){m.material.map.dispose();m.material.dispose();}if(![cube,sphere,roofGeometry,ringGeometry].includes(m.geometry))m.geometry.dispose();}});chunks.delete(id);}
-    root.updateMatrixWorld(true);
+    root.updateMatrixWorld(true);return true;
   }
-  function animate(time){for(const chunk of chunks.values())chunk.animate(time);}
+  function animate(time,x=0,z=0){for(const chunk of chunks.values())if(Math.hypot(chunk.group.position.x-x,chunk.group.position.z-z)<125)chunk.animate(time);}
   update(0,0);
   return {root,update,animate,chunks};
 }

@@ -17,20 +17,20 @@ try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference
 }
 if(renderer)startVillage();
 function startVillage(){
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
-  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.setPixelRatio(Math.min(devicePixelRatio,matchMedia('(pointer: coarse)').matches?1:1.25));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   viewport.prepend(renderer.domElement);const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','3D Greek village. Drag to orbit, select a house, or use Walk mode and W A S D to explore.');
-  const scene=new THREE.Scene();scene.background=new THREE.Color(0x98a7ba);scene.fog=new THREE.FogExp2(0x98a7ba,.0085);
+  const scene=new THREE.Scene();scene.background=new THREE.Color(0x98a7ba);scene.fog=new THREE.FogExp2(0x98a7ba,.0035);
   const camera=new THREE.PerspectiveCamera(48,1,.1,600);
   scene.add(new THREE.HemisphereLight(0xc2d5ff,0x74675b,2.1));
-  const sun=new THREE.DirectionalLight(0xffdcb6,3.0);sun.position.set(-35,55,30);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:150});sun.shadow.normalBias=.05;sun.shadow.bias=-.00015;scene.add(sun);scene.add(sun.target);
+  const sun=new THREE.DirectionalLight(0xffdcb6,3.0);sun.position.set(-35,55,30);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:150});sun.shadow.normalBias=.05;sun.shadow.bias=-.00015;scene.add(sun);scene.add(sun.target);
   const fill=new THREE.DirectionalLight(0x788eff,.8);fill.position.set(30,15,-25);scene.add(fill);
   const village=createVillage(THREE,chapters);scene.add(village.world);
   const districts=createDistricts(THREE);scene.add(districts.root);
   // The visitor is separate from chapter members and never counts toward a house.
   const player=new THREE.Group();player.position.set(0,.2,26);scene.add(player);
   const playerMaterial=new THREE.MeshStandardMaterial({color:0x8c9aff,roughness:.7});
-  const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.23,.48,4,8),playerMaterial);torso.position.y=.86;torso.castShadow=true;player.add(torso);
+  const torso=new THREE.Mesh(new THREE.CapsuleGeometry(.23,.48,4,8),playerMaterial);torso.position.y=.86;torso.castShadow=false;player.add(torso);
   const head=new THREE.Mesh(new THREE.SphereGeometry(.18,12,8),new THREE.MeshStandardMaterial({color:0xe9bd98}));head.position.y=1.45;player.add(head);
   const playerLimbs=[];[-1,1].forEach(side=>{const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.09,.35,3,6),new THREE.MeshStandardMaterial({color:0x333c56}));leg.position.set(side*.13,.35,0);player.add(leg);playerLimbs.push(leg);const arm=new THREE.Mesh(new THREE.CapsuleGeometry(.075,.34,3,6),playerMaterial);arm.position.set(side*.33,.87,0);player.add(arm);playerLimbs.push(arm);});
   const ring=new THREE.Mesh(new THREE.RingGeometry(.5,.6,32),new THREE.MeshBasicMaterial({color:0xb5c0ff,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.y=.04;player.add(ring);player.visible=false;
@@ -42,7 +42,7 @@ function startVillage(){
     else{button.classList.add('pin-empty');button.innerHTML='<span class="pin-letters">Your house?<small>Claim this lot ↗</small></span>';button.setAttribute('aria-label','Explore the empty lot and claim your chapter');}
     button.addEventListener('click',()=>choose(anchor.id,true));labelLayer.append(button);return {anchor,button};
   });
-  let mode='overview',selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,destination=null,route=[],raf=0,lastTime=0,partyTime=0,walkTime=0;
+  let mode='overview',selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,destination=null,route=[],raf=0,lastTime=0,partyTime=0,walkTime=0,lastActivity=0,lastRender=0,labelsDirty=true,viewWidth=1,viewHeight=1,shadowX=NaN,shadowZ=NaN;
   const held=new Set(),target=new THREE.Vector3(0,0,0),wantedTarget=new THREE.Vector3(0,0,0),raycaster=new THREE.Raycaster(),cameraRay=new THREE.Raycaster(),cameraDirection=new THREE.Vector3(),pointer=new THREE.Vector2(),projected=new THREE.Vector3();
   let theta=.68,phi=.79,radius=95,wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
   const walkButton=document.getElementById('village-walk'),overviewButton=document.getElementById('village-overview'),help=document.getElementById('village-help');
@@ -59,7 +59,7 @@ function startVillage(){
     wake();
   }
   function choose(id,focus=false){
-    const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;
+    const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;labelsDirty=true;
     village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);labels.forEach(l=>{l.button.classList.toggle('active',l.anchor.id===id);l.button.setAttribute('aria-pressed',String(l.anchor.id===id));});
     document.querySelectorAll('[data-map-house]').forEach(button=>button.classList.toggle('active',button.dataset.mapHouse===id));
     const chapter=chapters.find(c=>c.id===id);status.textContent=chapter?`${chapter.letters} · ${chapter.joined} / ${chapter.active} IN · ${Math.max(0,Math.ceil(chapter.active*.8)-chapter.joined)} TO QUALIFY`:'YOUR CHAPTER STARTS HERE';
@@ -111,14 +111,18 @@ function startVillage(){
     button.addEventListener('pointerdown',e=>{e.preventDefault();button.setPointerCapture(e.pointerId);held.add(button.dataset.walk);destination=null;route=[];destinationMarker.visible=false;wake();});
     ['pointerup','pointercancel','lostpointercapture'].forEach(event=>button.addEventListener(event,()=>held.delete(button.dataset.walk)));
   });
-  function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;if(!w||!h)return;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}
+  function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;if(!w||!h)return;viewWidth=w;viewHeight=h;labelsDirty=true;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}
   new ResizeObserver(resize).observe(viewport);
   new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(!visible)releaseMovement();wake();},{rootMargin:'80px'}).observe(shell);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)releaseMovement();lastTime=0;wake();});
   canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();visible=false;held.clear();cancelAnimationFrame(raf);raf=0;loading.hidden=false;loading.textContent='The village paused. Reload to return, or browse chapter standings below.';shell.classList.add('village-unavailable');});
   function wake(){if(!raf&&!document.hidden)raf=requestAnimationFrame(frame);}
   function frame(now){
-    raf=0;const dt=lastTime?Math.min((now-lastTime)/1000,.05):0;lastTime=now;
+    raf=0;
+    const cameraMoving=target.distanceToSquared(wantedTarget)>.0001||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
+    // Idle scenery needs fewer frames; camera and walking input keep full responsiveness.
+    if(!cameraMoving&&!held.size&&!destination&&!drag&&!labelsDirty&&now-lastRender<1000/30){wake();return;}
+    const dt=lastTime?Math.min((now-lastTime)/1000,.05):0;lastTime=now;
     let moving=false;
     if(mode==='walk'){
       let dx=(held.has('right')?1:0)-(held.has('left')?1:0),dz=(held.has('down')?1:0)-(held.has('up')?1:0);
@@ -139,17 +143,28 @@ function startVillage(){
       for(let d=.8;d<camera.position.distanceTo(target);d+=.5){const x=target.x+cameraDirection.x*d,z=target.z+cameraDirection.z*d;if(!isWalkable(x,z)){camera.position.copy(target).addScaledVector(cameraDirection,Math.max(.7,d-.5));break;}}
     }
     camera.lookAt(target);camera.updateMatrixWorld();
-    districts.update(target.x,target.z);
-    sun.position.set(target.x-35,55,target.z+30);sun.target.position.set(target.x,0,target.z);
-    if(!paused&&visible&&!document.hidden){partyTime+=dt;village.animateCrowd(partyTime);districts.animate(partyTime);}
-    renderer.render(scene,camera);
-    const occupied=[];const rect=viewport.getBoundingClientRect();
+    const districtChanged=districts.update(target.x,target.z),lightX=Math.round(target.x/12)*12,lightZ=Math.round(target.z/12)*12;
+    if(districtChanged||lightX!==shadowX||lightZ!==shadowZ){
+      shadowX=lightX;shadowZ=lightZ;sun.position.set(lightX-35,55,lightZ+30);sun.target.position.set(lightX,0,lightZ);renderer.shadowMap.needsUpdate=true;
+    }
+    if(!paused&&visible&&!document.hidden){
+      partyTime+=dt;
+      if(partyTime-lastActivity>=1/24){
+        if(Math.hypot(target.x,target.z)<110)village.animateCrowd(partyTime);
+        districts.animate(partyTime,target.x,target.z);lastActivity=partyTime;
+      }
+    }
+    renderer.render(scene,camera);lastRender=now;
+    if(cameraMoving||moving||labelsDirty){
+    const occupied=[];const rect={width:viewWidth,height:viewHeight};
     [...labels].sort((a,b)=>(b.anchor.id===selected?1:0)-(a.anchor.id===selected?1:0)||camera.position.distanceTo(a.anchor.point)-camera.position.distanceTo(b.anchor.point)).forEach(({anchor,button})=>{
       projected.copy(anchor.point).project(camera);const x=(projected.x*.5+.5)*rect.width,y=(-projected.y*.5+.5)*rect.height,w=rect.width<650?104:126;
       let show=projected.z<1&&projected.z>-1&&x>w/2+6&&x<rect.width-w/2-6&&y>104&&y<rect.height-112;
       if(show&&occupied.some(r=>Math.abs(r.x-x)<w+8&&Math.abs(r.y-y)<86))show=false;
       button.hidden=!show;if(show){button.style.transform=`translate(${x}px,${y}px) translate(-50%,-100%)`;occupied.push({x,y});}
     });
+    labelsDirty=false;
+    }
     const settling=target.distanceTo(wantedTarget)>.01||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     if(visible&&!document.hidden&&(!paused||moving||destination||settling))wake();
   }

@@ -59,3 +59,11 @@ test('the surrounding village streams a bounded number of repeatable blocks',()=
   }
   assert(districts.chunks.has('0,0'));assert.equal(village.members.length,117);
 });
+test('crowd culling bounds contain all chapter activity positions',()=>{
+  for(const time of [0,8,24,50])for(const member of village.members){
+    const pose=activityPose(member,time);
+    for(const part of Object.values(village.parts))assert(part.boundingSphere.containsPoint(new THREE.Vector3(pose.x,1.5,pose.z)));
+  }
+  const districts=createDistricts(THREE);assert.equal(districts.update(0,0),false);assert.equal(districts.update(150,0),true);
+  for(const chunk of districts.chunks.values())assert.equal(chunk.group.matrixAutoUpdate,false);
+});

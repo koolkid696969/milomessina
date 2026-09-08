@@ -35,3 +35,7 @@ The existing fomo.family palette and Aeonik typography remain: near-black, soft 
 ## Validation
 
 Run `node --test fomo/campuswars/tests/village.test.mjs` for member counts, reproducible crowds, six selectable lots, building orientation, walking boundaries, conversation turn-taking, routes to shared places and distant streets, neighborhood streaming, articulated transforms and geometry batching. Syntax checks and static reference checks cover the entry scripts, styles, local assets, unique HTML IDs, and matching chapter snapshots. The page has no compilation step. No test registrations were submitted. Browser interaction testing was not performed.
+
+## Rendering budget
+
+Fog density is 0.0035, reduced from 0.0085. Rendering uses a maximum pixel ratio of 1.25 (1 on touch devices), cached 1024px shadows refreshed on neighborhood/light-region changes, cheaper background materials, fixed architectural transforms and bounded crowd culling. Ambient activity updates at most 24 times per second and only near the viewer; idle rendering targets 30 frames per second while camera and walking input can render at the display cadence. House marker positions only update when the camera or selection changes. Actual browser frame rates have not been measured.

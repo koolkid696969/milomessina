@@ -88,7 +88,7 @@ export function createVillage(THREE,chapters){
   });
   const members=crowdMembers(chapters),parts={};const shirtColors=[0xd8dce8,0x626fd6,0xb74f52,0xe3c59a,0x314e72,0xb38799,0x798c9d,0xebe4d0],skinColors=[0xe2b191,0xb17c5a,0x85573c,0xd6a075,0x674638];
   ['torso','head','hair','armL','armR','foreL','foreR','legL','legR','cup'].forEach(name=>{
-    const mesh=new THREE.InstancedMesh(name==='head'?sphereGeometry:boxGeometry,mat(0xffffff),members.length);mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=false;mesh.castShadow=name==='torso';world.add(mesh);parts[name]=mesh;
+    const mesh=new THREE.InstancedMesh(name==='head'?sphereGeometry:boxGeometry,mat(0xffffff),members.length);mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=true;mesh.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,1,0),36);mesh.castShadow=false;world.add(mesh);parts[name]=mesh;
     members.forEach((m,i)=>mesh.setColorAt(i,new THREE.Color(name==='torso'?shirtColors[m.shirt]:name==='head'||name.startsWith('arm')||name.startsWith('fore')?skinColors[m.skin]:name==='hair'?0x342b29:name==='cup'?0xd54f56:0x374153)));
   });
   const dummy=new THREE.Object3D(),up=new THREE.Vector3(0,1,0),a=new THREE.Vector3(),b=new THREE.Vector3(),direction=new THREE.Vector3();
@@ -130,5 +130,8 @@ export function createVillage(THREE,chapters){
     objects.forEach((object,index)=>{batch.setMatrixAt(index,object.matrixWorld);object.removeFromParent();});
     batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();world.add(batch);
   });
+  world.updateMatrixWorld(true);
+  world.traverse(object=>{if(!dynamic.has(object)){object.matrixAutoUpdate=false;}});
+  flags.forEach(flag=>flag.castShadow=false);
   return {world,ground,pickables,anchors,members,parts,selection,animateCrowd};
 }

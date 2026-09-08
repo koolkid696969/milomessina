@@ -149,7 +149,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=9').catch(() => {
+  import('./village.js?v=10').catch(() => {
     document.getElementById('village-loading').textContent = 'The village couldn’t load. Browse every chapter’s progress below.';
     document.getElementById('village').classList.add('village-unavailable');
   });
