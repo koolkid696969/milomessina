@@ -71,10 +71,17 @@ test('street texture aligns continuously with the world grid and intersections',
     return paint.findLast(r=>u>=r.x&&u<r.x+r.w&&v>=r.z&&v<r.z+r.d)?.color;
   };
   for(const [x,z] of [[0,0],[0,100],[-100,0],[20,50],[0,50],[100,-50]])assert.equal(at(x,z),'#424954');
-  assert.equal(at(20,0),undefined);assert.equal(at(6.8,0),'#afb2ac');
+  assert.equal(at(20,0),'#626c62');assert.equal(at(6.8,0),'#afb2ac');
 });
 test('streaming neighborhoods never replaces or removes the street network',()=>{
   const districts=createDistricts(THREE),street=village.streets,parent=street.parent;
   for(const [x,z] of [[49,0],[51,0],[-51,150],[0,0]]){districts.update(x,z);assert.equal(street.parent,parent);assert.equal(street,village.streets);}
   assert.equal(street.geometry.parameters.width,20000);assert.equal(street.position.y,.045);
+});
+
+test('terrain and roads use one opaque floor without a competing large plane',()=>{
+  const floors=[];
+  village.world.traverse(o=>{if(o.isMesh&&o.geometry.type==='PlaneGeometry'&&o.geometry.parameters.width>=1000)floors.push(o);});
+  assert.equal(floors.length,1);assert.equal(floors[0],village.streets);
+  assert.equal(floors[0].material.alphaTest,0);assert.equal(floors[0].material.transparent,false);assert.equal(floors[0].material.depthWrite,true);
 });

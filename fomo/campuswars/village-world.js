@@ -27,7 +27,7 @@ export function createVillage(THREE,chapters){
     const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setIndex(indices);geometry.computeVertexNormals();const material=mat(color).clone();material.side=THREE.DoubleSide;const mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);mesh.castShadow=true;parent.add(mesh);
   }
   // A continuous campus block, with wide sidewalks and a walkable boulevard.
-  const terrain=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000),mat(0x626c62));terrain.rotation.x=-Math.PI/2;terrain.position.y=-.08;terrain.receiveShadow=true;world.add(terrain);
+
 
 
   const streets=createStreetNetwork(THREE);world.add(streets);

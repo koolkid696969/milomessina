@@ -43,3 +43,5 @@ Fog density is 0.0035, reduced from 0.0085. Rendering uses a maximum pixel ratio
 ## Street surface stability
 
 `village-streets.js` owns one persistent street plane. Asphalt, intersections, sidewalks, crossings and lane paint are drawn into a repeating texture on the same surface, removing near-coplanar road intersections and duplicate markings. District streaming only manages buildings and scenery; roads stay loaded. The texture repeats every 100 world units, matching the collision and block grid. Mipmaps and anisotropic filtering stabilize distant markings.
+
+The floor now includes opaque grass in the same texture as roads and sidewalks. The separate terrain plane and alpha cutouts were removed to eliminate overlapping depth layers and angle-dependent mipmap threshold changes. The orbit camera uses a 1–450 clipping range for better depth precision.
