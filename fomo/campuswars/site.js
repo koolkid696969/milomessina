@@ -38,6 +38,8 @@
       person.style.setProperty('--person-scale', String(position.scale));
       person.style.setProperty('--party-delay', `${position.delay}s`);
       person.style.setProperty('--party-duration', `${position.duration}s`);
+      person.style.setProperty('--party-motion', `party-${position.motion}`);
+      person.style.setProperty('--person-facing', String(position.facing));
       const sprite = document.createElement('span');
       sprite.className = 'party-sprite';
       sprite.style.backgroundPosition = `${(position.sprite % 6) * 20}% ${Math.floor(position.sprite / 6) * 100}%`;

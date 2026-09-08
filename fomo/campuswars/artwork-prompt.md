@@ -24,3 +24,10 @@ Layout: canvas exactly1536x1024, perfect SIX COLUMNS BY TWO ROWS, total12 distin
 Subjects: varied men8 and women4, all adults age21+, varied skin tones. College casual plain tees, jerseys, shorts, hoodies, baseball caps, casual trainers. Different outfit each person, restrained blue/cream/red/neutral colors. Small celebratory poses appropriate outdoor fraternity gathering: some hands raised but inside cell, talking gestures, casual dancing, waving, cheerful standing. Natural individual poses and anatomy, legible faces at small size, no recognizable people.
 Camera and medium: real photoreal people from front/slightly top-down camera to match a realistic slightly elevated miniature campus street scene. Consistent soft afternoon-to-bluehour light across all twelve. Full bodies suitable for cutting each person from equal atlas cells. Premium realistic photography, not cartoon or illustration.
 Constraints: exactly12 people in6x2 layout, eight men and four women. No background or ground, real transparent alpha. No logos, text, words, numbers, drinks, drugs, UI, contact-sheet gridlines, watermarks, or second person within any cell. Generate one sprite atlas only.
+
+
+## Replacement party atlas (September 8)
+
+One original replacement request, no retries. Output: `assets/party-dancers.png`, 1536×1024 with verified real alpha. The original standing-student atlas has been removed.
+
+Brief: twelve full-body adult college partygoers age 21+, nine men and three women in a six-column/two-row transparent photographic atlas. Consistent slightly elevated frontal camera and blue-hour lighting. All subjects mid-dance, cheering, laughing and looking toward friends. Poses include both fists overhead, a raised red cup, arms overhead with turned hips, leaning back with bent elbows, a raised knee, reaching for a high five, fist pumping in a crouch, side steps and jumping. College casual jerseys, tees, shorts, caps, sneakers and tank tops; three red cups. Natural anatomy and expressive silhouettes legible at small sizes. No standing-for-a-photo poses, scenery, gridlines, ground or extra people. Each whole person belongs in its own cell.
