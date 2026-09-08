@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=15';
+import {createVillage} from './village-world.js?v=16';
 import {createDistricts} from './village-districts.js';
 
 const shell=document.getElementById('village');
