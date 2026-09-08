@@ -1,4 +1,3 @@
-import {isWalkable} from './village-district-layout.js';
 export const LOTS = [
   {x:-20,z:-19,rotation:Math.PI/2,style:0},
   {x:20,z:-19,rotation:-Math.PI/2,style:1},
@@ -30,29 +29,4 @@ export function activityPose(member,time){
   const turn=(time+member.groupPhase)/6,speaking=Math.floor(turn)%member.groupSize===member.seat;
   // The speaking hand rises only to chest level; listeners keep their arms down.
   return {x:member.x,z:member.z,rotation:member.rotation+Math.sin(time*.47+member.phase)*.055,walking:false,gait:0,speaking,gesture:speaking?Math.sin((turn%1)*Math.PI)*(.5+.2*Math.sin(time*2.1+member.phase)):0,breath:Math.sin(time*1.7+member.phase)*.008};
-}
-export function movePlayer(position,dx,dz){
-  let x=position.x,z=position.z;const steps=Math.max(1,Math.ceil(Math.hypot(dx,dz)/.45));
-  for(let i=0;i<steps;i++){if(isWalkable(x+dx/steps,z))x+=dx/steps;if(isWalkable(x,z+dz/steps))z+=dz/steps;}
-  return {x,z};
-}
-// Local grid routing lets a tap take the visitor around buildings, not into walls.
-export function walkRoute(start,end){
-  const grid=2.5,key=(x,z)=>`${x},${z}`,sx=Math.round(start.x/grid),sz=Math.round(start.z/grid),ex=Math.round(end.x/grid),ez=Math.round(end.z/grid);
-  if(!isWalkable(end.x,end.z)||Math.hypot(end.x-start.x,end.z-start.z)>300)return [];
-  const open=[{x:sx,z:sz,g:0,f:0}],best=new Map([[key(sx,sz),0]]),parent=new Map();let found;
-  for(let iteration=0;open.length&&iteration<16000;iteration++){
-    let at=0;for(let i=1;i<open.length;i++)if(open[i].f<open[at].f)at=i;
-    const node=open.splice(at,1)[0],id=key(node.x,node.z);if(node.g!==best.get(id))continue;
-    if(node.x===ex&&node.z===ez){found=id;break;}
-    for(const [dx,dz] of [[1,0],[-1,0],[0,1],[0,-1]]){
-      const x=node.x+dx,z=node.z+dz,g=node.g+1,next=key(x,z);
-      if(!isWalkable(x*grid,z*grid)||!isWalkable((node.x+x)*grid/2,(node.z+z)*grid/2)||g>=(best.get(next)??Infinity))continue;
-      best.set(next,g);parent.set(next,id);open.push({x,z,g,f:g+Math.abs(x-ex)+Math.abs(z-ez)});
-    }
-  }
-  if(!found)return [];
-  const path=[end];let current=found;
-  while(parent.has(current)){const [x,z]=current.split(',').map(Number);path.push({x:x*grid,z:z*grid});current=parent.get(current);}
-  return path.reverse();
 }

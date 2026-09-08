@@ -11,19 +11,3 @@ export function districtSpecs(cx,cz){
   return result;
 }
 export function districtAt(x,z){return {x:Math.floor((x+50)/BLOCK),z:Math.floor((z+50)/BLOCK)};}
-export function isWalkable(x,z){
-  if(!Number.isFinite(x)||!Number.isFinite(z))return false;
-  const chunk=districtAt(x,z);
-  if(chunk.x===0&&chunk.z===0){
-    for(const side of [-1,1])for(const row of [-19,0,19]){
-      if(side===1&&row===19)continue;
-      if(Math.abs(x-side*20)<6.7&&Math.abs(z-row)<7)return false;
-    }
-    // Coffee kiosk and central fountain.
-    if(Math.abs(x-41)<5&&Math.abs(z+20)<4)return false;
-    if(Math.hypot(x-42,z-14)<3)return false;
-  }else{
-    for(const house of districtSpecs(chunk.x,chunk.z))if(Math.abs(x-house.x)<house.depth/2+2&&Math.abs(z-house.z)<house.width/2+1)return false;
-  }
-  return true;
-}

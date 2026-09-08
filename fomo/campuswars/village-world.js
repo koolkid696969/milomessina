@@ -34,7 +34,7 @@ export function createVillage(THREE,chapters){
 
   const streetSign=sign(world,'FOMO  /  GREEK VILLAGE',0,.14,34,10,2,'#303442','#adb5cb');
   if(streetSign)streetSign.rotation.x=-Math.PI/2;
-  const ground=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000),new THREE.MeshBasicMaterial({visible:false}));ground.rotation.x=-Math.PI/2;ground.position.y=.18;world.add(ground);
+
   // Street lamps, paths, trees and furniture give the village a lived-in scale.
   function tree(x,z,size=1){const group=new THREE.Group();group.position.set(x,0,z);world.add(group);cylinder(group,0,1.1,0,.14,2.2,0x655143);for(let k=0;k<4;k++){const leaf=ball(group,Math.sin(k*2)*.6,2.4+k*.3,Math.cos(k*2)*.5,1.15,0x475862);leaf.scale.y*=1.1;}group.scale.setScalar(size);}
   [-1,1].forEach(side=>{
@@ -117,7 +117,7 @@ export function createVillage(THREE,chapters){
   const selection=new THREE.Mesh(new THREE.RingGeometry(6.8,7.0,64),new THREE.MeshBasicMaterial({color:0xa2aeff,transparent:true,opacity:.75,side:THREE.DoubleSide,depthWrite:false}));selection.rotation.x=-Math.PI/2;selection.position.y=.21;world.add(selection);
   // Batch repeated architectural parts so phones draw whole sets at once.
   world.updateMatrixWorld(true);
-  const batches=new Map(),dynamic=new Set([ground,selection,...pickables,...flags,...Object.values(parts)]);
+  const batches=new Map(),dynamic=new Set([selection,...pickables,...flags,...Object.values(parts)]);
   world.traverse(object=>{
     if(!object.isMesh||dynamic.has(object)||object.isInstancedMesh)return;
     const key=object.geometry.uuid+object.material.uuid+object.castShadow+object.receiveShadow;
@@ -134,5 +134,5 @@ export function createVillage(THREE,chapters){
   world.updateMatrixWorld(true);
   world.traverse(object=>{if(!dynamic.has(object)){object.matrixAutoUpdate=false;}});
   flags.forEach(flag=>flag.castShadow=false);
-  return {world,ground,streets,pickables,anchors,members,parts,selection,animateCrowd};
+  return {world,streets,pickables,anchors,members,parts,selection,animateCrowd};
 }

@@ -18,7 +18,7 @@ export function createDistricts(THREE){
     const p=new THREE.Group();p.position.set(cx*BLOCK,0,cz*BLOCK);root.add(p);
     for(const side of [-1,1])for(let z=-35;z<=35;z+=18){tree(p,side*34,z,Math.abs(cx+cz+z)%3);if(z%2){box(p,side*7.8,1.7,z,.1,3.4,.1,0x54595e);box(p,side*7.8,3.45,z,.6,.15,.6,0xddd5b5);}}
     const core=cx===0&&cz===0;
-    const specs=districtSpecs(cx,cz),colliders=[];
+    const specs=districtSpecs(cx,cz);
     for(const spec of specs){
       const h=new THREE.Group();h.position.set(spec.x-cx*BLOCK,0,spec.z-cz*BLOCK);h.rotation.y=spec.rotation;p.add(h);const color=[0xa77864,0xb89272,0xbab9a6,0x9e786b,0x8f817c][spec.variant],w=spec.width,d=spec.depth,tall=spec.height;
       box(h,0,.25,0,w+1,.5,d+1,0xc0b6a0);box(h,0,tall/2+.5,0,w,tall,d,color);box(h,0,tall+.6,0,w+.5,.24,d+.5,0xe1dbca);
@@ -31,7 +31,6 @@ export function createDistricts(THREE){
       if(portico)mesh(h,roofGeometry,0,tall+1.5,d/2+.9,5.5,1.5,2.4,0xe0d9c5,Math.PI/4);
       box(h,-w*.25,tall+1.5,-1,.7,2.5,.8,color);
       for(const x of [-5,5])mesh(h,sphere,x,.65,d/2+2,.65,.6,.65,0x596c59);
-      colliders.push({x:spec.x,z:spec.z,w:d+4,d:w+2,h:tall+3});
     }
     if(core){
       // Coffee terrace: counter, striped awning, outdoor tables and bicycle parking.
@@ -76,7 +75,7 @@ export function createDistricts(THREE){
       meshes.forEach((m,i)=>{matrix.multiplyMatrices(inverse,m.matrixWorld);batch.setMatrixAt(i,matrix);m.removeFromParent();});batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();p.add(batch);
     }
     p.updateMatrixWorld(true);p.traverse(object=>object.matrixAutoUpdate=false);
-    return {group:p,animate,colliders};
+    return {group:p,animate};
   }
   let lastKey='';
   function update(x,z){const center=districtAt(x,z),key=`${center.x},${center.z}`;if(key===lastKey)return false;lastKey=key;const wanted=new Set();
