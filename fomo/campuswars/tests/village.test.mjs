@@ -83,7 +83,7 @@ test('the opaque campus floor has connected roads and pedestrian-only academic a
   assert.equal(at(7,0),'#bfc0b5');
 });
 test('cars and bicycles stay on the painted street network through every corner',()=>{
-  const {at}=paintedFloor();const roads=new Set(['#505a60','#c5bea5','#d9d6c7','#a5b4a4']);
+  const {at}=paintedFloor();const roads=new Set(['#505a60','#c5bea5','#d9d6c7','#a5b4a4','#4b555b','#566066','#485259','#788083','#414c53','#586567']);
   for(const path of [roundedLoop(2.4,-47.6,97.6,47.6,7.8),roundedLoop(-97.6,-47.6,-2.4,47.6,7.8),roundedLoop(4.7,-45.3,95.3,45.3,8),roundedLoop(-95.3,-45.3,-4.7,45.3,8)]){
     for(let distance=0;distance<path.length;distance+=1.7){const p=path.sample(distance);assert(roads.has(at(p.x,p.z)),`Traffic leaves pavement at ${p.x}, ${p.z}: ${at(p.x,p.z)}`);}
     const start=path.sample(0),end=path.sample(path.length-1e-5);assert(Math.hypot(start.x-end.x,start.z-end.z)<.001);
@@ -124,5 +124,55 @@ test('registered chapters stay under construction until the fifteenth member',()
     assert.equal(banner.userData.joined,joined);assert(scene.pickables.includes(banner));
     assert.equal(scene.members.filter(member=>member.chapter===id).length,joined);
     assert.equal(scene.anchors.length,6);
+  }
+});
+
+test('seeded campus details and appearances reproduce across independent builds',async()=>{
+  const {hash,appearance,palettes}=await import('../village-district-layout.js');
+  const {createHash}=await import('node:crypto');
+  const samples=Array.from({length:300},(_,i)=>appearance('campus',i));
+  assert.deepEqual(samples,Array.from({length:300},(_,i)=>appearance('campus',i)));
+  assert(new Set(samples.map(p=>p.shirt)).size>20);assert(new Set(samples.map(p=>p.skin)).size===palettes.skin.length);
+  for(const p of samples){assert(p.height>=.9&&p.height<=1.1);assert(p.hairLength>=0&&p.hairLength<1);}
+  for(const key of ['shirt','skin','height'])assert.notEqual(hash(-2,7,key),hash(-2,8,key));
+  const digest=d=>{const h=createHash('sha256');d.root.traverse(o=>{if(o.isInstancedMesh){h.update(o.geometry.type+o.count);h.update(Buffer.from(o.instanceMatrix.array.buffer));if(o.instanceColor)h.update(Buffer.from(o.instanceColor.array.buffer));}});return h.digest('hex');};
+  const a=createDistricts(THREE),b=createDistricts(THREE);assert.equal(digest(a),digest(b));
+  a.animate(17);b.animate(17);assert.equal(digest(a),digest(b));
+});
+
+test('a denser campus retains bounded instances and a persistent static horizon',()=>{
+  const districts=createDistricts(THREE),horizon=districts.horizon;
+  const counts=[...districts.chunks.values()].map(c=>c.people.length);
+  assert(counts.reduce((a,b)=>a+b,0)>=400);assert(Math.max(...counts)>Math.min(...counts)*2);
+  const horizonMatrix=horizon.matrixWorld.toArray(),horizonChildren=horizon.children.length;
+  for(const [x,z] of [[0,0],[500,500],[-900,300],[2000,-3000],[0,0]]){
+    districts.update(x,z);assert.equal(districts.chunks.size,9);
+    let instances=0,drawables=0;districts.root.traverse(o=>{if(o.isMesh)drawables++;if(o.isInstancedMesh)instances+=o.count;});
+    assert(instances<22000,`Unbounded instances: ${instances}`);assert(drawables<200,`Unbounded meshes: ${drawables}`);
+    for(const time of [0,8,16,23.99,240,10000]){districts.animate(time,x,z);districts.root.traverse(o=>{assert(o.matrixWorld.elements.every(Number.isFinite));if(o.isInstancedMesh)assert(o.instanceMatrix.array.every(Number.isFinite));});}
+    assert.equal(districts.horizon,horizon);assert.equal(horizon.parent,districts.root);assert.deepEqual(horizon.matrixWorld.toArray(),horizonMatrix);assert.equal(horizon.children.length,horizonChildren);
+  }
+});
+
+test('new campus activities have deterministic paths and parked cars clear buildings',()=>{
+  const districts=createDistricts(THREE),actions=new Set();let cars=0;
+  for(const c of districts.chunks.values()){
+    for(const person of c.people){actions.add(person.action);if(person.action==='doorway'){assert(campusPose(person,8-person.offset).hidden);assert(!campusPose(person,17-person.offset).hidden);}}
+    c.group.traverse(o=>{if(o.name!=='parked-campus-car')return;cars++;
+      for(const [x,z] of [[0,0],[-.9,-2.1],[-.9,2.1],[.9,-2.1],[.9,2.1]]){
+        const point=o.localToWorld(new THREE.Vector3(x,0,z));
+        for(const spec of c.specs){const dx=point.x-spec.x,dz=point.z-spec.z,a=spec.rotation,lx=dx*Math.cos(a)-dz*Math.sin(a),lz=dx*Math.sin(a)+dz*Math.cos(a);assert(!(Math.abs(lx)<spec.width/2+.2&&Math.abs(lz)<spec.depth/2+.2),`Parked car intersects ${spec.type}`);}
+      }
+    });
+  }
+  assert(cars>=70);for(const action of ['doorway','dogwalk','skate','frisbee','groundskeeper'])assert(actions.has(action));
+  assert.equal(districts.traffic.cars.length,8);assert.equal(districts.traffic.cyclists.length,12);
+});
+
+test('member conversations spread across the lawn and porch without body overlap',()=>{
+  const members=crowdMembers(chapters);
+  for(const chapter of chapters){const standing=members.filter(m=>m.chapter===chapter.id&&!m.walking);
+    for(let i=0;i<standing.length;i++)for(let j=i+1;j<standing.length;j++)assert(Math.hypot(standing[i].x-standing[j].x,standing[i].z-standing[j].z)>.5);
+    if(chapter.joined>=15){assert(standing.some(m=>m.ground>0));assert(new Set(standing.map(m=>m.groupSize)).size>=3);}
   }
 });

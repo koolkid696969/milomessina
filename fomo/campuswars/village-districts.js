@@ -1,6 +1,6 @@
-import {BLOCK,districtSpecs,districtAt,districtKind,mod} from './village-district-layout.js?v=17';
-import {createCampusKit} from './village-campus-kit.js?v=20';
-import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=17';
+import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=22';
+import {createCampusKit} from './village-campus-kit.js?v=22';
+import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=22';
 
 export function createDistricts(T){
   const root=new T.Group(),chunks=new Map(),kit=createCampusKit(T);
@@ -73,24 +73,61 @@ export function createDistricts(T){
       tree(p,x,z,seed+i,.8+(i%3)*.17);
     }
   }
+  function fillDetails(p,kind,cx,cz){
+    const core=kind==='greek',spine=['library','athletics','commons'].includes(kind);
+    for(const side of [-1,1]){
+      if(core){
+        const x=side*23;
+        kit.hedge(p,x,-42,12);kit.hedge(p,side*34,-35,10,Math.PI/2);
+        box(p,x,.25,-36,12,.35,6,0xbcb7a7);for(const dx of [-3,3]){table(p,x+dx,-36);bench(p,x+dx,-34.3);}
+        kit.streetFurniture(p,side*14,-39,side);
+        cylinder(p,side*32,3.3,-32,.06,6.6,0x687575);box(p,side*32+.44,5.3,-32,.78,1.7,.045,0x7b83ac);box(p,side*32+.44,5.3,-31.97,.035,1.4,.015,0xd9d4bd);
+        for(const dx of [-5,5])tree(p,x+dx,-38,Math.floor(hash(x,dx)*10000),.8);
+        kit.parkedCar(p,side*43,-37,0,side);kit.parkedCar(p,side*47,-37,0,side+8);
+        kit.bins(p,side*31,30);kit.hedge(p,side*44,33,11);
+      }else{
+        kit.hedge(p,side*35,42,15);kit.hedge(p,side*46,20,11,Math.PI/2);
+        kit.streetFurniture(p,side*15,37,cx*71+cz);
+        for(const x of [side*22,side*36]){box(p,x,.34,41,5,.5,.45,0xb1ae9d);for(let i=0;i<3;i++)mesh(p,'leaf',x-1.4+i*1.4,.8,41,.65,.48,.6,pick([0x748363,0x7b8059,0x88785d],cx,cz,x,i));}
+        if(!spine)for(let i=0;i<6;i++)kit.parkedCar(p,side*(18+i*4.8),-40,side>0?Math.PI/2:-Math.PI/2,Math.floor(hash(cx,cz,side,i)*10000));
+        if(spine){for(const x of [side*16,side*30]){table(p,x,39);kit.bins(p,x+1.8,40.5);}}
+      }
+      // Lamps and access bollards punctuate long pavements without blocking the road.
+      for(const z of [-40,34])for(let i=0;i<3;i++)cylinder(p,side*(core?31:18)+i*.9,.55,z,.09,.9,0x687575);
+    }
+    if(!spine){
+      for(const side of [-1,1])for(const z of [-37,37]){
+        const x=side*9.7;cylinder(p,x,4.8,z,.12,9.5,0x74614a);box(p,x,8.8,z,2.1,.12,.12,0x74614a);
+        if(z===-37)for(const dx of [-.6,.6])kit.wire(p,[x+dx,8.8,-37],[x+dx,8.8,37],1.4);
+      }
+      for(const z of [-37,37])kit.wire(p,[-9.7,8.8,z],[9.7,8.8,z],.9);
+    }
+  }
+  function distantCampus(){
+    const p=new T.Group();p.name='permanent-campus-horizon';
+    for(let i=0;i<65;i++){
+      const a=hash(i,'sky-angle')*Math.PI*2,r=225+hash(i,'sky-radius')*130,x=Math.sin(a)*r,z=Math.cos(a)*r,w=7+hash(i,'sky-width')*17,h=6+hash(i,'sky-height')*19;
+      box(p,x,h/2,z,w,h,8+hash(i,'sky-depth')*9,pick([0x8d9c9b,0x899292,0x9eaaa3,0x92988f],i,'sky-color'));
+      box(p,x,h+.3,z,w+.5,.5,10,0x9daba7);
+      for(let row=1;row<4;row++)for(const side of [-1,1])box(p,x,h*row/4,z+side*(4+hash(i,'sky-depth')*4.5+.03),w*.8,.55,.05,0x768a8b);
+    }
+    for(let i=0;i<80;i++){const a=hash(i,'distant-tree')*Math.PI*2,r=205+hash(i,'tree-radius')*130;mesh(p,'leaf',Math.sin(a)*r,3.5,Math.cos(a)*r,5+hash(i)*6,5+hash(i,1)*5,4+hash(i,2)*6,pick([0x7d907b,0x718978,0x8c9b82],i));}
+    // Water tower, bell tower and stadium floodlights break the dormitory skyline.
+    for(const x of [233,241])for(const z of [181,189])bar(p,[x,0,z],[x,24,z],.20,0x8c9f9d);
+    cylinder(p,237,26,185,6,6,0xaebdb5);mesh(p,'dome',237,29,185,6,2,6,0xaebdb5);
+    box(p,-248,16,55,8,32,8,0x9b9e8e);for(const x of [-251,-245])for(const z of [52,58])box(p,x,35,z,.6,6,.6,0xaeb3a3);mesh(p,'cone',-248,40,55,6,6,6,0x829790);
+    for(const z of [-155,-115]){cylinder(p,247,20,z,.35,40,0x9cacab);box(p,247,40,z,13,1.5,.6,0x859794);for(let i=0;i<6;i++)box(p,242+i*2,40,z+.4,1.5,1.1,.3,0xc6d0bd);}
+    kit.batch(p);p.updateMatrixWorld(true);p.traverse(o=>o.matrixAutoUpdate=false);return p;
+  }
+  const horizon=distantCampus();root.add(horizon);
   function makeChunk(cx,cz){
     const p=new T.Group();p.position.set(cx*BLOCK,0,cz*BLOCK);root.add(p);
     const kind=districtKind(cx,cz),specs=districtSpecs(cx,cz);p.userData.specs=specs;
     for(const spec of specs)kit.building(p,spec,cx*BLOCK,cz*BLOCK);
     landscape(p,kind,cx,cz);
+    fillDetails(p,kind,cx,cz);
     const activity=createCampusPeople(T,kit,kind,cx,cz);p.add(activity.root);
-    p.updateMatrixWorld(true);
-    const batches=new Map();p.traverse(m=>{
-      if(!m.isMesh||m.isInstancedMesh||m.userData.ownedGeometry||m.userData.ownedTexture)return;
-      const key=m.geometry.uuid+(m.material.map?.uuid||'plain')+m.castShadow+m.receiveShadow;
-      if(!batches.has(key))batches.set(key,[]);batches.get(key).push(m);
-    });
-    const inverse=new T.Matrix4().copy(p.matrixWorld).invert(),matrix=new T.Matrix4();
-    for(const meshes of batches.values()){
-      if(meshes.length<2)continue;
-      const first=meshes[0],material=first.material.clone();material.color.set(0xffffff);const batch=new T.InstancedMesh(first.geometry,material,meshes.length);batch.userData.ownedMaterial=true;batch.castShadow=first.castShadow;batch.receiveShadow=first.receiveShadow;
-      meshes.forEach((m,i)=>{matrix.multiplyMatrices(inverse,m.matrixWorld);batch.setMatrixAt(i,matrix);batch.setColorAt(i,m.material.color);m.removeFromParent();});batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();p.add(batch);
-    }
+    kit.batch(p);
     p.updateMatrixWorld(true);p.traverse(o=>o.matrixAutoUpdate=false);
     return {group:p,kind,specs,people:activity.people,animate:activity.animate,dispose(){activity.dispose();kit.disposeChunk(p);}};
   }
@@ -107,5 +144,5 @@ export function createDistricts(T){
     traffic.animate(time,x,z);
   }
   update(0,0);
-  return {root,update,animate,chunks,traffic};
+  return {root,update,animate,chunks,traffic,horizon};
 }

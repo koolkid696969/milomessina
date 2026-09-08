@@ -1,11 +1,13 @@
-import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js';
-import {createStreetNetwork} from './village-streets.js?v=17';
-import {createCampusFloorLogo} from './village-floor-logo.js?v=18';
-import {createChapterBanner} from './village-banners.js?v=20';
+import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=22';
+import {palettes,hash} from './village-district-layout.js?v=22';
+import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js?v=22';
+import {createStreetNetwork} from './village-streets.js?v=22';
+import {createCampusFloorLogo} from './village-floor-logo.js?v=22';
+import {createChapterBanner} from './village-banners.js?v=22';
 
 export function createVillage(THREE,chapters){
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
-  const materials=new Map();
+  const materials=new Map(),landscapeKit=createCampusKit(THREE);
   function mat(color,emissive=0){const key=color+':'+emissive;if(!materials.has(key))materials.set(key,new THREE.MeshStandardMaterial({color,roughness:.84,emissive,emissiveIntensity:emissive?.45:0}));return materials.get(key);}
   const boxGeometry=new THREE.BoxGeometry(1,1,1),sphereGeometry=new THREE.SphereGeometry(1,14,10),cylinderGeometry=new THREE.CylinderGeometry(1,1,1,20);
   function box(parent,x,y,z,w,h,d,color){const mesh=new THREE.Mesh(boxGeometry,typeof color==='object'?color:mat(color));mesh.position.set(x,y,z);mesh.scale.set(w,h,d);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
@@ -37,12 +39,8 @@ export function createVillage(THREE,chapters){
   const floorLogo=createCampusFloorLogo(THREE);if(floorLogo)world.add(floorLogo);
 
   // Street lamps, paths, trees and furniture give the village a lived-in scale.
-  function tree(x,z,size=1){
-    const group=new THREE.Group();group.position.set(x,0,z);world.add(group);cylinder(group,0,1.6,0,.13,3.2,0x6b5947);
-    const seed=Math.abs(x+z),colors=[0x526b50,0x667a55,0x7b885d];
-    for(let k=0;k<7;k++){const angle=k*2.399+seed,r=k?1:0;const leaf=ball(group,Math.sin(angle)*r,3.5+(k%3)*.28,Math.cos(angle)*r,1.15+(k%2)*.2,colors[k%3]);leaf.scale.y*=1.15;}
-    group.scale.setScalar(size);
-  }
+  function tree(x,z,size=1){landscapeKit.tree(world,x,z,Math.floor(hash(x,z,'tree')*10000),size);}
+
   [-1,1].forEach(side=>{
     [-31,-10,10,31].forEach(z=>{const x=side*7.6;cylinder(world,x,2,z,.07,4,0x3b3a46);box(world,x,4.1,z,.55,.12,.55,0x353444);const glow=box(world,x,3.82,z,.34,.45,.34,mat(0xffdea0,0xffbb55));glow.castShadow=false;const pool=new THREE.Mesh(new THREE.CircleGeometry(1.3,20),new THREE.MeshBasicMaterial({color:0xffd196,transparent:true,opacity:.07,depthWrite:false}));pool.rotation.x=-Math.PI/2;pool.position.set(x,.19,z);world.add(pool);});
     [-33,-9,10,33].forEach(z=>tree(side*29,z,.85+Math.abs(z)%3*.1));
@@ -166,10 +164,10 @@ export function createVillage(THREE,chapters){
     anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot});
   });
   const members=crowdMembers(chapters),parts={};
-  const bodyGeometry=new THREE.CapsuleGeometry(.5,1,3,8);bodyGeometry.scale(1,.5,1);const shirtColors=[0xd8dce8,0x626fd6,0xb74f52,0xe3c59a,0x314e72,0xb38799,0x798c9d,0xebe4d0],skinColors=[0xe2b191,0xb17c5a,0x85573c,0xd6a075,0x674638];
-  ['torso','head','hair','armL','armR','foreL','foreR','legL','legR','cup'].forEach(name=>{
-    const mesh=new THREE.InstancedMesh(name==='head'||name==='hair'?sphereGeometry:name==='cup'?cylinderGeometry:bodyGeometry,mat(0xffffff),members.length);mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=true;mesh.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,1,0),36);mesh.castShadow=false;world.add(mesh);parts[name]=mesh;
-    members.forEach((m,i)=>mesh.setColorAt(i,new THREE.Color(name==='torso'?shirtColors[m.shirt]:name==='head'||name.startsWith('arm')||name.startsWith('fore')?skinColors[m.skin]:name==='hair'?0x342b29:name==='cup'?0xd54f56:0x374153)));
+  const bodyGeometry=new THREE.CapsuleGeometry(.5,1,2,7);bodyGeometry.scale(1,.5,1);const shirtColors=palettes.shirts,skinColors=palettes.skin;
+  ['torso','head','hair','armL','armR','foreL','foreR','legL','legR','cup','backpack'].forEach(name=>{
+    const mesh=landscapeKit.instances(world,name==='head'||name==='hair'?landscapeKit.geometries.sphere:name==='cup'?cylinderGeometry:name==='backpack'?landscapeKit.geometries.box:bodyGeometry,members.length,36);mesh.material=mat(0xffffff);mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=true;mesh.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,1,0),36);mesh.castShadow=false;world.add(mesh);parts[name]=mesh;
+    members.forEach((m,i)=>mesh.setColorAt(i,new THREE.Color(name==='torso'||(m.jacket&&(name.startsWith('arm')||name.startsWith('fore')))?shirtColors[m.shirt]:name==='head'||name.startsWith('arm')||name.startsWith('fore')?skinColors[m.skin]:name==='hair'?palettes.hair[m.hair]:name==='cup'?0xd54f56:palettes.pants[m.pants])));
   });
   const dummy=new THREE.Object3D(),up=new THREE.Vector3(0,1,0),a=new THREE.Vector3(),b=new THREE.Vector3(),direction=new THREE.Vector3();
   function posePart(name,i,x,y,z,sx,sy,sz,rotation=0){dummy.position.set(x,y*1.25,z);dummy.rotation.set(0,rotation,0);dummy.scale.set(sx,sy*1.25,sz);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
@@ -177,16 +175,17 @@ export function createVillage(THREE,chapters){
   function animateCrowd(time){
     members.forEach((m,i)=>{
       const pose=activityPose(m,time),y=.68+pose.breath,angle=pose.rotation;
-      const transform=(x,yy,z=0)=>[pose.x+x*Math.cos(angle)+z*Math.sin(angle),yy,pose.z-x*Math.sin(angle)+z*Math.cos(angle)];
-      posePart('torso',i,...transform(0,y),.36,.48,.24,angle);
+      const transform=(x,yy,z=0)=>[pose.x+x*Math.cos(angle)+z*Math.sin(angle),yy*m.height+(m.ground||0)/1.25,pose.z-x*Math.sin(angle)+z*Math.cos(angle)];
+      posePart('torso',i,...transform(0,y),.36,.48*m.height,.24,angle);
+      posePart('backpack',i,...transform(0,y,-.19),m.backpack?.28:0,.32,.15,angle);
       const nod=Math.sin(time*(pose.speaking?1.6:.8)+m.phase)*.009;
-      posePart('head',i,...transform(0,y+.39+nod),.155,.18,.155,angle);posePart('hair',i,...transform(0,y+.51+nod,-.02),.27,.11,.25,angle);
+      posePart('head',i,...transform(0,y+.39+nod),.155,.18,.155,angle);posePart('hair',i,...transform(0,y+.51+nod,-.02),.16,.085+m.hairLength*.08,.16,angle);
       [-1,1].forEach((side,k)=>{
         const gait=pose.walking?Math.sin(pose.gait+(k?Math.PI:0)):0,gesture=k?pose.gesture:pose.gesture*.22;
         const shoulder=transform(side*.22,y+.14),elbow=transform(side*(.24+gesture*.11),y-.1+gesture*.18,-gait*.08),hand=transform(side*(.25+gesture*.16),y-.31+gesture*.42,.035+gesture*.2-gait*.13);
         limb(k?'armR':'armL',i,shoulder,elbow,.095);limb(k?'foreR':'foreL',i,elbow,hand,.08);
         const hip=transform(side*.1,y-.22),foot=transform(side*.12,.14+(pose.walking?Math.max(0,gait)*.045:0),gait*.2);limb(k?'legR':'legL',i,hip,foot,.13);
-        if(k)posePart('cup',i,...hand,.095,!pose.walking&&i%7===0?.13:0,.095,angle);
+        if(k)posePart('cup',i,...hand,.095,!pose.walking&&hash(m.chapter,m.member,'cup')>.86?.13:0,.095,angle);
       });
     });
     Object.values(parts).forEach(mesh=>mesh.instanceMatrix.needsUpdate=true);
@@ -196,20 +195,8 @@ export function createVillage(THREE,chapters){
   const selection=new THREE.Mesh(new THREE.RingGeometry(6.8,7.0,64),new THREE.MeshBasicMaterial({color:0xa2aeff,transparent:true,opacity:.75,side:THREE.DoubleSide,depthWrite:false}));selection.rotation.x=-Math.PI/2;selection.position.y=.21;world.add(selection);
   // Batch repeated architectural parts so phones draw whole sets at once.
   world.updateMatrixWorld(true);
-  const batches=new Map(),dynamic=new Set([selection,...pickables,...flags,...Object.values(parts)]);
-  world.traverse(object=>{
-    if(!object.isMesh||dynamic.has(object)||object.isInstancedMesh)return;
-    const key=object.geometry.uuid+object.material.uuid+object.castShadow+object.receiveShadow;
-    if(!batches.has(key))batches.set(key,[]);
-    batches.get(key).push(object);
-  });
-  batches.forEach(objects=>{
-    if(objects.length<2)return;
-    const first=objects[0],batch=new THREE.InstancedMesh(first.geometry,first.material,objects.length);
-    batch.castShadow=first.castShadow;batch.receiveShadow=first.receiveShadow;
-    objects.forEach((object,index)=>{batch.setMatrixAt(index,object.matrixWorld);object.removeFromParent();});
-    batch.instanceMatrix.needsUpdate=true;batch.computeBoundingSphere();world.add(batch);
-  });
+  const dynamic=new Set([selection,...pickables,...flags,...Object.values(parts)]);
+  batchCampusGeometry(THREE,world,[...dynamic]);
   world.updateMatrixWorld(true);
   world.traverse(object=>{if(!dynamic.has(object)){object.matrixAutoUpdate=false;}});
   flags.forEach(flag=>flag.castShadow=false);

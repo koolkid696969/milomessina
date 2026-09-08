@@ -1,3 +1,10 @@
+// Stable per-instance hashing: unrelated objects do not repeat in stripes or shift
+// when another instance is inserted. No runtime randomness or network state.
+export function hash(...keys){let h=2166136261;for(const key of keys){for(const c of String(key)){h=Math.imul(h^c.charCodeAt(0),16777619);}h=Math.imul(h^255,16777619);}h^=h>>>16;h=Math.imul(h,0x7feb352d);h^=h>>>15;h=Math.imul(h,0x846ca68b);return ((h^(h>>>16))>>>0)/4294967296;}
+export const pick=(list,...keys)=>list[Math.floor(hash(...keys)*list.length)];
+export const palettes={shirts:[0xe7decc,0x5f7397,0x984d47,0x43594c,0xc4a36a,0xa8b8bb,0x5e5274,0xd8dce1,0x7b8064,0x879cab,0xc27c5d,0xbba1a5,0x313d52,0xb2b692,0x85817c,0xe4ba83,0x734645,0x9bada2,0x4a656d,0xbbc5d4,0x7c6388,0xc7b7a4,0x8d9659,0xddd6b7],skin:[0xe5b28a,0xba8662,0x835c43,0xd7a074,0x684a38,0xc78c66,0xf0c3a0,0x9f7151],hair:[0x352a23,0x735036,0xc4a779,0x211f20,0x987149,0x554035,0xb69768,0x6e4c38],pants:[0x314357,0x63686b,0xab9576,0x393c49,0x727767,0x495d70]};
+export function appearance(id,index){return {shirt:Math.floor(hash(id,index,'shirt')*palettes.shirts.length),skin:Math.floor(hash(id,index,'skin')*palettes.skin.length),hair:Math.floor(hash(id,index,'hair')*palettes.hair.length),hairLength:hash(id,index,'hair-length'),height:.9+hash(id,index,'height')*.2,backpack:hash(id,index,'bag')>.46,jacket:hash(id,index,'jacket')>.73,shorts:hash(id,index,'shorts')>.66,pants:Math.floor(hash(id,index,'pants')*palettes.pants.length)};}
+
 export const BLOCK=100;
 export const mod=(n,d)=>((n%d)+d)%d;
 export function districtAt(x,z){return {x:Math.floor((x+50)/BLOCK),z:Math.floor((z+50)/BLOCK)};}
@@ -9,9 +16,9 @@ export function districtKind(cx,cz){
   return x===z?'residential':'town';
 }
 export function districtSpecs(cx,cz){
-  const kind=districtKind(cx,cz),seed=mod(cx*73+cz*137,29),ox=cx*BLOCK,oz=cz*BLOCK;
+  const kind=districtKind(cx,cz),seed=Math.floor(hash(cx,cz,'district')*1000000),ox=cx*BLOCK,oz=cz*BLOCK;
   const specs=[];
-  const add=(type,x,z,width,depth,height,rotation=0,label='')=>specs.push({type,x:ox+x,z:oz+z,width,depth,height,rotation,label,seed});
+  const add=(type,x,z,width,depth,height,rotation=0,label='')=>specs.push({type,x:ox+x,z:oz+z,width,depth,height,rotation,label,seed:Math.floor(hash(cx,cz,type,x,z)*1000000)});
   if(kind==='greek')return specs;
   if(kind==='library'||kind==='commons'){
     add('library',0,-20,36,19,12,0,'UNIVERSITY LIBRARY');
