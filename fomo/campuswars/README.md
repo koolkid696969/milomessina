@@ -66,7 +66,7 @@ The opening is below the requested approximately 200 draws / 700,000 triangles. 
 
 ## Brand and architectural references
 
-The existing fomo.family colors and Aeonik remain, with warm brick and ivory architecture. The trophy campaign artwork is retained; earlier superseded image prompts remain archived in `artwork-prompt.md`.
+The existing fomo.family colors and Aeonik remain, with warm brick and ivory architecture. The standalone prize section and its trophy image are removed from the page, along with the corresponding navigation link. Earlier superseded artwork and prompts remain archived.
 
 Architectural references from earlier work include [Maryland's Georgian fraternity row](https://fsl.umd.edu/about/history), [Alabama's Kappa Sigma plans](https://buildingbama.ua.edu/wp-content/uploads/2022/09/Kappa-Sigma-Stage-3.pdf), [UVA's shared campus spaces](https://www.virginia.edu/life-uva/) and [Maryland's campus circulation plan](https://facilities.umd.edu/projects-programs/campus-facilities-plan).
 
