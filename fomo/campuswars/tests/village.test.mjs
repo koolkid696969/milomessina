@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as THREE from '../vendor/three.module.min.js';
 import {createVillage} from '../village-world.js';
+import {createStreetNetwork} from '../village-streets.js';
 import {createDistricts} from '../village-districts.js';
 import {isWalkable} from '../village-district-layout.js';
 import {LOTS,crowdMembers,toWorld,movePlayer,activityPose,walkRoute} from '../village-layout.js';
@@ -66,4 +67,26 @@ test('crowd culling bounds contain all chapter activity positions',()=>{
   }
   const districts=createDistricts(THREE);assert.equal(districts.update(0,0),false);assert.equal(districts.update(150,0),true);
   for(const chunk of districts.chunks.values())assert.equal(chunk.group.matrixAutoUpdate,false);
+});
+
+test('street texture aligns continuously with the world grid and intersections',()=>{
+  const paint=[];
+  const context={scale(){},clearRect(){},fillRect(x,z,w,d){paint.push({x,z,w,d,color:this.fillStyle});}};
+  const original=globalThis.document;
+  globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>context})};
+  let streets;
+  try{streets=createStreetNetwork(THREE);}finally{if(original===undefined)delete globalThis.document;else globalThis.document=original;}
+  assert.deepEqual(streets.material.map.offset.toArray(),[.5,.5]);
+  assert.deepEqual(streets.material.map.repeat.toArray(),[200,200]);
+  const at=(x,z)=>{
+    const u=((x/100+.5)%1+1)%1*100,v=((-z/100+.5)%1+1)%1*100;
+    return paint.findLast(r=>u>=r.x&&u<r.x+r.w&&v>=r.z&&v<r.z+r.d)?.color;
+  };
+  for(const [x,z] of [[0,0],[0,100],[-100,0],[20,50],[0,50],[100,-50]])assert.equal(at(x,z),'#424954');
+  assert.equal(at(20,0),undefined);assert.equal(at(6.8,0),'#afb2ac');
+});
+test('streaming neighborhoods never replaces or removes the street network',()=>{
+  const districts=createDistricts(THREE),street=village.streets,parent=street.parent;
+  for(const [x,z] of [[49,0],[51,0],[-51,150],[0,0]]){districts.update(x,z);assert.equal(street.parent,parent);assert.equal(street,village.streets);}
+  assert.equal(street.geometry.parameters.width,20000);assert.equal(street.position.y,.045);
 });

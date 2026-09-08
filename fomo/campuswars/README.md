@@ -39,3 +39,7 @@ Run `node --test fomo/campuswars/tests/village.test.mjs` for member counts, repr
 ## Rendering budget
 
 Fog density is 0.0035, reduced from 0.0085. Rendering uses a maximum pixel ratio of 1.25 (1 on touch devices), cached 1024px shadows refreshed on neighborhood/light-region changes, cheaper background materials, fixed architectural transforms and bounded crowd culling. Ambient activity updates at most 24 times per second and only near the viewer; idle rendering targets 30 frames per second while camera and walking input can render at the display cadence. House marker positions only update when the camera or selection changes. Actual browser frame rates have not been measured.
+
+## Street surface stability
+
+`village-streets.js` owns one persistent street plane. Asphalt, intersections, sidewalks, crossings and lane paint are drawn into a repeating texture on the same surface, removing near-coplanar road intersections and duplicate markings. District streaming only manages buildings and scenery; roads stay loaded. The texture repeats every 100 world units, matching the collision and block grid. Mipmaps and anisotropic filtering stabilize distant markings.

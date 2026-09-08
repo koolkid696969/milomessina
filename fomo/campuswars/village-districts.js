@@ -16,10 +16,6 @@ export function createDistricts(THREE){
   }
   function makeChunk(cx,cz){
     const p=new THREE.Group();p.position.set(cx*BLOCK,0,cz*BLOCK);root.add(p);
-    box(p,0,-.025,0,11,.12,100,0x424954);box(p,0,-.024,-50,100,.12,11,0x424954);
-    for(const side of [-1,1]){box(p,side*6.8,.02,0,2.5,.23,85,0xafb2ac);box(p,0,.02,-50+side*6.8,100,.23,2.5,0xafb2ac);}
-    for(let z=-36;z<=36;z+=9)box(p,0,.05,z,.13,.025,2,0xcac1a8);
-    for(let x=-40;x<=40;x+=9)box(p,x,.05,-50,2,.025,.13,0xcac1a8);
     for(const side of [-1,1])for(let z=-35;z<=35;z+=18){tree(p,side*34,z,Math.abs(cx+cz+z)%3);if(z%2){box(p,side*7.8,1.7,z,.1,3.4,.1,0x54595e);box(p,side*7.8,3.45,z,.6,.15,.6,0xddd5b5);}}
     const core=cx===0&&cz===0;
     const specs=districtSpecs(cx,cz),colliders=[];

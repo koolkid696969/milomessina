@@ -1,4 +1,5 @@
 import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js';
+import {createStreetNetwork} from './village-streets.js';
 
 export function createVillage(THREE,chapters){
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
@@ -29,8 +30,8 @@ export function createVillage(THREE,chapters){
   const terrain=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000),mat(0x626c62));terrain.rotation.x=-Math.PI/2;terrain.position.y=-.08;terrain.receiveShadow=true;world.add(terrain);
 
 
-  for(let z=-35;z<36;z+=6)box(world,0,.05,z,.12,.02,2.1,0xc9b791);
-  [-28,28].forEach(z=>{for(let x=-4.5;x<=4.5;x+=1.5)box(world,x,.05,z,.75,.03,2.8,0xcfd0c5);});
+  const streets=createStreetNetwork(THREE);world.add(streets);
+
   const streetSign=sign(world,'FOMO  /  GREEK VILLAGE',0,.14,34,10,2,'#303442','#adb5cb');
   if(streetSign)streetSign.rotation.x=-Math.PI/2;
   const ground=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000),new THREE.MeshBasicMaterial({visible:false}));ground.rotation.x=-Math.PI/2;ground.position.y=.18;world.add(ground);
@@ -133,5 +134,5 @@ export function createVillage(THREE,chapters){
   world.updateMatrixWorld(true);
   world.traverse(object=>{if(!dynamic.has(object)){object.matrixAutoUpdate=false;}});
   flags.forEach(flag=>flag.castShadow=false);
-  return {world,ground,pickables,anchors,members,parts,selection,animateCrowd};
+  return {world,ground,streets,pickables,anchors,members,parts,selection,animateCrowd};
 }
