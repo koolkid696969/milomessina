@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=17';
+import {createVillage} from './village-world.js?v=18';
 import {createDistricts} from './village-districts.js?v=17';
 
 const shell=document.getElementById('village');
@@ -24,6 +24,10 @@ function startVillage(){
   const fill=new THREE.DirectionalLight(0x788eff,.8);fill.position.set(30,15,-25);scene.add(fill);
   const village=createVillage(THREE,chapters);scene.add(village.world);
   const districts=createDistricts(THREE);scene.add(districts.root);
+  let autoOrbit=!reduced;
+  function takeControl(){autoOrbit=false;}
+  document.addEventListener('pointerdown',takeControl,{once:true,capture:true});
+  document.addEventListener('village:artwork',()=>{viewDirty=true;wake();});
   let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastActivity=0,lastRender=0,viewDirty=true,shadowX=NaN,shadowZ=NaN;
   const target=new THREE.Vector3(0,0,0),wantedTarget=new THREE.Vector3(0,0,0),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
   let theta=.68,phi=.79,radius=95,wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
@@ -32,14 +36,14 @@ function startVillage(){
   function choose(id,focus=false){
     const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
     village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);
-    if(focus){wantedTarget.set(anchor.lot.x*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=anchor.lot.x<0?1.08:-1.08;}
+    if(focus){takeControl();wantedTarget.set(anchor.lot.x*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=anchor.lot.x<0?1.08:-1.08;}
     document.dispatchEvent(new CustomEvent('village:select',{detail:{id}}));wake();
   }
   document.addEventListener('chapter:select',e=>choose(e.detail.id,Boolean(e.detail.focus)));
   document.addEventListener('party:pause',e=>{paused=e.detail.paused;wake();});
-  document.getElementById('village-overview').addEventListener('click',resetView);
-  document.getElementById('village-zoom-in').addEventListener('click',()=>{wantedRadius=Math.max(20,wantedRadius*.8);wake();});
-  document.getElementById('village-zoom-out').addEventListener('click',()=>{wantedRadius=Math.min(160,wantedRadius*1.25);wake();});
+  document.getElementById('village-overview').addEventListener('click',()=>{takeControl();resetView();});
+  document.getElementById('village-zoom-in').addEventListener('click',()=>{takeControl();wantedRadius=Math.max(20,wantedRadius*.8);wake();});
+  document.getElementById('village-zoom-out').addEventListener('click',()=>{takeControl();wantedRadius=Math.min(160,wantedRadius*1.25);wake();});
   const expand=document.getElementById('village-expand');expand.hidden=!shell.requestFullscreen;
   expand.addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await shell.requestFullscreen();}catch{expand.disabled=true;expand.title='Full screen is unavailable in this browser.';}});
   document.addEventListener('fullscreenchange',()=>{expand.textContent=document.fullscreenElement?'Exit full screen ↙':'Full screen ↗';resize();});
@@ -52,8 +56,9 @@ function startVillage(){
     if(hit){choose(hit.object.userData.chapter,true);return;}
   });
   canvas.addEventListener('pointercancel',()=>{drag=null;});canvas.addEventListener('lostpointercapture',()=>{drag=null;});
-  canvas.addEventListener('wheel',e=>{if(document.activeElement!==canvas&&!document.fullscreenElement)return;e.preventDefault();wantedRadius=Math.max(20,Math.min(160,wantedRadius*Math.exp(e.deltaY*.001)));wake();},{passive:false});
+  canvas.addEventListener('wheel',e=>{if(document.activeElement!==canvas&&!document.fullscreenElement)return;e.preventDefault();takeControl();wantedRadius=Math.max(20,Math.min(160,wantedRadius*Math.exp(e.deltaY*.001)));wake();},{passive:false});
   canvas.addEventListener('keydown',event=>{
+    takeControl();
     if(event.code==='Escape'||event.code==='Home'){event.preventDefault();resetView();return;}
     if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.code))return;
     event.preventDefault();
@@ -75,8 +80,9 @@ function startVillage(){
     raf=0;
     const cameraMoving=target.distanceToSquared(wantedTarget)>.0001||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     // Idle scenery needs fewer frames; camera input keep full responsiveness.
-    if(!cameraMoving&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
+    if((!cameraMoving||autoOrbit)&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
     const dt=lastTime?Math.min((now-lastTime)/1000,.05):0;lastTime=now;
+    if(autoOrbit&&!paused&&visible&&!document.hidden)wantedTheta+=dt*.035;
     const ease=reduced?1:1-Math.exp(-dt*7);target.lerp(wantedTarget,ease);theta+=(wantedTheta-theta)*ease;phi+=(wantedPhi-phi)*ease;radius+=(wantedRadius-radius)*ease;
     camera.position.set(target.x+Math.sin(theta)*Math.cos(phi)*radius,target.y+Math.sin(phi)*radius,target.z+Math.cos(theta)*Math.cos(phi)*radius);
     camera.lookAt(target);camera.updateMatrixWorld();

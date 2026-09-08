@@ -1,5 +1,6 @@
 import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js';
 import {createStreetNetwork} from './village-streets.js?v=17';
+import {createCampusFloorLogo} from './village-floor-logo.js?v=18';
 import {createChapterBanner} from './village-banners.js?v=15';
 
 export function createVillage(THREE,chapters){
@@ -33,8 +34,7 @@ export function createVillage(THREE,chapters){
 
   const streets=createStreetNetwork(THREE);world.add(streets);
 
-  const streetSign=sign(world,'FOMO  /  GREEK VILLAGE',0,.14,34,10,2,'#303442','#adb5cb');
-  if(streetSign)streetSign.rotation.x=-Math.PI/2;
+  const floorLogo=createCampusFloorLogo(THREE);if(floorLogo)world.add(floorLogo);
 
   // Street lamps, paths, trees and furniture give the village a lived-in scale.
   function tree(x,z,size=1){const group=new THREE.Group();group.position.set(x,0,z);world.add(group);cylinder(group,0,1.1,0,.14,2.2,0x655143);for(let k=0;k<4;k++){const leaf=ball(group,Math.sin(k*2)*.6,2.4+k*.3,Math.cos(k*2)*.5,1.15,0x475862);leaf.scale.y*=1.1;}group.scale.setScalar(size);}
