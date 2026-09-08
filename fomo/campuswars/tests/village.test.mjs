@@ -114,3 +114,15 @@ test('terrain and roads use one opaque floor without a competing large plane',()
   assert.equal(floors.length,1);assert.equal(floors[0],village.streets);
   assert.equal(floors[0].material.alphaTest,0);assert.equal(floors[0].material.transparent,false);assert.equal(floors[0].material.depthWrite,true);
 });
+
+test('registered chapters stay under construction until the fifteenth member',()=>{
+  for(const joined of [0,2,14,15]){
+    const data=chapters.map((chapter,index)=>index===0?{...chapter,joined}:chapter),scene=createVillage(THREE,data),id=data[0].id;
+    assert.equal(Boolean(scene.world.getObjectByName(`chapter-construction-${id}`)),joined<15);
+    assert.equal(Boolean(scene.world.getObjectByName(`chapter-house-${id}`)),joined>=15);
+    const banner=scene.world.getObjectByName(`chapter-banner-${id}`);
+    assert.equal(banner.userData.joined,joined);assert(scene.pickables.includes(banner));
+    assert.equal(scene.members.filter(member=>member.chapter===id).length,joined);
+    assert.equal(scene.anchors.length,6);
+  }
+});

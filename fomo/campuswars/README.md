@@ -59,3 +59,5 @@ The one opaque ground texture now repeats over 300 world units, with pedestrian 
 The main headline and homepage share title are `$500,000 committed`, as supplied by the user. Chapter qualification and individual prize rules retain their existing amounts.
 
 The ground marking reuses the original fomo symbol and lowercase `fomo /campus` lockup from `/fomo/`, with Aeonik loaded before the texture is refreshed. The initial overview slowly orbits while visible and unpaused; the first pointer interaction, keyboard input or house focus hands over control permanently for that visit. Reduced-motion preferences suppress the automatic orbit.
+
+Chapters with 0–14 onboarded members display a concrete foundation, exposed timber framing, scaffolding, ladders and staged materials instead of a finished house. Their membership banner remains on the construction frontage. A finished house appears at 15 members. The starting overview is 0.38 radians above the horizon (about 22 degrees) and orbits at 0.06 radians per second before interaction.

@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=18';
+import {createVillage} from './village-world.js?v=19';
 import {createDistricts} from './village-districts.js?v=17';
 
 const shell=document.getElementById('village');
@@ -30,9 +30,9 @@ function startVillage(){
   document.addEventListener('village:artwork',()=>{viewDirty=true;wake();});
   let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastActivity=0,lastRender=0,viewDirty=true,shadowX=NaN,shadowZ=NaN;
   const target=new THREE.Vector3(0,0,0),wantedTarget=new THREE.Vector3(0,0,0),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
-  let theta=.68,phi=.79,radius=95,wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
+  let theta=.68,phi=.38,radius=95,wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
   function overviewRadius(){return viewport.clientWidth<650?145:viewport.clientWidth<1000?112:95;}
-  function resetView(){wantedTarget.set(0,0,0);wantedRadius=overviewRadius();wantedPhi=.79;wantedTheta=.68;wake();}
+  function resetView(){wantedTarget.set(0,0,0);wantedRadius=overviewRadius();wantedPhi=.38;wantedTheta=.68;wake();}
   function choose(id,focus=false){
     const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
     village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);
@@ -82,7 +82,7 @@ function startVillage(){
     // Idle scenery needs fewer frames; camera input keep full responsiveness.
     if((!cameraMoving||autoOrbit)&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
     const dt=lastTime?Math.min((now-lastTime)/1000,.05):0;lastTime=now;
-    if(autoOrbit&&!paused&&visible&&!document.hidden)wantedTheta+=dt*.035;
+    if(autoOrbit&&!paused&&visible&&!document.hidden)wantedTheta+=dt*.06;
     const ease=reduced?1:1-Math.exp(-dt*7);target.lerp(wantedTarget,ease);theta+=(wantedTheta-theta)*ease;phi+=(wantedPhi-phi)*ease;radius+=(wantedRadius-radius)*ease;
     camera.position.set(target.x+Math.sin(theta)*Math.cos(phi)*radius,target.y+Math.sin(phi)*radius,target.z+Math.cos(theta)*Math.cos(phi)*radius);
     camera.lookAt(target);camera.updateMatrixWorld();

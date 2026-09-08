@@ -48,6 +48,56 @@ export function createVillage(THREE,chapters){
     box(parent,x,y,z+.14,.065,1.45,.055,0xe8ddc8);box(parent,x,y,z+.14,.9,.065,.055,0xe8ddc8);
     [-.68,.68].forEach(dx=>box(parent,x+dx,y,z,.23,1.65,.15,0x283940));
   }
+  function constructionSite(parent,chapter){
+    const site=new THREE.Group();site.name=`chapter-construction-${chapter.id}`;site.userData={chapter:chapter.id,joined:chapter.joined,state:'construction'};parent.add(site);
+    const timber=0xc49a63,concrete=0xb3b1a5,steel=0x7e9295,orange=0xd48b46;
+    function beam(a,b,width=.14,color=timber){
+      const direction=new THREE.Vector3().subVectors(new THREE.Vector3(...b),new THREE.Vector3(...a));
+      const m=box(site,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,width,direction.length(),width,color);
+      m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction.normalize());return m;
+    }
+    box(site,0,.15,0,11,.16,8.5,0x968771);
+    box(site,0,.34,0,9.4,.32,7,concrete);
+    // Exposed foundation and joists; no finished walls, windows or roof below 15.
+    for(const z of [-3.3,3.3])box(site,0,.59,z,9.2,.18,.16,timber);
+    for(const x of [-4.5,4.5])box(site,x,.59,0,.16,.18,6.6,timber);
+    for(let x=-4;x<=4;x+=1)box(site,x,.53,0,.12,.12,6.5,timber);
+    const frameHeight=chapter.joined===0?1.7:3.2;
+    for(const x of [-4.5,4.5])for(const z of [-3.3,3.3])beam([x,.65,z],[x,frameHeight,z],.19);
+    // The rear wall begins to take shape as members arrive.
+    if(chapter.joined>0){
+      for(let x=-3.6;x<=3.7;x+=.9)beam([x,.65,-3.3],[x,frameHeight,-3.3],.12);
+      box(site,0,frameHeight,-3.3,9.3,.18,.2,timber);
+      for(const x of [-4.5,4.5]){box(site,x,frameHeight,0,.18,.18,6.6,timber);beam([x,.7,-3.2],[x,frameHeight,0],.11);}
+      for(let i=0;i<Math.min(3,Math.floor(chapter.joined/3));i++)box(site,-3.6+i*1.8,1.75,-3.4,1.7,2.2,.07,0xb39468);
+    }
+    if(chapter.joined>=8){
+      for(let x=-4.2;x<=4.3;x+=1.4)box(site,x,3.3,0,.14,.2,6.6,timber);
+      for(const x of [-4.5,4.5])for(const z of [-3.3,3.3])beam([x,3.3,z],[x,5.5,z],.16);
+      box(site,0,5.5,-3.3,9.2,.16,.16,timber);
+    }
+    // Scaffold platform, cross bracing and a leaning access ladder.
+    for(const x of [-5.3,-6.1])for(const z of [-2.8,1.8])beam([x,.2,z],[x,3.8,z],.065,steel);
+    box(site,-5.7,2.35,-.5,1.05,.12,5.2,0xa39377);
+    for(const x of [-5.3,-6.1]){beam([x,.4,-2.8],[x,3.7,1.8],.045,steel);beam([x,3.7,-2.8],[x,.4,1.8],.045,steel);}
+    for(const x of [-5.9,-5.45])beam([x,.2,3.2],[x,2.5,1.5],.05,steel);
+    for(let i=0;i<7;i++)beam([-5.9,.3+i*.32,3.13-i*.24],[-5.45,.3+i*.32,3.13-i*.24],.045,steel);
+    // Staged lumber, masonry pallets and safety barriers make the lot read as active construction.
+    for(let layer=0;layer<4;layer++)for(let row=0;row<3;row++)box(site,3.4+row*.28,.26+layer*.13,4.45,.22,.11,2.4,timber);
+    box(site,-3.2,.23,4.5,1.9,.16,1.3,0x8d775b);
+    for(let layer=0;layer<3;layer++)for(let col=0;col<4;col++)box(site,-3.86+col*.44,.43+layer*.23,4.5,.4,.2,1.05,0xa8755d);
+    for(const x of [-5.8,5.8]){
+      box(site,x,.24,6.1,.5,.12,.5,0x4e4e47);
+      const cone=new THREE.Mesh(new THREE.ConeGeometry(.23,.65,10),mat(orange));cone.position.set(x,.62,6.1);site.add(cone);
+      cylinder(site,x,.61,6.1,.14,.1,0xeee5ce);
+    }
+    for(const x of [-2.4,2.4])box(site,x,1.6,6.1,.1,3,.1,steel);
+    const banner=createChapterBanner(THREE,chapter,4.8);banner.position.set(0,1.66,6.2);site.add(banner);pickables.push(banner);
+    box(site,0,2.8,6.1,5.1,.1,.12,steel);
+    sign(site,'UNDER CONSTRUCTION',0,3.12,6.2,4.8,.42,'#d6b26d','#2c3038');
+    const hit=box(site,0,2.8,0,12.5,6,12,new THREE.MeshBasicMaterial({visible:false}));hit.userData.chapter=chapter.id;pickables.push(hit);
+    return site;
+  }
   LOTS.forEach((lot,index)=>{
     const group=new THREE.Group();group.position.set(lot.x,0,lot.z);group.rotation.y=lot.rotation;world.add(group);
     const chapter=chapters[index],id=chapter?.id||'empty';
@@ -59,6 +109,10 @@ export function createVillage(THREE,chapters){
       [-5.5,5.5].forEach(x=>[-3,6].forEach(z=>cylinder(group,x,.55,z,.08,1.1,0xc6b69a)));
       box(group,0,1.5,7.6,.13,2.5,.13,0xc6b69a);box(group,0,2,7.65,3.6,1.5,.16,0x646eff);sign(group,'YOUR HOUSE',0,2.1,7.75,3.2,.55,'#646eff','#ffffff');sign(group,'START HERE',0,1.65,7.75,2.8,.35,'#646eff','#ffffff');
       const hit=box(group,0,1,1,12,2,13,new THREE.MeshBasicMaterial({visible:false}));hit.userData.chapter=id;pickables.push(hit);anchors.push({id,point:new THREE.Vector3(lot.x,4,lot.z),lot});return;
+    }
+    if(chapter.joined<15){
+      constructionSite(group,chapter);
+      anchors.push({id,point:new THREE.Vector3(lot.x,6,lot.z),lot});return;
     }
     const house=new THREE.Group();house.name=`chapter-house-${id}`;group.add(house);
     const colors=[0xb77458,0xad6952,0xa3604c,0xd5cfbb,0x855d54];const wall=index===3?mat(colors[index]):facade(colors[index]);const width=[11,12.2,10.5,12.2,10.5][index],height=index===4?9.1:7.4,depth=7.5;
