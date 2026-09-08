@@ -18,3 +18,43 @@
 .house-visual{aspect-ratio:5/6;margin:0}.house-progress{margin:0;align-self:start;padding-top:4px}.lot-cta{margin:0;align-self:start;padding:9px 12px}.lot-plus{top:55%;background:#151625a6;border-color:#8a99ff4a;font-size:24px;width:36px;height:36px;border-radius:6px}
 .house-card .house-label strong{transition:color .2s}.house-card:hover .house-label strong{color:#dfe4ff}.house-card.selected .progress-track{box-shadow:0 0 0 1px #858fc235}.house-card.selected .house-label strong{color:#c7d0ff}
 @media(max-width:700px){.house-track{padding-top:19px}.house-track::before{inset:67px 0 50px}.house-track>.house-card{grid-template-rows:48px auto 40px;padding-bottom:10px}.house-label{height:48px}.house-visual{margin:0;aspect-ratio:5/6}.house-progress{margin:0}.lot-cta{margin:0}.lot-plus{width:32px;height:32px;font-size:22px}}
+
+/* The page follows the same parcel-to-house progression as the village. */
+.village-build{border-top:1px solid var(--line);padding-top:72px}
+.build-heading{display:grid;grid-template-columns:1.2fr 1fr;gap:70px;align-items:end}
+.build-heading .eyebrow{color:var(--blue-light);margin-bottom:20px}
+.build-heading>p{max-width:380px;color:var(--muted);font-size:18px;line-height:1.6;padding-bottom:4px}
+.growth-stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:48px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.growth-stages article{padding:23px 28px 30px;min-width:0;border-right:1px solid var(--line);display:flex;flex-direction:column}
+.growth-stages article:first-child{padding-left:0}.growth-stages article:last-child{padding-right:0;border-right:0}
+.stage-caption{display:flex;justify-content:space-between;gap:12px;font-size:10px;font-weight:700;letter-spacing:.075em;color:#7e88ab}
+.stage-caption>span:first-child{color:#c2caff}
+.parcel-art{display:block;width:100%;height:auto;overflow:visible}
+.growth-stages .parcel-art{margin:5px 0 22px}
+.growth-stages h3{font-size:26px;line-height:1.12;margin-bottom:14px}
+.growth-stages p{font-size:15px;line-height:1.65;color:#a2a7bd;margin-bottom:24px}
+.scene-link{display:flex;align-items:center;justify-content:space-between;gap:20px;color:#bdc7ff;background:none;border:0;border-top:1px solid #30334c;padding:14px 0 0;text-align:left;font-size:13px;font-weight:500;margin-top:auto;min-height:44px}
+.scene-link:hover{color:white}.scene-link>span{font-size:20px}
+.competition-note{display:grid;grid-template-columns:160px 1fr 180px;gap:30px;align-items:start;padding-top:30px}
+.competition-note>.eyebrow{font-size:10px;color:var(--blue-light);line-height:1.7;max-width:120px}
+.competition-note>p{font-size:15px;line-height:1.6;color:#929ab3;max-width:580px}.competition-note strong{color:#d3daef;font-weight:500}
+.competition-season{font-size:10px;letter-spacing:.055em;line-height:1.9;color:#8c92aa;justify-self:end}
+.competition-season strong{font-size:11px;white-space:nowrap}
+.prizes .section-heading{max-width:900px}.prizes .prize-grid{margin-top:35px}.prizes .national-prize{border-radius:4px}.prizes .other-prizes>article{border-radius:4px}
+.village-rally{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;align-items:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:25px}
+.village-rally .eyebrow{color:var(--blue-light);font-size:11px;margin-bottom:22px}.village-rally h2{font-size:clamp(38px,4.6vw,66px)}
+.village-rally-copy>p:not(.eyebrow){margin-top:22px;color:#a2a9bf;line-height:1.65;font-size:16px}
+.village-rally .rally-actions{justify-content:flex-start;gap:12px;flex-wrap:wrap}.village-rally .button{font-size:13px;gap:20px}
+.rally-parcel{color:var(--text);border:0;padding:0;background:transparent;min-width:0;text-align:center}
+.rally-parcel .parcel-art{transition:transform .25s}.rally-parcel:hover .parcel-art{transform:translateY(-8px)}
+.rally-parcel>span{display:flex;justify-content:center;gap:70px;color:#aab7f5;font-size:11px;letter-spacing:.1em;padding-top:18px}.rally-parcel>span>span{font-size:20px;line-height:1}
+.questions h2{font-size:clamp(32px,3.1vw,44px);max-width:340px}.questions{gap:55px}
+@media(max-width:1000px){.build-heading{gap:40px}.build-heading>p{font-size:16px}.growth-stages article{padding-inline:18px}.stage-caption{font-size:9px;letter-spacing:.03em}.growth-stages h3{font-size:23px}.competition-note{grid-template-columns:130px 1fr;gap:20px}.competition-season{grid-column:2;justify-self:start}.village-rally{gap:30px}.village-rally .rally-actions{align-items:flex-start}}
+@media(max-width:700px){
+ .village-build{padding-top:45px}.build-heading{grid-template-columns:1fr;gap:18px}.build-heading .eyebrow{font-size:10px;margin-bottom:15px}.build-heading h2{font-size:36px}.build-heading>p{font-size:15px;max-width:350px}
+ .growth-stages{grid-template-columns:1fr;margin-top:30px}.growth-stages article,.growth-stages article:first-child,.growth-stages article:last-child{padding:22px 0 28px;border-right:0;border-bottom:1px solid var(--line)}.growth-stages article:last-child{border-bottom:0}
+ .stage-caption{font-size:10px;letter-spacing:.06em}.growth-stages .parcel-art{max-width:340px;align-self:center;margin:0 0 18px}.growth-stages h3{font-size:26px}.growth-stages p{font-size:15px;max-width:410px;margin-bottom:17px}.scene-link{font-size:13px}
+ .competition-note{grid-template-columns:1fr;gap:12px;padding-top:24px}.competition-note>.eyebrow{max-width:none}.competition-season{grid-column:auto;margin-top:8px}.competition-note>p{font-size:14px}
+ .village-rally{grid-template-columns:1fr;gap:20px;padding-block:45px;margin-top:0}.village-rally .eyebrow{font-size:10px;margin-bottom:17px}.village-rally h2{font-size:39px}.village-rally-copy>p:not(.eyebrow){font-size:15px}.village-rally .rally-actions{flex-direction:row;align-items:stretch}.village-rally .rally-actions>.button{min-width:0;flex:1;gap:10px;padding-inline:12px;font-size:12px}.rally-parcel{max-width:380px;width:100%;justify-self:center}.rally-parcel>span{padding-top:6px}
+ .questions{gap:25px}.questions h2{font-size:35px}.questions .eyebrow{font-size:10px}
+}

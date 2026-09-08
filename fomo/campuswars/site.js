@@ -46,21 +46,27 @@
       text('panel-letters', chapter.letters);
       text('panel-school', chapter.school.toUpperCase());
       text('panel-name', chapter.name);
-      text('panel-target', remaining ? `${remaining} more to qualify.` : 'The 80% target is reached.');
+      text('panel-target', chapter.joined<15 ? `${15-chapter.joined} more to build your house.` : remaining ? `${remaining} more to qualify.` : 'Your house reached 80%.');
       text('panel-detail', `${chapter.joined} joined · ${target} needed · ${chapter.active} active members`);
       panelShare.setAttribute('aria-label', `Share ${chapter.name}’s Campus Wars progress`);
     } else {
       text('panel-letters', '+');
       text('panel-school', 'YOUR HOUSE BELONGS HERE');
-      text('panel-name', 'Your letters. Your clan.');
-      text('panel-target', 'Be the one who starts it.');
-      text('panel-detail', 'Register your chapter. Get the link. Rally the house.');
+      text('panel-name', 'Your house starts here.');
+      text('panel-target', 'Claim your place on the row.');
+      text('panel-detail', 'Get your invite link. Bring your people. Build your house.');
     }
     if (writeHash) history.replaceState(null, '', `${location.pathname}${location.search}#chapter=${encodeURIComponent(id)}`);
     if (emit) document.dispatchEvent(new CustomEvent('chapter:select', {detail: {id, focus: true}}));
   }
 
   document.addEventListener('village:select', event => selectChapter(event.detail.id, {emit: false}));
+  document.querySelectorAll('[data-visit]').forEach(button=>button.addEventListener('click',()=>{
+    selectChapter(button.dataset.visit,{scroll:true});
+    document.getElementById('village').scrollIntoView({block:'start',behavior:reducedMotion?'instant':'smooth'});
+    const canvas=document.querySelector('#village-viewport canvas');
+    canvas?.focus({preventScroll:true});
+  }));
 
   let drag = null;
   let dragged = false;
@@ -116,8 +122,8 @@
     const target = chapter ? Math.ceil(chapter.active * 0.8) : 0;
     const url = chapter ? `${canonicalUrl}#chapter=${encodeURIComponent(chapter.id)}` : canonicalUrl;
     const data = {
-      title: chapter ? `${chapter.letters} — fomo Campus Wars` : '$500,000 committed — fomo Campus Wars',
-      text: chapter ? `${chapter.name}: ${chapter.joined} in, ${Math.max(0, target - chapter.joined)} more to hit 80% in this registration snapshot. Let’s get the house on fomo.` : '$500,000 committed. Let’s get our house on fomo. Who’s getting us in?',
+      title: chapter ? `${chapter.letters} — fomo Campus Wars` : 'Your house belongs here — fomo Campus Wars',
+      text: chapter ? `${chapter.name}: ${chapter.joined} in, ${Math.max(0, target - chapter.joined)} more to hit 80% in this registration snapshot. Let’s get the house on fomo.` : 'There’s an empty lot for our chapter in the Greek village. $500,000 committed. Who’s getting our house on the map?',
       url
     };
     if (navigator.share) {
@@ -149,7 +155,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=23').catch(() => {
+  import('./village.js?v=24').catch(() => {
     document.getElementById('village-loading').textContent = 'The village couldn’t load. Browse every chapter’s progress below.';
     document.getElementById('village').classList.add('village-unavailable');
   });

@@ -14,7 +14,7 @@ Registration links continue to `https://www.aryatoufanian.com/fomo/onboard/`. Th
 
 The six chapter lots and street grid retain their existing positions. Houses use Georgian/classical architecture with brick, columns, porticoes, balconies, shutters, roofs and porches. Chapters with fewer than 15 joined members have foundations, exposed timber, scaffolding and staged materials; a completed house appears at 15. House footprint and height grow with the absolute number onboarded, with bounded dimensions that fit the lots.
 
-House-mounted ivory/navy cloth banners show Greek letters, chapter name and the real member count. Their 2048-pixel textures use Aeonik, woven detail, stitching and modeled eyelets. Counter-scaling preserves lettering proportions as houses grow. The ground lockup reuses the original `fomo /campus` logo.
+House-mounted ivory/navy cloth banners show Greek letters, chapter name and the real member count. Their 2048-pixel textures use Aeonik, woven detail, stitching and modeled eyelets. Counter-scaling preserves lettering proportions as houses grow. The original `fomo /campus` lockup now hangs across the main domed library at (0, −120), on a 29-unit-wide façade banner. It uses a 3072-pixel texture and sits in front of the columns, suspended below the cornice. The previous ground logo is removed.
 
 The opening camera retains the screenshot-matched position approximately `(10.194, 12.378, -52.779)`, looking at `(1.808, 2, -8.101)`. It slowly orbits at 0.06 rad/s until the first camera/house interaction. Reset returns to this composition. Drag or arrow keys orbit, Shift-drag pans, and zoom/fullscreen controls remain. House selection updates the detail panel and `#chapter=...` share link. The walk-around mode, avatar, minimap, shortcuts and instructional overlays remain removed.
 
@@ -55,7 +55,7 @@ node --test fomo/campuswars/tests/village.test.mjs
 
 All 18 tests pass. They cover exact chapter counts, six selectable lots, construction thresholds, reproducible crowds and hashed campus builds, clothing diversity, conversation turns and body clearance, pavement-bound traffic, building/parking separation, nine-block resource bounds, permanent horizon identity, and finite transforms through all new activities and distant streaming positions. Sampled scene bounds remain below 200 mesh objects and 22,000 instances; browser draw calls are measured separately below.
 
-Measured in an isolated headless Chrome 142 WebGL browser using SwiftShader, with the same 1320×720 scene viewport, opening/close-up camera positions, frozen reduced-motion state and warmed cached shadows for both builds. Counters are `renderer.info.render` from the actual rendered frame, not scene-object estimates. Baseline is commit `161e653` immediately before this density pass. Its measurements differ from the older figures in the brief.
+Density-pass measurements below predate the later empty-lot floor, library banner and surrounding-page edits. Measured in an isolated headless Chrome 142 WebGL browser using SwiftShader, with the same 1320×720 scene viewport, opening/close-up camera positions, frozen reduced-motion state and warmed cached shadows for both builds. Counters are `renderer.info.render` from the actual rendered frame, not scene-object estimates. Baseline is commit `161e653` immediately before this density pass. Its measurements differ from the older figures in the brief.
 
 | View | Before draw calls | After draw calls | Before triangles | After triangles |
 | --- | ---: | ---: | ---: | ---: |
@@ -69,3 +69,9 @@ The opening is below the requested approximately 200 draws / 700,000 triangles. 
 The existing fomo.family colors and Aeonik remain, with warm brick and ivory architecture. The trophy campaign artwork is retained; earlier superseded image prompts remain archived in `artwork-prompt.md`.
 
 Architectural references from earlier work include [Maryland's Georgian fraternity row](https://fsl.umd.edu/about/history), [Alabama's Kappa Sigma plans](https://buildingbama.ua.edu/wp-content/uploads/2022/09/Kappa-Sigma-Stage-3.pdf), [UVA's shared campus spaces](https://www.virginia.edu/life-uva/) and [Maryland's campus circulation plan](https://facilities.umd.edu/projects-programs/campus-facilities-plan).
+
+## Village-centered page
+
+The surrounding page follows the same progression as the scene: claim an empty lot, bring the first 15 members to build the house, then reach 80% to qualify. Inline architectural illustrations explain those stages without additional runtime assets or another WebGL scene. Buttons return to the actual empty lot, Phi Kappa Psi construction site or Sigma Chi house, using the existing selection and camera controls.
+
+The opening pairs “Your house belongs here” with the retained “$500,000 committed.” Prize amounts and qualification rules are unchanged. Navigation, chapter details, sharing, the closing invitation, FAQs and the mobile signup bar all follow the village theme. Trading performance and onboarding are explicitly explained as separate determinants of competition rank and house growth.

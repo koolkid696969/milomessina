@@ -1,8 +1,7 @@
-import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=23';
+import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=24';
 import {palettes,hash} from './village-district-layout.js?v=22';
 import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js?v=22';
 import {createStreetNetwork} from './village-streets.js?v=22';
-import {createCampusFloorLogo} from './village-floor-logo.js?v=22';
 import {createChapterBanner} from './village-banners.js?v=22';
 
 export function createVillage(THREE,chapters){
@@ -36,7 +35,6 @@ export function createVillage(THREE,chapters){
 
   const streets=createStreetNetwork(THREE);world.add(streets);
 
-  const floorLogo=createCampusFloorLogo(THREE);if(floorLogo)world.add(floorLogo);
 
   // Street lamps, paths, trees and furniture give the village a lived-in scale.
   function tree(x,z,size=1){landscapeKit.tree(world,x,z,Math.floor(hash(x,z,'tree')*10000),size);}
