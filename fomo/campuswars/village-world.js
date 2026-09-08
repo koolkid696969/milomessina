@@ -1,5 +1,5 @@
 import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js';
-import {createStreetNetwork} from './village-streets.js';
+import {createStreetNetwork} from './village-streets.js?v=17';
 import {createChapterBanner} from './village-banners.js?v=15';
 
 export function createVillage(THREE,chapters){
@@ -103,14 +103,15 @@ export function createVillage(THREE,chapters){
     house.userData={chapter:id,joined:chapter.joined,footprint,roofline};
     anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot});
   });
-  const members=crowdMembers(chapters),parts={};const shirtColors=[0xd8dce8,0x626fd6,0xb74f52,0xe3c59a,0x314e72,0xb38799,0x798c9d,0xebe4d0],skinColors=[0xe2b191,0xb17c5a,0x85573c,0xd6a075,0x674638];
+  const members=crowdMembers(chapters),parts={};
+  const bodyGeometry=new THREE.CapsuleGeometry(.5,1,3,8);bodyGeometry.scale(1,.5,1);const shirtColors=[0xd8dce8,0x626fd6,0xb74f52,0xe3c59a,0x314e72,0xb38799,0x798c9d,0xebe4d0],skinColors=[0xe2b191,0xb17c5a,0x85573c,0xd6a075,0x674638];
   ['torso','head','hair','armL','armR','foreL','foreR','legL','legR','cup'].forEach(name=>{
-    const mesh=new THREE.InstancedMesh(name==='head'?sphereGeometry:boxGeometry,mat(0xffffff),members.length);mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=true;mesh.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,1,0),36);mesh.castShadow=false;world.add(mesh);parts[name]=mesh;
+    const mesh=new THREE.InstancedMesh(name==='head'||name==='hair'?sphereGeometry:name==='cup'?cylinderGeometry:bodyGeometry,mat(0xffffff),members.length);mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=true;mesh.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,1,0),36);mesh.castShadow=false;world.add(mesh);parts[name]=mesh;
     members.forEach((m,i)=>mesh.setColorAt(i,new THREE.Color(name==='torso'?shirtColors[m.shirt]:name==='head'||name.startsWith('arm')||name.startsWith('fore')?skinColors[m.skin]:name==='hair'?0x342b29:name==='cup'?0xd54f56:0x374153)));
   });
   const dummy=new THREE.Object3D(),up=new THREE.Vector3(0,1,0),a=new THREE.Vector3(),b=new THREE.Vector3(),direction=new THREE.Vector3();
-  function posePart(name,i,x,y,z,sx,sy,sz,rotation=0){dummy.position.set(x,y,z);dummy.rotation.set(0,rotation,0);dummy.scale.set(sx,sy,sz);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
-  function limb(name,i,from,to,r){a.set(...from);b.set(...to);direction.subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);const length=direction.length();dummy.quaternion.setFromUnitVectors(up,direction.normalize());dummy.scale.set(r,length,r);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
+  function posePart(name,i,x,y,z,sx,sy,sz,rotation=0){dummy.position.set(x,y*1.25,z);dummy.rotation.set(0,rotation,0);dummy.scale.set(sx,sy*1.25,sz);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
+  function limb(name,i,from,to,r){a.set(...from);b.set(...to);a.y*=1.25;b.y*=1.25;direction.subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);const length=direction.length();dummy.quaternion.setFromUnitVectors(up,direction.normalize());dummy.scale.set(r,length,r);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
   function animateCrowd(time){
     members.forEach((m,i)=>{
       const pose=activityPose(m,time),y=.68+pose.breath,angle=pose.rotation;

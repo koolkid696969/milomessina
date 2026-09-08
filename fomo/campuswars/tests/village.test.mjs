@@ -6,6 +6,8 @@ import {createVillage} from '../village-world.js';
 import {createStreetNetwork} from '../village-streets.js';
 import {createDistricts} from '../village-districts.js';
 import {LOTS,crowdMembers,toWorld,activityPose} from '../village-layout.js';
+import {campusPose} from '../village-campus-life.js';
+import {roundedLoop} from '../village-district-layout.js';
 const {chapters}=JSON.parse(fs.readFileSync(new URL('../chapters.json',import.meta.url)));
 const village=createVillage(THREE,chapters);
 test('each onboarded member appears exactly once at their own chapter',()=>{
@@ -57,21 +59,48 @@ test('crowd culling bounds contain all chapter activity positions',()=>{
   for(const chunk of districts.chunks.values())assert.equal(chunk.group.matrixAutoUpdate,false);
 });
 
-test('street texture aligns continuously with the world grid and intersections',()=>{
-  const paint=[];
-  const context={scale(){},clearRect(){},fillRect(x,z,w,d){paint.push({x,z,w,d,color:this.fillStyle});}};
-  const original=globalThis.document;
-  globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>context})};
-  let streets;
-  try{streets=createStreetNetwork(THREE);}finally{if(original===undefined)delete globalThis.document;else globalThis.document=original;}
-  assert.deepEqual(streets.material.map.offset.toArray(),[.5,.5]);
-  assert.deepEqual(streets.material.map.repeat.toArray(),[200,200]);
+function paintedFloor(){
+  const paint=[];let path=[];
+  const context={scale(){},fillRect(x,z,w,d){paint.push({kind:'rect',x,z,w,d,color:this.fillStyle});},beginPath(){path=[];},arc(x,z,r){path.push({x,z,r});},moveTo(x,z){path.push({x,z});},lineTo(x,z){path.push({x,z});},fill(){paint.push({kind:'circle',...path[0],color:this.fillStyle});},stroke(){for(let i=1;i<path.length;i++)paint.push({kind:'line',a:path[i-1],b:path[i],width:this.lineWidth,color:this.strokeStyle});}};
+  const original=globalThis.document;globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>context})};
+  let streets;try{streets=createStreetNetwork(THREE);}finally{if(original===undefined)delete globalThis.document;else globalThis.document=original;}
   const at=(x,z)=>{
-    const u=((x/100+.5)%1+1)%1*100,v=((-z/100+.5)%1+1)%1*100;
-    return paint.findLast(r=>u>=r.x&&u<r.x+r.w&&v>=r.z&&v<r.z+r.d)?.color;
+    const u=((x/300+.5)%1+1)%1*300,v=((-z/300+.5)%1+1)%1*300;
+    return paint.findLast(r=>{
+      if(r.kind==='rect')return u>=r.x&&u<r.x+r.w&&v>=r.z&&v<r.z+r.d;
+      if(r.kind==='circle')return Math.hypot(u-r.x,v-r.z)<=r.r;
+      const dx=r.b.x-r.a.x,dz=r.b.z-r.a.z,t=Math.max(0,Math.min(1,((u-r.a.x)*dx+(v-r.a.z)*dz)/(dx*dx+dz*dz)));
+      return Math.hypot(u-r.a.x-t*dx,v-r.a.z-t*dz)<=r.width/2;
+    })?.color;
   };
-  for(const [x,z] of [[0,0],[0,100],[-100,0],[20,50],[0,50],[100,-50]])assert.equal(at(x,z),'#424954');
-  assert.equal(at(20,0),'#626c62');assert.equal(at(6.8,0),'#afb2ac');
+  return {streets,at};
+}
+test('the opaque campus floor has connected roads and pedestrian-only academic axes',()=>{
+  const {streets,at}=paintedFloor();
+  assert.deepEqual(streets.material.map.offset.toArray(),[.5,.5]);assert.deepEqual(streets.material.map.repeat.toArray(),[200/3,200/3]);
+  for(const [x,z] of [[1,0],[101,0],[-101,0],[20,51],[1,50],[101,-50],[301,0]])assert.equal(at(x,z),'#505a60');
+  assert.equal(at(0,100),'#c4c2b3');assert.equal(at(0,-85),'#c4c2b3');
+  assert.equal(at(7,0),'#bfc0b5');
+});
+test('cars and bicycles stay on the painted street network through every corner',()=>{
+  const {at}=paintedFloor();const roads=new Set(['#505a60','#c5bea5','#d9d6c7','#a5b4a4']);
+  for(const path of [roundedLoop(2.4,-47.6,97.6,47.6,7.8),roundedLoop(-97.6,-47.6,-2.4,47.6,7.8),roundedLoop(4.7,-45.3,95.3,45.3,8),roundedLoop(-95.3,-45.3,-4.7,45.3,8)]){
+    for(let distance=0;distance<path.length;distance+=1.7){const p=path.sample(distance);assert(roads.has(at(p.x,p.z)),`Traffic leaves pavement at ${p.x}, ${p.z}: ${at(p.x,p.z)}`);}
+    const start=path.sample(0),end=path.sample(path.length-1e-5);assert(Math.hypot(start.x-end.x,start.z-end.z)<.001);
+  }
+});
+test('campus activity varies and stays outside building footprints',()=>{
+  const districts=createDistricts(THREE),actions=new Set();
+  for(const chunk of districts.chunks.values())for(const person of chunk.people){
+    actions.add(person.action);
+    for(const time of [0,7,19,45,90]){
+      const pose=campusPose(person,time);assert([pose.x,pose.z,pose.angle].every(Number.isFinite));
+      for(const spec of chunk.specs){const dx=pose.x-(spec.x-chunk.group.position.x),dz=pose.z-(spec.z-chunk.group.position.z),a=spec.rotation,x=dx*Math.cos(a)-dz*Math.sin(a),z=dx*Math.sin(a)+dz*Math.cos(a);assert(!(Math.abs(x)<spec.width/2+.15&&Math.abs(z)<spec.depth/2+.15),`${person.action} intersects ${spec.type}`);}
+    }
+  }
+  for(const action of ['walk','jog','talk','study','sit','lawn','queue','basketball'])assert(actions.has(action));
+  assert.equal(districts.traffic.cars.length,8);assert.equal(districts.traffic.cyclists.length,12);
+  for(const time of [0,1,240,10000]){districts.animate(time);districts.root.traverse(o=>{if(o.isInstancedMesh)assert([...o.instanceMatrix.array].every(Number.isFinite));});}
 });
 test('streaming neighborhoods never replaces or removes the street network',()=>{
   const districts=createDistricts(THREE),street=village.streets,parent=street.parent;

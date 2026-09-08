@@ -116,8 +116,8 @@
     const target = chapter ? Math.ceil(chapter.active * 0.8) : 0;
     const url = chapter ? `${canonicalUrl}#chapter=${encodeURIComponent(chapter.id)}` : canonicalUrl;
     const data = {
-      title: chapter ? `${chapter.letters} — fomo Campus Wars` : '$10,000. One chapter takes it. — fomo Campus Wars',
-      text: chapter ? `${chapter.name}: ${chapter.joined} in, ${Math.max(0, target - chapter.joined)} more to hit 80% in this registration snapshot. Let’s get the house on fomo.` : '$10,000. One chapter takes it. Let’s get our house on fomo. Who’s getting us in?',
+      title: chapter ? `${chapter.letters} — fomo Campus Wars` : '$500,000 committed — fomo Campus Wars',
+      text: chapter ? `${chapter.name}: ${chapter.joined} in, ${Math.max(0, target - chapter.joined)} more to hit 80% in this registration snapshot. Let’s get the house on fomo.` : '$500,000 committed. Let’s get our house on fomo. Who’s getting us in?',
       url
     };
     if (navigator.share) {
@@ -149,7 +149,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=16').catch(() => {
+  import('./village.js?v=17').catch(() => {
     document.getElementById('village-loading').textContent = 'The village couldn’t load. Browse every chapter’s progress below.';
     document.getElementById('village').classList.add('village-unavailable');
   });
