@@ -16,20 +16,22 @@ Calls to action preserve the original operational registration destination:
 `https://www.aryatoufanian.com/fomo/onboard/`.
 This page does not claim to register a chapter or create a join link itself. Existing members are instructed to get the chapter invite from their lead.
 
+## 3D village
+
+The primary experience is a real Three.js scene rendered with WebGL. Three.js 0.180.0 is pinned and served locally from `vendor/`; its MIT license is included. No third-party runtime requests or build step are needed.
+
+`village-world.js` builds five distinct Georgian/classical fraternity houses with modeled brick facades, columns, porticoes, balconies, windows, roofs, porches, chapter pennants, speakers and tables. A sixth undeveloped lot has a claim sign. Shared streets, sidewalks, lamps, trees and benches connect the houses. Geometry follows the user's architectural references and earlier research on [Maryland's Georgian fraternity row](https://fsl.umd.edu/about/history) and [Alabama's Kappa Sigma building plans](https://buildingbama.ua.edu/wp-content/uploads/2022/09/Kappa-Sigma-Stage-3.pdf). This is a representative village combining chapters from multiple campuses, not a map of an actual campus.
+
+`village-layout.js` creates one articulated 3D partygoer for each joined member: 60, 34, 21, 2, and 0. The visitor avatar is visually separate and does not contribute to these counts. Dance poses move shoulders, elbows, hands, torsos and legs with varied timing. Repeated architecture and body parts are instanced to limit draw calls. Old photographic panorama and crowd sprites are no longer used.
+
+`village.js` handles orbiting, zoom, projected chapter markers, house picking, overview and walking modes, a visitor avatar, click-to-walk destinations, keyboard movement (WASD/arrows), touch movement controls, a clickable minimap, fullscreen, and synchronization with the chapter detail panel and deep links. Walking stays in the boulevard and front lawns outside building footprints. Click a house to focus it or walk toward its lawn. The empty lot links to the original chapter registration flow. These are outdoor village interactions; house interiors are not modeled.
+
+The party can be paused. Animation stops offscreen and when the document is hidden, and reduced-motion preferences suppress idle dance motion. The chapter roster and registration links remain usable if WebGL or the module cannot load.
+
 ## Brand and artwork
 
-Palette and Aeonik typography match fomo.family: near-black #060510, soft white #EAEDFF, periwinkle #606AF7. Font files were extracted from this repository's existing fomo font stylesheet.
-
-`assets/frat-row-columns.jpg` is an original architectural panorama used as one continuous background under six interactive lots. Five substantial chapter houses share a sidewalk, consistent scale and lighting: brick pediment and balcony, a six-column portico, a mansion with broad wings, a white classical facade, and a taller dark-brick house. The sixth lot remains empty. These are visual representations, not authenticated photographs of the named chapters.
-
-Architecture follows the user's three reference photos and primary references from [Maryland's Georgian fraternity row](https://fsl.umd.edu/about/history), [Maryland's House 7](https://drf.umd.edu/facilities/residence-halls-communities/house-7), and [Alabama's Kappa Sigma building plans](https://buildingbama.ua.edu/wp-content/uploads/2022/09/Kappa-Sigma-Stage-3.pdf). Tall white columns, substantial brick facades, porticoes, balconies, side wings and broad lawns replace the earlier small residential houses.
-
-`assets/party-dancers.png` is a transparent 6×2 atlas of twelve original adult partygoers with raised arms, bent knees, dancing poses and red cups. Members gather in small staggered groups with five pose-specific dance rhythms and varied timing. `crowd.js` produces deterministic positions for exactly one person per joined member. `site.js` creates 60, 34, 21, 2 and 0 sprites directly from the same records used for chapter counters: 117 total, without decorative extras or people baked into the panorama. Updating the snapshot updates the crowds on page load. Motion pauses offscreen, in hidden tabs, via the Pause party button, and for reduced-motion preferences. The empty lot has no people.
-
-Both assets were generated once without retries. Exact prompts are archived in `artwork-prompt.md`.
-
-`assets/trophy.jpg` was generated using the built-in image tool as a chrome championship trophy on a deep cobalt background with metallic confetti and no text. It is campaign imagery.
+The existing fomo.family palette and Aeonik typography remain: near-black, soft white and periwinkle. The scene uses warm brick, ivory columns and blue-hour lighting. The trophy campaign image is retained. Earlier generated-image prompts remain archived in `artwork-prompt.md`; they describe superseded assets.
 
 ## Validation
 
-The page has no dependency install or compilation step. JavaScript syntax, local file references, unique HTML IDs, navigation anchors, and all five qualification targets were checked. The data is checked against the supplied screenshot. Crowd layout checks verify exact counts, unique member positions, deterministic output, sprite bounds and invalid-count rejection. No test registrations were submitted.
+Run `node --test fomo/campuswars/tests/village.test.mjs` for member counts, reproducible crowds, six selectable lots, building orientation, walking boundaries, articulated animation transforms and geometry batching. Syntax checks and static reference checks cover the entry scripts, styles, local assets, unique HTML IDs, and matching chapter snapshots. The page has no compilation step. No test registrations were submitted. Browser interaction testing was not performed.

@@ -12,26 +12,9 @@
 
 /* A single photographic streetscape keeps light, scale and pavement continuous. */
 .house-track{display:grid;grid-template-columns:repeat(6,minmax(185px,1fr));width:100%;min-width:1110px;position:relative;isolation:isolate;padding-top:20px}
-.house-track::before{content:'';position:absolute;inset:74px 0 52px;background:url(assets/frat-row-columns.jpg) center center / 100% auto no-repeat;z-index:-1;pointer-events:none}
+.house-track::before{content:'';position:absolute;inset:74px 0 52px;background:none;z-index:-1;pointer-events:none}
 .house-track>.house-card{display:grid;grid-template-rows:54px auto 40px;align-items:center;justify-items:center;width:100%;padding:0 0 12px;isolation:auto}
 .house-card::after{display:none}.house-label{width:100%;height:54px;transform:none!important}
 .house-visual{aspect-ratio:5/6;margin:0}.house-progress{margin:0;align-self:start;padding-top:4px}.lot-cta{margin:0;align-self:start;padding:9px 12px}.lot-plus{top:55%;background:#151625a6;border-color:#8a99ff4a;font-size:24px;width:36px;height:36px;border-radius:6px}
 .house-card .house-label strong{transition:color .2s}.house-card:hover .house-label strong{color:#dfe4ff}.house-card.selected .progress-track{box-shadow:0 0 0 1px #858fc235}.house-card.selected .house-label strong{color:#c7d0ff}
 @media(max-width:700px){.house-track{padding-top:19px}.house-track::before{inset:67px 0 50px}.house-track>.house-card{grid-template-rows:48px auto 40px;padding-bottom:10px}.house-label{height:48px}.house-visual{margin:0;aspect-ratio:5/6}.house-progress{margin:0}.lot-cta{margin:0}.lot-plus{width:32px;height:32px;font-size:22px}}
-
-/* Foreground crowds are individual photo sprites, one per joined member. */
-.party-crowd{position:absolute;left:3%;right:3%;bottom:7%;height:34%;pointer-events:none;isolation:isolate}
-.party-person{position:absolute;display:block;width:22px;height:44px;transform:translate(-50%,-100%) scale(var(--person-scale));transform-origin:50% 100%;pointer-events:none}
-.party-sprite{display:block;width:100%;height:100%;background:url(assets/party-dancers.png) no-repeat;background-size:600% 200%;transform-origin:50% 100%;scale:var(--person-facing) 1;animation:var(--party-motion) var(--party-duration) ease-in-out var(--party-delay) infinite;animation-play-state:paused}
-.party-running .party-sprite{animation-play-state:running}
-/* Different rhythms keep the crowd from moving in unison. */
-.party-person::before{content:'';position:absolute;bottom:1px;left:20%;width:60%;height:3px;background:#05040e70;border-radius:50%;filter:blur(1px)}
-@keyframes party-bounce{0%,100%{transform:translateY(0) scaleY(.96)}20%{transform:translateY(0) scaleY(.89)}48%{transform:translateY(-6px) rotate(-3deg)}76%{transform:translateY(0) scaleY(.92)}}
-@keyframes party-cheer{0%,100%{transform:rotate(-5deg)}25%{transform:translateY(-4px) rotate(2deg)}50%{transform:rotate(5deg) scaleY(.94)}75%{transform:translateY(-3px) rotate(-2deg)}}
-@keyframes party-sway{0%,100%{transform:translateX(-2px) rotate(-7deg)}50%{transform:translateX(2px) rotate(7deg) scaleY(.96)}}
-@keyframes party-shuffle{0%,100%{transform:translateX(-2px) rotate(-4deg)}25%{transform:translateY(-2px) scaleY(.95)}50%{transform:translateX(2px) rotate(4deg)}75%{transform:translateY(-2px) scaleY(.95)}}
-@keyframes party-dip{0%,100%{transform:rotate(-3deg)}30%{transform:scaleY(.86) rotate(3deg)}60%{transform:translateY(-2px) rotate(5deg)}80%{transform:scaleY(.92)}}
-.party-tools{display:flex;align-items:center;gap:18px}.party-tools>span{color:#7f819d}.party-tools button{padding:5px 10px;border:1px solid #363449;border-radius:6px;background:#12111a;color:#a8b1db;font-size:12px;min-height:32px}.party-tools button:hover{background:#23213c;color:#eaedff}
-.house-visual{overflow:visible}.lot-plus{top:69%}
-@media(max-width:700px){.party-person{width:20px;height:40px}.party-tools{gap:10px}.party-tools>span{display:none}.row-instructions{align-items:center}.row-instructions>span{max-width:210px}.party-tools button{font-size:12px;white-space:nowrap}}
-@media(prefers-reduced-motion:reduce){.party-sprite{animation:none!important}}
