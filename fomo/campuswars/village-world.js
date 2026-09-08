@@ -1,4 +1,4 @@
-import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=22';
+import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=23';
 import {palettes,hash} from './village-district-layout.js?v=22';
 import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js?v=22';
 import {createStreetNetwork} from './village-streets.js?v=22';
@@ -104,15 +104,13 @@ export function createVillage(THREE,chapters){
   LOTS.forEach((lot,index)=>{
     const group=new THREE.Group();group.position.set(lot.x,0,lot.z);group.rotation.y=lot.rotation;world.add(group);
     const chapter=chapters[index],id=chapter?.id||'empty';
+    if(!chapter){
+      const floor=landscapeKit.claimFloor(group);pickables.push(floor);
+      anchors.push({id,point:new THREE.Vector3(lot.x,4,lot.z),lot});return;
+    }
     box(group,0,.02,3,15,.22,18,0x515b58);
     box(group,0,.15,7.7,1.65,.1,8.6,0xb3b0a4);
     [-6.8,6.8].forEach(x=>{box(group,x,.12,3,.12,.16,17,0x8b9096);});
-    if(!chapter){
-      const outline=new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-5.5,.2,-3),new THREE.Vector3(5.5,.2,-3),new THREE.Vector3(5.5,.2,6),new THREE.Vector3(-5.5,.2,6)]),new THREE.LineBasicMaterial({color:0xa6afff}));group.add(outline);
-      [-5.5,5.5].forEach(x=>[-3,6].forEach(z=>cylinder(group,x,.55,z,.08,1.1,0xc6b69a)));
-      box(group,0,1.5,7.6,.13,2.5,.13,0xc6b69a);box(group,0,2,7.65,3.6,1.5,.16,0x646eff);sign(group,'YOUR HOUSE',0,2.1,7.75,3.2,.55,'#646eff','#ffffff');sign(group,'START HERE',0,1.65,7.75,2.8,.35,'#646eff','#ffffff');
-      const hit=box(group,0,1,1,12,2,13,new THREE.MeshBasicMaterial({visible:false}));hit.userData.chapter=id;pickables.push(hit);anchors.push({id,point:new THREE.Vector3(lot.x,4,lot.z),lot});return;
-    }
     if(chapter.joined<15){
       constructionSite(group,chapter);
       anchors.push({id,point:new THREE.Vector3(lot.x,6,lot.z),lot});return;

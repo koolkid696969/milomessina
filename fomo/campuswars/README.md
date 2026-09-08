@@ -18,7 +18,7 @@ House-mounted ivory/navy cloth banners show Greek letters, chapter name and the 
 
 The opening camera retains the screenshot-matched position approximately `(10.194, 12.378, -52.779)`, looking at `(1.808, 2, -8.101)`. It slowly orbits at 0.06 rad/s until the first camera/house interaction. Reset returns to this composition. Drag or arrow keys orbit, Shift-drag pans, and zoom/fullscreen controls remain. House selection updates the detail panel and `#chapter=...` share link. The walk-around mode, avatar, minimap, shortcuts and instructional overlays remain removed.
 
-The chapter roster and signup links remain usable if WebGL fails. Native sharing falls back to clipboard and then a selectable URL.
+The empty lot has a single purple floor reading `YOUR HOUSE / CLICK TO START` across its full 15×18 surface. Its freestanding sign, stakes and walkway are removed. Clicking any part of that floor follows the existing chapter registration link. The chapter roster and signup links remain usable if WebGL fails. Native sharing falls back to clipboard and then a selectable URL.
 
 ## A fuller, lived-in campus
 

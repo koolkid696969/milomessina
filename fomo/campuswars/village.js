@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=22';
-import {createDistricts} from './village-districts.js?v=22';
+import {createVillage} from './village-world.js?v=23';
+import {createDistricts} from './village-districts.js?v=23';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
@@ -56,7 +56,7 @@ function startVillage(){
   canvas.addEventListener('pointerup',e=>{
     if(!drag||drag.id!==e.pointerId)return;drag=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);
     if(dragDistance>8)return;rayAt(e);const hit=raycaster.intersectObjects(village.pickables,false)[0];
-    if(hit){choose(hit.object.userData.chapter,true);return;}
+    if(hit){if(hit.object.userData.action==='register'){document.getElementById('panel-claim').click();return;}choose(hit.object.userData.chapter,true);return;}
   });
   canvas.addEventListener('pointercancel',()=>{drag=null;});canvas.addEventListener('lostpointercapture',()=>{drag=null;});
   canvas.addEventListener('wheel',e=>{if(document.activeElement!==canvas&&!document.fullscreenElement)return;e.preventDefault();takeControl();wantedRadius=Math.max(20,Math.min(160,wantedRadius*Math.exp(e.deltaY*.001)));wake();},{passive:false});
