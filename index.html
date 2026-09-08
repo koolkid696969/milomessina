@@ -208,6 +208,43 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   box-shadow:0 14px 30px -12px rgba(0,0,0,.5)}
 .shots img{display:block;width:100%;height:auto}
 
+/* ── projects list ──────────────────────────────────────
+   Everything on the domain, listed the way Finder lists a folder: a row per
+   site, its path in mono, and one line on what it is. Measured against the
+   window like the rest of the pane — the row folds onto two lines in a narrow
+   card and runs across in a wide one. */
+.pane .lede{font-size:.92rem;color:var(--muted);margin-top:12px;max-width:56ch}
+.pane .grp{margin-top:20px}
+.pane .grp h3{font-family:var(--mono);font-size:.62rem;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted-2);padding-bottom:8px;border-bottom:1px solid var(--line)}
+.pane ul.plist{list-style:none;display:block;margin-top:4px;max-width:none}
+.pane .plist li{display:block;font-size:inherit;color:inherit;line-height:inherit}
+.pane .plist li::before{content:none}
+.pane .plist a{display:grid;grid-template-columns:1fr auto;gap:1px 14px;align-items:baseline;
+  padding:9px 10px;margin-inline:-10px;border-radius:8px;transition:background .15s}
+.pane .plist a:hover{background:var(--paper-2)}
+.pane .plist .nm{grid-area:1/1;font-size:.92rem;font-weight:600;letter-spacing:-.022em;color:var(--ink);
+  display:flex;align-items:baseline;gap:8px;min-width:0}
+/* the arrow rides the name and only turns up on hover, so the list reads as a
+   column of titles rather than a column of arrows */
+.pane .plist .nm::after{content:'↗';font-size:.72rem;color:var(--muted-2);
+  opacity:0;transition:opacity .15s}
+.pane .plist a:hover .nm::after{opacity:1}
+/* narrow: the path sits out at the right of the name and the blurb runs full
+   width beneath both. placed by hand — auto-placement drops the path below a
+   full-width item rather than beside the one before it. */
+.pane .plist .pt{grid-area:1/2;font-family:var(--mono);font-size:.67rem;color:var(--muted-2);
+  white-space:nowrap;text-align:right}
+.pane .plist a:hover .pt{color:var(--ink-2)}
+.pane .plist .ds{grid-area:2/1/auto/-1;font-size:.83rem;line-height:1.45;color:var(--muted)}
+@container (min-width:560px){
+  /* wide enough for one line: name, then the blurb, then the path out at the
+     right edge where the eye can run down it */
+  .pane .plist a{grid-template-columns:auto 1fr auto}
+  .pane .plist .ds{grid-area:1/2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pane .plist .pt{grid-area:1/3}
+}
+
 /* ── notes window ───────────────────────────────────────
    This one is dressed as Notes itself rather than as the site: the app's
    own greys and yellow, the system face, a note list beside the note. */
@@ -538,6 +575,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   <span class="mm"><i>mm</i> milo messina</span>
   <menu>
     <li><button type="button" data-open="win-work" data-tab="tab-fm">Work</button></li>
+    <li><button type="button" data-open="win-work" data-tab="tab-px">Projects</button></li>
     <li><button type="button" data-open="win-notes">About</button></li>
     <li><button type="button" data-open="win-contact">Contact</button></li>
   </menu>
@@ -588,6 +626,12 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
               <path d="M12 34 L84 88 M84 12 L12 66"/>
             </g>
           </svg><span>polymarket</span></button>
+        <button type="button" role="tab" id="tab-px" aria-controls="pane-px" aria-selected="false" tabindex="-1">
+          <!-- a folder: this tab is the directory of everything on the domain -->
+          <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <path d="M10 76V27a5 5 0 0 1 5-5h21l9 11h40a5 5 0 0 1 5 5v38a5 5 0 0 1-5 5H15a5 5 0 0 1-5-5z"
+                  stroke="#BE7F22" stroke-width="7" stroke-linejoin="round"/>
+          </svg><span>projects</span></button>
       </div>
 
       <!-- FOMO -->
@@ -650,6 +694,61 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         </div>
         <div class="cta">
           <span class="note">paid partnerships · nbacentral</span>
+        </div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="pane" role="tabpanel" id="pane-px" aria-labelledby="tab-px" tabindex="0" hidden>
+        <div class="pane-title">
+          <h2>projects</h2>
+        </div>
+        <p class="lede">
+          Everything I&rsquo;ve built and put up on this domain &mdash; the fomo campus
+          pages, the chapter competition, and the experiments.
+        </p>
+
+        <div class="grp">
+          <h3>fomo campus</h3>
+          <ul class="plist">
+            <li><a href="/fomo">
+              <span class="nm">fomo campus</span>
+              <span class="ds">The program: five roles, an eight-week goal map, sixty days</span>
+              <span class="pt">/fomo</span></a></li>
+            <li><a href="/fomo/campuswars">
+              <span class="nm">campus wars</span>
+              <span class="ds">Your chapter vs. every chapter for the $10,000 national prize</span>
+              <span class="pt">/fomo/campuswars</span></a></li>
+            <li><a href="/fomo/submit">
+              <span class="nm">get paid for views</span>
+              <span class="ds">Post a video, tag @fomo, get paid per 1,000 qualifying views</span>
+              <span class="pt">/fomo/submit</span></a></li>
+            <li><a href="/fomo/apply">
+              <span class="nm">apply</span>
+              <span class="ds">Application for one of the five seats on a campus team</span>
+              <span class="pt">/fomo/apply</span></a></li>
+            <li><a href="/fomo/report">
+              <span class="nm">weekly report</span>
+              <span class="ds">Where a campus team drops its Sunday report to HQ</span>
+              <span class="pt">/fomo/report</span></a></li>
+            <li><a href="/fomoportal">
+              <span class="nm">campus portal</span>
+              <span class="ds">Four ways into fomo at your school, on one page</span>
+              <span class="pt">/fomoportal</span></a></li>
+          </ul>
+        </div>
+
+        <div class="grp">
+          <h3>experiments</h3>
+          <ul class="plist">
+            <li><a href="/cars">
+              <span class="nm">the garage</span>
+              <span class="ds">Supercar Ron &mdash; a collection of cars, rendered in the browser</span>
+              <span class="pt">/cars</span></a></li>
+            <li><a href="/photos">
+              <span class="nm">photos</span>
+              <span class="ds">Photographs, sitting on the desktop</span>
+              <span class="pt">/photos</span></a></li>
+          </ul>
         </div>
       </div>
     </div>
