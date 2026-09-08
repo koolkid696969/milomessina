@@ -1,4 +1,4 @@
-import {LOTS,toWorld,crowdMembers} from './village-layout.js';
+import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js';
 
 export function createVillage(THREE,chapters){
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
@@ -26,14 +26,14 @@ export function createVillage(THREE,chapters){
     const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setIndex(indices);geometry.computeVertexNormals();const material=mat(color).clone();material.side=THREE.DoubleSide;const mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);mesh.castShadow=true;parent.add(mesh);
   }
   // A continuous campus block, with wide sidewalks and a walkable boulevard.
-  box(world,0,-.6,0,67,1.1,77,0x242b37);
-  box(world,0,-.03,0,11,.12,75,0x303442);
-  [-1,1].forEach(side=>{box(world,side*6.8,.02,0,2.5,.23,75,0xa0a4a9);box(world,side*8.25,.04,0,.2,.3,75,0xcacbd0);});
+  const terrain=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000),mat(0x626c62));terrain.rotation.x=-Math.PI/2;terrain.position.y=-.08;terrain.receiveShadow=true;world.add(terrain);
+
+
   for(let z=-35;z<36;z+=6)box(world,0,.05,z,.12,.02,2.1,0xc9b791);
   [-28,28].forEach(z=>{for(let x=-4.5;x<=4.5;x+=1.5)box(world,x,.05,z,.75,.03,2.8,0xcfd0c5);});
   const streetSign=sign(world,'FOMO  /  GREEK VILLAGE',0,.14,34,10,2,'#303442','#adb5cb');
   if(streetSign)streetSign.rotation.x=-Math.PI/2;
-  const ground=new THREE.Mesh(new THREE.PlaneGeometry(65,75),new THREE.MeshBasicMaterial({visible:false}));ground.rotation.x=-Math.PI/2;ground.position.y=.18;world.add(ground);
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(20000,20000),new THREE.MeshBasicMaterial({visible:false}));ground.rotation.x=-Math.PI/2;ground.position.y=.18;world.add(ground);
   // Street lamps, paths, trees and furniture give the village a lived-in scale.
   function tree(x,z,size=1){const group=new THREE.Group();group.position.set(x,0,z);world.add(group);cylinder(group,0,1.1,0,.14,2.2,0x655143);for(let k=0;k<4;k++){const leaf=ball(group,Math.sin(k*2)*.6,2.4+k*.3,Math.cos(k*2)*.5,1.15,0x475862);leaf.scale.y*=1.1;}group.scale.setScalar(size);}
   [-1,1].forEach(side=>{
@@ -96,15 +96,17 @@ export function createVillage(THREE,chapters){
   function limb(name,i,from,to,r){a.set(...from);b.set(...to);direction.subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);const length=direction.length();dummy.quaternion.setFromUnitVectors(up,direction.normalize());dummy.scale.set(r,length,r);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
   function animateCrowd(time){
     members.forEach((m,i)=>{
-      const phase=time*m.speed*3+m.phase,bob=Math.max(0,Math.sin(phase))*(m.pose===0?.19:.055),sway=Math.sin(phase*.5)*.075,y=.68+bob,angle=m.rotation+Math.sin(phase*.5)*.22;
-      const transform=(x,yy,z=0)=>[m.x+x*Math.cos(angle)+z*Math.sin(angle)+sway,yy,m.z-x*Math.sin(angle)+z*Math.cos(angle)];
-      posePart('torso',i,...transform(0,y),.36,.48,.24,angle);posePart('head',i,...transform(0,y+.39),.155,.18,.155);posePart('hair',i,...transform(0,y+.51,-.02),.27,.11,.25,angle);
+      const pose=activityPose(m,time),y=.68+pose.breath,angle=pose.rotation;
+      const transform=(x,yy,z=0)=>[pose.x+x*Math.cos(angle)+z*Math.sin(angle),yy,pose.z-x*Math.sin(angle)+z*Math.cos(angle)];
+      posePart('torso',i,...transform(0,y),.36,.48,.24,angle);
+      const nod=Math.sin(time*(pose.speaking?1.6:.8)+m.phase)*.009;
+      posePart('head',i,...transform(0,y+.39+nod),.155,.18,.155,angle);posePart('hair',i,...transform(0,y+.51+nod,-.02),.27,.11,.25,angle);
       [-1,1].forEach((side,k)=>{
-        const raised=m.pose===0||m.pose===2||side===1,armAngle=raised?2.1+Math.sin(phase+side)*.42:.55+Math.sin(phase)*.45;
-        const shoulder=transform(side*.22,y+.14),elbow=transform(side*(.22+Math.sin(armAngle)*.23),y+.14-Math.cos(armAngle)*.23),hand=transform(side*(.25+Math.sin(armAngle)*.32),y+.14-Math.cos(armAngle)*.42,.05);
+        const gait=pose.walking?Math.sin(pose.gait+(k?Math.PI:0)):0,gesture=k?pose.gesture:pose.gesture*.22;
+        const shoulder=transform(side*.22,y+.14),elbow=transform(side*(.24+gesture*.11),y-.1+gesture*.18,-gait*.08),hand=transform(side*(.25+gesture*.16),y-.31+gesture*.42,.035+gesture*.2-gait*.13);
         limb(k?'armR':'armL',i,shoulder,elbow,.095);limb(k?'foreR':'foreL',i,elbow,hand,.08);
-        const hip=transform(side*.1,y-.22),foot=transform(side*(.13+Math.sin(phase+side)*.035),.16+bob,m.pose===3?Math.sin(phase+side)*.11:0);limb(k?'legR':'legL',i,hip,foot,.13);
-        if(k)posePart('cup',i,...hand,.105,m.pose===2?.16:0,.105,angle);
+        const hip=transform(side*.1,y-.22),foot=transform(side*.12,.14+(pose.walking?Math.max(0,gait)*.045:0),gait*.2);limb(k?'legR':'legL',i,hip,foot,.13);
+        if(k)posePart('cup',i,...hand,.095,!pose.walking&&i%7===0?.13:0,.095,angle);
       });
     });
     Object.values(parts).forEach(mesh=>mesh.instanceMatrix.needsUpdate=true);
