@@ -20,9 +20,9 @@ This page does not claim to register a chapter or create a join link itself. Exi
 
 Palette and Aeonik typography match fomo.family: near-black #060510, soft white #EAEDFF, periwinkle #606AF7. Font files were extracted from this repository's existing fomo font stylesheet.
 
-`assets/frat-row.jpg` is an original 3D-style architectural illustration created with built-in image generation. The houses are visual representations, not authenticated photographs or models of the named chapter buildings. The row is a lightweight image composition with interactive chapter controls, not a WebGL model.
+`assets/frat-row-human.jpg` is one original architectural panorama created with built-in image generation, used as a continuous background under six interactive lots. Five unique homes share a single sidewalk and consistent scale/light: Spanish Revival stucco, coastal clapboard, brick Greek Revival, stone Tudor, and Craftsman. No facades repeat. Selection changes labels and progress styling without lifting pieces of the street. The homes are visual representations, not authenticated photographs of the named chapters.
 
-Artwork brief: a wide 3:1 realistic miniature fraternity row on near-black, with three distinct American fraternity houses (white-column Greek revival, brick Georgian, cream stone classical) and a fourth empty lot outlined in periwinkle with a faint house wireframe. Warm window light, dark roof materials, clean architectural details, continuous sidewalk, no words, people, logos or UI. Generated once without variants. Source 2172×724; JPEG optimized for delivery.
+Artwork brief: photograph-like handcrafted scale-model street, near-black backdrop, overcast blue-hour lighting, warm light in selected windows, modest 2–3-story homes with weathered material, porch furniture, bicycle, uneven planting and a basketball. A sixth gravel lot has a simple stake and restrained periwinkle outline. No people, text, logos, glossy mansions or wireframe house. Central band composition for responsive cropping. Generated once with no retries, 2172×724. JPEG delivery asset. Exact prompt archived in `artwork-prompt.md`.
 
 `assets/trophy.jpg` was generated using the built-in image tool as a chrome championship trophy on a deep cobalt background with metallic confetti and no text. It is campaign imagery.
 

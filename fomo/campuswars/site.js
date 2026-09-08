@@ -22,7 +22,7 @@
       card.setAttribute('aria-pressed', String(selected));
       if (selected && scroll) {
         neighborhood.scrollTo({
-          left: Math.max(0, card.offsetLeft - neighborhood.offsetLeft - (neighborhood.clientWidth - card.offsetWidth) / 2),
+          left: Math.max(0, neighborhood.scrollLeft + card.getBoundingClientRect().left - neighborhood.getBoundingClientRect().left - (neighborhood.clientWidth - card.offsetWidth) / 2),
           behavior: reducedMotion ? 'instant' : 'smooth'
         });
       }
