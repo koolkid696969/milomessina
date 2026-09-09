@@ -4,8 +4,8 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {INTRO_DURATION,introCaptionAt} from '../../fomo/campuswars/village-intro.js';
 
-function harness({reduced=false,hash='',blocked=false}={}) {
-  const nodes=new Map(),events=new Map(),timers=new Map();let timerId=0,animation;
+function harness({reduced=false,hash='',blocked=false,frameCallbacks=false}={}) {
+  const nodes=new Map(),events=new Map(),timers=new Map();let timerId=0,animation,frameId=0;const frames=new Map();
   function node(id) {
     if(!nodes.has(id))nodes.set(id,{
       hidden:false,inert:false,offsetHeight:800,style:{setProperty(key,value){this[key]=value;}},
@@ -21,6 +21,7 @@ function harness({reduced=false,hash='',blocked=false}={}) {
     play(){if(blocked)return Promise.reject(new Error('Autoplay blocked'));this.paused=false;events.get('intro-video:playing')?.();return Promise.resolve();},
     pause(){this.paused=true;events.get('intro-video:pause')?.();}
   });
+  if(frameCallbacks){video.requestVideoFrameCallback=fn=>{frames.set(++frameId,fn);return frameId;};video.cancelVideoFrameCallback=id=>frames.delete(id);}
   const doc={body:node('body'),documentElement:node('html'),getElementById:node,querySelector:node,hidden:false,
     addEventListener(type,fn){events.set(`document:${type}`,fn);}};
   vm.runInNewContext(fs.readFileSync(new URL('../main.js',import.meta.url),'utf8').replace(/^import .*;\n/,''),{
@@ -30,10 +31,10 @@ function harness({reduced=false,hash='',blocked=false}={}) {
     setTimeout(fn,delay){timers.set(++timerId,{fn,delay});return timerId;},clearTimeout(id){timers.delete(id);},
     requestAnimationFrame(fn){animation=fn;return 1;},cancelAnimationFrame(){animation=null;}
   });
-  return {node,doc,video,timers,fire(name,event={}){events.get(name)(event);},flush(){const pending=[...timers.values()];timers.clear();pending.forEach(t=>t.fn());},step(time){video.currentTime=time;animation?.();}};
+  return {node,doc,video,timers,frames,renderFrame(time){const pending=[...frames.values()];frames.clear();pending.forEach(fn=>fn(0,{mediaTime:time}));},fire(name,event={}){events.get(name)(event);},flush(){const pending=[...timers.values()];timers.clear();pending.forEach(t=>t.fn());},step(time){video.currentTime=time;animation?.();}};
 }
 test('intro streams a video immediately without constructing the 3D village',()=>{
-  const h=harness();assert.equal(h.video.src,'/landingpage/assets/intro-desktop-hd.mp4');assert.equal(h.video.paused,false);assert.equal(h.node('page').inert,true);
+  const h=harness();assert.equal(h.video.src,'/landingpage/assets/intro-desktop-smooth.mp4');assert.equal(h.video.paused,false);assert.equal(h.node('page').inert,true);
   const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
   assert.match(html,/<video[^>]*muted autoplay playsinline preload="auto"/);
   assert.match(html,/class="opening-poster"/);assert.doesNotMatch(html,/<iframe|Getting campus ready|pause-intro|Play intro/);
@@ -64,4 +65,12 @@ test('final shot brings in the logo before revealing the hero without scrolling'
   h.fire('intro-video:ended');assert.equal(h.node('page').inert,true);assert.equal(h.node('intro-transition').style['--outro'],'1');
   h.flush();assert.equal(h.node('opening').hidden,true);assert.equal(h.node('page').inert,false);assert.equal(h.node('page').scrolled,undefined);
   h.flush();assert.equal(h.node('intro-transition').hidden,true);
+});
+
+test('captions follow presented video frames and stop scheduling after skip',()=>{
+  const h=harness({frameCallbacks:true});assert.equal(h.frames.size,1);
+  h.renderFrame(3);assert.equal(h.node('film-title').textContent,"IF YOU'RE IN A CHAPTER.");assert.equal(h.frames.size,1);
+  h.fire('intro-video:playing');assert.equal(h.frames.size,1);
+  h.fire('skip-intro:click');assert.equal(h.frames.size,0);
+  h.fire('replay-intro:click');h.renderFrame(.5);assert.equal(h.node('film-title').textContent,'GREEK WARS.');assert.equal(h.frames.size,1);
 });

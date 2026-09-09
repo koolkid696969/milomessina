@@ -12,25 +12,54 @@ const description = document.getElementById('film-description');
 const transition = document.getElementById('intro-transition');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 let active = false, resumeOnVisible = false, finishTimer, raf = 0;
+let videoFrame = 0, lastPaint = -1, lastStage = -1, lastOutro = -1;
 
-function paint() {
-  const seconds = Math.min(INTRO_DURATION, video.currentTime || 0);
+function paint(mediaTime = video.currentTime || 0) {
+  const seconds = Math.min(INTRO_DURATION, mediaTime);
+  lastPaint = seconds;
   const copy = introCaptionAt(seconds);
-  title.textContent = copy.index === 1 ? "IF YOU'RE IN A CHAPTER." : copy.title;
-  description.textContent = copy.description;
+  if (copy.index !== lastStage) {
+    title.textContent = copy.index === 1 ? "IF YOU'RE IN A CHAPTER." : copy.title;
+    description.textContent = copy.description;
+    lastStage = copy.index;
+  }
   caption.style.opacity = video.paused ? '1' : String(copy.copyOpacity * copy.opacity);
   caption.style.transform = `translateY(${video.paused ? 0 : copy.lift}px) scale(${video.paused ? 1 : copy.scale})`;
   progress.style.transform = `scaleX(${Math.min(1, seconds / INTRO_DURATION)})`;
-  transition.style.setProperty('--outro', String(Math.max(0, Math.min(1, (seconds - (INTRO_DURATION - 1.4)) / 1.4))));
+  const outro = Math.max(0, Math.min(1, (seconds - (INTRO_DURATION - 1.4)) / 1.4));
+  if (outro !== lastOutro) {
+    transition.style.setProperty('--outro', String(outro));
+    lastOutro = outro;
+  }
 }
-function tick() {
-  paint();
-  if (active && !video.paused) raf = requestAnimationFrame(tick);
+function cancelPaint() {
+  cancelAnimationFrame(raf);
+  if (videoFrame) video.cancelVideoFrameCallback(videoFrame);
+  raf = videoFrame = 0;
+}
+function schedulePaint() {
+  if (!active || video.paused) return;
+  if (typeof video.requestVideoFrameCallback === 'function') {
+    videoFrame = video.requestVideoFrameCallback((_, metadata) => {
+      videoFrame = 0;
+      paint(metadata.mediaTime);
+      schedulePaint();
+    });
+  } else {
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      if (Math.abs(video.currentTime - lastPaint) >= 1 / 30) paint();
+      schedulePaint();
+    });
+  }
 }
 function syncPlayback() {
-  cancelAnimationFrame(raf);
-  if (video.readyState >= 2) video.classList.add('has-frame');
-  if (active) tick();
+  cancelPaint();
+  if (video.readyState >= 2) {
+    video.classList.add('has-frame');
+    opening.classList.add('has-video-frame');
+  }
+  if (active) { paint(); schedulePaint(); }
 }
 function play() {
   const pending = video.play();
@@ -39,7 +68,7 @@ function play() {
 function finish({scroll = true, cinematic = false} = {}) {
   if (!active) return;
   active = false;
-  cancelAnimationFrame(raf);
+  cancelPaint();
   video.pause();
   opening.inert = true;
   const revealPage = () => {
@@ -68,6 +97,7 @@ function finish({scroll = true, cinematic = false} = {}) {
 function start({replay: replaying = false} = {}) {
   clearTimeout(finishTimer);
   active = true; resumeOnVisible = false;
+  lastPaint = lastStage = lastOutro = -1;
   transition.hidden = false;
   transition.classList.remove('is-leaving');
   transition.style.setProperty('--outro', '0');
@@ -77,7 +107,7 @@ function start({replay: replaying = false} = {}) {
   opening.hidden = false; opening.inert = false; page.inert = true;
   if (replaying) video.currentTime = 0;
   if (!video.getAttribute('src')) {
-    video.src = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile-hd.mp4' : '/landingpage/assets/intro-desktop-hd.mp4';
+    video.src = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile-hd.mp4' : '/landingpage/assets/intro-desktop-smooth.mp4';
   }
   window.scrollTo({top: 0, behavior: 'instant'});
   paint();

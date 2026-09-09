@@ -131,7 +131,8 @@ a.role-card:hover{transform:translateY(-2px);border-color:#516af666}
 .film-progress span{display:block;width:100%;height:100%;background:#d9ff8f;transform:scaleX(0);transform-origin:left}
 .intro-active{overflow:hidden}
 .intro-active .opening{position:fixed;inset:0;z-index:20}
-.intro-active #page{pointer-events:none}
+.intro-active #page{pointer-events:none;visibility:hidden}
+.opening.has-video-frame .opening-poster{visibility:hidden}
 .reveal{animation:enter .6s both}
 @keyframes enter{from{opacity:.2;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
