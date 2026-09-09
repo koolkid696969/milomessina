@@ -59,8 +59,35 @@ unaffected either way.
 Edit the tab by hand if you like — the page re-reads it every 30 seconds. Just
 leave the `id` column alone; the page uses it to find rows.
 
+## The clock
+
+The same page carries a clock-in board. Press a name in when they arrive and
+out when they leave; the card runs a live timer while someone is on the clock,
+and the hours panel below totals the week and all time. Hours export to CSV
+separately from the money.
+
+Shifts land in an **`hours`** tab:
+
+| Column | Holds |
+| --- | --- |
+| `id` | 8 characters, generated server-side |
+| `who` | which intern |
+| `day` | the local date the shift started, for reading the tab |
+| `start`, `end` | UTC stamps — `end` is blank while someone is still on the clock |
+| `minutes` | filled in on clock-out |
+
+Start and end are stored in UTC on purpose: the elapsed time is worked out in
+whatever timezone the person pressing the button is in, and it has to agree
+with what the sheet says. The `day` column sits alongside them so the tab is
+still readable by eye.
+
+Someone can only be clocked in once at a time — a second press is refused. A
+shift nobody closed shows up in red after 16 hours, saying so rather than
+quietly counting as a very long day; close it by clocking out, delete the row
+from the table, or fix `end` by hand in the sheet.
+
 ## Changing the team
 
 `PEOPLE` at the top of the page's script, and `INVOICE_PEOPLE` in the Apps
 Script, are the same four names. Change both — the endpoint refuses a name it
-doesn't recognise.
+doesn't recognise, on a spend and on a clock-in alike.

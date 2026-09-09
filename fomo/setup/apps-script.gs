@@ -198,11 +198,25 @@ function invoiceApi(body) {
     }
     if (!n) return reply(false, 'nothing is owed to ' + who);
 
+  } else if (action === 'clockin' || action === 'clockout') {
+    var clockErr = action === 'clockin' ? shiftIn(body.who) : shiftOut(body.who);
+    if (clockErr) return reply(false, clockErr);
+
+  } else if (action === 'shiftdelete') {
+    var ssh = shiftSheet();
+    var srow = shiftFind(ssh, body.id);
+    if (srow) ssh.deleteRow(srow);
+
   } else if (action !== 'list') {
     return reply(false, 'unknown action');
   }
 
-  return reply(true, null, { rows: invoiceRead(sh).map(invoicePublic) });
+  /* Both halves come back on every call, so the page always renders
+     what the sheet actually holds rather than what it hoped it did. */
+  return reply(true, null, {
+    rows: invoiceRead(sh).map(invoicePublic),
+    shifts: shiftRead(shiftSheet()).map(shiftPublic)
+  });
 }
 
 /* The tab builds itself on the first spend, the same way the form tabs do. */
@@ -299,6 +313,111 @@ function invoicePublic(r) {
 
 function invoiceStamp() {
   return Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd'T'HH:mm:ss");
+}
+
+/* ── the clock, behind the same /invoice page ────────────────── */
+
+var SHIFT_TAB = 'hours';
+var SHIFT_COLS = ['id', 'who', 'day', 'start', 'end', 'minutes'];
+
+function shiftSheet() {
+  var ss = CONFIG.SHEET_ID ? SpreadsheetApp.openById(CONFIG.SHEET_ID)
+                           : SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) throw new Error('no spreadsheet — set SHEET_ID, or run this script from inside the sheet');
+
+  var sh = ss.getSheetByName(SHIFT_TAB);
+  if (!sh) {
+    sh = ss.insertSheet(SHIFT_TAB);
+    sh.getRange(1, 1, sh.getMaxRows(), SHIFT_COLS.length).setNumberFormat('@');
+    sh.getRange(1, SHIFT_COLS.indexOf('minutes') + 1, sh.getMaxRows()).setNumberFormat('0');
+    sh.getRange(1, 1, 1, SHIFT_COLS.length).setValues([SHIFT_COLS]).setFontWeight('bold');
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+/* start and end are stored as UTC ISO stamps, not local text: the page
+   does the elapsed-time arithmetic in whatever timezone the person
+   pressing the button is sitting in, and it has to agree with the sheet.
+   `day` is the local date alongside them, purely so the tab reads well. */
+function shiftIn(who) {
+  who = String(who || '');
+  if (INVOICE_PEOPLE.indexOf(who) === -1) return 'that name is not on the bootcamp';
+
+  var sh = shiftSheet();
+  if (shiftOpenFor(sh, who)) return who + ' is already on the clock';
+
+  var now = new Date();
+  sh.appendRow([
+    Utilities.getUuid().slice(0, 8),
+    who,
+    Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyy-MM-dd'),
+    now.toISOString(),
+    '',
+    ''
+  ]);
+  return null;
+}
+
+function shiftOut(who) {
+  who = String(who || '');
+  var sh = shiftSheet();
+  var open = shiftOpenFor(sh, who);
+  if (!open) return who + ' is not on the clock';
+
+  var end = new Date();
+  var started = new Date(open.start);
+  var minutes = Math.max(0, Math.round((end.getTime() - started.getTime()) / 60000));
+  sh.getRange(open._row, SHIFT_COLS.indexOf('end') + 1).setValue(end.toISOString());
+  sh.getRange(open._row, SHIFT_COLS.indexOf('minutes') + 1).setValue(minutes);
+  return null;
+}
+
+function shiftOpenFor(sh, who) {
+  var all = shiftRead(sh);
+  for (var i = 0; i < all.length; i++) {
+    if (all[i].who === who && !all[i].end) return all[i];
+  }
+  return null;
+}
+
+function shiftRead(sh) {
+  var last = sh.getLastRow();
+  if (last < 2) return [];
+  var vals = sh.getRange(2, 1, last - 1, SHIFT_COLS.length).getValues();
+  var out = [];
+  for (var i = 0; i < vals.length; i++) {
+    var raw = vals[i];
+    if (!String(raw[0])) continue;
+    var o = { _row: i + 2 };
+    for (var j = 0; j < SHIFT_COLS.length; j++) o[SHIFT_COLS[j]] = raw[j];
+    o.id = String(o.id);
+    o.who = String(o.who);
+    o.start = shiftStamp(o.start);
+    o.end = shiftStamp(o.end);
+    o.minutes = Number(o.minutes) || 0;
+    out.push(o);
+  }
+  return out;
+}
+
+/* Same defence as the ledger's dates: a hand-edit can turn the stamp
+   back into a real date, so hand both shapes back as ISO. */
+function shiftStamp(v) {
+  if (v instanceof Date) return v.toISOString();
+  return String(v || '');
+}
+
+function shiftFind(sh, id) {
+  id = String(id || '');
+  if (!id) return null;
+  var all = shiftRead(sh);
+  for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i]._row;
+  return null;
+}
+
+function shiftPublic(s) {
+  return { id: s.id, who: s.who, start: s.start, end: s.end, minutes: s.minutes };
 }
 
 function reply(ok, error, extra) {

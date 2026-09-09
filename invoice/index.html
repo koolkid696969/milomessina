@@ -209,6 +209,31 @@ footer{padding:34px 0 46px;color:var(--muted-2);font-size:.8rem;display:flex;gap
 footer .sep{opacity:.4}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+/* ---------- the clock ---------- */
+.clock-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border-top:1px solid var(--line);margin-top:16px}
+.clock-card{background:var(--surface);padding:15px 18px 17px;display:flex;flex-direction:column;gap:10px}
+.clock-card .nm2{display:flex;align-items:center;gap:8px;font-weight:500;font-size:.94rem}
+.clock-card .st{width:7px;height:7px;border-radius:50%;background:var(--muted-2);flex:none}
+.clock-card.on .st{background:var(--good);box-shadow:0 0 10px var(--good)}
+.clock-card .el{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.4rem;
+  letter-spacing:-.035em;line-height:1;color:var(--muted-2)}
+.clock-card.on .el{color:var(--good)}
+.clock-card .since{font-size:.75rem;color:var(--muted-2);min-height:1.1em}
+.clock-card .since.stale{color:var(--owed)}
+.clock-btn{margin-top:6px;padding:10px 14px;border-radius:100px;font-weight:600;font-size:.86rem;
+  border:1px solid var(--line-2);color:var(--text);
+  transition:background .2s,border-color .2s,color .2s,transform .2s}
+.clock-btn:hover{border-color:var(--violet);transform:translateY(-1px)}
+.clock-card.on .clock-btn{background:var(--good);border-color:var(--good);color:#04170D}
+.clock-card.on .clock-btn:hover{filter:brightness(1.08)}
+.clock-btn:disabled{opacity:.5;cursor:default;transform:none}
+.clock-card .wk{font-family:var(--mono);font-size:.68rem;letter-spacing:.05em;color:var(--muted-2)}
+@media(max-width:900px){.clock-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:470px){.clock-grid{grid-template-columns:1fr}}
+td.tnum{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.83rem;white-space:nowrap}
+td.tnum.run{color:var(--good)}
+
 /* ---------- passcode gate ---------- */
 #gate{position:fixed;inset:0;z-index:90;background:var(--ink);display:grid;place-items:center;padding:24px}
 #gate .box{width:min(380px,100%);text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center}
@@ -274,6 +299,13 @@ footer .sep{opacity:.4}
 
   <section>
     <div class="panel">
+      <div class="panel-h"><h2>on the clock</h2><span class="note" id="clock-note">Press a name in when they arrive, out when they leave.</span></div>
+      <div class="clock-grid" id="clock-grid"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="panel">
       <div class="panel-h"><h2>log a spend</h2><span class="note">Anyone on the team can add a line. It lands in the shared sheet.</span></div>
       <form class="form" id="form" autocomplete="off">
         <div class="field">
@@ -318,6 +350,25 @@ footer .sep{opacity:.4}
       <div class="panel-h" style="padding:2px 0 0"><h2>where it went</h2></div>
       <div class="bars" id="by-cat"></div>
       <div class="scale" id="cat-scale"><span>$0</span><span></span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="panel">
+      <div class="panel-h"><h2>hours logged</h2><span class="note" id="hours-note"></span></div>
+      <div class="tools">
+        <span class="lbl" id="hours-week"></span>
+        <span class="push">
+          <button class="mini" id="t-hours-csv">Export hours CSV</button>
+        </span>
+      </div>
+      <div class="tbl-scroll">
+        <table>
+          <thead><tr><th>who</th><th>day</th><th>in</th><th>out</th><th style="text-align:right">length</th><th></th></tr></thead>
+          <tbody id="shift-body"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="shift-empty" hidden>No shifts yet. Clock someone in above.</div>
     </div>
   </section>
 
@@ -386,7 +437,7 @@ var CATS = [
 ];
 var CAT = {}; CATS.forEach(function(c){ CAT[c.id] = c; });
 
-var rows = [], armed = {}, picked = null, busy = false, poll = null;
+var rows = [], shifts = [], armed = {}, picked = null, busy = false, poll = null, tick = null;
 var filters = {who:"", cat:"", status:"", q:""};
 
 /* ---------- helpers ---------- */
@@ -433,6 +484,9 @@ function api(action, payload){
           receipt: r.receipt, status: r.status === "reimbursed" ? "reimbursed" : "pending",
           logged: r.logged
         };
+      });
+      shifts = (out.shifts || []).map(function(v){
+        return {id:String(v.id), who:String(v.who), start:v.start, end:v.end, minutes:Number(v.minutes)||0};
       });
       setLive(true, "synced " + clockNow());
       hideBanner();
@@ -619,6 +673,8 @@ function visible(){
 }
 
 function render(){
+  renderClock();
+  renderShifts();
   var list = visible();
   var total = 0, owed = 0, paid = 0, byCat = {}, byPerson = {};
   PEOPLE.forEach(function(p){ byPerson[p] = {owed:0, paid:0, total:0}; });
@@ -735,6 +791,189 @@ function render(){
 }
 function cMaxOf(rank){ return rank.length ? rank[0].v : 1; }
 
+/* ---------- the clock ---------- */
+function openShift(who){
+  for (var i = 0; i < shifts.length; i++) if (shifts[i].who === who && !shifts[i].end) return shifts[i];
+  return null;
+}
+function shiftMs(s, now){
+  var st = Date.parse(s.start);
+  if (!st) return Math.max(0, (Number(s.minutes) || 0) * 60000);
+  var en = s.end ? Date.parse(s.end) : now;
+  if (!en || en < st) return 0;
+  return en - st;
+}
+function hm(ms){
+  var m = Math.round(ms / 60000), h = Math.floor(m / 60);
+  return h ? h + "h " + String(m % 60).padStart(2, "0") + "m" : m + "m";
+}
+function clockOf(iso){
+  var t = Date.parse(iso);
+  if (!t) return "—";
+  var d = new Date(t);
+  return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+}
+function dayOf(iso){
+  var t = Date.parse(iso);
+  if (!t) return "—";
+  var d = new Date(t);
+  return niceDate(d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"));
+}
+/* the working week starts Monday */
+function weekStart(){
+  var d = new Date(); d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return d.getTime();
+}
+function hoursFor(who, since, now){
+  var total = 0;
+  for (var i = 0; i < shifts.length; i++){
+    var s = shifts[i];
+    if (s.who !== who) continue;
+    var st = Date.parse(s.start);
+    if (since && (!st || st < since)) continue;
+    total += shiftMs(s, now);
+  }
+  return total;
+}
+
+function renderClock(){
+  var now = Date.now(), wk = weekStart(), box = document.getElementById("clock-grid"), onNow = 0;
+  box.innerHTML = "";
+  PEOPLE.forEach(function(p){
+    var open = openShift(p), card = document.createElement("div");
+    card.className = "clock-card" + (open ? " on" : "");
+    if (open) onNow++;
+
+    var nm = document.createElement("div");
+    nm.className = "nm2";
+    nm.innerHTML = '<span class="st"></span>' + esc(p);
+
+    var el = document.createElement("div");
+    el.className = "el"; el.id = "el-" + p;
+    el.textContent = open ? hm(shiftMs(open, now)) : hm(hoursFor(p, wk, now));
+
+    var since = document.createElement("div");
+    since.className = "since"; since.id = "since-" + p;
+    since.textContent = open ? "since " + clockOf(open.start) : "this week";
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "clock-btn";
+    btn.setAttribute("data-clock", p);
+    btn.textContent = open ? "Clock out" : "Clock in";
+
+    var wkline = document.createElement("div");
+    wkline.className = "wk";
+    wkline.textContent = "week " + hm(hoursFor(p, wk, now)) + " · all " + hm(hoursFor(p, 0, now));
+
+    card.appendChild(nm); card.appendChild(el); card.appendChild(since);
+    card.appendChild(btn); card.appendChild(wkline);
+    box.appendChild(card);
+  });
+  document.getElementById("clock-note").textContent = onNow
+    ? onNow + (onNow === 1 ? " intern is" : " interns are") + " on the clock right now"
+    : "Press a name in when they arrive, out when they leave.";
+}
+
+/* Only the numbers move between renders, so the ticking touches nothing else. */
+function tickClock(){
+  if (document.hidden) return;
+  var now = Date.now(), wk = weekStart();
+  PEOPLE.forEach(function(p){
+    var open = openShift(p), el = document.getElementById("el-" + p);
+    if (!el) return;
+    if (!open) { el.textContent = hm(hoursFor(p, wk, now)); return; }
+    var ms = shiftMs(open, now);
+    el.textContent = hm(ms);
+    var since = document.getElementById("since-" + p);
+    if (!since) return;
+    /* a shift nobody closed reads as a mistake, not as a long day */
+    if (ms > 16 * 3600000) {
+      since.className = "since stale";
+      since.textContent = "open since " + dayOf(open.start) + " " + clockOf(open.start) + " — clock out or delete it";
+    } else {
+      since.className = "since";
+      since.textContent = "since " + clockOf(open.start);
+    }
+  });
+}
+
+document.getElementById("clock-grid").addEventListener("click", function(ev){
+  var btn = ev.target.closest("button[data-clock]"); if (!btn) return;
+  var who = btn.getAttribute("data-clock");
+  var open = openShift(who);
+  var length = open ? hm(shiftMs(open, Date.now())) : "";
+  btn.disabled = true; busy = true;
+  api(open ? "clockout" : "clockin", {who: who}).then(function(){
+    toast(open ? who + " clocked out — " + length + " logged." : who + " is on the clock.");
+  })["catch"](function(e){ toast(fail(e), true); btn.disabled = false; })
+   .then(function(){ busy = false; });
+});
+
+function renderShifts(){
+  var now = Date.now(), wk = weekStart();
+  var list = shifts.slice().sort(function(a,b){
+    return (Date.parse(b.start) || 0) - (Date.parse(a.start) || 0);
+  });
+  var weekTotal = 0, allTotal = 0;
+  shifts.forEach(function(s){
+    var st = Date.parse(s.start);
+    allTotal += shiftMs(s, now);
+    if (st && st >= wk) weekTotal += shiftMs(s, now);
+  });
+
+  document.getElementById("hours-note").textContent = list.length
+    ? list.length + (list.length === 1 ? " shift" : " shifts") + " on record" : "";
+  document.getElementById("hours-week").textContent =
+    "this week " + hm(weekTotal) + "  ·  all time " + hm(allTotal);
+
+  var shown = list.slice(0, 20);
+  document.getElementById("shift-body").innerHTML = shown.map(function(s){
+    var running = !s.end;
+    return "<tr>" +
+      '<td class="who">' + esc(s.who) + "</td>" +
+      '<td class="date">' + esc(dayOf(s.start)) + "</td>" +
+      '<td class="tnum">' + esc(clockOf(s.start)) + "</td>" +
+      '<td class="tnum">' + (running ? "—" : esc(clockOf(s.end))) + "</td>" +
+      '<td class="tnum' + (running ? " run" : "") + '" style="text-align:right">' +
+        esc(hm(shiftMs(s, now))) + (running ? " so far" : "") + "</td>" +
+      '<td><div class="acts"><button class="mini danger" data-shift="' + esc(s.id) + '">Delete</button></div></td>' +
+    "</tr>";
+  }).join("");
+  document.getElementById("shift-empty").hidden = shown.length > 0;
+}
+
+document.getElementById("shift-body").addEventListener("click", function(ev){
+  var btn = ev.target.closest("button[data-shift]"); if (!btn) return;
+  var id = btn.getAttribute("data-shift");
+  arm("sh" + id, btn, "Delete?", function(){
+    busy = true;
+    api("shiftdelete", {id:id}).then(function(){ toast("Shift deleted."); })
+      ["catch"](function(e){ toast(fail(e), true); })
+      .then(function(){ busy = false; });
+  });
+});
+
+document.getElementById("t-hours-csv").addEventListener("click", function(){
+  if (!shifts.length) { toast("No shifts to export yet.", true); return; }
+  var now = Date.now();
+  var q = function(v){ return '"' + String(v == null ? "" : v).replace(/"/g,'""') + '"'; };
+  var list = shifts.slice().sort(function(a,b){ return (Date.parse(a.start)||0) - (Date.parse(b.start)||0); });
+  var csv = ["who","day","clock_in","clock_out","hours","minutes"].join(",") + "\r\n" +
+    list.map(function(s){
+      var ms = shiftMs(s, now);
+      return [s.who, dayOf(s.start), clockOf(s.start), s.end ? clockOf(s.end) : "still on the clock",
+        (ms/3600000).toFixed(2), Math.round(ms/60000)].map(q).join(",");
+    }).join("\r\n") + "\r\n";
+  var url = URL.createObjectURL(new Blob(["﻿" + csv], {type:"text/csv;charset=utf-8"}));
+  var a = document.createElement("a");
+  a.href = url; a.download = "fomo-hours-" + today() + ".csv";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  toast("Hours exported.");
+});
+
 /* ---------- chrome ---------- */
 function setLive(ok, txt){
   document.getElementById("live-dot").className = "dot" + (ok ? "" : " off");
@@ -753,6 +992,7 @@ function open_(){
   document.getElementById("app").hidden = false;
   render();
   api("list")["catch"](function(e){ fail(e); });
+  tick = setInterval(tickClock, 1000);
   poll = setInterval(function(){
     if (busy || document.hidden) return;
     api("list")["catch"](function(){ /* the banner already says it */ });
