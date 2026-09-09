@@ -67,10 +67,12 @@ function startVillage(){
     if(!reduced)applyLighting(view.night);
   }
   function finishIntro(){
+    const wasPlaying=entranceActive;
     entrancePending=false;entranceActive=false;intro.hidden=true;shell.classList.remove('intro-playing');
     moneyRain.clear();introRoll=0;camera.fov=48;camera.updateProjectionMatrix();
     applyLighting(document.getElementById('night-toggle').getAttribute('aria-pressed')==='true'?1:0);
     if(['intro-skip','intro-pause','intro-join'].some(id=>document.activeElement===document.getElementById(id)))canvas.focus({preventScroll:true});
+    if(wasPlaying)document.dispatchEvent(new CustomEvent('village:introend'));
   }
   function beginIntro(){
     if(!ready)return;
