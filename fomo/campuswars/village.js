@@ -1,7 +1,7 @@
 import * as THREE from './vendor/three.module.min.js';
 import {createVillage} from './village-world.js?v=38';
 import {createDistricts} from './village-districts.js?v=35';
-import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=42';
+import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
 import {createMoneyRain} from './village-money-rain.js?v=42';
 import {prewarmVillage} from './village-prewarm.js?v=43';
 

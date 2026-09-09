@@ -39,7 +39,7 @@ test('captions follow the tour, clear at 13.6 seconds, and replay on request',()
   const h=cameraHarness();h.show(true);h.step(.02);
   assert.equal(h.element('village-intro').hidden,false);
   assert.equal(h.element('intro-title').textContent,'GREEK WARS.');
-  h.step(2.8);assert.equal(h.element('intro-title').textContent,'BUILD YOUR HOUSE.');
+  h.step(2.8);assert.equal(h.element('intro-title').textContent,"IF YOU'RE IN A FRAT.");
   h.step(3.25);assert.equal(h.element('intro-title').textContent,'$500 once onboarded');
   h.step(4.25);assert.equal(h.element('intro-title').textContent,'YOUR CHAPTER. NEXT.');
   h.step(3.4);assert.equal(h.element('village-intro').hidden,true);
@@ -54,7 +54,7 @@ test('slow rendering does not stretch the intro beyond 13.6 visible seconds',()=
 test('leaving the viewport pauses the intro clock',()=>{
   const h=cameraHarness();h.show(true);h.step(1);h.show(false);h.step(10);
   assert.equal(h.element('village-intro').hidden,false);
-  h.show(true);h.step(4);assert.equal(h.element('intro-title').textContent,'BUILD YOUR HOUSE.');
+  h.show(true);h.step(4);assert.equal(h.element('intro-title').textContent,"IF YOU'RE IN A FRAT.");
   h.step(14);assert.equal(h.element('village-intro').hidden,true);
 });
 test('skip and direct camera interaction both clear the captions',()=>{
@@ -78,10 +78,10 @@ test('pause freezes the tour and captions, resume continues, and replay clears p
   assert.equal(h.element('intro-title').textContent,'GREEK WARS.');
   assert.equal(h.element('intro-pause').textContent,'Resume intro');
   h.fire('intro-pause:click');h.step(3);
-  assert.equal(h.element('intro-title').textContent,'BUILD YOUR HOUSE.');
+  assert.equal(h.element('intro-title').textContent,"IF YOU'RE IN A FRAT.");
   h.fire('intro-pause:click');h.fire('document:village:replay');h.step(5);
   assert.equal(h.element('intro-pause').textContent,'Pause intro');
-  assert.equal(h.element('intro-title').textContent,'BUILD YOUR HOUSE.');
+  assert.equal(h.element('intro-title').textContent,"IF YOU'RE IN A FRAT.");
 });
 test('the join link appears only on the closing invitation',()=>{
   const h=cameraHarness();h.show(true);h.step(1);assert.equal(h.element('intro-join').hidden,true);
