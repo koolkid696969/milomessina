@@ -89,6 +89,14 @@ a{color:var(--violet-hi)}
 .head{padding:clamp(26px,4vw,42px) 0 8px}
 .head h1{font-size:clamp(2rem,4.4vw,3.1rem)}
 .head p{margin-top:12px;max-width:62ch;font-size:1rem}
+.crew{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:18px}
+.crew a,.crew .off{display:inline-flex;align-items:baseline;gap:9px;font-size:.95rem;font-weight:500}
+.crew a{color:var(--text);transition:color .2s}
+.crew em{font-style:normal;font-weight:400;font-size:.84rem;color:var(--violet-hi);
+  border-bottom:1px solid transparent;transition:border-color .2s,color .2s}
+.crew a:hover em{border-bottom-color:var(--violet)}
+.crew .off{color:var(--muted-2)}
+.crew .off em{color:var(--muted-2)}
 
 /* ---------- totals rail ---------- */
 .rail{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);
@@ -375,7 +383,12 @@ td.tnum.run{color:var(--good)}
 <main class="wrap">
   <div class="head">
     <h1>arya's fomo bootcamp</h1>
-    <p>What the four of you spend, the hours you put in, and what you're pushing — in one place, so Arya can see what's owed, who's on the clock, and how the work is going.</p>
+    <div class="crew">
+      <a href="/">Milo <em>milomessina.com</em></a>
+      <a href="https://bijanizadian.com" target="_blank" rel="noopener noreferrer">Bijan <em>bijanizadian.com</em></a>
+      <span class="off">Jesse <em>site to come</em></span>
+      <a href="https://lucianopinilla.com" target="_blank" rel="noopener noreferrer">Luchi <em>lucianopinilla.com</em></a>
+    </div>
   </div>
 
   <div class="rail">
