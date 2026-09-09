@@ -96,7 +96,8 @@ The `invoice` tab:
 | `category` | lunch, coffee, ai, software, travel, supplies, other |
 | `amount` | USD |
 | `status` | `pending` or `reimbursed` |
-| `note`, `receipt` | optional |
+| `note` | optional |
+| `receipt` | a link, if one was pasted in — see below |
 | `reimbursed` | when it was marked paid |
 
 The `hours` tab:
@@ -115,6 +116,27 @@ what the sheet says. The `day` column sits alongside so the tab still reads well
 
 Edit either tab by hand if you like — the page re-reads them every 30 seconds.
 Just leave the `id` columns alone; the page uses them to find rows.
+
+## Receipt photos
+
+The receipt field takes a photo, not a link. On a phone it opens the camera
+or the camera roll; on a laptop, the file picker. Tap the thumbnail in the
+ledger to see the full shot, and Escape or a click outside closes it.
+
+Photos are never stored at full size. A phone snap is two to five megabytes
+and a browser's whole store is about five, so each one is drawn down to
+1000px on its long edge and re-encoded as JPEG — a 260KB receipt lands
+around 20KB, and a real camera photo around 100KB. That is roughly forty
+receipts before the store fills.
+
+When it does fill, the line is **not** added: the store is rolled back to
+what was last written and the page says which. Nothing appears on screen
+that was not saved. Deleting a line with a photo on it frees the room again.
+
+Photos need `BACKEND = 'device'`. The sheet keeps a 500-character cell, not
+an image, so on `'sheet'` the picker is switched off and says so rather than
+taking a photo it would have to throw away. Rows carrying an old `https://`
+receipt link still render as a link, either way.
 
 ## The clock
 
