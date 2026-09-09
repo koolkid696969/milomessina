@@ -3,7 +3,7 @@ import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=24'
 import {palettes,hash} from './village-district-layout.js?v=22';
 import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js?v=25';
 import {createStreetNetwork} from './village-streets.js?v=22';
-import {createChapterBanner} from './village-banners.js?v=22';
+import {createChapterBanner,bannerIdentity} from './village-banners.js?v=27';
 
 export function createVillage(THREE,chapters){
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
@@ -144,7 +144,7 @@ export function createVillage(THREE,chapters){
     [-1,1].forEach(side=>box(house,side*(bannerWidth/2-.12),bannerTop+.17,6.18,.045,.32,.045,0xc3b997));
     [-4.8,4.8].forEach(x=>{ball(group,x,.6,5.8,.65,0x4a5757);box(group,x,.27,5.8,1.3,.25,1.3,0x918a7d);});
     // Chapter pennant, porch chairs, a table and speakers.
-    cylinder(group,-6.1,2.4,6.1,.045,4.8,0xc3b997);const flag=box(group,-5.52,4.3,6.1,1.15,.65,.045,[0x6976d2,0x873f3e,0x5f7792,0xbc9959,0x934843][index]);flags.push(flag);
+    cylinder(group,-6.1,2.4,6.1,.045,4.8,0xc3b997);const flag=box(group,-5.52,4.3,6.1,1.15,.65,.045,bannerIdentity(chapter).primary);flags.push(flag);
     if(chapter.joined){[-3.8,3.8].forEach(x=>{box(group,x,.6,6.7,.55,1.1,.5,0x232936);[.38,.78].forEach(y=>{const speaker=cylinder(group,x,y,6.98,.17,.025,0x596475);speaker.rotation.x=Math.PI/2;});});box(group,3.8,.72,8.5,1.9,.12,.85,0xa6906d);[-.65,.65].forEach(x=>box(group,3.8+x,.36,8.5,.1,.7,.5,0x4e4a48));for(let cup=0;cup<3;cup++)cylinder(group,3.35+cup*.35,.89,8.5,.07,.2,0xce5757);}
     const hit=box(house,0,height/2,0,width+1,height+3,depth+5,new THREE.MeshBasicMaterial({visible:false}));hit.userData.chapter=id;pickables.push(hit);
     // Absolute onboarded counts grow the building, while the lawn and people retain their scale.
