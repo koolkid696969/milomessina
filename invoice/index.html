@@ -1349,6 +1349,13 @@ document.getElementById("t-hours-csv").addEventListener("click", function(){
    is pushes, not commits. api.github.com allows the browser straight in
    and rates limit per viewer's IP at 60/hour, so the answers are cached
    and refetched at most every ten minutes. */
+/* Whoever's usernames are known go in here, so nobody has to type them
+   on their own machine. They seed the fields on a first visit only — once
+   someone edits or clears one on their browser, that choice stands. A name
+   left out simply reads as not linked, which is the truth: no username
+   means no measurement, and that is not the same as having pushed nothing. */
+var GH_DEFAULTS = { "Milo": "koolkid696969", "Bijan": "Code-Atreides" };
+
 var GH_DAYS = 14, GH_CACHE = "fomo.github.cache", GH_LOGINS = "fomo.github.logins";
 var GH_FRESH = 10 * 60 * 1000;
 var GH_HUES = ["--s1", "--s2", "--s3", "--s4"];
@@ -1369,7 +1376,11 @@ function ghWindow(){
 
 function loadGh(){
   try {
-    logins = JSON.parse(localStorage.getItem(GH_LOGINS) || "{}") || {};
+    var savedLogins = localStorage.getItem(GH_LOGINS);
+    logins = savedLogins ? (JSON.parse(savedLogins) || {}) : {};
+    if (!savedLogins) {
+      PEOPLE.forEach(function(p){ if (GH_DEFAULTS[p]) logins[p] = GH_DEFAULTS[p]; });
+    }
     var c = JSON.parse(localStorage.getItem(GH_CACHE) || "null");
     /* the failures ride along with the data: without them a cached render
        shows a mistyped username as a quiet zero instead of a mistake */

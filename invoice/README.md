@@ -151,6 +151,16 @@ row from the table.
 
 ## What everyone's pushing
 
+`GH_DEFAULTS` at the top of the pushing code holds the usernames that are
+already known — Milo and Bijan — so nobody has to type them on their own
+machine. They seed the fields on a first visit only; once someone edits or
+clears one in their browser, that choice stands.
+
+Anyone not in there reads as **not linked**, and their card shows a dash rather
+than a zero. That distinction is deliberate: no username means nothing was
+measured, which is not the same as having pushed nothing. Add the other two to
+`GH_DEFAULTS` (or type them into the fields) and they start counting.
+
 Each intern's GitHub username goes in the four fields at the bottom of the
 pushing panel — paste the profile URL or an `@name` if that is easier, both get
 trimmed to the username. **Save usernames** stores them in this browser and
