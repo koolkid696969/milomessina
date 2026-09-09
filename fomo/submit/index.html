@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>get paid for views — fomo campus</title>
-<meta name="description" content="Post a video about fomo, tag @fomo, send us the link. Approved videos earn $2 per 1,000 qualifying views, up to $5,000 per video, plus a $25 bonus once your first three are approved. Rep your school on camera and you're in.">
+<meta name="description" content="Post a video about fomo, tag @fomo, send us the link. Approved videos earn $2 per 1,000 qualifying views, up to $5,000 per video, plus a $25 joining bonus the first time a video is approved. Rep your school on camera and you're in.">
 <meta name="theme-color" content="#08070F">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/fomo/assets/base.css">
@@ -301,7 +301,7 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
   <div class="wrap">
     <div class="shead rv">
       <h2>how much you'll earn.</h2>
-      <p>One rate, however far it goes: <b>$2 for every 1,000 qualifying views</b>, up to <b>$5,000</b> on a single video &mdash; plus a <b>$25</b> bonus the moment your first three videos are approved.</p>
+      <p>One rate, however far it goes: <b>$2 for every 1,000 qualifying views</b>, up to <b>$5,000</b> on a single video. Your first approved video also earns a <b>$25</b> joining bonus, once.</p>
     </div>
 
     <div class="pay rv">
@@ -309,9 +309,9 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
         <h4>the rates</h4>
         <div class="krow"><span>On every approved video, per 1,000 qualifying views</span><b>$2.00</b></div>
         <div class="krow"><span>Most one video can earn, all in</span><b>$5,000</b></div>
-        <div class="krow"><span>Bonus, once your first 3 videos are approved</span><b>$25</b></div>
+        <div class="krow"><span>Joining bonus, on your first approved video</span><b>$25</b></div>
         <div class="krow"><span>Videos you can send</span><b>no cap</b></div>
-        <p class="pay-eg">A video at 100,000 views earns <b>$200</b>. The $25 is paid on top of that, once, as soon as your third video is approved.</p>
+        <p class="pay-eg">A video at 100,000 views earns <b>$200</b>. If it's your first approved video, the $25 is paid on top of that &mdash; <b>$225</b>. Every video after earns on views alone.</p>
       </div>
 
       <div class="paycard">
@@ -517,8 +517,8 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
     return Math.round(x/10000)*10000;};
   const fmt=x=>x>=1e6?(x/1e6).toFixed(x>=1e7?0:2).replace(/\.?0+$/,'')+'M'
            :x>=1000?(x/1000).toFixed(x>=1e5?0:1).replace(/\.0$/,'')+'K':x;
-  /* $2 per 1,000 views, capped at $5,000 — the $25 starter bonus is paid
-     once across your first three videos, so it is not part of this */
+  /* $2 per 1,000 views, capped at $5,000 — the $25 joining bonus lands once,
+     on the first approved video, so it is not part of this */
   function pay(x){return Math.min(Math.round(x/1000*2),5000);}
   function paint(){const t=+sl.value,x=toViews(t);
     sl.style.setProperty('--p',(t/10)+'%');
