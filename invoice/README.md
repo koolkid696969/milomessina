@@ -151,43 +151,45 @@ row from the table.
 
 ## What everyone's pushing
 
-`GH_DEFAULTS` at the top of the pushing code holds the usernames that are
-already known — Milo and Bijan — so nobody has to type them on their own
-machine. They seed the fields on a first visit only; once someone edits or
-clears one in their browser, that choice stands.
+A GitHub-style contribution map — week columns, days down, the same green ramp
+— for the team together and then one each. Above it: the quarter's total,
+today's, and the busiest single day. Hovering a square names the day and its
+count.
 
-Anyone not in there reads as **not linked**, and their card shows a dash rather
-than a zero. That distinction is deliberate: no username means nothing was
-measured, which is not the same as having pushed nothing. Add the other two to
-`GH_DEFAULTS` (or type them into the fields) and they start counting.
+`GH_DEFAULTS` at the top of the pushing code holds the usernames already known,
+so nobody has to type them on their own machine. They seed the fields on a first
+visit only; once someone edits or clears one in their browser, that stands.
+Anyone not listed reads as **not linked** and shows a dash rather than a zero —
+no username means nothing was measured, which is not the same as having pushed
+nothing.
 
-Each intern's GitHub username goes in the four fields at the bottom of the
-pushing panel — paste the profile URL or an `@name` if that is easier, both get
-trimmed to the username. **Save usernames** stores them in this browser and
-fetches straight away.
+### Where the numbers come from
 
-There is no OAuth and no token, because public activity does not need one and a
-token in a page this public would be a liability. That buys the honest limit on
-the whole panel:
+Each linked account's **public repositories** are listed, the ones pushed inside
+the window are read, and their commits are counted by day.
 
-- **Only public pushes are visible.** Work in a private repository does not
-  appear, and there is no way to reach it without every intern issuing a
-  personal access token.
-- **It counts pushes, not commits.** GitHub stopped putting commit counts in the
-  public events feed — the payload carries the push, not what was in it — so a
-  push of one commit and a push of nine count the same.
-- **GitHub's feed stops at 300 events or 90 days.** For a heavy fortnight that
-  can run out mid-window; when it does the number is shown with a `+` and the
-  footer says why. It is a floor, never a guess.
+The public events feed looked like the obvious source and was the wrong one. It
+no longer carries commit counts, it stops at 300 events, and — the reason it had
+to go — it never backfills: commits pushed while a repo was private stay missing
+from it permanently. An intern who had just made their repo public read as a
+flat zero while committing daily.
 
-The chart stacks the four of them per day over a fortnight, so each column is
-the team's day and each band is one person's share of it. Hovering a column
-breaks it down. Above it: the fortnight's total, today's, and the busiest day.
+Still no OAuth and no token. Public commits need neither, and a token on a page
+this public would be a liability. The limits that come with that, stated rather
+than papered over:
+
+- **Private repositories are invisible.** Nothing counts until a repo is public,
+  though making it public later does bring its whole history in.
+- **Commits to someone else's repository don't count** — only repos the account
+  owns.
+- **Very long histories are a floor.** Six repos per account, three pages of
+  commits each; past that the number carries a `+` and the footer says why.
 
 Unauthenticated GitHub allows 60 requests an hour **per viewer's IP**, not per
-site, so everyone gets their own budget. Answers are cached for ten minutes and
-survive a reload — including the failures, so a mistyped username reads as a
-mistake rather than a quiet zero. **Refresh** forces a new fetch.
+site, so everyone has their own budget. A refresh costs a few requests per
+account, results cache for fifteen minutes and survive a reload — failures
+included, so a mistyped username reads as a mistake rather than a quiet zero.
+If the limit is hit the panel says so and names the minute it resets.
 
 ## Changing the team
 
