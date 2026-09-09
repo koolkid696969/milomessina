@@ -28,7 +28,7 @@ pretend it saved anything.
 
 ## The passcode
 
-`PASSCODE` at the top of `index.html` is `fomo-stipend`. Change it to whatever
+`PASSCODE` at the top of `index.html` is `monkey`. Change it to whatever
 you want the four of them to type; it is remembered per browser afterwards.
 
 It travels in the page source, so it is a turnstile that keeps the ledger off
