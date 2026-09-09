@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Intro visual review</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#101724;color:white;font:13px system-ui}header{height:48px;display:flex;align-items:center;gap:20px;padding:8px 18px}button{padding:7px 12px}iframe{display:block;border:0;width:100vw;height:calc(100dvh - 48px)}</style>
+<header><button id="review">Inspect reward scene</button><span id="status">Opening village…</span></header><iframe id="preview" title="Greek village preview" src="../"></iframe>
+<script>
+const frame=document.getElementById('preview'),status=document.getElementById('status');let timer=0,observer;
+function review(){
+  clearTimeout(timer);observer?.disconnect();const doc=frame.contentDocument;
+  status.textContent='Playing; pauses automatically during the money rain.';
+  observer=new MutationObserver(()=>{
+    if(doc.getElementById('intro-title').textContent!=='$500 once onboarded')return;
+    observer.disconnect();timer=setTimeout(()=>{
+      const button=doc.getElementById('intro-pause');
+      if(!doc.getElementById('village-intro').hidden&&button.getAttribute('aria-pressed')!=='true')button.click();
+      status.textContent='Reward scene paused for visual inspection.';
+    },1700);
+  });
+  observer.observe(doc.getElementById('intro-title'),{childList:true});
+  doc.dispatchEvent(new frame.contentWindow.CustomEvent('village:replay'));
+}
+frame.addEventListener('load',()=>{
+  const doc=frame.contentDocument,shell=doc.getElementById('village');
+  if(shell.classList.contains('village-ready'))review();else{
+    const ready=new MutationObserver(()=>{if(shell.classList.contains('village-ready')){ready.disconnect();review();}});ready.observe(shell,{attributes:true,attributeFilter:['class']});
+  }
+});
+document.getElementById('review').addEventListener('click',review);
+</script></html>

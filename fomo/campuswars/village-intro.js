@@ -1,26 +1,49 @@
-// The tour and captions share visible elapsed time, even on slower devices.
-export const INTRO_DURATION = 5;
+// One visible-time clock drives the flight, lens, lighting and brief captions.
+export const INTRO_DURATION = 13.6;
+export const INTRO_PACE = .85;
 export const openingView = {target:[1.808,2,-8.101],theta:2.956047,phi:.224457,radius:46.627674};
 export const introStages = [
-  {start:0,end:1.5,label:'01 / THE COMPETITION',title:'Greek Wars.',description:'Your chapter’s trading competition on fomo.'},
-  {start:1.5,end:3.2,label:'02 / BUILD YOUR HOUSE',title:'Bring your people.',description:'15 members build a house. 80% onboard to qualify.'},
-  {start:3.2,end:5,label:'03 / MAKE YOUR MOVE',title:'$500,000 committed.',description:'Rally your chapter. Compete for rewards.'}
+  {start:0,end:2.72,title:'GREEK WARS.',description:'Your chapter. Your team. A trading competition on fomo.'},
+  {start:2.72,end:5.95,title:'BUILD YOUR HOUSE.',description:'15 members build it. Every new member makes it grow.'},
+  {start:5.95,end:10.2,title:'$500 once onboarded',description:'Rally your chapter. Compete on campus and nationally.'},
+  {start:10.2,end:13.6,title:'YOUR CHAPTER. NEXT.',description:'Bring your people to Greek Wars.'}
 ];
-const stops = [
-  {time:0,target:[0,3,4],theta:2.65,phi:.76,radius:112},
-  {time:1.5,target:[5,3,0],theta:2.8,phi:.55,radius:78},
-  {time:3.2,target:[0,3,-8],theta:2.9,phi:.36,radius:58},
-  {time:5,...openingView}
+const home=[openingView.target[0]+Math.sin(openingView.theta)*Math.cos(openingView.phi)*openingView.radius,openingView.target[1]+Math.sin(openingView.phi)*openingView.radius,openingView.target[2]+Math.cos(openingView.theta)*Math.cos(openingView.phi)*openingView.radius];
+// Shared velocities and zero acceleration at each knot make the whole route C2 continuous.
+// Low waypoints keep the flight over the boulevard; the bank remains above rooftops.
+const knots=[
+  {time:0,position:[0,104,104],velocity:[0,-15,-24],target:[0,2,-5],fov:66,roll:0},
+  {time:3.2,position:[0,7,30],velocity:[0,0,-27],target:[-13,4,-19],fov:72,roll:-.055},
+  {time:6.4,position:[0,8,-38],velocity:[0,0,-12],target:[-20,5,-19],fov:60,roll:.045},
+  {time:9.5,position:[48,40,12],velocity:[0,0,28],target:[0,3,0],fov:64,roll:-.10},
+  {time:12.5,position:[0,30,58],velocity:[-12,-2,-12],target:[0,3,0],fov:56,roll:.04},
+  {time:16,position:home,velocity:[0,0,0],target:openingView.target,fov:48,roll:0}
 ];
-export function introViewAt(seconds) {
-  const time=Math.max(0,Math.min(INTRO_DURATION,seconds));
-  const index=stops.findIndex((stop,i)=>i<stops.length-1&&time<=stops[i+1].time);
-  const a=stops[index],b=stops[index+1],t=(time-a.time)/(b.time-a.time),ease=t*t*(3-2*t);
-  const mix=(x,y)=>x+(y-x)*ease;
-  return {target:a.target.map((v,i)=>mix(v,b.target[i])),theta:mix(a.theta,b.theta),phi:mix(a.phi,b.phi),radius:mix(a.radius,b.radius)};
+const clamp=v=>Math.max(0,Math.min(1,v));
+const smooth=v=>{const t=clamp(v);return t*t*(3-2*t);};
+// Quintic Hermite basis, with shared first derivatives and zero second derivatives.
+function interpolate(a,b,va,vb,t,span){
+  const t2=t*t,t3=t2*t,t4=t3*t,t5=t4*t;
+  return a*(1-10*t3+15*t4-6*t5)+b*(10*t3-15*t4+6*t5)+va*span*(t-6*t3+8*t4-3*t5)+vb*span*(-4*t3+7*t4-3*t5);
 }
-export function introCaptionAt(seconds) {
-  const index=seconds<1.5?0:seconds<3.2?1:2;
-  const stage=introStages[index];
-  return {index,...stage,opacity:Math.min(1,Math.max(0,(INTRO_DURATION-seconds)/.35)),progress:introStages.map(s=>Math.max(0,Math.min(1,(seconds-s.start)/(s.end-s.start))))};
+function targetVelocity(index,axis){
+  if(index===0||index===knots.length-1)return 0;
+  return (knots[index+1].target[axis]-knots[index-1].target[axis])/(knots[index+1].time-knots[index-1].time);
+}
+export function introViewAt(seconds){
+  const time=Math.max(0,Math.min(16,seconds/INTRO_PACE));
+  const index=knots.findIndex((k,i)=>i<knots.length-1&&time<=knots[i+1].time),a=knots[index],b=knots[index+1];
+  const span=b.time-a.time,t=(time-a.time)/span;
+  const position=a.position.map((value,i)=>interpolate(value,b.position[i],a.velocity[i],b.velocity[i],t,span));
+  const target=a.target.map((value,i)=>interpolate(value,b.target[i],targetVelocity(index,i),targetVelocity(index+1,i),t,span));
+  const offset=position.map((value,i)=>value-target[i]),radius=Math.hypot(...offset);
+  const night=smooth((time-6.8)/1.1)*(1-smooth((time-11.5)/1.4));
+  return {target,theta:Math.atan2(offset[0],offset[2]),phi:Math.asin(offset[1]/radius),radius,fov:interpolate(a.fov,b.fov,0,0,t,span),roll:interpolate(a.roll,b.roll,0,0,t,span),night};
+}
+export function introCaptionAt(seconds){
+  const time=Math.max(0,Math.min(INTRO_DURATION,seconds));
+  const index=introStages.findIndex((stage,i)=>time<stage.end||i===introStages.length-1),stage=introStages[index];
+  const local=time-stage.start,hold=(index===3?3.8:2.5)*INTRO_PACE;
+  const reveal=smooth((local-.3*INTRO_PACE)/.22),exit=1-smooth((local-hold)/.3);
+  return {index,...stage,opacity:clamp((INTRO_DURATION-time)/.35),copyOpacity:reveal*exit,lift:(1-reveal)*24,scale:1+(1-reveal)*.12,join:index===3};
 }

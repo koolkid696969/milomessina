@@ -3,23 +3,24 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../vendor/three.module.min.js';
+import {createMoneyRain} from '../village-money-rain.js';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from '../village-intro.js';
 
 function cameraHarness(reduced=false,initialHash=''){
-  const elements=new Map(),events=new Map(),selections=[];let intersection,frame,camera;
+  const elements=new Map(),events=new Map(),selections=[],lighting=[];let intersection,frame,camera;
   function element(id){if(!elements.has(id))elements.set(id,{clientWidth:1200,clientHeight:650,hidden:false,style:{setProperty(){}},querySelectorAll:()=>[],classList:{add(){},remove(){},toggle(){}},getAttribute:()=> 'false',setAttribute(){},prepend(){},focus(){},setPointerCapture(){},addEventListener(type,fn){events.set(id+':'+type,fn);}});return elements.get(id);}
   element('chapters-data').textContent='{"chapters":[]}';
   const canvas=element('canvas');
   class Renderer{constructor(){this.domElement=canvas;this.shadowMap={};}setPixelRatio(){}setSize(){}render(scene,view){camera=view;}}
-  const sandbox={INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:()=>({world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:1,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
+  const sandbox={createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:()=>({world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:1,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
   const source=fs.readFileSync(new URL('../village.js',import.meta.url),'utf8').replace(/^import .*;$/gm,'');
   vm.runInNewContext(source,sandbox);
   let now=100;
-  return {selections,element,fire(name){events.get(name)();},show(visible){intersection([{isIntersecting:visible}]);},step(seconds,fps=60){for(let t=0;t<seconds;t+=1/fps){now+=1000/fps;const fn=frame;frame=null;fn?.(now);}return camera.position.clone();},drag(){events.get('canvas:pointerdown')({button:0,pointerId:1,clientX:0,clientY:0});},reset(){events.get('village-overview:click')();}};
+  return {selections,lighting,lens:()=>camera.fov,element,fire(name){events.get(name)();},show(visible){intersection([{isIntersecting:visible}]);},step(seconds,fps=60){for(let t=0;t<seconds;t+=1/fps){now+=1000/fps;const fn=frame;frame=null;fn?.(now);}return camera.position.clone();},drag(){events.get('canvas:pointerdown')({button:0,pointerId:1,clientX:0,clientY:0});},reset(){events.get('village-overview:click')();}};
 }
-test('entrance falls from the campus overview into the row in five seconds and does not replay',()=>{
+test('entrance falls from the campus overview into the row in 13.6 seconds and does not replay',()=>{
   const h=cameraHarness();h.show(true);const high=h.step(.02);assert(high.y>75);
-  const low=h.step(5);assert(low.y<14);assert(low.distanceTo(high)>60);
+  const low=h.step(INTRO_DURATION);assert(low.y<14);assert(low.distanceTo(high)>60);
   h.show(false);h.step(1);h.show(true);assert(h.step(.02).y<14);
 });
 test('taking control cancels the descent immediately and reset remains usable',()=>{
@@ -34,26 +35,27 @@ test('startup preserves a new chapter deep link while waiting for live registrat
   assert.deepEqual(h.selections,[],'fallback selection must not overwrite the requested live chapter');
 });
 
-test('captions follow the tour, clear at five seconds, and replay on request',()=>{
+test('captions follow the tour, clear at 13.6 seconds, and replay on request',()=>{
   const h=cameraHarness();h.show(true);h.step(.02);
   assert.equal(h.element('village-intro').hidden,false);
-  assert.equal(h.element('intro-title').textContent,'Greek Wars.');
-  h.step(1.6);assert.equal(h.element('intro-title').textContent,'Bring your people.');
-  h.step(1.7);assert.equal(h.element('intro-title').textContent,'$500,000 committed.');
-  h.step(1.8);assert.equal(h.element('village-intro').hidden,true);
+  assert.equal(h.element('intro-title').textContent,'GREEK WARS.');
+  h.step(2.8);assert.equal(h.element('intro-title').textContent,'BUILD YOUR HOUSE.');
+  h.step(3.25);assert.equal(h.element('intro-title').textContent,'$500 once onboarded');
+  h.step(4.25);assert.equal(h.element('intro-title').textContent,'YOUR CHAPTER. NEXT.');
+  h.step(3.4);assert.equal(h.element('village-intro').hidden,true);
   h.fire('document:village:replay');h.step(.02);
   assert.equal(h.element('village-intro').hidden,false);
-  assert.equal(h.element('intro-title').textContent,'Greek Wars.');
+  assert.equal(h.element('intro-title').textContent,'GREEK WARS.');
 });
-test('slow rendering does not stretch the intro beyond five visible seconds',()=>{
-  const h=cameraHarness();h.show(true);h.step(.1,10);h.step(5,10);
+test('slow rendering does not stretch the intro beyond 13.6 visible seconds',()=>{
+  const h=cameraHarness();h.show(true);h.step(.1,10);h.step(INTRO_DURATION,10);
   assert.equal(h.element('village-intro').hidden,true);
 });
 test('leaving the viewport pauses the intro clock',()=>{
   const h=cameraHarness();h.show(true);h.step(1);h.show(false);h.step(10);
   assert.equal(h.element('village-intro').hidden,false);
-  h.show(true);h.step(1);assert.equal(h.element('intro-title').textContent,'Bring your people.');
-  h.step(4);assert.equal(h.element('village-intro').hidden,true);
+  h.show(true);h.step(4);assert.equal(h.element('intro-title').textContent,'BUILD YOUR HOUSE.');
+  h.step(14);assert.equal(h.element('village-intro').hidden,true);
 });
 test('skip and direct camera interaction both clear the captions',()=>{
   for(const action of ['skip','drag']){
@@ -66,6 +68,72 @@ test('skip and direct camera interaction both clear the captions',()=>{
 test('reduced motion keeps the camera still while explaining the game',()=>{
   const h=cameraHarness(true);h.show(true);const start=h.step(.02);
   assert.equal(h.element('village-intro').hidden,false);
-  assert(start.distanceTo(h.step(5.1))<.001);
+  assert(start.distanceTo(h.step(INTRO_DURATION+.1))<.001);
   assert.equal(h.element('village-intro').hidden,true);
+});
+
+test('pause freezes the tour and captions, resume continues, and replay clears pause',()=>{
+  const h=cameraHarness();h.show(true);h.step(2);h.fire('intro-pause:click');
+  const at=h.step(.02);assert(at.distanceTo(h.step(20))<.001);
+  assert.equal(h.element('intro-title').textContent,'GREEK WARS.');
+  assert.equal(h.element('intro-pause').textContent,'Resume intro');
+  h.fire('intro-pause:click');h.step(3);
+  assert.equal(h.element('intro-title').textContent,'BUILD YOUR HOUSE.');
+  h.fire('intro-pause:click');h.fire('document:village:replay');h.step(5);
+  assert.equal(h.element('intro-pause').textContent,'Pause intro');
+  assert.equal(h.element('intro-title').textContent,'BUILD YOUR HOUSE.');
+});
+test('the join link appears only on the closing invitation',()=>{
+  const h=cameraHarness();h.show(true);h.step(1);assert.equal(h.element('intro-join').hidden,true);
+  h.step(12);assert.equal(h.element('intro-join').hidden,false);
+  h.fire('document:village:replay');h.step(.02);assert.equal(h.element('intro-join').hidden,true);
+});
+function position(view){return new THREE.Vector3(view.target[0]+Math.sin(view.theta)*Math.cos(view.phi)*view.radius,view.target[1]+Math.sin(view.phi)*view.radius,view.target[2]+Math.cos(view.theta)*Math.cos(view.phi)*view.radius);}
+test('flight, bank and lens remain continuous at every shot boundary',()=>{
+  for(const t of [0,2.72,5.44,8.075,10.625,13.6]){
+    const before=introViewAt(t-.001),after=introViewAt(t+.001);
+    assert(position(before).distanceTo(position(after))<.25);
+    for(const key of ['phi','radius','fov','roll','night'])assert(Math.abs(before[key]-after[key])<.2);
+    assert(before.target.every((v,i)=>Math.abs(v-after.target[i])<.05));
+    const caption=introCaptionAt(t);assert(caption.copyOpacity>=0&&caption.copyOpacity<=1);
+  }
+  const end=introViewAt(INTRO_DURATION);
+  assert(position(end).distanceTo(position(openingView))<1e-9);
+  assert.equal(end.fov,48);assert(Math.abs(end.roll)<1e-9);assert.equal(end.night,0);
+});
+test('the low flight stays on the boulevard, the orbit clears roofs, and captions leave breathing room',()=>{
+  for(let t=0;t<=INTRO_DURATION;t+=.02){
+    const view=introViewAt(t),p=position(view);
+    assert(p.y>=6);assert(view.fov>=48&&view.fov<=78);assert(Math.abs(view.roll)<=.21);
+    if(t>=2.72&&t<=5.44)assert(Math.abs(p.x)<2);
+    if(Math.abs(p.x)>10&&Math.abs(p.z)<32)assert(p.y>22,'outside the street corridor the camera must clear houses');
+  }
+  assert.equal(introCaptionAt(2.6).copyOpacity,0);
+  assert.equal(introCaptionAt(5.6).copyOpacity,0);
+  assert.equal(introCaptionAt(9.6).copyOpacity,0);
+  assert.equal(introViewAt(9).night,1);
+});
+
+test('skipping a night flyby restores daylight and the ordinary camera lens',()=>{
+  const h=cameraHarness();h.show(true);h.step(9);
+  assert.equal(h.lighting.at(-1),true);assert(h.lens()>48);
+  h.fire('intro-skip:click');h.step(.02);
+  assert.equal(h.lighting.at(-1),false);assert.equal(h.lens(),48);
+});
+test('reduced motion never banks, changes the lens or runs the lighting transition',()=>{
+  const h=cameraHarness(true);h.show(true);const start=h.step(.02);h.step(9);
+  assert.equal(h.lens(),48);assert.equal(h.lighting.length,0);
+  assert(start.distanceTo(h.step(8))<.001);
+});
+
+test('camera carries nonzero speed through waypoints with matching velocity and acceleration',()=>{
+  const h=.001;
+  for(const t of [2.72,5.44,8.075,10.625]){
+    const a=position(introViewAt(t-2*h)),b=position(introViewAt(t-h)),c=position(introViewAt(t)),d=position(introViewAt(t+h)),e=position(introViewAt(t+2*h));
+    const incoming=c.clone().sub(b).divideScalar(h),outgoing=d.clone().sub(c).divideScalar(h);
+    assert(incoming.length()>10,'waypoint must not stop the flight');
+    assert(incoming.distanceTo(outgoing)<.02,'velocity must carry through the join');
+    const accIn=c.clone().add(a).addScaledVector(b,-2).divideScalar(h*h),accOut=e.clone().add(c).addScaledVector(d,-2).divideScalar(h*h);
+    assert(accIn.distanceTo(accOut)<.8,'acceleration must not jump at the join');
+  }
 });

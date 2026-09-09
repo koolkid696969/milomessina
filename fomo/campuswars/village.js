@@ -1,7 +1,8 @@
 import * as THREE from './vendor/three.module.min.js';
 import {createVillage} from './village-world.js?v=38';
 import {createDistricts} from './village-districts.js?v=35';
-import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=33';
+import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=42';
+import {createMoneyRain} from './village-money-rain.js?v=42';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
@@ -27,32 +28,52 @@ function startVillage(){
   const sun=new THREE.DirectionalLight(0xffe5c6,2.6);sun.position.set(-35,55,30);sun.castShadow=true;sun.shadow.mapSize.set(coarse?1024:2048,coarse?1024:2048);sun.shadow.radius=1.4;Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:150});sun.shadow.normalBias=.05;sun.shadow.bias=-.00015;scene.add(sun);scene.add(sun.target);
   const fill=new THREE.DirectionalLight(0xc4d2e0,.5);fill.position.set(30,15,-25);scene.add(fill);
   let village=createVillage(THREE,chapters);scene.add(village.world);
+  const moneyRain=createMoneyRain(THREE,chapters,village.anchors);scene.add(moneyRain.root);
   let districts=createDistricts(THREE,village.extension);scene.add(districts.root);
+  const dusk={sky:new THREE.Color(0x25233f),ambient:new THREE.Color(0x9a9fdc),ground:new THREE.Color(0x453649),sun:new THREE.Color(0xc49ab1),fill:new THREE.Color(0x858dff)};
+  let litAtNight=false;
+  function applyLighting(amount){
+    scene.background.set(0x98a7ba).lerp(dusk.sky,amount);scene.fog.color.copy(scene.background);scene.fog.density=.0022+amount*.001;
+    ambient.color.set(0xd4e2ed).lerp(dusk.ambient,amount);ambient.groundColor.set(0x857768).lerp(dusk.ground,amount);ambient.intensity=1.55-amount*.9;
+    sun.color.set(0xffe5c6).lerp(dusk.sun,amount);sun.intensity=2.6-amount*2.28;
+    fill.color.set(0xc4d2e0).lerp(dusk.fill,amount);fill.intensity=.5-amount*.15;
+    const night=amount>.45;
+    if(night!==litAtNight){litAtNight=night;village.nightLife.setNight(night);}
+  }
   const intro=document.getElementById('village-intro');
-  const introBars=[...intro.querySelectorAll('.intro-progress i')];
-  let autoOrbit=!reduced,entrancePending=true,entranceActive=false,entranceTime=0,captionIndex=-1;
+  let autoOrbit=!reduced,entrancePending=true,entranceActive=false,entrancePaused=false,entranceTime=0,captionIndex=-1;
   function paintIntro(){
     const caption=introCaptionAt(entranceTime);
     if(captionIndex!==caption.index){
       captionIndex=caption.index;
-      document.getElementById('intro-step').textContent=caption.label;
       document.getElementById('intro-title').textContent=caption.title;
       document.getElementById('intro-description').textContent=caption.description;
+      document.getElementById('intro-join').hidden=!caption.join;
     }
     intro.style.setProperty('--intro-opacity',caption.opacity);
-    introBars.forEach((bar,i)=>bar.style.setProperty('--fill',caption.progress[i]));
+    intro.style.setProperty('--copy-opacity',reduced||entrancePaused?1:caption.copyOpacity);
+    intro.style.setProperty('--copy-lift',`${reduced||entrancePaused?0:caption.lift}px`);
+    intro.style.setProperty('--copy-scale',reduced||entrancePaused?1:caption.scale);
   }
+  let introRoll=0,introNight=0;
   function applyIntroView(){
     const view=reduced?openingView:introViewAt(entranceTime);
     target.set(...view.target);theta=view.theta;phi=view.phi;radius=view.radius;
     wantedTarget.copy(target);wantedTheta=theta;wantedPhi=phi;wantedRadius=radius;
+    introRoll=view.roll||0;introNight=view.night||0;
+    const fov=view.fov||48;if(camera.fov!==fov){camera.fov=fov;camera.updateProjectionMatrix();}
+    if(!reduced)applyLighting(view.night);
   }
   function finishIntro(){
     entrancePending=false;entranceActive=false;intro.hidden=true;shell.classList.remove('intro-playing');
-    if(document.activeElement===document.getElementById('intro-skip'))canvas.focus({preventScroll:true});
+    moneyRain.clear();introRoll=0;camera.fov=48;camera.updateProjectionMatrix();
+    applyLighting(document.getElementById('night-toggle').getAttribute('aria-pressed')==='true'?1:0);
+    if(['intro-skip','intro-pause','intro-join'].some(id=>document.activeElement===document.getElementById(id)))canvas.focus({preventScroll:true});
   }
   function beginIntro(){
-    entrancePending=false;entranceActive=true;entranceTime=0;captionIndex=-1;lastTime=0;
+    entrancePending=false;entranceActive=true;entrancePaused=false;entranceTime=0;captionIndex=-1;lastTime=0;
+    document.getElementById('intro-pause').textContent='Pause intro';
+    document.getElementById('intro-pause').setAttribute('aria-pressed','false');
     autoOrbit=!reduced;intro.hidden=false;shell.classList.add('intro-playing');
     document.dispatchEvent(new CustomEvent('village:introstart'));
     applyIntroView();paintIntro();wake();
@@ -63,6 +84,11 @@ function startVillage(){
     finishIntro();
   }
   document.getElementById('intro-skip').addEventListener('click',()=>{finishIntro();resetView();wake();});
+  document.getElementById('intro-pause').addEventListener('click',()=>{
+    entrancePaused=!entrancePaused;lastTime=0;
+    document.getElementById('intro-pause').textContent=entrancePaused?'Resume intro':'Pause intro';
+    document.getElementById('intro-pause').setAttribute('aria-pressed',String(entrancePaused));wake();
+  });
   document.addEventListener('village:replay',beginIntro);
   document.addEventListener('village:artwork',()=>{viewDirty=true;wake();});
   let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastRender=0,viewDirty=true,shadowX=NaN,shadowZ=NaN;
@@ -73,10 +99,7 @@ function startVillage(){
   nightToggle.addEventListener('click',()=>{
     const night=nightToggle.getAttribute('aria-pressed')!=='true';
     nightToggle.setAttribute('aria-pressed',String(night));shell.classList.toggle('village-night',night);
-    scene.background.set(night?0x25233f:0x98a7ba);scene.fog.color.copy(scene.background);scene.fog.density=night?.0032:.0022;
-    ambient.color.set(night?0x9a9fdc:0xd4e2ed);ambient.groundColor.set(night?0x453649:0x857768);ambient.intensity=night?.65:1.55;
-    sun.color.set(night?0xc49ab1:0xffe5c6);sun.intensity=night?.32:2.6;fill.color.set(night?0x858dff:0xc4d2e0);fill.intensity=night?.35:.5;
-    village.nightLife.setNight(night);viewDirty=true;wake();
+    applyLighting(night?1:0);viewDirty=true;wake();
   });
   function resetView(){wantedTarget.set(...openingView.target);wantedRadius=openingView.radius;wantedPhi=openingView.phi;wantedTheta=openingView.theta;wake();}
   function choose(id,focus=false,emit=true){
@@ -90,7 +113,8 @@ function startVillage(){
     const previous=village,next=createVillage(THREE,event.detail.chapters,{streets:previous.streets});
     chapters=event.detail.chapters;scene.remove(previous.world);scene.add(next.world);village=next;previous.dispose();
     if(previous.extension!==next.extension){scene.remove(districts.root);districts.dispose();districts=createDistricts(THREE,next.extension);scene.add(districts.root);}
-    village.nightLife.setNight(nightToggle.getAttribute('aria-pressed')==='true');
+    moneyRain.setChapters(chapters,village.anchors);
+    village.nightLife.setNight(litAtNight);
     village.animateCrowd(partyTime);village.animateEffects(partyTime);
     const requested=event.detail.selectedId||selected;
     choose(village.anchors.some(a=>a.id===requested)?requested:chapters[0]?.id||'empty',false);
@@ -155,14 +179,15 @@ function startVillage(){
     if(autoOrbit&&!entranceActive&&!paused&&visible&&!document.hidden)wantedTheta+=dt*.06;
     const cameraDt=visible&&!document.hidden?dt:0;
     if(entranceActive){
-      if(visible&&!document.hidden)entranceTime=Math.min(INTRO_DURATION,entranceTime+elapsed);
+      if(visible&&!document.hidden&&!entrancePaused)entranceTime=Math.min(INTRO_DURATION,entranceTime+elapsed);
       applyIntroView();paintIntro();
+      if(!reduced)moneyRain.update(entranceTime,introNight);
       if(entranceTime>=INTRO_DURATION)finishIntro();
     }else{
       const ease=reduced?1:1-Math.exp(-cameraDt*7);target.lerp(wantedTarget,ease);theta+=(wantedTheta-theta)*ease;phi+=(wantedPhi-phi)*ease;radius+=(wantedRadius-radius)*ease;
     }
     camera.position.set(target.x+Math.sin(theta)*Math.cos(phi)*radius,target.y+Math.sin(phi)*radius,target.z+Math.cos(theta)*Math.cos(phi)*radius);
-    camera.lookAt(target);camera.updateMatrixWorld();
+    camera.lookAt(target);if(introRoll)camera.rotateZ(introRoll);camera.updateMatrixWorld();
     // Keep nearby rank labels from covering an entire house when the camera approaches.
     for(const badge of village.competition.badges){
       const width=Math.min(badge.userData.width,camera.position.distanceTo(badge.position)*2*Math.tan(camera.fov*Math.PI/360)*112/viewport.clientHeight);
@@ -172,7 +197,7 @@ function startVillage(){
     if(districtChanged||lightX!==shadowX||lightZ!==shadowZ){
       shadowX=lightX;shadowZ=lightZ;sun.position.set(lightX-35,55,lightZ+30);sun.target.position.set(lightX,0,lightZ);renderer.shadowMap.needsUpdate=true;
     }
-    if(!paused&&visible&&!document.hidden){
+    if(!paused&&!(entranceActive&&entrancePaused)&&visible&&!document.hidden){
       partyTime+=dt;village.animateEffects(partyTime);
       village.animateCrowd(partyTime);
       districts.animate(partyTime,target.x,target.z);
