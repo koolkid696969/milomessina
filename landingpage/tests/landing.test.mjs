@@ -42,7 +42,7 @@ test('reduced motion and direct program links do not download or play the video'
   for(const options of [{reduced:true},{hash:'#internship'}]){const h=harness(options);assert.equal(h.video.src,undefined);assert.equal(h.node('opening').hidden,true);assert.equal(h.node('page').inert,false);}
 });
 test('caption and progress timing follow the actual video clock',()=>{
-  const h=harness();h.step(3);assert.equal(h.node('film-title').textContent,"IF YOU'RE IN A FRAT.");h.step(6.8);assert.equal(h.node('film-progress').style.transform,'scaleX(0.5)');
+  const h=harness();h.step(3);assert.equal(h.node('film-title').textContent,"IF YOU'RE IN A CHAPTER.");h.step(6.8);assert.equal(h.node('film-progress').style.transform,'scaleX(0.5)');
 });
 test('replay starts the video automatically from the beginning',()=>{
   const h=harness();

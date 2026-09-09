@@ -16,7 +16,7 @@ let active = false, resumeOnVisible = false, finishTimer, raf = 0;
 function paint() {
   const seconds = Math.min(INTRO_DURATION, video.currentTime || 0);
   const copy = introCaptionAt(seconds);
-  title.textContent = copy.title;
+  title.textContent = copy.index === 1 ? "IF YOU'RE IN A CHAPTER." : copy.title;
   description.textContent = copy.description;
   caption.style.opacity = video.paused ? '1' : String(copy.copyOpacity * copy.opacity);
   caption.style.transform = `translateY(${video.paused ? 0 : copy.lift}px) scale(${video.paused ? 1 : copy.scale})`;
