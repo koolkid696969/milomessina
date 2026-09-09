@@ -9,6 +9,20 @@
   const panelShare = document.getElementById('panel-share');
   const panelClaim = document.getElementById('panel-claim');
   const canonicalUrl = 'https://milomessina.com/fomo/campuswars/';
+  const drawer = document.getElementById('village-drawer');
+  const drawerToggle = document.getElementById('village-chapters');
+  function setDrawer(open) {
+    drawer.hidden = !open;
+    drawerToggle.setAttribute('aria-expanded', String(open));
+  }
+  drawerToggle.addEventListener('click', () => setDrawer(drawer.hidden));
+  document.getElementById('drawer-close').addEventListener('click', () => {setDrawer(false);drawerToggle.focus();});
+  const about = document.getElementById('about-dialog');
+  document.getElementById('village-about').addEventListener('click', () => about.showModal());
+  document.getElementById('about-close').addEventListener('click', () => about.close());
+  document.getElementById('intro-replay').addEventListener('click', () => {about.close();setDrawer(false);document.dispatchEvent(new CustomEvent('village:replay'));});
+  document.addEventListener('keydown', event => {if(event.key === 'Escape' && !drawer.hidden){setDrawer(false);drawerToggle.focus();}});
+  document.addEventListener('village:introstart', () => setDrawer(false));
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let selectedId = 'sigma-chi-sdsu';
   const text = (id, value) => { document.getElementById(id).textContent = value; };
@@ -49,7 +63,7 @@
       text('panel-name', chapter.name);
       text('panel-target', chapter.joined<15 ? `${15-chapter.joined} more to build your house.` : remaining ? `${remaining} more to qualify.` : 'Your house reached 80%.');
       text('panel-detail', `${chapter.joined} joined · ${target} needed · ${chapter.active} active members`);
-      panelShare.setAttribute('aria-label', `Share ${chapter.name}’s Campus Wars progress`);
+      panelShare.setAttribute('aria-label', `Share ${chapter.name}’s Greek Wars progress`);
     } else {
       text('panel-letters', '+');
       text('panel-school', 'YOUR HOUSE BELONGS HERE');
@@ -61,14 +75,10 @@
     if (emit) document.dispatchEvent(new CustomEvent('chapter:select', {detail: {id, focus: true}}));
   }
 
-  document.addEventListener('village:select', event => selectChapter(event.detail.id, {emit: false}));
-  document.querySelectorAll('[data-visit]').forEach(button=>button.addEventListener('click',()=>{
-    selectChapter(button.dataset.visit,{scroll:true});
-    document.getElementById('village').scrollIntoView({block:'start',behavior:reducedMotion?'instant':'smooth'});
-    const canvas=document.querySelector('#village-viewport canvas');
-    canvas?.focus({preventScroll:true});
-  }));
-
+  document.addEventListener('village:select', event => {
+    selectChapter(event.detail.id, {emit: false});
+    if (event.detail.interactive) setDrawer(true);
+  });
   let drag = null;
   let dragged = false;
   neighborhood.addEventListener('pointerdown', event => {
@@ -124,7 +134,7 @@
     const target = chapter ? Math.ceil(chapter.active * 0.8) : 0;
     const url = chapter ? `${canonicalUrl}#chapter=${encodeURIComponent(chapter.id)}` : canonicalUrl;
     const data = {
-      title: chapter ? `${chapter.letters} — fomo Campus Wars` : 'Get your frat paid — fomo Campus Wars',
+      title: chapter ? `${chapter.letters} — fomo Greek Wars` : 'Get your frat paid — fomo Greek Wars',
       text: chapter ? `${chapter.name}: ${chapter.joined} in, ${Math.max(0, target - chapter.joined)} more to hit 80%. Let’s get the house on fomo.` : 'There’s an empty lot for our chapter in the Greek village. $500,000 committed. Who’s getting our house on the map?',
       url
     };
@@ -157,9 +167,11 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=32').catch(error => {
+  import('./village.js?v=33').catch(error => {
     console.error('Unable to load Greek village:', error);
-    document.getElementById('village-loading').textContent = 'The village couldn’t load. Browse every chapter’s progress below.';
+    document.getElementById('village-loading').textContent = 'The village couldn’t load. Open Chapters to browse progress or join Greek Wars.';
+    document.getElementById('village').classList.remove('intro-playing');
+    document.getElementById('village-intro').hidden = true;
     document.getElementById('village').classList.add('village-unavailable');
   });
   let lastUpdated;
@@ -204,8 +216,4 @@
       document.getElementById('chapter-sync').textContent = status.live ? `Live onboarding · Updated ${time} · Refreshes every 30 seconds` : lastUpdated ? `Updates reconnecting · Showing data from ${time}` : 'Connecting to live onboarding · Showing saved registrations';
     }
   })).catch(() => {document.getElementById('chapter-sync').textContent = 'Live updates unavailable · Showing saved registrations';});
-  if ('IntersectionObserver' in window) {
-    const dock = document.querySelector('.mobile-dock');
-    new IntersectionObserver(([entry]) => dock.classList.toggle('visible', !entry.isIntersecting), {threshold:0}).observe(document.getElementById('village'));
-  }
 })();

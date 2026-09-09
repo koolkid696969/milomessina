@@ -1,17 +1,17 @@
 import * as THREE from './vendor/three.module.min.js';
 import {createVillage} from './village-world.js?v=32';
 import {createDistricts} from './village-districts.js?v=32';
+import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=33';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
 const loading=document.getElementById('village-loading');
 let chapters=JSON.parse(document.getElementById('chapters-data').textContent).chapters;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-// Opening composition calibrated from the supplied street-level reference.
-const openingView={target:[1.808,2,-8.101],theta:2.956047,phi:.224457,radius:46.627674};
+
 let renderer;
 try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});}catch(error){
-  loading.textContent='Your chapter standings are below. This device can’t open the 3D village.';
+  loading.textContent='This device can’t open the 3D village. Open Chapters to see progress, or join Greek Wars.';
   shell.classList.add('village-unavailable');
 }
 if(renderer)startVillage();
@@ -28,16 +28,47 @@ function startVillage(){
   const fill=new THREE.DirectionalLight(0xc4d2e0,.5);fill.position.set(30,15,-25);scene.add(fill);
   let village=createVillage(THREE,chapters);scene.add(village.world);
   let districts=createDistricts(THREE,village.extension);scene.add(districts.root);
-  let autoOrbit=!reduced,entrancePending=!reduced,entranceActive=false,entranceTime=0;
-  function takeControl(){
-    autoOrbit=false;entrancePending=false;
-    if(entranceActive){entranceActive=false;wantedTarget.copy(target);wantedRadius=radius;wantedPhi=phi;wantedTheta=theta;}
+  const intro=document.getElementById('village-intro');
+  const introBars=[...intro.querySelectorAll('.intro-progress i')];
+  let autoOrbit=!reduced,entrancePending=true,entranceActive=false,entranceTime=0,captionIndex=-1;
+  function paintIntro(){
+    const caption=introCaptionAt(entranceTime);
+    if(captionIndex!==caption.index){
+      captionIndex=caption.index;
+      document.getElementById('intro-step').textContent=caption.label;
+      document.getElementById('intro-title').textContent=caption.title;
+      document.getElementById('intro-description').textContent=caption.description;
+    }
+    intro.style.setProperty('--intro-opacity',caption.opacity);
+    introBars.forEach((bar,i)=>bar.style.setProperty('--fill',caption.progress[i]));
   }
+  function applyIntroView(){
+    const view=reduced?openingView:introViewAt(entranceTime);
+    target.set(...view.target);theta=view.theta;phi=view.phi;radius=view.radius;
+    wantedTarget.copy(target);wantedTheta=theta;wantedPhi=phi;wantedRadius=radius;
+  }
+  function finishIntro(){
+    entrancePending=false;entranceActive=false;intro.hidden=true;shell.classList.remove('intro-playing');
+    if(document.activeElement===document.getElementById('intro-skip'))canvas.focus({preventScroll:true});
+  }
+  function beginIntro(){
+    entrancePending=false;entranceActive=true;entranceTime=0;captionIndex=-1;lastTime=0;
+    autoOrbit=!reduced;intro.hidden=false;shell.classList.add('intro-playing');
+    document.dispatchEvent(new CustomEvent('village:introstart'));
+    applyIntroView();paintIntro();wake();
+  }
+  function takeControl(){
+    autoOrbit=false;
+    if(entranceActive){wantedTarget.copy(target);wantedRadius=radius;wantedPhi=phi;wantedTheta=theta;}
+    finishIntro();
+  }
+  document.getElementById('intro-skip').addEventListener('click',()=>{finishIntro();resetView();wake();});
+  document.addEventListener('village:replay',beginIntro);
   document.addEventListener('village:artwork',()=>{viewDirty=true;wake();});
   let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastRender=0,viewDirty=true,shadowX=NaN,shadowZ=NaN;
   const target=new THREE.Vector3(...openingView.target),wantedTarget=new THREE.Vector3(...openingView.target),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
   let {theta,phi,radius}=openingView;let wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
-  if(entrancePending){target.set(0,3,-30);radius=145;phi=.88;theta=openingView.theta-.32;}
+  if(!reduced)applyIntroView();
   const nightToggle=document.getElementById('night-toggle');
   nightToggle.addEventListener('click',()=>{
     const night=nightToggle.getAttribute('aria-pressed')!=='true';
@@ -52,7 +83,7 @@ function startVillage(){
     const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
     village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);
     if(focus){takeControl();wantedTarget.set(anchor.lot.x*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=anchor.lot.x<0?1.08:-1.08;}
-    if(emit)document.dispatchEvent(new CustomEvent('village:select',{detail:{id}}));wake();
+    if(emit)document.dispatchEvent(new CustomEvent('village:select',{detail:{id,interactive:focus}}));wake();
   }
   document.addEventListener('chapter:select',e=>choose(e.detail.id,Boolean(e.detail.focus)));
   document.addEventListener('chapters:update',event=>{
@@ -104,15 +135,12 @@ function startVillage(){
   function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;if(!w||!h)return;viewDirty=true;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}
   new ResizeObserver(resize).observe(viewport);
   new IntersectionObserver(([entry])=>{
-    visible=entry.isIntersecting;
-    if(visible&&entrancePending){
-      entrancePending=false;entranceActive=true;entranceTime=0;
-      target.set(0,3,-30);radius=145;phi=.88;theta=openingView.theta-.32;lastTime=0;
-    }
+    visible=entry.isIntersecting;lastTime=0;
+    if(visible&&entrancePending)beginIntro();
     if(!visible){releasePointer();lastTime=0;}wake();
   },{threshold:0}).observe(shell);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)releasePointer();lastTime=0;wake();});
-  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();visible=false;cancelAnimationFrame(raf);raf=0;loading.hidden=false;loading.textContent='The village paused. Reload to return, or browse chapter standings below.';shell.classList.add('village-unavailable');});
+  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();finishIntro();visible=false;cancelAnimationFrame(raf);raf=0;loading.hidden=false;loading.textContent='The village paused. Reload to return, or open Chapters to see progress.';shell.classList.add('village-unavailable');});
   function wake(){if(!raf&&!document.hidden)raf=requestAnimationFrame(frame);}
   function frame(now){
     raf=0;
@@ -122,11 +150,17 @@ function startVillage(){
     // Start sharp; reduce only pixel density if sustained slow frames appear.
     if(visible&&!document.hidden&&lastRender&&now-lastRender>55)slowFrames++;else slowFrames=Math.max(0,slowFrames-1);
     if(slowFrames>24&&renderScale>(coarse?1:1.25)){renderScale=Math.max(coarse?1:1.25,renderScale-.25);renderer.setPixelRatio(renderScale);slowFrames=0;}
-    const dt=lastTime?Math.min((now-lastTime)/1000,.05):0;lastTime=now;
+    const elapsed=lastTime?Math.max(0,(now-lastTime)/1000):0;
+    const dt=Math.min(elapsed,.05);lastTime=now;
     if(autoOrbit&&!entranceActive&&!paused&&visible&&!document.hidden)wantedTheta+=dt*.06;
     const cameraDt=visible&&!document.hidden?dt:0;
-    if(entranceActive){entranceTime+=cameraDt;if(entranceTime>=4)entranceActive=false;}
-    const ease=reduced?1:1-Math.exp(-cameraDt*(entranceActive?1.5:7));target.lerp(wantedTarget,ease);theta+=(wantedTheta-theta)*ease;phi+=(wantedPhi-phi)*ease;radius+=(wantedRadius-radius)*ease;
+    if(entranceActive){
+      if(visible&&!document.hidden)entranceTime=Math.min(INTRO_DURATION,entranceTime+elapsed);
+      applyIntroView();paintIntro();
+      if(entranceTime>=INTRO_DURATION)finishIntro();
+    }else{
+      const ease=reduced?1:1-Math.exp(-cameraDt*7);target.lerp(wantedTarget,ease);theta+=(wantedTheta-theta)*ease;phi+=(wantedPhi-phi)*ease;radius+=(wantedRadius-radius)*ease;
+    }
     camera.position.set(target.x+Math.sin(theta)*Math.cos(phi)*radius,target.y+Math.sin(phi)*radius,target.z+Math.cos(theta)*Math.cos(phi)*radius);
     camera.lookAt(target);camera.updateMatrixWorld();
     // Keep nearby rank labels from covering an entire house when the camera approaches.
