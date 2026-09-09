@@ -398,6 +398,7 @@ td.tnum.run{color:var(--good)}
         <select id="t-status"><option value="">any status</option><option value="pending">still owed</option><option value="reimbursed">reimbursed</option></select>
         <input id="t-q" type="search" placeholder="search what or note">
         <span class="push">
+          <button class="mini" id="t-clear" hidden>Clear example data</button>
           <button class="mini ghost" id="t-refresh">Refresh</button>
           <button class="mini" id="t-csv">Export CSV</button>
         </span>
@@ -480,8 +481,141 @@ function toast(msg, bad){
   clearTimeout(toast._t); toast._t = setTimeout(function(){ t.className = ""; }, 3200);
 }
 
-/* ---------- the sheet ---------- */
+/* ---------- where it saves ----------
+
+   'device' keeps everything in this browser's own storage: nothing to
+   deploy, nothing to configure, and it works the moment the page loads.
+   The catch is in the name — the ledger lives on whichever computer it
+   was typed on, so two people opening the page do not see the same one.
+
+   'sheet' switches to the Apps Script endpoint below, which is the shared
+   version: one ledger everyone reads and writes. It needs the script in
+   fomo/setup/apps-script.gs deployed first — invoice/README.md covers it. */
+var BACKEND = 'device';
+
+var LS_ROWS = "fomo.ledger.rows", LS_SHIFTS = "fomo.ledger.shifts";
+
+function lsGet(k){
+  try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }
+  catch(e){ return null; }
+}
+function saveAll(){
+  try {
+    localStorage.setItem(LS_ROWS, JSON.stringify(rows));
+    localStorage.setItem(LS_SHIFTS, JSON.stringify(shifts));
+    return true;
+  } catch(e){
+    /* a full or locked store must not look like a save that worked */
+    setLive(false, "not saved");
+    showBanner("<b>This browser wouldn't save that.</b> Private windows and full storage both do this. " +
+      "Export what's on screen to CSV before you close the tab.");
+    return false;
+  }
+}
+function newId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function byId(list, id){
+  for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
+  return null;
+}
+
+function loadLocal(){
+  var r = lsGet(LS_ROWS), s = lsGet(LS_SHIFTS);
+  if (r === null && s === null) {
+    var seed = seedExamples();
+    rows = seed.rows; shifts = seed.shifts;
+    saveAll();
+  } else {
+    rows = r || []; shifts = s || [];
+  }
+}
+
+/* A ledger with nothing in it shows nothing, so the first visit gets a
+   week of plausible spends and shifts to look at. Every one is tagged,
+   and one button in the toolbar clears the lot. */
+function seedExamples(){
+  var day = 86400000, now = Date.now();
+  var d = function(back){
+    var t = new Date(now - back * day);
+    return t.getFullYear() + "-" + String(t.getMonth()+1).padStart(2,"0") + "-" + String(t.getDate()).padStart(2,"0");
+  };
+  var at = function(back, h, m){
+    var t = new Date(now - back * day); t.setHours(h, m, 0, 0); return t.toISOString();
+  };
+  return {
+    rows: [
+      {id:"ex1", who:"Milo",  what:"OpenAI API credits",            category:"ai",       amount:120,   date:d(1), note:"campus wars scraping run", receipt:"", status:"pending",    logged:at(1,18,4),  example:true},
+      {id:"ex2", who:"Bijan", what:"Team lunch at Sweetgreen",      category:"lunch",    amount:64.4,  date:d(1), note:"covered Jesse + Luchi",     receipt:"", status:"pending",    logged:at(1,20,12), example:true},
+      {id:"ex3", who:"Jesse", what:"Blue Bottle coffee run",        category:"coffee",   amount:23.75, date:d(2), note:"",                          receipt:"", status:"reimbursed", logged:at(2,15,30), example:true},
+      {id:"ex4", who:"Luchi", what:"Figma seat for the month",      category:"software", amount:15,    date:d(4), note:"",                          receipt:"", status:"reimbursed", logged:at(4,11,20), example:true},
+      {id:"ex5", who:"Milo",  what:"Caltrain to the SF demo day",   category:"travel",   amount:31.5,  date:d(5), note:"round trip",                receipt:"", status:"pending",    logged:at(5,8,45),  example:true},
+      {id:"ex6", who:"Luchi", what:"Whiteboard markers + stickies", category:"supplies", amount:28.12, date:d(6), note:"",                          receipt:"", status:"reimbursed", logged:at(6,17,10), example:true}
+    ],
+    shifts: [
+      {id:"exs1", who:"Milo",  start:at(1,9,30),  end:at(1,17,0),  minutes:450, example:true},
+      {id:"exs2", who:"Bijan", start:at(1,10,0),  end:at(1,16,30), minutes:390, example:true},
+      {id:"exs3", who:"Jesse", start:at(2,9,45),  end:at(2,15,15), minutes:330, example:true},
+      {id:"exs4", who:"Luchi", start:at(2,11,0),  end:at(2,18,0),  minutes:420, example:true},
+      {id:"exs5", who:"Milo",  start:at(4,9,0),   end:at(4,17,30), minutes:510, example:true}
+    ]
+  };
+}
+
+/* Same call signature as the sheet version, so every button above is
+   unchanged whichever backend is switched on. */
+function apiLocal(action, p){
+  p = p || {};
+  return new Promise(function(resolve, reject){
+    var now = new Date().toISOString();
+
+    if (action === "add") {
+      rows.push({
+        id:newId(), who:p.who, what:p.what, category:p.category,
+        amount:Math.round((Number(p.amount)||0) * 100) / 100, date:p.date,
+        note:p.note || "", receipt:p.receipt || "", status:"pending", logged:now
+      });
+
+    } else if (action === "update") {
+      var hit = byId(rows, p.id);
+      if (!hit) return reject(new Error("that line is no longer on the ledger"));
+      hit.status = p.status === "reimbursed" ? "reimbursed" : "pending";
+
+    } else if (action === "delete") {
+      rows = rows.filter(function(r){ return r.id !== p.id; });
+
+    } else if (action === "settle") {
+      var n = 0;
+      rows.forEach(function(r){
+        if (r.who === p.who && r.status !== "reimbursed") { r.status = "reimbursed"; n++; }
+      });
+      if (!n) return reject(new Error("nothing is owed to " + p.who));
+
+    } else if (action === "clockin") {
+      if (PEOPLE.indexOf(p.who) === -1) return reject(new Error("that name is not on the bootcamp"));
+      if (openShift(p.who)) return reject(new Error(p.who + " is already on the clock"));
+      shifts.push({id:newId(), who:p.who, start:now, end:"", minutes:0});
+
+    } else if (action === "clockout") {
+      var open = openShift(p.who);
+      if (!open) return reject(new Error(p.who + " is not on the clock"));
+      open.end = now;
+      open.minutes = Math.max(0, Math.round((Date.parse(now) - Date.parse(open.start)) / 60000));
+
+    } else if (action === "shiftdelete") {
+      shifts = shifts.filter(function(s){ return s.id !== p.id; });
+    }
+
+    if (saveAll()) { setLive(true, "saved on this device"); hideBanner(); }
+    render();
+    resolve({ok:true});
+  });
+}
+
 function api(action, payload){
+  return BACKEND === "sheet" ? apiSheet(action, payload) : apiLocal(action, payload);
+}
+
+/* ---------- the shared sheet, when BACKEND is switched to it ---------- */
+function apiSheet(action, payload){
   var body = {_api:"invoice", action:action, _key:PASSCODE};
   if (payload) Object.keys(payload).forEach(function(k){ body[k] = payload[k]; });
   return fetch(ENDPOINT, {method:"POST", body:JSON.stringify(body)}).then(function(res){
@@ -639,6 +773,19 @@ document.getElementById("t-refresh").addEventListener("click", function(){
     .then(function(){ b.disabled = false; b.textContent = "Refresh"; });
 });
 
+document.getElementById("t-clear").addEventListener("click", function(){
+  var btn = this, n = rows.filter(function(r){ return r.example; }).length +
+                      shifts.filter(function(v){ return v.example; }).length;
+  if (!n) return;
+  arm("clr", btn, "Clear " + n + " example rows?", function(){
+    rows = rows.filter(function(r){ return !r.example; });
+    shifts = shifts.filter(function(v){ return !v.example; });
+    if (BACKEND !== "sheet") saveAll();
+    render();
+    toast("Example data cleared.");
+  });
+});
+
 document.getElementById("t-csv").addEventListener("click", function(){
   var list = visible();
   if (!list.length) { toast("Nothing to export with these filters.", true); return; }
@@ -785,7 +932,8 @@ function render(){
     return "<tr>" +
       '<td class="date">' + esc(niceDate(r.date)) + "</td>" +
       '<td class="who">' + esc(r.who || "—") + "</td>" +
-      '<td><div class="what"><b>' + esc(r.what || "—") + "</b>" +
+      '<td><div class="what"><b>' + esc(r.what || "—") +
+        (r.example ? '<span class="ex">example</span>' : "") + "</b>" +
         (r.note ? "<small>" + esc(r.note) + "</small>" : "") +
         (url ? '<small><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">receipt →</a></small>' : "") +
       "</div></td>" +
@@ -805,6 +953,8 @@ function render(){
   document.getElementById("foot-tot").textContent = filtered
     ? money(total) + " shown · " + money(owed) + " owed" : money(owed) + " owed out";
   document.getElementById("foot-count").textContent = rows.length + " lines on the ledger";
+  document.getElementById("t-clear").hidden =
+    !rows.some(function(r){ return r.example; }) && !shifts.some(function(v){ return v.example; });
 }
 function cMaxOf(rank){ return rank.length ? rank[0].v : 1; }
 
@@ -1007,13 +1157,21 @@ function open_(){
   document.getElementById("gate").hidden = true;
   document.getElementById("gate").style.display = "none";
   document.getElementById("app").hidden = false;
-  render();
-  api("list")["catch"](function(e){ fail(e); });
+  if (BACKEND === "sheet") {
+    render();
+    api("list")["catch"](function(e){ fail(e); });
+    poll = setInterval(function(){
+      if (busy || document.hidden) return;
+      api("list")["catch"](function(){ /* the banner already says it */ });
+    }, 30000);
+  } else {
+    loadLocal();
+    setLive(true, "saved on this device");
+    render();
+    /* nothing to refresh from, and nobody else to poll for */
+    document.getElementById("t-refresh").hidden = true;
+  }
   tick = setInterval(tickClock, 1000);
-  poll = setInterval(function(){
-    if (busy || document.hidden) return;
-    api("list")["catch"](function(){ /* the banner already says it */ });
-  }, 30000);
 }
 document.getElementById("gate-form").addEventListener("submit", function(ev){
   ev.preventDefault();
