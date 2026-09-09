@@ -6,17 +6,17 @@ import * as THREE from '../vendor/three.module.min.js';
 import {createMoneyRain} from '../village-money-rain.js';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from '../village-intro.js';
 
-function cameraHarness(reduced=false,initialHash=''){
-  const elements=new Map(),events=new Map(),selections=[],lighting=[];let intersection,frame,camera;
+function cameraHarness(reduced=false,initialHash='',deferWarmup=false){
+  const elements=new Map(),events=new Map(),selections=[],lighting=[],builds=[];let intersection,frame,camera,finishWarmup;
   function element(id){if(!elements.has(id))elements.set(id,{clientWidth:1200,clientHeight:650,hidden:false,style:{setProperty(){}},querySelectorAll:()=>[],classList:{add(){},remove(){},toggle(){}},getAttribute:()=> 'false',setAttribute(){},prepend(){},focus(){},setPointerCapture(){},addEventListener(type,fn){events.set(id+':'+type,fn);}});return elements.get(id);}
   element('chapters-data').textContent='{"chapters":[]}';
   const canvas=element('canvas');
   class Renderer{constructor(){this.domElement=canvas;this.shadowMap={};}setPixelRatio(){}setSize(){}render(scene,view){camera=view;}}
-  const sandbox={createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:()=>({world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:1,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
+  const sandbox={prewarmVillage:()=>({then(done){finishWarmup=done;if(!deferWarmup)done();return {catch(){}};}}),createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:(_T,input)=>(builds.push(input),{dispose(){},world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:1,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
   const source=fs.readFileSync(new URL('../village.js',import.meta.url),'utf8').replace(/^import .*;$/gm,'');
   vm.runInNewContext(source,sandbox);
   let now=100;
-  return {selections,lighting,lens:()=>camera.fov,element,fire(name){events.get(name)();},show(visible){intersection([{isIntersecting:visible}]);},step(seconds,fps=60){for(let t=0;t<seconds;t+=1/fps){now+=1000/fps;const fn=frame;frame=null;fn?.(now);}return camera.position.clone();},drag(){events.get('canvas:pointerdown')({button:0,pointerId:1,clientX:0,clientY:0});},reset(){events.get('village-overview:click')();}};
+  return {builds,finishWarmup:()=>finishWarmup(),selections,lighting,lens:()=>camera.fov,element,fire(name,event){events.get(name)(event);},show(visible){intersection([{isIntersecting:visible}]);},step(seconds,fps=60){for(let t=0;t<seconds;t+=1/fps){now+=1000/fps;const fn=frame;frame=null;fn?.(now);}return camera?.position.clone();},drag(){events.get('canvas:pointerdown')({button:0,pointerId:1,clientX:0,clientY:0});},reset(){events.get('village-overview:click')();}};
 }
 test('entrance falls from the campus overview into the row in 13.6 seconds and does not replay',()=>{
   const h=cameraHarness();h.show(true);const high=h.step(.02);assert(high.y>75);
@@ -136,4 +136,30 @@ test('camera carries nonzero speed through waypoints with matching velocity and 
     const accIn=c.clone().add(a).addScaledVector(b,-2).divideScalar(h*h),accOut=e.clone().add(c).addScaledVector(d,-2).divideScalar(h*h);
     assert(accIn.distanceTo(accOut)<.8,'acceleration must not jump at the join');
   }
+});
+
+test('the intro waits for GPU warmup and starts its clock only when ready',()=>{
+  const h=cameraHarness(false,'',true);h.show(true);
+  assert.equal(h.step(20),undefined,'no playback frames may render during warmup');
+  assert.equal(h.element('village-loading').hidden,false);
+  h.finishWarmup();assert.equal(h.element('village-loading').hidden,true);
+  assert(h.step(.02).y>75);
+  assert.equal(h.element('intro-title').textContent,'GREEK WARS.');
+  h.step(9);assert.equal(h.lighting.at(-1),true);
+  h.step(5);assert.equal(h.element('village-intro').hidden,true);
+});
+
+
+test('live rosters arriving during compilation are coalesced and warmed before playback',()=>{
+  const h=cameraHarness(false,'',true);h.show(true);
+  h.fire('document:chapters:update',{detail:{chapters:[{id:'old',joined:0}]}});
+  const chapters=[{id:'latest',joined:0}];
+  h.fire('document:chapters:update',{detail:{chapters}});
+  assert.equal(h.builds.length,1,'the compiling world must remain intact');
+  h.finishWarmup();
+  assert.equal(h.builds.length,2);assert.equal(h.builds[1],chapters);
+  assert.equal(h.element('village-loading').hidden,false,'new materials must warm before playback');
+  assert.equal(h.step(1),undefined);
+  h.finishWarmup();assert.equal(h.element('village-loading').hidden,true);
+  assert(h.step(.02).y>75);
 });

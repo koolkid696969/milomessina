@@ -3,6 +3,7 @@ import {createVillage} from './village-world.js?v=38';
 import {createDistricts} from './village-districts.js?v=35';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=42';
 import {createMoneyRain} from './village-money-rain.js?v=42';
+import {prewarmVillage} from './village-prewarm.js?v=43';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
@@ -17,6 +18,7 @@ try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference
 }
 if(renderer)startVillage();
 function startVillage(){
+  let ready=false,pendingChapterUpdate=null;
   const coarse=matchMedia('(pointer: coarse)').matches;
   let renderScale=Math.min(devicePixelRatio,coarse?1.5:2),slowFrames=0;
   renderer.setPixelRatio(renderScale);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
@@ -71,6 +73,7 @@ function startVillage(){
     if(['intro-skip','intro-pause','intro-join'].some(id=>document.activeElement===document.getElementById(id)))canvas.focus({preventScroll:true});
   }
   function beginIntro(){
+    if(!ready)return;
     entrancePending=false;entranceActive=true;entrancePaused=false;entranceTime=0;captionIndex=-1;lastTime=0;
     document.getElementById('intro-pause').textContent='Pause intro';
     document.getElementById('intro-pause').setAttribute('aria-pressed','false');
@@ -109,7 +112,7 @@ function startVillage(){
     if(emit)document.dispatchEvent(new CustomEvent('village:select',{detail:{id,interactive:focus}}));wake();
   }
   document.addEventListener('chapter:select',e=>choose(e.detail.id,Boolean(e.detail.focus)));
-  document.addEventListener('chapters:update',event=>{
+  function updateChapters(event){
     const previous=village,next=createVillage(THREE,event.detail.chapters,{streets:previous.streets});
     chapters=event.detail.chapters;scene.remove(previous.world);scene.add(next.world);village=next;previous.dispose();
     if(previous.extension!==next.extension){scene.remove(districts.root);districts.dispose();districts=createDistricts(THREE,next.extension);scene.add(districts.root);}
@@ -119,6 +122,11 @@ function startVillage(){
     const requested=event.detail.selectedId||selected;
     choose(village.anchors.some(a=>a.id===requested)?requested:chapters[0]?.id||'empty',false);
     renderer.shadowMap.needsUpdate=true;viewDirty=true;wake();
+  }
+  document.addEventListener('chapters:update',event=>{
+    // Do not dispose materials while their asynchronous compilation is pending.
+    if(!ready){pendingChapterUpdate=event;return;}
+    updateChapters(event);
   });
   document.addEventListener('party:pause',e=>{paused=e.detail.paused;wake();});
   document.getElementById('village-overview').addEventListener('click',()=>{takeControl();resetView();});
@@ -165,7 +173,7 @@ function startVillage(){
   },{threshold:0}).observe(shell);
   document.addEventListener('visibilitychange',()=>{if(document.hidden)releasePointer();lastTime=0;wake();});
   canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();finishIntro();visible=false;cancelAnimationFrame(raf);raf=0;loading.hidden=false;loading.textContent='The village paused. Reload to return, or open Chapters to see progress.';shell.classList.add('village-unavailable');});
-  function wake(){if(!raf&&!document.hidden)raf=requestAnimationFrame(frame);}
+  function wake(){if(ready&&!raf&&!document.hidden)raf=requestAnimationFrame(frame);}
   function frame(now){
     raf=0;
     const cameraMoving=target.distanceToSquared(wantedTarget)>.0001||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
@@ -210,5 +218,21 @@ function startVillage(){
   resize();resetView();
   // Do not overwrite a new chapter's deep link before its first live response.
   const initial=new URLSearchParams(location.hash.slice(1)).get('chapter');choose(village.anchors.some(a=>a.id===initial)?initial:selected,false,false);
-  loading.hidden=true;shell.classList.add('village-ready');wake();
+  camera.position.set(0,104,104);camera.lookAt(target);camera.updateMatrixWorld();
+  function prepare(){return prewarmVillage(THREE,renderer,scene,camera,applyLighting,moneyRain).then(()=>{
+    if(pendingChapterUpdate){
+      const event=pendingChapterUpdate;pendingChapterUpdate=null;updateChapters(event);
+      return prepare();
+    }
+    ready=true;lastTime=0;lastRender=0;
+    applyLighting(nightToggle.getAttribute('aria-pressed')==='true'?1:0);
+    loading.hidden=true;shell.classList.add('village-ready');
+    if(visible&&entrancePending)beginIntro();
+    wake();
+  });}
+  prepare().catch(error=>{
+    console.error('Unable to prepare Greek village:',error);
+    loading.textContent='The village couldn’t load. Open Chapters to browse progress or join Greek Wars.';
+    shell.classList.add('village-unavailable');
+  });
 }
