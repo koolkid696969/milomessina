@@ -11,7 +11,7 @@ const title = document.getElementById('film-title');
 const description = document.getElementById('film-description');
 const transition = document.getElementById('intro-transition');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-let active = false, resumeOnVisible = false, finishTimer, raf = 0;
+let active = false, usedFallback = false, finishTimer, raf = 0;
 let videoFrame = 0, lastPaint = -1, lastStage = -1, lastOutro = -1;
 
 function paint(mediaTime = video.currentTime || 0) {
@@ -62,8 +62,10 @@ function syncPlayback() {
   if (active) { paint(); schedulePaint(); }
 }
 function play() {
+  if (!active || document.hidden) return;
+  video.muted = true;
   const pending = video.play();
-  if (pending) pending.catch(() => { if (active) finish(); });
+  if (pending) pending.catch(() => { if (active) syncPlayback(); });
 }
 function finish({scroll = true, cinematic = false} = {}) {
   if (!active) return;
@@ -96,13 +98,12 @@ function finish({scroll = true, cinematic = false} = {}) {
 }
 function start({replay: replaying = false} = {}) {
   clearTimeout(finishTimer);
-  active = true; resumeOnVisible = false;
+  active = true; usedFallback = false;
   lastPaint = lastStage = lastOutro = -1;
   transition.hidden = false;
   transition.classList.remove('is-leaving');
   transition.style.setProperty('--outro', '0');
   page.classList.remove('hero-arriving');
-  document.documentElement.classList.remove('skip-intro');
   document.body.classList.add('intro-active');
   opening.hidden = false; opening.inert = false; page.inert = true;
   if (replaying) video.currentTime = 0;
@@ -111,27 +112,36 @@ function start({replay: replaying = false} = {}) {
   }
   window.scrollTo({top: 0, behavior: 'instant'});
   paint();
-  play();
+  if (video.error) recoverVideo(); else play();
   syncPlayback();
 }
 video.addEventListener('playing', syncPlayback);
 video.addEventListener('pause', syncPlayback);
 video.addEventListener('loadeddata', syncPlayback);
 video.addEventListener('ended', () => finish({cinematic: true}));
-video.addEventListener('error', () => finish());
+function recoverVideo() {
+  if (!active || usedFallback) return;
+  usedFallback = true;
+  video.classList.remove('has-frame');
+  opening.classList.remove('has-video-frame');
+  video.src = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile.mp4' : '/landingpage/assets/intro-desktop.mp4';
+  play();
+}
+video.addEventListener('error', recoverVideo);
+video.addEventListener('canplay', () => { if (active && video.paused) play(); });
 document.getElementById('skip-intro').addEventListener('click', () => finish());
 document.querySelector('.skip-link').addEventListener('click', () => finish({scroll: false}));
-document.addEventListener('keydown', event => { if (event.key === 'Escape') finish(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape') finish(); else if (active && video.paused) play(); });
+document.addEventListener('pointerdown', () => { if (active && video.paused) play(); });
 document.addEventListener('visibilitychange', () => {
   if (!active) return;
-  if (document.hidden) { resumeOnVisible = !video.paused; video.pause(); }
-  else if (resumeOnVisible) { resumeOnVisible = false; play(); }
+  if (document.hidden) video.pause();
+  else play();
 });
-reduced.addEventListener('change', () => { replay.hidden = reduced.matches; if (reduced.matches) finish(); });
-replay.hidden = reduced.matches;
+replay.hidden = false;
 replay.addEventListener('click', () => { start({replay: true}); document.getElementById('skip-intro').focus({preventScroll: true}); });
-if (!reduced.matches && !location.hash) start();
-else { video.pause(); opening.hidden = true; document.documentElement.classList.remove('intro-initial'); }
+window.addEventListener('pageshow', event => { if (event.persisted) start({replay: true}); });
+start();
 
 if ('IntersectionObserver' in window && !reduced.matches) {
   const reveal = new IntersectionObserver(entries => {
