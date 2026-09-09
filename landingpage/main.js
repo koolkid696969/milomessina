@@ -1,92 +1,106 @@
-'use strict';
-(() => {
-  const opening = document.getElementById('opening');
-  const frame = document.getElementById('intro-frame');
-  const page = document.getElementById('page');
-  const programs = document.getElementById('programs');
-  const pause = document.getElementById('pause-intro');
-  const replay = document.getElementById('replay-intro');
-  const status = document.getElementById('opening-status');
-  const progress = document.getElementById('film-progress');
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-  let active = false, paused = false, started = false, timeout, finishTimer;
-  let elapsed = 0, lastTime = 0, raf = 0;
-  function tick(now) {
-    if (!active) return;
-    if (started && !paused && !document.hidden && lastTime) elapsed += (now - lastTime) / 1000;
-    lastTime = now;
-    progress.style.transform = `scaleX(${Math.min(1, elapsed / 13.6)})`;
-    raf = requestAnimationFrame(tick);
+import {INTRO_DURATION, introCaptionAt} from '/fomo/campuswars/village-intro.js?v=44';
+
+const opening = document.getElementById('opening');
+const video = document.getElementById('intro-video');
+const page = document.getElementById('page');
+const programs = document.getElementById('programs');
+const pause = document.getElementById('pause-intro');
+const replay = document.getElementById('replay-intro');
+const progress = document.getElementById('film-progress');
+const caption = document.getElementById('film-caption');
+const title = document.getElementById('film-title');
+const description = document.getElementById('film-description');
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+let active = false, pausedByUser = false, resumeOnVisible = false, finishTimer, raf = 0;
+
+function paint() {
+  const seconds = Math.min(INTRO_DURATION, video.currentTime || 0);
+  const copy = introCaptionAt(seconds);
+  title.textContent = copy.title;
+  description.textContent = copy.description;
+  caption.style.opacity = video.paused ? '1' : String(copy.copyOpacity * copy.opacity);
+  caption.style.transform = `translateY(${video.paused ? 0 : copy.lift}px) scale(${video.paused ? 1 : copy.scale})`;
+  progress.style.transform = `scaleX(${Math.min(1, seconds / INTRO_DURATION)})`;
+}
+function tick() {
+  paint();
+  if (active && !video.paused) raf = requestAnimationFrame(tick);
+}
+function syncPlayback() {
+  cancelAnimationFrame(raf);
+  pause.textContent = video.paused ? 'Play intro' : 'Pause intro';
+  pause.setAttribute('aria-pressed', String(video.paused));
+  if (video.readyState >= 2) video.classList.add('has-frame');
+  if (active) tick();
+}
+function play() {
+  const pending = video.play();
+  if (pending) pending.catch(() => { if (active) syncPlayback(); });
+}
+function finish({scroll = true} = {}) {
+  if (!active) return;
+  active = false;
+  cancelAnimationFrame(raf);
+  video.pause();
+  document.documentElement.classList.remove('intro-initial');
+  document.body.classList.remove('intro-active');
+  page.inert = false;
+  opening.inert = true;
+  if (scroll) {
+    programs.focus({preventScroll: true});
+    page.scrollIntoView({behavior: reduced.matches ? 'instant' : 'smooth', block: 'start'});
   }
-  function finish({scroll = true} = {}) {
-    if (!active) return;
-    active = false;
-    clearTimeout(timeout);
-    cancelAnimationFrame(raf);
-    document.body.classList.remove('intro-active');
-    document.body.classList.add('intro-leaving');
-    page.inert = false;
-    opening.inert = true;
-    // Removing the browsing context stops the renderer, animations and network work.
-    frame.removeAttribute('src');
-    if (scroll) {
-      programs.focus({preventScroll: true});
-      page.scrollIntoView({behavior: reduced.matches ? 'instant' : 'smooth', block: 'start'});
+  finishTimer = setTimeout(() => {
+    const contentScroll = Math.max(0, window.scrollY - opening.offsetHeight);
+    opening.hidden = true;
+    if (scroll) window.scrollTo({top: contentScroll, behavior: 'instant'});
+  }, reduced.matches ? 0 : 850);
+}
+function start({replay: replaying = false} = {}) {
+  clearTimeout(finishTimer);
+  active = true; pausedByUser = false; resumeOnVisible = false;
+  document.documentElement.classList.remove('skip-intro');
+  document.body.classList.add('intro-active');
+  opening.hidden = false; opening.inert = false; page.inert = true;
+  if (replaying) video.currentTime = 0;
+  if (!video.getAttribute('src')) {
+    video.src = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile.mp4' : '/landingpage/assets/intro-desktop.mp4';
+  }
+  window.scrollTo({top: 0, behavior: 'instant'});
+  paint();
+  play();
+  syncPlayback();
+}
+video.addEventListener('playing', syncPlayback);
+video.addEventListener('pause', syncPlayback);
+video.addEventListener('loadeddata', syncPlayback);
+video.addEventListener('ended', () => finish());
+video.addEventListener('error', () => finish());
+pause.addEventListener('click', () => {
+  if (!active) return;
+  pausedByUser = !video.paused;
+  if (video.paused) play(); else video.pause();
+});
+document.getElementById('skip-intro').addEventListener('click', () => finish());
+document.querySelector('.skip-link').addEventListener('click', () => finish({scroll: false}));
+document.addEventListener('keydown', event => { if (event.key === 'Escape') finish(); });
+document.addEventListener('visibilitychange', () => {
+  if (!active) return;
+  if (document.hidden) { resumeOnVisible = !video.paused; video.pause(); }
+  else if (resumeOnVisible && !pausedByUser) { resumeOnVisible = false; play(); }
+});
+reduced.addEventListener('change', () => { replay.hidden = reduced.matches; if (reduced.matches) finish(); });
+replay.hidden = reduced.matches;
+replay.addEventListener('click', () => { start({replay: true}); document.getElementById('skip-intro').focus({preventScroll: true}); });
+if (!reduced.matches && !location.hash) start();
+else { video.pause(); opening.hidden = true; document.documentElement.classList.remove('intro-initial'); }
+
+if ('IntersectionObserver' in window && !reduced.matches) {
+  const reveal = new IntersectionObserver(entries => {
+    for (const entry of entries) if (entry.isIntersecting) {
+      entry.target.classList.add('reveal');
+      reveal.unobserve(entry.target);
     }
-    finishTimer = setTimeout(() => {
-      const contentScroll = Math.max(0, window.scrollY - opening.offsetHeight);
-      opening.hidden = true;
-      document.body.classList.remove('intro-leaving');
-      if (scroll) window.scrollTo({top: contentScroll, behavior: 'instant'});
-    }, reduced.matches ? 0 : 850);
-  }
-  function start() {
-    clearTimeout(finishTimer);
-    active = true; paused = false; started = false; elapsed = 0; lastTime = 0;
-    progress.style.transform = 'scaleX(0)';
-    opening.hidden = false; opening.inert = false; page.inert = true;
-    pause.hidden = true; pause.textContent = 'Pause intro'; pause.setAttribute('aria-pressed', 'false');
-    status.textContent = 'Getting campus ready…';
-    document.body.classList.remove('intro-leaving');
-    document.body.classList.add('intro-active');
-    window.scrollTo({top: 0, behavior: 'instant'});
-    frame.src = '/landingpage/intro.html';
-    // A device that cannot initialize 3D should still reach every program.
-    timeout = setTimeout(() => finish(), 30000);
-    raf = requestAnimationFrame(tick);
-  }
-  window.addEventListener('message', event => {
-    if (event.origin !== location.origin || event.source !== frame.contentWindow || !active) return;
-    if (event.data?.type === 'campus:intro-start') {
-      started = true; lastTime = 0; pause.hidden = false;
-      status.textContent = 'Welcome to campus.';
-      clearTimeout(timeout);
-    }
-    if (event.data?.type === 'campus:intro-end' || event.data?.type === 'campus:intro-error') finish();
-  });
-  pause.addEventListener('click', () => {
-    if (!started || !active) return;
-    paused = !paused; lastTime = 0;
-    pause.textContent = paused ? 'Resume intro' : 'Pause intro';
-    pause.setAttribute('aria-pressed', String(paused));
-    frame.contentWindow.postMessage({type: 'campus:pause'}, location.origin);
-  });
-  document.getElementById('skip-intro').addEventListener('click', () => finish());
-  document.querySelector('.skip-link').addEventListener('click', () => finish({scroll: false}));
-  document.addEventListener('keydown', event => { if (event.key === 'Escape' && active) finish(); });
-  document.addEventListener('visibilitychange', () => { lastTime = 0; });
-  reduced.addEventListener('change', () => { replay.hidden = reduced.matches; if (reduced.matches) finish(); });
-  replay.hidden = reduced.matches;
-  replay.addEventListener('click', () => { start(); document.getElementById('skip-intro').focus({preventScroll: true}); });
-  // Direct program links and reduced-motion visits go straight to the content.
-  if (!reduced.matches && !location.hash) start();
-  if ('IntersectionObserver' in window && !reduced.matches) {
-    const reveal = new IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) {
-        entry.target.classList.add('reveal');
-        reveal.unobserve(entry.target);
-      }
-    }, {threshold: .08});
-    document.querySelectorAll('.program-copy,.role-card,.creator-rate,.greek-steps').forEach(node => reveal.observe(node));
-  }
-})();
+  }, {threshold: .08});
+  document.querySelectorAll('.program-copy,.role-card,.creator-rate,.greek-steps').forEach(node => reveal.observe(node));
+}

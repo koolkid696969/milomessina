@@ -9,16 +9,32 @@
 <link rel="canonical" href="https://milomessina.com/landingpage">
 <meta property="og:type" content="website"><meta property="og:title" content="fomo / campus — Greek Wars, Internship &amp; Creators"><meta property="og:description" content="Greek Wars. Internship. Creators. Three ways to get in."><meta property="og:url" content="https://milomessina.com/landingpage">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23516af6'/%3E%3Ctext x='12' y='48' font-family='Arial' font-weight='900' font-size='48' fill='white'%3Ef.%3C/text%3E%3C/svg%3E">
+<script>document.documentElement.classList.add(matchMedia('(prefers-reduced-motion: reduce)').matches || location.hash ? 'skip-intro' : 'intro-initial');</script>
+<style>.intro-initial body{overflow:hidden}.skip-intro #opening{display:none!important}.opening{position:relative;height:100svh;background:#101724}.opening-poster,.opening-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.opening-poster img{width:100%;height:100%;object-fit:cover}.opening-video{opacity:0}.opening-video.has-frame{opacity:1}</style>
+<noscript><style>#opening{display:none!important}</style></noscript>
+<link rel="preload" as="image" href="/landingpage/assets/intro-desktop.webp" media="(min-width:701px)" fetchpriority="high">
+<link rel="preload" as="image" href="/landingpage/assets/intro-mobile.webp" media="(max-width:700px)" fetchpriority="high">
 <link rel="preload" as="font" type="font/ttf" href="/fomo/campuswars/assets/aeonik-700.ttf" crossorigin>
-<link rel="stylesheet" href="/landingpage/styles.css?v=22">
-<script src="/landingpage/main.js" defer></script>
+<link rel="stylesheet" href="/landingpage/styles.css?v=26">
+<script type="module" src="/landingpage/main.js?v=26"></script>
 </head>
 <body>
 <a class="skip-link" href="#programs">Skip to programs</a>
-<section class="opening" id="opening" aria-label="Greek village opening film" hidden>
-  <div class="opening-backdrop"><span class="wordmark">fomo<span>/campus</span></span><p id="opening-status" role="status">Getting campus ready…</p></div>
-  <iframe id="intro-frame" title="Greek Wars village drone intro" tabindex="-1" aria-hidden="true"></iframe>
-  <div class="film-top"><span class="wordmark">fomo<span>/campus</span></span><div class="film-controls"><button id="pause-intro" type="button" aria-pressed="false" hidden>Pause intro</button><button id="skip-intro" type="button">Skip intro <span aria-hidden="true">↘</span></button></div></div>
+<section class="opening" id="opening" aria-label="Greek village opening film">
+  <picture class="opening-poster" aria-hidden="true"><source media="(max-width:700px)" srcset="/landingpage/assets/intro-mobile.webp"><img src="/landingpage/assets/intro-desktop.webp" width="1280" height="720" alt="" fetchpriority="high"></picture>
+  <video id="intro-video" class="opening-video" muted autoplay playsinline preload="auto" aria-label="Greek village drone intro"></video>
+  <script>
+  (() => {
+    const video = document.getElementById('intro-video');
+    if (document.documentElement.classList.contains('skip-intro')) return;
+    video.muted = true;
+    video.src = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile.mp4' : '/landingpage/assets/intro-desktop.mp4';
+    video.addEventListener('loadeddata', () => video.classList.add('has-frame'), {once:true});
+    video.play().catch(() => {});
+  })();
+  </script>
+  <div class="film-caption" id="film-caption"><h2 id="film-title">GREEK WARS.</h2><p id="film-description">Your chapter. Your team. A trading competition on fomo.</p></div>
+  <div class="film-top"><span class="wordmark">fomo<span>/campus</span></span><div class="film-controls"><button id="pause-intro" type="button" aria-pressed="false">Pause intro</button><button id="skip-intro" type="button">Skip intro <span aria-hidden="true">↘</span></button></div></div>
   <div class="film-progress" aria-hidden="true"><span id="film-progress"></span></div>
 </section>
 <div id="page">
