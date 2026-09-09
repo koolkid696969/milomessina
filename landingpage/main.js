@@ -4,14 +4,14 @@ const opening = document.getElementById('opening');
 const video = document.getElementById('intro-video');
 const page = document.getElementById('page');
 const programs = document.getElementById('programs');
-const pause = document.getElementById('pause-intro');
 const replay = document.getElementById('replay-intro');
 const progress = document.getElementById('film-progress');
 const caption = document.getElementById('film-caption');
 const title = document.getElementById('film-title');
 const description = document.getElementById('film-description');
+const transition = document.getElementById('intro-transition');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-let active = false, pausedByUser = false, resumeOnVisible = false, finishTimer, raf = 0;
+let active = false, resumeOnVisible = false, finishTimer, raf = 0;
 
 function paint() {
   const seconds = Math.min(INTRO_DURATION, video.currentTime || 0);
@@ -21,6 +21,7 @@ function paint() {
   caption.style.opacity = video.paused ? '1' : String(copy.copyOpacity * copy.opacity);
   caption.style.transform = `translateY(${video.paused ? 0 : copy.lift}px) scale(${video.paused ? 1 : copy.scale})`;
   progress.style.transform = `scaleX(${Math.min(1, seconds / INTRO_DURATION)})`;
+  transition.style.setProperty('--outro', String(Math.max(0, Math.min(1, (seconds - (INTRO_DURATION - 1.4)) / 1.4))));
 }
 function tick() {
   paint();
@@ -28,43 +29,55 @@ function tick() {
 }
 function syncPlayback() {
   cancelAnimationFrame(raf);
-  pause.textContent = video.paused ? 'Play intro' : 'Pause intro';
-  pause.setAttribute('aria-pressed', String(video.paused));
   if (video.readyState >= 2) video.classList.add('has-frame');
   if (active) tick();
 }
 function play() {
   const pending = video.play();
-  if (pending) pending.catch(() => { if (active) syncPlayback(); });
+  if (pending) pending.catch(() => { if (active) finish(); });
 }
-function finish({scroll = true} = {}) {
+function finish({scroll = true, cinematic = false} = {}) {
   if (!active) return;
   active = false;
   cancelAnimationFrame(raf);
   video.pause();
-  document.documentElement.classList.remove('intro-initial');
-  document.body.classList.remove('intro-active');
-  page.inert = false;
   opening.inert = true;
-  if (scroll) {
-    programs.focus({preventScroll: true});
-    page.scrollIntoView({behavior: reduced.matches ? 'instant' : 'smooth', block: 'start'});
-  }
-  finishTimer = setTimeout(() => {
-    const contentScroll = Math.max(0, window.scrollY - opening.offsetHeight);
+  const revealPage = () => {
     opening.hidden = true;
-    if (scroll) window.scrollTo({top: contentScroll, behavior: 'instant'});
-  }, reduced.matches ? 0 : 850);
+    document.documentElement.classList.remove('intro-initial');
+    document.body.classList.remove('intro-active');
+    page.inert = false;
+    if (scroll) {
+      window.scrollTo({top: 0, behavior: 'instant'});
+      programs.focus({preventScroll: true});
+    }
+    if (cinematic && !reduced.matches) {
+      page.classList.add('hero-arriving');
+      transition.classList.add('is-leaving');
+      finishTimer = setTimeout(() => {
+        transition.hidden = true;
+        page.classList.remove('hero-arriving');
+      }, 900);
+    } else transition.hidden = true;
+  };
+  if (cinematic && !reduced.matches) {
+    transition.style.setProperty('--outro', '1');
+    finishTimer = setTimeout(revealPage, 320);
+  } else revealPage();
 }
 function start({replay: replaying = false} = {}) {
   clearTimeout(finishTimer);
-  active = true; pausedByUser = false; resumeOnVisible = false;
+  active = true; resumeOnVisible = false;
+  transition.hidden = false;
+  transition.classList.remove('is-leaving');
+  transition.style.setProperty('--outro', '0');
+  page.classList.remove('hero-arriving');
   document.documentElement.classList.remove('skip-intro');
   document.body.classList.add('intro-active');
   opening.hidden = false; opening.inert = false; page.inert = true;
   if (replaying) video.currentTime = 0;
   if (!video.getAttribute('src')) {
-    video.src = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile.mp4' : '/landingpage/assets/intro-desktop.mp4';
+    video.src = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile-hd.mp4' : '/landingpage/assets/intro-desktop-hd.mp4';
   }
   window.scrollTo({top: 0, behavior: 'instant'});
   paint();
@@ -74,20 +87,15 @@ function start({replay: replaying = false} = {}) {
 video.addEventListener('playing', syncPlayback);
 video.addEventListener('pause', syncPlayback);
 video.addEventListener('loadeddata', syncPlayback);
-video.addEventListener('ended', () => finish());
+video.addEventListener('ended', () => finish({cinematic: true}));
 video.addEventListener('error', () => finish());
-pause.addEventListener('click', () => {
-  if (!active) return;
-  pausedByUser = !video.paused;
-  if (video.paused) play(); else video.pause();
-});
 document.getElementById('skip-intro').addEventListener('click', () => finish());
 document.querySelector('.skip-link').addEventListener('click', () => finish({scroll: false}));
 document.addEventListener('keydown', event => { if (event.key === 'Escape') finish(); });
 document.addEventListener('visibilitychange', () => {
   if (!active) return;
   if (document.hidden) { resumeOnVisible = !video.paused; video.pause(); }
-  else if (resumeOnVisible && !pausedByUser) { resumeOnVisible = false; play(); }
+  else if (resumeOnVisible) { resumeOnVisible = false; play(); }
 });
 reduced.addEventListener('change', () => { replay.hidden = reduced.matches; if (reduced.matches) finish(); });
 replay.hidden = reduced.matches;
