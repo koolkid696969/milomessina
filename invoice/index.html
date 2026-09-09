@@ -478,11 +478,12 @@ td.tnum.run{color:var(--good)}
       </div>
       <div class="gh-team" id="gh-team"></div>
       <div class="gh-people" id="gh-people"></div>
-      <div class="gh-link" id="gh-link"></div>
+      <div class="gh-link" id="gh-link" hidden></div>
       <div class="gh-foot">
         <span id="gh-status">Add each GitHub username to start counting.</span>
         <span class="push">
-          <button class="mini" id="gh-save">Save usernames</button>
+          <button class="mini ghost" id="gh-manage">Manage accounts</button>
+          <button class="mini" id="gh-save" hidden>Save accounts</button>
           <button class="mini ghost" id="gh-refresh">Refresh</button>
         </span>
       </div>
@@ -1365,7 +1366,7 @@ document.getElementById("t-hours-csv").addEventListener("click", function(){
    and commits pushed to somebody else's repository. */
 var GH_WEEKS = 13, GH_CACHE = "fomo.github.cache", GH_LOGINS = "fomo.github.logins";
 var GH_FRESH = 15 * 60 * 1000, GH_MAX_REPOS = 6, GH_MAX_PAGES = 3;
-var GH_DEFAULTS = { "Milo": "koolkid696969", "Bijan": "Code-Atreides" };
+var GH_DEFAULTS = { "Milo": "koolkid696969", "Bijan": "Code-Atreides", "Jesse": "jsebaiz, jessebaiz" };
 var logins = {}, ghData = {}, ghErrors = {}, ghAt = 0, ghBusy = false;
 
 function dayKey(d){
@@ -1392,6 +1393,18 @@ function calWeeks(){
   return out;
 }
 function level(n){ return !n ? 0 : n <= 2 ? 1 : n <= 5 ? 2 : n <= 9 ? 3 : 4; }
+
+/* Somebody's repo and somebody's commits can sit under different logins —
+   a second account owns the repository while the first authors everything
+   in it. Either name alone then counts nothing, so a person holds a list. */
+function ghNames(p){
+  return String(logins[p] || "").split(/[,\s]+/).filter(Boolean);
+}
+function ghNameSet(p){
+  var set = {};
+  ghNames(p).forEach(function(n){ set[n.toLowerCase()] = true; });
+  return set;
+}
 
 function loadGh(){
   try {
@@ -1422,19 +1435,27 @@ function ghJson(url){
   });
 }
 
-function ghFetch(login){
+function ghFetch(names, nameSet){
   var since = calStart().toISOString();
-  var days = {}, truncated = false;
+  var days = {}, truncated = false, seen = {}, repos = [];
 
-  return ghJson("https://api.github.com/users/" + encodeURIComponent(login) +
-                "/repos?per_page=100&sort=pushed&type=owner").then(function(repos){
-    if (!Array.isArray(repos)) throw new Error("GitHub sent something unreadable");
-    var live = repos.filter(function(r){ return r && !r.fork && r.pushed_at && r.pushed_at >= since; })
-                    .slice(0, GH_MAX_REPOS);
+  return names.reduce(function(chain, name){
+    return chain.then(function(){
+      return ghJson("https://api.github.com/users/" + encodeURIComponent(name) +
+                    "/repos?per_page=100&sort=pushed&type=owner").then(function(list){
+        if (!Array.isArray(list)) throw new Error("GitHub sent something unreadable");
+        list.forEach(function(r){
+          if (!r || r.fork || !r.pushed_at || r.pushed_at < since) return;
+          if (seen[r.full_name]) return;
+          seen[r.full_name] = true; repos.push(r);
+        });
+      });
+    });
+  }, Promise.resolve()).then(function(){
+    var live = repos.slice(0, GH_MAX_REPOS);
     if (!live.length) return {days:days, truncated:false, repos:0};
-
     return live.reduce(function(chain, repo){
-      return chain.then(function(){ return ghRepoCommits(repo.full_name, login, since, days); })
+      return chain.then(function(){ return ghRepoCommits(repo.full_name, nameSet, since, days); })
                   .then(function(more){ if (more) truncated = true; });
     }, Promise.resolve()).then(function(){
       return {days:days, truncated:truncated, repos:live.length};
@@ -1444,11 +1465,10 @@ function ghFetch(login){
 
 /* One page holds 100 commits; a busy repo needs a few, and past the cap
    the number is a floor rather than a total. */
-function ghRepoCommits(fullName, login, since, days){
+function ghRepoCommits(fullName, nameSet, since, days){
   function page(n){
-    return ghJson("https://api.github.com/repos/" + fullName + "/commits?author=" +
-                  encodeURIComponent(login) + "&since=" + encodeURIComponent(since) +
-                  "&per_page=100&page=" + n)["catch"](function(e){
+    return ghJson("https://api.github.com/repos/" + fullName + "/commits?since=" +
+                  encodeURIComponent(since) + "&per_page=100&page=" + n)["catch"](function(e){
       /* an empty repo answers 409; that is not a failure worth reporting */
       if (/ 409$/.test(e.message)) return [];
       throw e;
@@ -1457,8 +1477,10 @@ function ghRepoCommits(fullName, login, since, days){
       list.forEach(function(c){
         var when = c && c.commit && c.commit.author && c.commit.author.date;
         if (!when) return;
-        var k = dayKey(new Date(when));
-        days[k] = (days[k] || 0) + 1;
+        var by = c.author && c.author.login ? c.author.login.toLowerCase() : "";
+        /* somebody else's commit in a shared repo is not theirs to count */
+        if (!by || !nameSet[by]) return;
+        days[dayKey(new Date(when))] = (days[dayKey(new Date(when))] || 0) + 1;
       });
       if (list.length < 100) return false;
       if (n >= GH_MAX_PAGES) return true;
@@ -1480,7 +1502,7 @@ function refreshGh(force){
      spend an unauthenticated hour's worth of requests */
   return names.reduce(function(chain, p){
     return chain.then(function(){
-      return ghFetch(logins[p]).then(function(got){
+      return ghFetch(ghNames(p), ghNameSet(p)).then(function(got){
         ghData[p] = got; delete ghErrors[p];
       })["catch"](function(e){
         ghErrors[p] = e.message; delete ghData[p];
@@ -1610,13 +1632,7 @@ function renderGh(){
     cnt.textContent = !logins[p] || ghErrors[p] ? "—"
       : byPerson[p] + ((ghData[p] || {}).truncated ? "+" : "") + " commits";
     head.appendChild(nm); head.appendChild(cnt);
-    if (logins[p] && !ghErrors[p]) {
-      var a = document.createElement("a");
-      a.href = "https://github.com/" + encodeURIComponent(logins[p]);
-      a.target = "_blank"; a.rel = "noopener noreferrer";
-      a.textContent = "@" + logins[p];
-      head.appendChild(a);
-    }
+    /* the handles stay off the page — the count is the point of the card */
     card.appendChild(head);
     card.appendChild(buildCal((ghData[p] || {}).days || {}));
     var sub = document.createElement("div");
@@ -1649,6 +1665,7 @@ function buildGhLink(){
     span.className = "lbl"; span.textContent = p + "'s github";
     var input = document.createElement("input");
     input.type = "text"; input.id = "gh-in-" + p; input.placeholder = "username";
+    input.title = "One username, or several separated by commas if they commit from more than one account";
     input.autocomplete = "off"; input.spellcheck = false;
     input.value = logins[p] || "";
     lab.appendChild(span); lab.appendChild(input);
@@ -1659,19 +1676,36 @@ document.getElementById("gh-save").addEventListener("click", function(){
   var changed = false;
   PEOPLE.forEach(function(p){
     /* people paste the profile URL as often as the name; take either */
-    var raw = document.getElementById("gh-in-" + p).value.trim()
-      .replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/^@/, "").replace(/\/.*$/, "");
-    if (raw && !/^[A-Za-z0-9-]{1,39}$/.test(raw)) {
-      toast("“" + raw + "” isn't a GitHub username.", true);
-      raw = logins[p] || "";
+    /* a profile or repo URL pastes as readily as a name, and a person may
+       have two accounts — take a comma-separated list of any of those */
+    var parts = document.getElementById("gh-in-" + p).value.split(/[,\s]+/)
+      .map(function(v){
+        return v.trim().replace(/^https?:\/\/(www\.)?github\.com\//i, "")
+                .replace(/^@/, "").replace(/\/.*$/, "").replace(/\.git$/i, "");
+      }).filter(Boolean);
+    var bad = parts.filter(function(v){ return !/^[A-Za-z0-9-]{1,39}$/.test(v); });
+    if (bad.length) {
+      toast("“" + bad[0] + "” isn't a GitHub username.", true);
+      parts = ghNames(p);
     }
+    var raw = parts.join(", ");
     if (raw !== (logins[p] || "")) changed = true;
     if (raw) logins[p] = raw; else delete logins[p];
     document.getElementById("gh-in-" + p).value = raw;
   });
   saveGh();
   if (changed) { ghData = {}; ghErrors = {}; ghAt = 0; }
+  /* close it again, so a handle is never left sitting open on screen */
+  document.getElementById("gh-link").hidden = true;
+  document.getElementById("gh-save").hidden = true;
+  document.getElementById("gh-manage").textContent = "Manage accounts";
   refreshGh(true).then(function(){ toast("GitHub accounts saved."); });
+});
+document.getElementById("gh-manage").addEventListener("click", function(){
+  var box = document.getElementById("gh-link"), opening = box.hidden;
+  box.hidden = !opening;
+  document.getElementById("gh-save").hidden = !opening;
+  this.textContent = opening ? "Hide accounts" : "Manage accounts";
 });
 document.getElementById("gh-refresh").addEventListener("click", function(){
   var b = this; b.disabled = true; b.textContent = "Refreshing…";

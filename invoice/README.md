@@ -157,7 +157,14 @@ today's, and the busiest single day. Hovering a square names the day and its
 count.
 
 `GH_DEFAULTS` at the top of the pushing code holds the usernames already known,
-so nobody has to type them on their own machine. They seed the fields on a first
+so nobody has to type them on their own machine. The handles are not
+printed anywhere on the page — the cards carry names and counts only, and the
+fields that hold them sit behind **Manage accounts**, closed by default and
+closed again on save.
+
+> That is tidiness, not secrecy. `GH_DEFAULTS` lives in this page's source, and
+> this repository is public, so anyone who opens either can read the handles.
+> Treat them as public, because they are. They seed the fields on a first
 visit only; once someone edits or clears one in their browser, that stands.
 Anyone not listed reads as **not linked** and shows a dash rather than a zero —
 no username means nothing was measured, which is not the same as having pushed
@@ -180,8 +187,12 @@ than papered over:
 
 - **Private repositories are invisible.** Nothing counts until a repo is public,
   though making it public later does bring its whole history in.
-- **Commits to someone else's repository don't count** — only repos the account
-  owns.
+- **Commits to someone else's repository don't count** — only repos one of the
+  linked accounts owns.
+- **A person can hold more than one account.** Jesse's repository is owned by one
+  login while every commit in it is authored by another, so either name alone
+  counts nothing. Separate them with a comma and both are read: repositories are
+  taken from all of them, and a commit counts when its author is any of them.
 - **Very long histories are a floor.** Six repos per account, three pages of
   commits each; past that the number carries a `+` and the footer says why.
 
