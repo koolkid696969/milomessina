@@ -271,6 +271,44 @@ td.tnum.run{color:var(--good)}
   border:1px solid var(--line-2);box-shadow:var(--shadow);display:block}
 #shot .bar{position:absolute;top:18px;right:18px;display:flex;gap:9px}
 
+/* ---------- pushing ---------- */
+.gh-top{display:flex;flex-wrap:wrap;gap:22px;padding:16px 20px 4px;align-items:baseline}
+.gh-big{display:flex;flex-direction:column;gap:5px}
+.gh-big .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.6rem;letter-spacing:-.035em;line-height:1}
+.gh-chart{padding:10px 20px 18px}
+.gh-days{display:flex;gap:5px;align-items:flex-end;height:132px}
+.gh-col{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;
+  border-radius:3px;transition:background .15s}
+.gh-col:hover{background:var(--raise)}
+.gh-seg{border-radius:2px;min-height:3px}
+.gh-col.zero::after{content:'';display:block;height:2px;border-radius:2px;background:var(--line-2)}
+.gh-axis{display:flex;gap:5px;margin-top:8px;border-top:1px solid var(--line);padding-top:7px}
+.gh-axis span{flex:1;min-width:0;text-align:center;font-family:var(--mono);font-size:.6rem;color:var(--muted-2);
+  white-space:nowrap;overflow:hidden}
+.gh-ymax{font-family:var(--mono);font-size:.62rem;color:var(--muted-2);margin-bottom:6px;display:block}
+.gh-people{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.gh-person{background:var(--surface);padding:13px 16px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.gh-person .nm3{display:flex;align-items:center;gap:7px;font-size:.86rem;font-weight:500;min-width:0}
+.gh-person .nm3 i{width:9px;height:9px;border-radius:3px;flex:none}
+.gh-person .nm3 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gh-person .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.15rem;letter-spacing:-.03em}
+.gh-person .sub2{font-size:.72rem;color:var(--muted-2)}
+.gh-person .sub2.bad{color:var(--owed)}
+.gh-person a{font-size:.72rem;color:var(--muted-2)}
+.gh-person a:hover{color:var(--violet-hi)}
+@media(max-width:820px){.gh-people{grid-template-columns:1fr 1fr}}
+.gh-link{padding:14px 20px;border-top:1px solid var(--line);display:grid;
+  grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:820px){.gh-link{grid-template-columns:1fr 1fr}}
+@media(max-width:470px){.gh-link{grid-template-columns:1fr}}
+.gh-link label{display:flex;flex-direction:column;gap:5px;min-width:0}
+.gh-link input{width:100%;padding:9px 12px;background-color:var(--surface-2);color:var(--text);
+  border:1px solid var(--line-2);border-radius:var(--r-s);font:inherit;font-size:.86rem}
+.gh-link input:focus{border-color:var(--violet);outline:none;box-shadow:0 0 0 3px var(--violet-soft)}
+.gh-foot{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:12px;flex-wrap:wrap;
+  align-items:center;font-size:.78rem;color:var(--muted-2)}
+.gh-foot .push{margin-left:auto;display:flex;gap:9px}
+
 /* ---------- passcode gate ---------- */
 #gate{position:fixed;inset:0;z-index:90;background:var(--ink);display:grid;place-items:center;padding:24px}
 #gate .box{width:min(380px,100%);text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center}
@@ -412,6 +450,31 @@ td.tnum.run{color:var(--good)}
         </table>
       </div>
       <div class="empty" id="shift-empty" hidden>No shifts yet. Clock someone in above.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="panel">
+      <div class="panel-h"><h2>what everyone's pushing</h2><span class="note" id="gh-note">Public GitHub activity, last 14 days.</span></div>
+      <div class="gh-top">
+        <div class="gh-big"><span class="lbl">pushes together</span><span class="v" id="gh-total">—</span><span class="sub2" id="gh-total-sub">across the team</span></div>
+        <div class="gh-big"><span class="lbl">today</span><span class="v" id="gh-today">—</span><span class="sub2" id="gh-today-sub">so far</span></div>
+        <div class="gh-big"><span class="lbl">busiest day</span><span class="v" id="gh-best">—</span><span class="sub2" id="gh-best-sub">of the fortnight</span></div>
+      </div>
+      <div class="gh-chart">
+        <span class="gh-ymax" id="gh-ymax"></span>
+        <div class="gh-days" id="gh-days"></div>
+        <div class="gh-axis" id="gh-axis"></div>
+      </div>
+      <div class="gh-people" id="gh-people"></div>
+      <div class="gh-link" id="gh-link"></div>
+      <div class="gh-foot">
+        <span id="gh-status">Add each GitHub username to start counting.</span>
+        <span class="push">
+          <button class="mini" id="gh-save">Save usernames</button>
+          <button class="mini ghost" id="gh-refresh">Refresh</button>
+        </span>
+      </div>
     </div>
   </section>
 
@@ -1274,6 +1337,253 @@ document.getElementById("t-hours-csv").addEventListener("click", function(){
   toast("Hours exported.");
 });
 
+/* ---------- pushing ----------
+
+   No OAuth and no tokens: a GitHub username is all that public activity
+   needs, and a token in a page this public would be a liability. The
+   cost of that is the honest limit on this whole panel — it can only
+   ever see PUBLIC pushes. Work in a private repo is invisible here.
+
+   GitHub also stopped putting commit counts in the public events feed
+   (the payload carries the push, not what was in it), so what is counted
+   is pushes, not commits. api.github.com allows the browser straight in
+   and rates limit per viewer's IP at 60/hour, so the answers are cached
+   and refetched at most every ten minutes. */
+var GH_DAYS = 14, GH_CACHE = "fomo.github.cache", GH_LOGINS = "fomo.github.logins";
+var GH_FRESH = 10 * 60 * 1000;
+var GH_HUES = ["--s1", "--s2", "--s3", "--s4"];
+var logins = {}, ghData = {}, ghErrors = {}, ghAt = 0, ghBusy = false;
+
+function ghHue(who){ return GH_HUES[PEOPLE.indexOf(who)] || "--s7"; }
+function dayKey(d){
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function ghWindow(){
+  var out = [], d = new Date(); d.setHours(0,0,0,0);
+  for (var i = GH_DAYS - 1; i >= 0; i--) {
+    var t = new Date(d); t.setDate(t.getDate() - i);
+    out.push(dayKey(t));
+  }
+  return out;
+}
+
+function loadGh(){
+  try {
+    logins = JSON.parse(localStorage.getItem(GH_LOGINS) || "{}") || {};
+    var c = JSON.parse(localStorage.getItem(GH_CACHE) || "null");
+    /* the failures ride along with the data: without them a cached render
+       shows a mistyped username as a quiet zero instead of a mistake */
+    if (c && c.at) { ghData = c.data || {}; ghErrors = c.err || {}; ghAt = c.at; }
+  } catch(e){ logins = {}; ghData = {}; ghErrors = {}; ghAt = 0; }
+}
+function saveGh(){
+  try {
+    localStorage.setItem(GH_LOGINS, JSON.stringify(logins));
+    localStorage.setItem(GH_CACHE, JSON.stringify({at:ghAt, data:ghData, err:ghErrors}));
+  } catch(e){ /* the ledger's own storage warning covers a full store */ }
+}
+
+/* GitHub hands back 100 events a page and stops at 300 in total, so a
+   busy fortnight can run off the end of the feed. Page until the events
+   fall out of the window, then say plainly when the wall was hit rather
+   than pass a truncated count off as the whole number. */
+function ghFetch(login){
+  var cutoff = new Date(); cutoff.setHours(0,0,0,0);
+  cutoff.setDate(cutoff.getDate() - (GH_DAYS - 1));
+  var days = [];
+
+  function page(n){
+    return fetch("https://api.github.com/users/" + encodeURIComponent(login) +
+                 "/events/public?per_page=100&page=" + n, {
+      headers: {"Accept": "application/vnd.github+json"}
+    }).then(function(res){
+      if (res.status === 404) throw new Error("no GitHub user by that name");
+      if (res.status === 403 || res.status === 429) {
+        var reset = Number(res.headers.get("x-ratelimit-reset")) * 1000;
+        var mins = reset ? Math.max(1, Math.ceil((reset - Date.now()) / 60000)) : null;
+        throw new Error("GitHub is rate limiting this network" + (mins ? " — try again in " + mins + " min" : ""));
+      }
+      if (!res.ok) throw new Error("GitHub answered " + res.status);
+      return res.json();
+    }).then(function(events){
+      if (!Array.isArray(events)) throw new Error("GitHub sent something unreadable");
+      events.forEach(function(e){
+        if (e && e.type === "PushEvent" && e.created_at) days.push(dayKey(new Date(e.created_at)));
+      });
+      if (!events.length || events.length < 100) return {days:days, truncated:false};
+      var oldest = new Date(events[events.length - 1].created_at);
+      if (oldest < cutoff) return {days:days, truncated:false};
+      if (n >= 3) return {days:days, truncated:true};
+      return page(n + 1);
+    });
+  }
+  return page(1);
+}
+
+function refreshGh(force){
+  var names = PEOPLE.filter(function(p){ return logins[p]; });
+  if (!names.length) { renderGh(); return Promise.resolve(); }
+  if (!force && ghAt && Date.now() - ghAt < GH_FRESH) { renderGh(); return Promise.resolve(); }
+  if (ghBusy) return Promise.resolve();
+
+  ghBusy = true;
+  document.getElementById("gh-status").textContent = "Asking GitHub…";
+  return Promise.all(names.map(function(p){
+    return ghFetch(logins[p]).then(function(got){
+      ghData[p] = got; delete ghErrors[p];
+    })["catch"](function(e){
+      ghErrors[p] = e.message; delete ghData[p];
+    });
+  })).then(function(){
+    ghAt = Date.now(); ghBusy = false;
+    saveGh(); renderGh();
+  });
+}
+
+function renderGh(){
+  var days = ghWindow(), linked = PEOPLE.filter(function(p){ return logins[p]; });
+  var byDay = {}, byPerson = {}, total = 0, capped = false;
+  days.forEach(function(k){ byDay[k] = {}; });
+  PEOPLE.forEach(function(p){
+    byPerson[p] = 0;
+    var got = ghData[p] || {};
+    if (got.truncated) capped = true;
+    (got.days || []).forEach(function(k){
+      if (!(k in byDay)) return;
+      byDay[k][p] = (byDay[k][p] || 0) + 1;
+      byPerson[p]++; total++;
+    });
+  });
+
+  var max = 1;
+  days.forEach(function(k){
+    var sum = 0; PEOPLE.forEach(function(p){ sum += byDay[k][p] || 0; });
+    if (sum > max) max = sum;
+  });
+  var today = dayKey(new Date());
+  var todayTotal = 0; PEOPLE.forEach(function(p){ todayTotal += byDay[today][p] || 0; });
+  var best = null, bestN = 0;
+  days.forEach(function(k){
+    var sum = 0; PEOPLE.forEach(function(p){ sum += byDay[k][p] || 0; });
+    if (sum > bestN) { bestN = sum; best = k; }
+  });
+
+  document.getElementById("gh-total").textContent =
+    linked.length ? String(total) + (capped ? "+" : "") : "—";
+  document.getElementById("gh-total-sub").textContent = linked.length
+    ? "across " + linked.length + (linked.length === 1 ? " account" : " accounts") + ", " + GH_DAYS + " days"
+    : "no accounts linked yet";
+  document.getElementById("gh-today").textContent = linked.length ? String(todayTotal) : "—";
+  document.getElementById("gh-today-sub").textContent = todayTotal ? "so far today" : "nothing pushed yet today";
+  document.getElementById("gh-best").textContent = bestN ? String(bestN) : "—";
+  document.getElementById("gh-best-sub").textContent = best && bestN ? niceDate(best) : "of the fortnight";
+  document.getElementById("gh-ymax").textContent = linked.length ? "peak " + max + " / day" : "";
+
+  /* the columns */
+  var box = document.getElementById("gh-days"), axis = document.getElementById("gh-axis");
+  box.innerHTML = ""; axis.innerHTML = "";
+  days.forEach(function(k, i){
+    var col = document.createElement("div");
+    col.className = "gh-col";
+    var sum = 0, lines = [];
+    PEOPLE.forEach(function(p){
+      var n = byDay[k][p] || 0;
+      if (!n) return;
+      sum += n;
+      var seg = document.createElement("div");
+      seg.className = "gh-seg";
+      seg.style.height = (n / max * 100) + "%";
+      seg.style.background = "var(" + ghHue(p) + ")";
+      col.appendChild(seg);
+      lines.push(p + " — " + n + (n === 1 ? " push" : " pushes"));
+    });
+    if (!sum) { col.className = "gh-col zero"; lines.push("nothing pushed"); }
+    bindTip(col, niceDate(k), lines.concat(sum ? [sum + " in total"] : []));
+    box.appendChild(col);
+
+    var lab = document.createElement("span");
+    /* every other label, so a fortnight fits without stacking on itself */
+    lab.textContent = (i % 2 === 0 || i === days.length - 1) ? niceDate(k).split(" ")[1] : "";
+    axis.appendChild(lab);
+  });
+
+  /* one card each */
+  var people = document.getElementById("gh-people");
+  people.innerHTML = "";
+  PEOPLE.forEach(function(p){
+    var card = document.createElement("div");
+    card.className = "gh-person";
+    var nm = document.createElement("div");
+    nm.className = "nm3";
+    nm.innerHTML = '<i style="background:var(' + ghHue(p) + ')"></i><span>' + esc(p) + "</span>";
+    var n = document.createElement("div");
+    n.className = "n";
+    n.textContent = !logins[p] || ghErrors[p]
+      ? "—"
+      : String(byPerson[p]) + ((ghData[p] || {}).truncated ? "+" : "");
+    var sub = document.createElement("div");
+    sub.className = "sub2" + (ghErrors[p] ? " bad" : "");
+    if (ghErrors[p]) sub.textContent = ghErrors[p];
+    else if (!logins[p]) sub.textContent = "not linked";
+    else sub.textContent = (byDay[today][p] || 0) + " today";
+    card.appendChild(nm); card.appendChild(n); card.appendChild(sub);
+    if (logins[p] && !ghErrors[p]) {
+      var a = document.createElement("a");
+      a.href = "https://github.com/" + encodeURIComponent(logins[p]);
+      a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.textContent = "@" + logins[p];
+      card.appendChild(a);
+    }
+    people.appendChild(card);
+  });
+
+  document.getElementById("gh-status").textContent = !linked.length
+    ? "Add each GitHub username to start counting."
+    : ghAt ? "Counted from public activity, as of " + clockNow() +
+             ". Private repositories don't appear here." +
+             (capped ? " A + means GitHub's feed ran out before the fortnight did — that count is a floor." : "")
+           : "Not fetched yet.";
+}
+
+/* the username fields */
+function buildGhLink(){
+  var box = document.getElementById("gh-link");
+  box.innerHTML = "";
+  PEOPLE.forEach(function(p){
+    var lab = document.createElement("label");
+    var span = document.createElement("span");
+    span.className = "lbl"; span.textContent = p + "'s github";
+    var input = document.createElement("input");
+    input.type = "text"; input.id = "gh-in-" + p; input.placeholder = "username";
+    input.autocomplete = "off"; input.spellcheck = false;
+    input.value = logins[p] || "";
+    lab.appendChild(span); lab.appendChild(input);
+    box.appendChild(lab);
+  });
+}
+document.getElementById("gh-save").addEventListener("click", function(){
+  var changed = false;
+  PEOPLE.forEach(function(p){
+    /* people paste the profile URL as often as the name; take either */
+    var raw = document.getElementById("gh-in-" + p).value.trim()
+      .replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/^@/, "").replace(/\/.*$/, "");
+    if (raw && !/^[A-Za-z0-9-]{1,39}$/.test(raw)) {
+      toast("“" + raw + "” isn't a GitHub username.", true);
+      raw = logins[p] || "";
+    }
+    if (raw !== (logins[p] || "")) changed = true;
+    if (raw) logins[p] = raw; else delete logins[p];
+    document.getElementById("gh-in-" + p).value = raw;
+  });
+  saveGh();
+  if (changed) { ghData = {}; ghErrors = {}; ghAt = 0; }
+  refreshGh(true).then(function(){ toast("GitHub accounts saved."); });
+});
+document.getElementById("gh-refresh").addEventListener("click", function(){
+  var b = this; b.disabled = true; b.textContent = "Refreshing…";
+  refreshGh(true).then(function(){ b.disabled = false; b.textContent = "Refresh"; });
+});
+
 /* ---------- chrome ---------- */
 function setLive(ok, txt){
   document.getElementById("live-dot").className = "dot" + (ok ? "" : " off");
@@ -1302,6 +1612,10 @@ function open_(){
     setLive(true, "saved on this device");
     render();
   }
+  loadGh();
+  buildGhLink();
+  renderGh();
+  refreshGh(false);
   tick = setInterval(tickClock, 1000);
 }
 document.getElementById("gate-form").addEventListener("submit", function(ev){

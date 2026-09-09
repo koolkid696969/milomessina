@@ -149,6 +149,36 @@ shift nobody closed shows up in red after 16 hours, saying so rather than
 quietly counting as a very long day; close it by clocking out, or delete the
 row from the table.
 
+## What everyone's pushing
+
+Each intern's GitHub username goes in the four fields at the bottom of the
+pushing panel — paste the profile URL or an `@name` if that is easier, both get
+trimmed to the username. **Save usernames** stores them in this browser and
+fetches straight away.
+
+There is no OAuth and no token, because public activity does not need one and a
+token in a page this public would be a liability. That buys the honest limit on
+the whole panel:
+
+- **Only public pushes are visible.** Work in a private repository does not
+  appear, and there is no way to reach it without every intern issuing a
+  personal access token.
+- **It counts pushes, not commits.** GitHub stopped putting commit counts in the
+  public events feed — the payload carries the push, not what was in it — so a
+  push of one commit and a push of nine count the same.
+- **GitHub's feed stops at 300 events or 90 days.** For a heavy fortnight that
+  can run out mid-window; when it does the number is shown with a `+` and the
+  footer says why. It is a floor, never a guess.
+
+The chart stacks the four of them per day over a fortnight, so each column is
+the team's day and each band is one person's share of it. Hovering a column
+breaks it down. Above it: the fortnight's total, today's, and the busiest day.
+
+Unauthenticated GitHub allows 60 requests an hour **per viewer's IP**, not per
+site, so everyone gets their own budget. Answers are cached for ten minutes and
+survive a reload — including the failures, so a mistyped username reads as a
+mistake rather than a quiet zero. **Refresh** forces a new fetch.
+
 ## Changing the team
 
 `PEOPLE` at the top of the page's script, and `INVOICE_PEOPLE` in the Apps
