@@ -1,6 +1,7 @@
+import {humanPose} from './village-human-motion.js?v=25';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=24';
 import {palettes,hash} from './village-district-layout.js?v=22';
-import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js?v=22';
+import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js?v=25';
 import {createStreetNetwork} from './village-streets.js?v=22';
 import {createChapterBanner} from './village-banners.js?v=22';
 
@@ -160,29 +161,45 @@ export function createVillage(THREE,chapters){
     anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot});
   });
   const members=crowdMembers(chapters),parts={};
-  const bodyGeometry=new THREE.CapsuleGeometry(.5,1,2,7);bodyGeometry.scale(1,.5,1);const shirtColors=palettes.shirts,skinColors=palettes.skin;
-  ['torso','head','hair','armL','armR','foreL','foreR','legL','legR','cup','backpack'].forEach(name=>{
-    const mesh=landscapeKit.instances(world,name==='head'||name==='hair'?landscapeKit.geometries.sphere:name==='cup'?cylinderGeometry:name==='backpack'?landscapeKit.geometries.box:bodyGeometry,members.length,36);mesh.material=mat(0xffffff);mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.frustumCulled=true;mesh.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,1,0),36);mesh.castShadow=false;world.add(mesh);parts[name]=mesh;
-    members.forEach((m,i)=>mesh.setColorAt(i,new THREE.Color(name==='torso'||(m.jacket&&(name.startsWith('arm')||name.startsWith('fore')))?shirtColors[m.shirt]:name==='head'||name.startsWith('arm')||name.startsWith('fore')?skinColors[m.skin]:name==='hair'?palettes.hair[m.hair]:name==='cup'?0xd54f56:palettes.pants[m.pants])));
-  });
+  const bodyGeometry=new THREE.CapsuleGeometry(.5,1,3,8);bodyGeometry.scale(1,.5,1);
+  const roundParts=new Set(['head','hair','handL','handR','nose']);
+  const names=['torso','pelvis','neck','head','hair','nose','armL','armR','foreL','foreR','handL','handR','legL','legR','shinL','shinR','shoeL','shoeR','cup','backpack'];
+  for(const name of names){
+    const geometry=roundParts.has(name)?landscapeKit.geometries.sphere:name.startsWith('shoe')?landscapeKit.geometries.shoe:name==='cup'?cylinderGeometry:name==='backpack'?landscapeKit.geometries.box:bodyGeometry;
+    const mesh=landscapeKit.instances(world,geometry,members.length,39);mesh.material=mat(0xffffff);mesh.castShadow=false;parts[name]=mesh;
+    members.forEach((m,i)=>{
+      const shirt=name==='torso'||name.startsWith('arm')||(m.jacket&&name.startsWith('fore'));
+      const skin=['head','neck','nose'].includes(name)||name.startsWith('hand')||name.startsWith('fore')||(m.shorts&&name.startsWith('shin'));
+      const color=shirt?palettes.shirts[m.shirt]:skin?palettes.skin[m.skin]:name==='hair'?palettes.hair[m.hair]:name==='cup'?0xd54f56:name.startsWith('shoe')?0xe1ded4:palettes.pants[m.pants];
+      mesh.setColorAt(i,new THREE.Color(color));
+    });
+  }
   const dummy=new THREE.Object3D(),up=new THREE.Vector3(0,1,0),a=new THREE.Vector3(),b=new THREE.Vector3(),direction=new THREE.Vector3();
-  function posePart(name,i,x,y,z,sx,sy,sz,rotation=0){dummy.position.set(x,y*1.25,z);dummy.rotation.set(0,rotation,0);dummy.scale.set(sx,sy*1.25,sz);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
-  function limb(name,i,from,to,r){a.set(...from);b.set(...to);a.y*=1.25;b.y*=1.25;direction.subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);const length=direction.length();dummy.quaternion.setFromUnitVectors(up,direction.normalize());dummy.scale.set(r,length,r);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
+  function posePart(name,i,x,y,z,sx,sy,sz,rotation=0,pitch=0){dummy.position.set(x,y,z);dummy.rotation.set(pitch,rotation,0,'YXZ');dummy.scale.set(sx,sy,sz);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
+  function limb(name,i,from,to,r){a.set(...from);b.set(...to);direction.subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);const length=direction.length();dummy.quaternion.setFromUnitVectors(up,direction.normalize());dummy.scale.set(r,length+.025,r);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
   function animateCrowd(time){
     members.forEach((m,i)=>{
-      const pose=activityPose(m,time),y=.68+pose.breath,angle=pose.rotation;
-      const transform=(x,yy,z=0)=>[pose.x+x*Math.cos(angle)+z*Math.sin(angle),yy*m.height+(m.ground||0)/1.25,pose.z-x*Math.sin(angle)+z*Math.cos(angle)];
-      posePart('torso',i,...transform(0,y),.36,.48*m.height,.24,angle);
-      posePart('backpack',i,...transform(0,y,-.19),m.backpack?.28:0,.32,.15,angle);
-      const nod=Math.sin(time*(pose.speaking?1.6:.8)+m.phase)*.009;
-      posePart('head',i,...transform(0,y+.39+nod),.155,.18,.155,angle);posePart('hair',i,...transform(0,y+.51+nod,-.02),.16,.085+m.hairLength*.08,.16,angle);
-      [-1,1].forEach((side,k)=>{
-        const gait=pose.walking?Math.sin(pose.gait+(k?Math.PI:0)):0,gesture=k?pose.gesture:pose.gesture*.22;
-        const shoulder=transform(side*.22,y+.14),elbow=transform(side*(.24+gesture*.11),y-.1+gesture*.18,-gait*.08),hand=transform(side*(.25+gesture*.16),y-.31+gesture*.42,.035+gesture*.2-gait*.13);
-        limb(k?'armR':'armL',i,shoulder,elbow,.095);limb(k?'foreR':'foreL',i,elbow,hand,.08);
-        const hip=transform(side*.1,y-.22),foot=transform(side*.12,.14+(pose.walking?Math.max(0,gait)*.045:0),gait*.2);limb(k?'legR':'legL',i,hip,foot,.13);
-        if(k)posePart('cup',i,...hand,.095,!pose.walking&&hash(m.chapter,m.member,'cup')>.86?.13:0,.095,angle);
-      });
+      const state=activityPose(m,time),rig=humanPose(m,state,time),angle=state.rotation,h=m.height;
+      const transform=([x,y,z])=>[state.x+(x*Math.cos(angle)+z*Math.sin(angle))*h,y*h+(state.ground??m.ground??0),state.z+(-x*Math.sin(angle)+z*Math.cos(angle))*h];
+      const part=(name,point,x,y,z,yaw=0,pitch=0)=>posePart(name,i,...transform(point),x*h,y*h,z*h,angle+yaw,pitch);
+      part('torso',rig.chest,.40,.52,.25,rig.twist,rig.lean);
+      part('pelvis',rig.hip,.29,.20,.23,-rig.twist*.5);
+      part('neck',[rig.head[0],rig.head[1]-.19,rig.head[2]],.12,.15,.12);
+      part('head',rig.head,.126,.17,.136,rig.headYaw);
+      const hairOffset=-.025;
+      part('hair',[rig.head[0]+Math.sin(rig.headYaw)*hairOffset,rig.head[1]+.075,rig.head[2]+Math.cos(rig.headYaw)*hairOffset],.132,.105+m.hairLength*.04,.14,rig.headYaw);
+      part('nose',[rig.head[0]+Math.sin(rig.headYaw)*.132,rig.head[1]-.01,rig.head[2]+Math.cos(rig.headYaw)*.132],.026,.036,.036,rig.headYaw);
+      part('backpack',[rig.chest[0],rig.chest[1]-.025,rig.chest[2]-.19],m.backpack?.28:0,.34,.15,rig.twist);
+      for(let j=0;j<2;j++){
+        const side=j?'R':'L',arm=rig.arms[j],leg=rig.legs[j];
+        limb('arm'+side,i,transform(arm.shoulder),transform(arm.elbow),.115*h);
+        limb('fore'+side,i,transform(arm.elbow),transform(arm.hand),.083*h);
+        part('hand'+side,arm.hand,.047,.067,.043);
+        limb('leg'+side,i,transform(leg.hip),transform(leg.knee),.155*h);
+        limb('shin'+side,i,transform(leg.knee),transform(leg.ankle),.11*h);
+        part('shoe'+side,[leg.ankle[0],leg.ankle[1]-.055+Math.abs(Math.sin(leg.pitch))*.145,leg.ankle[2]+.045],.15,.13,.29,0,leg.pitch);
+        if(j)part('cup',[arm.hand[0],arm.hand[1]+.04,arm.hand[2]+.025],.065,!state.walking&&hash(m.chapter,m.member,'cup')>.86?.13:0,.065);
+      }
     });
     Object.values(parts).forEach(mesh=>mesh.instanceMatrix.needsUpdate=true);
     flags.forEach((flag,i)=>{flag.rotation.y=Math.sin(time*2+i)*.15;flag.rotation.z=Math.sin(time*3+i)*.035;});

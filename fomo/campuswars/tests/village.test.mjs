@@ -6,7 +6,7 @@ import {createVillage} from '../village-world.js';
 import {createStreetNetwork} from '../village-streets.js';
 import {createDistricts} from '../village-districts.js';
 import {LOTS,crowdMembers,toWorld,activityPose} from '../village-layout.js';
-import {campusPose} from '../village-campus-life.js';
+import {campusPeople,campusPose} from '../village-campus-life.js';
 import {roundedLoop} from '../village-district-layout.js';
 const {chapters}=JSON.parse(fs.readFileSync(new URL('../chapters.json',import.meta.url)));
 const village=createVillage(THREE,chapters);
@@ -39,7 +39,7 @@ test('most members stay in conversation groups with only five chapter walkers',(
   for(const member of standing){const a=activityPose(member,0),b=activityPose(member,15);assert.equal(a.x,b.x);assert.equal(a.z,b.z);assert(Math.abs(a.breath)<.01&&Math.abs(b.breath)<.01);}
   const groups=Map.groupBy(standing,m=>m.chapter+':'+m.groupPhase);
   for(const t of [0,4,13,27])for(const group of groups.values())assert.equal(group.filter(m=>activityPose(m,t).speaking).length,1);
-  for(const member of village.members.filter(m=>m.walking)){assert.notEqual(activityPose(member,0).x,activityPose(member,10).x);}
+  for(const member of village.members.filter(m=>m.walking)){const a=activityPose(member,0),b=activityPose(member,10);assert(Math.hypot(a.x-b.x,a.z-b.z)>1);}
 });
 
 test('the surrounding village streams a bounded number of repeatable blocks',()=>{
@@ -173,6 +173,49 @@ test('member conversations spread across the lawn and porch without body overlap
   const members=crowdMembers(chapters);
   for(const chapter of chapters){const standing=members.filter(m=>m.chapter===chapter.id&&!m.walking);
     for(let i=0;i<standing.length;i++)for(let j=i+1;j<standing.length;j++)assert(Math.hypot(standing[i].x-standing[j].x,standing[i].z-standing[j].z)>.5);
-    if(chapter.joined>=15){assert(standing.some(m=>m.ground>0));assert(new Set(standing.map(m=>m.groupSize)).size>=3);}
+    if(chapter.joined>=15){assert(standing.some(m=>m.ground>.3));assert(new Set(standing.map(m=>m.groupSize)).size>=3);}
+  }
+});
+
+// Locomotion regressions: check physical constraints, not just changing matrices.
+const {footstep,gaitPhase,humanPose,speechGesture}=await import('../village-human-motion.js');
+test('feet hold ground during stance and return smoothly across each stride',()=>{
+  for(const height of [.9,1,1.1])for(const speed of [.65,1,1.6])for(const jog of [false,true]){
+    const person={height,phase:0},cycle=(jog?1.48:1.08)*height,samples=[.1,.2,.3];
+    const positions=samples.map(u=>{const distance=u*cycle,foot=footstep(gaitPhase(distance,person,jog),jog);assert(foot.planted);assert.equal(foot.lift,0);return distance+foot.z*height;});
+    assert(Math.max(...positions)-Math.min(...positions)<1e-9,'A planted foot slides');
+    for(const u of [0,jog?.48:.62,1]){
+      const a=footstep((u-1e-6)*Math.PI*2,jog),b=footstep((u+1e-6)*Math.PI*2,jog);
+      assert(Math.abs(a.z-b.z)<1e-4&&Math.abs(a.lift-b.lift)<1e-4&&Math.abs(a.pitch-b.pitch)<1e-4,'Foot pops at stride boundary');
+    }
+    assert(footstep(.8*Math.PI*2,jog).lift>.05);
+    const dt=.001,d=.2*cycle,a=footstep(gaitPhase(d,person,jog),jog),b=footstep(gaitPhase(d+dt*speed,person,jog),jog);
+    assert(Math.abs(speed+(b.z-a.z)*height/dt)<1e-8);
+  }
+});
+test('knees bend forward without stretching legs and standing feet stay still',()=>{
+  const distance=(a,b)=>Math.hypot(...a.map((v,i)=>v-b[i]));
+  for(const action of ['walk','jog'])for(let t=0;t<8;t+=.025){
+    const p={action,height:1,phase:.7},rig=humanPose(p,{walking:true,gait:gaitPhase(t,p,action==='jog')},t);
+    for(const leg of rig.legs){assert(Math.abs(distance(leg.hip,leg.knee)-.43)<.002);assert(Math.abs(distance(leg.knee,leg.ankle)-.43)<.002);assert(leg.knee[2]>(leg.hip[2]+leg.ankle[2])/2);}
+  }
+  const p={height:1,phase:2},a=humanPose(p,{walking:false},0),b=humanPose(p,{walking:false},17);
+  assert.deepEqual(a.legs.map(l=>l.ankle),b.legs.map(l=>l.ankle));assert.notDeepEqual(a.chest,b.chest);
+});
+test('chapter walkers keep an even pace and clear their conversation groups',()=>{
+  const members=crowdMembers(chapters);
+  for(const p of members.filter(m=>m.walking))for(let t=0;t<70;t+=.2){
+    const a=activityPose(p,t),b=activityPose(p,t+.001);
+    assert(Math.abs(Math.hypot(b.x-a.x,b.z-a.z)/.001-.76)<.001);
+    assert(Math.cos(a.rotation)*(b.z-a.z)+Math.sin(a.rotation)*(b.x-a.x)>0);
+    for(const other of members.filter(m=>!m.walking&&m.chapter===p.chapter))assert(Math.hypot(a.x-other.x,a.z-other.z)>.5);
+  }
+});
+test('conversation hands settle before speaker changes and routes turn continuously',()=>{
+  for(const boundary of [0,1,2,10])assert(speechGesture(boundary-1e-6,6*boundary,2)<1e-8&&speechGesture(boundary+1e-6,6*boundary,2)<1e-8);
+  const people=campusPeople('greek',0,0);
+  for(const p of people.filter(p=>['walk','jog','groundskeeper'].includes(p.action)))for(let t=0;t<240;t+=.5){
+    const a=campusPose(p,t),b=campusPose(p,t+.001),turn=Math.atan2(Math.sin(b.angle-a.angle),Math.cos(b.angle-a.angle));
+    assert(Math.abs(turn)<.01,'Instant direction reversal');
   }
 });

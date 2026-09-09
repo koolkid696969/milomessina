@@ -1,6 +1,6 @@
 import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=22';
 import {createCampusKit} from './village-campus-kit.js?v=24';
-import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=22';
+import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=25';
 
 export function createDistricts(T){
   const root=new T.Group(),chunks=new Map(),kit=createCampusKit(T);

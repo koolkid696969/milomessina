@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=24';
-import {createDistricts} from './village-districts.js?v=24';
+import {createVillage} from './village-world.js?v=25';
+import {createDistricts} from './village-districts.js?v=25';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
@@ -32,7 +32,7 @@ function startVillage(){
   function takeControl(){autoOrbit=false;}
   document.addEventListener('pointerdown',takeControl,{once:true,capture:true});
   document.addEventListener('village:artwork',()=>{viewDirty=true;wake();});
-  let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastActivity=0,lastRender=0,viewDirty=true,shadowX=NaN,shadowZ=NaN;
+  let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastRender=0,viewDirty=true,shadowX=NaN,shadowZ=NaN;
   const target=new THREE.Vector3(...openingView.target),wantedTarget=new THREE.Vector3(...openingView.target),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
   let {theta,phi,radius}=openingView;let wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
   function resetView(){wantedTarget.set(...openingView.target);wantedRadius=openingView.radius;wantedPhi=openingView.phi;wantedTheta=openingView.theta;wake();}
@@ -82,8 +82,8 @@ function startVillage(){
   function frame(now){
     raf=0;
     const cameraMoving=target.distanceToSquared(wantedTarget)>.0001||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
-    // Idle scenery needs fewer frames; camera input keep full responsiveness.
-    if((!cameraMoving||autoOrbit)&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
+    // Active people update on every rendered frame. Only paused scenery is capped.
+    if(paused&&!cameraMoving&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
     // Start sharp; reduce only pixel density if sustained slow frames appear.
     if(visible&&!document.hidden&&lastRender&&now-lastRender>55)slowFrames++;else slowFrames=Math.max(0,slowFrames-1);
     if(slowFrames>24&&renderScale>(coarse?1:1.25)){renderScale=Math.max(coarse?1:1.25,renderScale-.25);renderer.setPixelRatio(renderScale);slowFrames=0;}
@@ -98,10 +98,8 @@ function startVillage(){
     }
     if(!paused&&visible&&!document.hidden){
       partyTime+=dt;
-      if(partyTime-lastActivity>=1/24){
-        if(Math.hypot(target.x,target.z)<110)village.animateCrowd(partyTime);
-        districts.animate(partyTime,target.x,target.z);lastActivity=partyTime;
-      }
+      if(Math.hypot(target.x,target.z)<110)village.animateCrowd(partyTime);
+      districts.animate(partyTime,target.x,target.z);
     }
     renderer.render(scene,camera);lastRender=now;
     viewDirty=false;

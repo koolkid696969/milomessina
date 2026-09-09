@@ -37,13 +37,23 @@ The density pass adds:
 
 `village-layout.js` still creates exactly one person per joined chapter member. The 112 standing members occupy wider conversation groups of varied sizes, including pairs and a larger cluster, scattered over the lawn and porch. Placement scores prioritize body clearance. Five chapter members stroll. A single speaker per group makes small gestures while listeners breathe and nod; nobody jumps or holds both arms overhead.
 
+## Human motion and appearance
+
+Chapter members and ambient visitors now share `village-human-motion.js`: proportional bodies, articulated hips/knees/ankles, upper/lower arms, hands, necks, shaped hair, small noses and shoes. Clothing and accessory colors remain seeded, with sleeves and exposed calves on shorts. Nearby chapter models have more rounded geometry; ambient models retain a smaller geometry budget and the same six instance batches per block.
+
+Walking cycles follow distance traveled and individual height. Feet move backward at travel speed during ground contact, then lift and return on a continuous curve. Knees solve to fixed leg lengths, arms counter-swing, hips shift weight, shoulders counter-rotate, and heads glance ahead through rounded turns. Standing people settle into a taller relaxed stance with planted feet, subtle breathing, independent glances and smoothly eased conversation gestures. Joggers, seated students, skateboarders and people holding a leash or pushing a mower retain distinct poses.
+
+The five chapter walkers follow a constant-speed loop around the conversation groups, with sampled clearance above half a world unit. Doorway visitors ease to a stop and turn over two seconds before returning. The groundskeeper follows a rounded route instead of reversing instantly. These are procedural routes, not a general crowd collision or navigation system; ambient visitors can still overlap when overtaking.
+
+The motion tests check ground-contact sliding, stride-boundary continuity, leg lengths and knee direction, fixed standing feet, route speed/clearance, and continuous speaking/turning transitions. The local browser review covered character close-ups, the full village and pause/resume. The historical rendering measurements below predate this change; full-scene frame rates and updated triangle counts have not been benchmarked.
+
 ## Ground and rendering architecture
 
 `village-streets.js` owns one persistent, opaque floor. Its 300-unit repeating texture carries roads, rounded junctions, sidewalks, crossings, bicycle lanes, parking, wheel wear, repairs, cracks, desire paths, leaf litter, damp patches, manholes, drains and chalk. There are no added overlapping decal planes. Streaming never removes or replaces the floor. Mipmaps, anisotropy and the 1–450 camera clipping range preserve surface stability.
 
 All added geometry uses the batching/instancing helpers in `village-campus-kit.js`. Static geometry batches share material properties and use per-instance colors; animated people and their props share instance buffers. Distant scenery is batched once. Wires use thin triangular prisms, distant foliage has a modest polygon count, and tiny shoes use simpler rounded geometry to fund the additional population. Removed chunks dispose their instance buffers and owned materials/textures while shared resources remain cached.
 
-All new activity runs through the existing 24 Hz ambient tick. Pause, reduced-motion preferences, hidden-document and offscreen controls remain in `village.js`; no new animation loop was introduced. Adaptive pixel ratio remains 2× maximum desktop / 1.5× touch, stepping down under sustained slow frames. Cached shadow maps remain 2048px desktop / 1024px touch.
+Active people now update on every rendered frame, removing the separate 24 Hz timer that could reduce visible animation to approximately 15 Hz when combined with the old 30 Hz rendering cap. Pause, reduced-motion preferences, hidden-document and offscreen controls remain in `village.js`; no new animation loop was introduced. Adaptive pixel ratio remains 2× maximum desktop / 1.5× touch, stepping down under sustained slow frames. Cached shadow maps remain 2048px desktop / 1024px touch.
 
 ## Verification and measured rendering budget
 
@@ -53,7 +63,7 @@ Run:
 node --test fomo/campuswars/tests/village.test.mjs
 ```
 
-All 18 tests pass. They cover exact chapter counts, six selectable lots, construction thresholds, reproducible crowds and hashed campus builds, clothing diversity, conversation turns and body clearance, pavement-bound traffic, building/parking separation, nine-block resource bounds, permanent horizon identity, and finite transforms through all new activities and distant streaming positions. Sampled scene bounds remain below 200 mesh objects and 22,000 instances; browser draw calls are measured separately below.
+All 22 tests pass. They cover exact chapter counts, six selectable lots, construction thresholds, reproducible crowds and hashed campus builds, clothing diversity, conversation turns and body clearance, pavement-bound traffic, building/parking separation, nine-block resource bounds, permanent horizon identity, and finite transforms through all new activities and distant streaming positions. Sampled scene bounds remain below 200 mesh objects and 22,000 instances; browser draw calls are measured separately below.
 
 Density-pass measurements below predate the later empty-lot floor, library banner and surrounding-page edits. Measured in an isolated headless Chrome 142 WebGL browser using SwiftShader, with the same 1320×720 scene viewport, opening/close-up camera positions, frozen reduced-motion state and warmed cached shadows for both builds. Counters are `renderer.info.render` from the actual rendered frame, not scene-object estimates. Baseline is commit `161e653` immediately before this density pass. Its measurements differ from the older figures in the brief.
 
