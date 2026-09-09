@@ -1,6 +1,6 @@
-# The stipend ledger
+# arya's fomo bootcamp — the internal tool
 
-`/invoice` is the internal expense and hours tool for arya's fomo bootcamp.
+`/invoice` is the internal tool for arya's fomo bootcamp.
 Milo, Bijan, Jesse and Luchi log what they front — lunches, API credits, coffee
 — and clock in and out; the page totals what's been spent, who is still owed,
 where the money went, and how many hours each of them has worked.
