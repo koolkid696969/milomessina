@@ -8,8 +8,25 @@ import {createDistricts} from '../village-districts.js';
 import {LOTS,crowdMembers,toWorld,activityPose} from '../village-layout.js';
 import {campusPeople,campusPose} from '../village-campus-life.js';
 import {roundedLoop} from '../village-district-layout.js';
+import {houseStandings,createCompetition} from '../village-competition.js';
 const {chapters}=JSON.parse(fs.readFileSync(new URL('../chapters.json',import.meta.url)));
 const village=createVillage(THREE,chapters);
+test('house ranks use full-roster onboarding progress and preserve genuine ties',()=>{
+  assert.deepEqual(houseStandings(chapters).map(c=>[c.id,c.rank,Math.round(c.progress*100)]),[
+    ['sigma-chi-sdsu',1,60],['kappa-sigma-coastal',2,49],['phi-delta-theta-tampa',3,42],['phi-kappa-psi-vt',4,2],['tau-kappa-epsilon-tampa',5,0]
+  ]);
+  const input=[{id:'a',joined:10,active:20},{id:'b',joined:20,active:40},{id:'c',joined:24,active:100},{id:'empty',joined:0,active:0}],before=structuredClone(input);
+  assert.deepEqual(houseStandings(input).map(c=>[c.id,c.rank]),[['b',1],['a',1],['c',3]]);
+  assert.deepEqual(input,before);
+});
+test('competition marks only registered houses and aims the spotlight at the leader',()=>{
+  const {badges,spotlight,leaderId,board}=village.competition;
+  assert.equal(badges.length,5);assert.equal(leaderId,'sigma-chi-sdsu');
+  for(const badge of badges){const anchor=village.anchors.find(a=>a.id===badge.userData.chapter);assert(anchor);assert.equal(badge.position.x,anchor.lot.x);assert.equal(badge.position.z,anchor.lot.z);assert(badge.position.y>anchor.point.y);}
+  const leader=village.anchors.find(a=>a.id===leaderId);assert.equal(spotlight.target.position.x,leader.lot.x);assert.equal(spotlight.target.position.z,leader.lot.z);
+  const front=new THREE.Vector3(0,0,1).applyQuaternion(board.quaternion),towardHouses=new THREE.Vector3(-board.position.x,0,-board.position.z).normalize();assert(front.dot(towardHouses)>.95);
+  const empty=createCompetition(THREE,chapters.map(c=>({...c,joined:0})),village.anchors);assert.equal(empty.leaderId,null);assert.equal(empty.spotlight,null);
+});
 test('each onboarded member appears exactly once at their own chapter',()=>{
   assert.equal(village.members.length,117);
   for(const c of chapters){const members=village.members.filter(m=>m.chapter===c.id);assert.equal(members.length,c.joined);assert.equal(new Set(members.map(m=>m.member)).size,c.joined);}
@@ -62,7 +79,9 @@ test('crowd culling bounds contain all chapter activity positions',()=>{
 function paintedFloor(){
   const paint=[];let path=[];
   const context={scale(){},fillRect(x,z,w,d){paint.push({kind:'rect',x,z,w,d,color:this.fillStyle});},beginPath(){path=[];},arc(x,z,r){path.push({x,z,r});},moveTo(x,z){path.push({x,z});},lineTo(x,z){path.push({x,z});},fill(){paint.push({kind:'circle',...path[0],color:this.fillStyle});},stroke(){for(let i=1;i<path.length;i++)paint.push({kind:'line',a:path[i-1],b:path[i],width:this.lineWidth,color:this.strokeStyle});}};
-  const original=globalThis.document;globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>context})};
+  context.createRadialGradient=()=>({addColorStop(){}});
+  const aux={scale(){},fillRect(){},beginPath(){},arc(){},moveTo(){},lineTo(){},quadraticCurveTo(){},fill(){},stroke(){},putImageData(){},createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)})};
+  let canvases=0;const original=globalThis.document;globalThis.document={createElement:()=>({width:0,height:0,getContext:()=>canvases++===0?context:aux})};
   let streets;try{streets=createStreetNetwork(THREE);}finally{if(original===undefined)delete globalThis.document;else globalThis.document=original;}
   const at=(x,z)=>{
     const u=((x/300+.5)%1+1)%1*300,v=((-z/300+.5)%1+1)%1*300;
@@ -218,4 +237,28 @@ test('conversation hands settle before speaker changes and routes turn continuou
     const a=campusPose(p,t),b=campusPose(p,t+.001),turn=Math.atan2(Math.sin(b.angle-a.angle),Math.cos(b.angle-a.angle));
     assert(Math.abs(turn)<.01,'Instant direction reversal');
   }
+});
+
+test('claim beacon stays subtle, animates after batching, and its street-facing board is selectable',()=>{
+  const {beacon}=village,{beam,board,rings}=beacon;
+  assert.equal(beam.material.side,THREE.BackSide);assert.equal(beam.material.depthWrite,false);
+  assert.equal(beam.material.blending,THREE.AdditiveBlending);assert(beam.geometry.parameters.openEnded);
+  const pixels=beam.material.alphaMap.image.data;assert(pixels[1]>pixels[pixels.length-3]);
+  village.world.updateMatrixWorld(true);const before=rings[0].matrixWorld.toArray();
+  for(let t=0;t<6;t+=.1){village.animateEffects(t);assert(beam.material.opacity>=.10&&beam.material.opacity<=.19);}
+  village.world.updateMatrixWorld(true);assert.notDeepEqual(rings[0].matrixWorld.toArray(),before);
+  const front=new THREE.Vector3(0,0,1).transformDirection(board.matrixWorld),point=board.getWorldPosition(new THREE.Vector3());
+  assert(front.x<-.99);const ray=new THREE.Raycaster(point.clone().addScaledVector(front,4),front.clone().negate());
+  assert.equal(ray.intersectObjects(village.pickables,false)[0].object,board);assert.equal(board.userData.action,'register');
+});
+test('party windows restore their daylight materials and the largest house gets uplights',()=>{
+  const {nightLife}=village;assert(nightLife.windows.size>=2);assert.equal(nightLife.uplights.length,2);
+  const day=[...nightLife.windows.keys()].map(m=>[m.color.getHex(),m.emissive.getHex(),m.emissiveIntensity]);
+  nightLife.setNight(true);assert(nightLife.root.visible);
+  for(const m of nightLife.windows.keys())assert(m.emissiveIntensity>3);
+  const biggest=village.anchors.find(a=>a.id===chapters.toSorted((a,b)=>b.joined-a.joined)[0].id);
+  assert.equal(nightLife.uplights[0].parent.position.x,biggest.lot.x);assert.equal(nightLife.uplights[0].parent.position.z,biggest.lot.z);
+  village.animateEffects(1);const before=nightLife.flames[0].scale.toArray();village.animateEffects(1.2);assert.notDeepEqual(nightLife.flames[0].scale.toArray(),before);
+  nightLife.setNight(false);assert(!nightLife.root.visible);
+  assert.deepEqual([...nightLife.windows.keys()].map(m=>[m.color.getHex(),m.emissive.getHex(),m.emissiveIntensity]),day);
 });

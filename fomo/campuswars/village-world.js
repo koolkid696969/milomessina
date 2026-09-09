@@ -1,13 +1,16 @@
+import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=30';
+import {createCompetition} from './village-competition.js?v=29';
+import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=28';
 import {humanPose} from './village-human-motion.js?v=25';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=24';
 import {palettes,hash} from './village-district-layout.js?v=22';
 import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js?v=25';
-import {createStreetNetwork} from './village-streets.js?v=22';
+import {createStreetNetwork} from './village-streets.js?v=28';
 import {createChapterBanner,bannerIdentity} from './village-banners.js?v=27';
 
 export function createVillage(THREE,chapters){
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
-  const materials=new Map(),landscapeKit=createCampusKit(THREE);
+  const materials=new Map(),landscapeKit=createCampusKit(THREE),grassMaterial=createGrassMaterial(THREE),lawns=[];
   function mat(color,emissive=0){const key=color+':'+emissive;if(!materials.has(key))materials.set(key,new THREE.MeshStandardMaterial({color,roughness:.84,emissive,emissiveIntensity:emissive?.45:0}));return materials.get(key);}
   const boxGeometry=new THREE.BoxGeometry(1,1,1),sphereGeometry=new THREE.SphereGeometry(1,14,10),cylinderGeometry=new THREE.CylinderGeometry(1,1,1,20);
   function box(parent,x,y,z,w,h,d,color){const mesh=new THREE.Mesh(boxGeometry,typeof color==='object'?color:mat(color));mesh.position.set(x,y,z);mesh.scale.set(w,h,d);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
@@ -45,8 +48,9 @@ export function createVillage(THREE,chapters){
     [-33,-9,10,33].forEach(z=>tree(side*29,z,.85+Math.abs(z)%3*.1));
     [-9,10].forEach(z=>{box(world,side*9,.6,z,1,.2,2.3,0x85694f);box(world,side*9.4,1,z,.13,.65,2.3,0x85694f);[-.8,.8].forEach(d=>box(world,side*9,.3,z+d,.8,.6,.12,0x333747));});
   });
+  const windowMaterials=[false,true].map(lit=>{const m=new THREE.MeshStandardMaterial({color:lit?0xffdca1:0x34414f,roughness:.5,emissive:0xa36527,emissiveIntensity:lit?.45:.01});m.userData.nightWindow=true;return m;});
   function windowUnit(parent,x,y,z,lit=true){
-    box(parent,x,y,z,1.05,1.65,.13,0xe7dfcb);box(parent,x,y,z+.08,.8,1.38,.07,lit?mat(0xffdca1,0xa36527):mat(0x34414f));
+    box(parent,x,y,z,1.05,1.65,.13,0xe7dfcb);box(parent,x,y,z+.08,.8,1.38,.07,windowMaterials[Number(lit)]);
     box(parent,x,y,z+.14,.065,1.45,.055,0xe8ddc8);box(parent,x,y,z+.14,.9,.065,.055,0xe8ddc8);
     [-.68,.68].forEach(dx=>box(parent,x+dx,y,z,.23,1.65,.15,0x283940));
   }
@@ -107,7 +111,7 @@ export function createVillage(THREE,chapters){
       const floor=landscapeKit.claimFloor(group);pickables.push(floor);
       anchors.push({id,point:new THREE.Vector3(lot.x,4,lot.z),lot});return;
     }
-    box(group,0,.02,3,15,.22,18,0x515b58);
+    const lawn=box(group,0,.02,3,15,.22,18,grassMaterial);lawn.name=`chapter-lawn-${id}`;lawns.push(lawn);
     box(group,0,.15,7.7,1.65,.1,8.6,0xb3b0a4);
     [-6.8,6.8].forEach(x=>{box(group,x,.12,3,.12,.16,17,0x8b9096);});
     if(chapter.joined<15){
@@ -160,6 +164,7 @@ export function createVillage(THREE,chapters){
     house.userData={chapter:id,joined:chapter.joined,footprint,roofline};
     anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot});
   });
+  world.add(createLawnBlades(THREE,LOTS.slice(0,chapters.length)));
   const members=crowdMembers(chapters),parts={};
   const bodyGeometry=new THREE.CapsuleGeometry(.5,1,3,8);bodyGeometry.scale(1,.5,1);
   const roundParts=new Set(['head','hair','handL','handR','nose']);
@@ -205,13 +210,19 @@ export function createVillage(THREE,chapters){
     flags.forEach((flag,i)=>{flag.rotation.y=Math.sin(time*2+i)*.15;flag.rotation.z=Math.sin(time*3+i)*.035;});
   }
   animateCrowd(0);
+  const competition=createCompetition(THREE,chapters,anchors);world.add(competition.root);
   const selection=new THREE.Mesh(new THREE.RingGeometry(6.8,7.0,64),new THREE.MeshBasicMaterial({color:0xa2aeff,transparent:true,opacity:.75,side:THREE.DoubleSide,depthWrite:false}));selection.rotation.x=-Math.PI/2;selection.position.y=.21;world.add(selection);
   // Batch repeated architectural parts so phones draw whole sets at once.
   world.updateMatrixWorld(true);
   const dynamic=new Set([selection,...pickables,...flags,...Object.values(parts)]);
-  batchCampusGeometry(THREE,world,[...dynamic]);
+  batchCampusGeometry(THREE,world,[...dynamic,...lawns]);
   world.updateMatrixWorld(true);
   world.traverse(object=>{if(!dynamic.has(object)){object.matrixAutoUpdate=false;}});
   flags.forEach(flag=>flag.castShadow=false);
-  return {world,streets,pickables,anchors,members,parts,selection,animateCrowd};
+  const emptyAnchor=anchors.find(a=>a.id==='empty');
+  const beacon=emptyAnchor?createLotBeacon(THREE,emptyAnchor.lot):null;
+  if(beacon){world.add(beacon.root);pickables.push(beacon.board);}
+  const nightLife=createNightLife(THREE,world,anchors,chapters);world.add(nightLife.root);
+  function animateEffects(time){beacon?.animate(time);if(nightLife.root.visible)nightLife.animate(time);}
+  return {world,streets,pickables,anchors,members,parts,selection,animateCrowd,competition,beacon,nightLife,animateEffects};
 }

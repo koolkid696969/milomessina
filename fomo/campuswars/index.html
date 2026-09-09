@@ -8,7 +8,7 @@
 <meta property="og:type" content="website"><meta property="og:title" content="Get your frat paid — fomo Campus Wars"><meta property="og:description" content="An empty lot is waiting for your letters. Explore the Greek village, bring your chapter, and compete on fomo. $500,000 committed."><meta property="og:url" content="https://milomessina.com/fomo/campuswars/"><meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23516af6'/%3E%3Ctext x='12' y='48' font-family='Arial' font-weight='900' font-size='48' fill='%23eaedff'%3Ef.%3C/text%3E%3C/svg%3E">
 <link rel="preload" as="font" type="font/ttf" href="/fomo/campuswars/assets/aeonik-700.ttf" crossorigin>
-<link rel="stylesheet" href="/fomo/campuswars/styles.css?v=24"><script src="/fomo/campuswars/site.js?v=27" defer></script>
+<link rel="stylesheet" href="/fomo/campuswars/styles.css?v=24"><script src="/fomo/campuswars/site.js?v=30" defer></script>
 <script type="application/json" id="chapters-data">{
   "source": "User-provided registration screenshot",
   "live": false,
@@ -76,7 +76,7 @@
   ]
 }
 </script>
-<link rel="stylesheet" href="/fomo/campuswars/village.css?v=25">
+<link rel="stylesheet" href="/fomo/campuswars/village.css?v=30">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -85,7 +85,7 @@
 <section class="row-section" id="the-row" aria-label="Chapter houses">
 <div class="village-shell" id="village">
 <div class="village-viewport" id="village-viewport"><div class="village-loading" id="village-loading" role="status"><span class="loading-mark">f.</span>Opening the village…</div></div>
-<div class="village-top"><div class="village-title"><span class="village-kicker">WELCOME TO THE ROW</span><strong>Greek village<span class="village-dot"></span></strong></div><button class="village-reset" id="village-overview" type="button">Reset view</button></div>
+<div class="village-top"><div class="village-title"><span class="village-kicker">WELCOME TO THE ROW</span><strong>Greek village<span class="village-dot"></span></strong></div><div class="village-top-actions"><button class="village-reset" id="village-leaderboard" type="button">Leaderboard</button><button class="village-reset" id="village-overview" type="button">Reset view</button></div></div>
 
 <div class="village-bottom"><div class="village-view-tools"><button id="village-zoom-in" type="button" aria-label="Zoom into village">+</button><button id="village-zoom-out" type="button" aria-label="Zoom out of village">−</button><button id="village-expand" type="button">Full screen ↗</button></div></div>
 
@@ -101,7 +101,7 @@
 <button class="house-card" data-chapter="tau-kappa-epsilon-tampa" aria-pressed="false"><span class="house-label"><strong>ΤΚΕ</strong><span>Tampa</span></span><span class="house-visual"></span><span class="house-progress"><span><b>0</b> / 60 in <em>0%</em></span><span class="progress-track"><i style="width:0%"></i><b></b></span></span></button>
 <button class="house-card empty-lot" data-chapter="empty" aria-pressed="false"><span class="house-label"><strong>Your house</strong><span>Your lot is waiting.</span></span><span class="house-visual"><span class="lot-plus" aria-hidden="true">+</span></span><span class="lot-cta">Claim this lot <span aria-hidden="true">↗</span></span></button>
 </div></div>
-<div class="row-instructions"><span>Tap a chapter to visit its house</span><div class="party-tools"><span>80% = qualified</span><button id="party-toggle" type="button" aria-pressed="false">Pause activity</button></div></div>
+<div class="row-instructions"><span>Tap a chapter to visit its house</span><div class="party-tools"><span>80% = qualified</span><button id="night-toggle" type="button" aria-pressed="false">Party mode</button><button id="party-toggle" type="button" aria-pressed="false">Pause activity</button></div></div>
 <div class="chapter-panel" id="chapter-panel" aria-live="polite" aria-atomic="true"><div class="chapter-identity"><span class="chapter-crest" id="panel-letters">ΣΧ</span><div><span class="eyebrow" id="panel-school">SAN DIEGO STATE UNIVERSITY</span><h3 id="panel-name">Sigma Chi</h3></div></div><div class="chapter-status"><strong id="panel-target">20 more to qualify.</strong><span id="panel-detail">60 joined · 80 needed · 100 active members</span></div><button class="button button-quiet" type="button" id="panel-share">Rally this chapter <span aria-hidden="true">↗</span></button><a class="button" id="panel-claim" href="https://www.aryatoufanian.com/fomo/onboard/" hidden>Claim your lot <span aria-hidden="true">↗</span></a></div>
 <p class="row-disclosure">Onboarding snapshot · Only the five marked houses show registered chapters. Surrounding buildings and campus visitors are scenery.</p>
 <noscript><p class="noscript">Explore the chapter snapshot above. <a href="https://www.aryatoufanian.com/fomo/onboard/">Register your chapter here.</a></p></noscript>

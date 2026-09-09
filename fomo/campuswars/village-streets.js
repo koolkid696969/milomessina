@@ -1,17 +1,24 @@
+import {createGrassMaterial} from './village-grass.js?v=28';
 import {hash} from './village-district-layout.js?v=22';
 // A single opaque floor carries all roads, grass, paths and paint. Its larger
 // campus pattern includes pedestrian districts instead of one road per block.
 export function createStreetNetwork(T){
-  let map;
+  let map,grassMask;
   if(typeof document!=='undefined'){
     const canvas=document.createElement('canvas');canvas.width=canvas.height=4096;
     const ctx=canvas.getContext('2d'),unit=canvas.width/300;ctx.scale(unit,unit);
-    const rect=(color,x,z,w,d)=>{ctx.fillStyle=color;ctx.fillRect(x+150,150-z-d,w,d);};
-    const circle=(color,x,z,r)=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(x+150,150-z,r,0,Math.PI*2);ctx.fill();};
-    const line=(color,points,width)=>{ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();points.forEach(([x,z],i)=>i?ctx.lineTo(x+150,150-z):ctx.moveTo(x+150,150-z));ctx.stroke();};
-    rect('#728068',-150,-150,300,300);
-    // Muted, irregular lawn grain gives the ground scale without extra geometry.
-    for(let i=0;i<16000;i++)rect(i%2?'#77846c':'#6d7b65',hash(i,'grass-x')*300-150,hash(i,'grass-z')*300-150,.14+hash(i,'blade-w')*.4,.12+hash(i,'blade-d')*.3);
+    const maskCanvas=document.createElement('canvas');maskCanvas.width=maskCanvas.height=1024;
+    const mask=maskCanvas.getContext('2d');mask.scale(1024/300,1024/300);mask.fillStyle='#ffffff';mask.fillRect(0,0,300,300);let lawnPaint=true;
+    const rect=(color,x,z,w,d)=>{ctx.fillStyle=color;ctx.fillRect(x+150,150-z-d,w,d);if(!lawnPaint){mask.fillStyle='#000000';mask.fillRect(x+150,150-z-d,w,d);}};
+    const circle=(color,x,z,r)=>{for(const c of lawnPaint?[ctx]:[ctx,mask]){c.fillStyle=c===ctx?color:'#000000';c.beginPath();c.arc(x+150,150-z,r,0,Math.PI*2);c.fill();}};
+    const line=(color,points,width)=>{for(const c of lawnPaint?[ctx]:[ctx,mask]){c.strokeStyle=c===ctx?color:'#000000';c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.beginPath();points.forEach(([x,z],i)=>i?c.lineTo(x+150,150-z):c.moveTo(x+150,150-z));c.stroke();}};
+    rect('#718753',-150,-150,300,300);
+    // Soft soil/moisture variation under the fine world-space blade texture.
+    for(let i=0;i<950;i++){
+      const x=hash(i,'meadow-x')*300,y=hash(i,'meadow-y')*300,r=2+hash(i,'meadow-r')*7;
+      const fade=ctx.createRadialGradient(x,y,0,x,y,r);fade.addColorStop(0,i%4?'#45633024':'#b1a07035');fade.addColorStop(1,'#71875300');ctx.fillStyle=fade;ctx.fillRect(x-r,y-r,r*2,r*2);
+    }
+    lawnPaint=false;
     // Desire paths, damp patches and leaves are paint on the same opaque floor.
     for(const ox of [-100,0,100])for(const oz of [-100,0,100])for(const side of [-1,1]){
       line('#948e75',[[ox+side*10,oz+38],[ox+side*17,oz+32],[ox+side*24,oz+30]],.8);
@@ -74,8 +81,9 @@ export function createStreetNetwork(T){
       circle('#586567',ox+3.2,z+5,.4);
       for(let i=0;i<4;i++)rect('#e3d1ad',ox+6.6,z+i*.4,.5,.07);
     }
+    grassMask=new T.CanvasTexture(maskCanvas);grassMask.wrapS=grassMask.wrapT=T.RepeatWrapping;grassMask.anisotropy=8;
     map=new T.CanvasTexture(canvas);map.wrapS=map.wrapT=T.RepeatWrapping;map.repeat.set(200/3,200/3);map.offset.set(.5,.5);map.colorSpace=T.SRGBColorSpace;map.anisotropy=8;map.minFilter=T.LinearMipmapLinearFilter;map.magFilter=T.LinearFilter;
   }
-  const material=new T.MeshLambertMaterial({color:map?0xffffff:0x728068,...(map?{map}:{}),transparent:false,alphaTest:0,depthWrite:true});
+  const material=createGrassMaterial(T,map,grassMask);
   const streets=new T.Mesh(new T.PlaneGeometry(20000,20000),material);streets.name='continuous-village-floor';streets.rotation.x=-Math.PI/2;streets.position.y=.045;streets.receiveShadow=true;return streets;
 }

@@ -155,7 +155,8 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=27').catch(() => {
+  import('./village.js?v=30').catch(error => {
+    console.error('Unable to load Greek village:', error);
     document.getElementById('village-loading').textContent = 'The village couldn’t load. Browse every chapter’s progress below.';
     document.getElementById('village').classList.add('village-unavailable');
   });
