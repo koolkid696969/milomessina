@@ -78,6 +78,7 @@ svg,img{display:block}
 .target-track{height:6px;border-radius:999px;background:var(--accent-soft);overflow:hidden}
 .target-track>span{display:block;width:80%;height:100%;border-radius:inherit;background:var(--accent)}
 .section-foot{text-align:center;margin-top:32px}
+.section-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:20px 28px}
 .text-link{display:inline-flex;align-items:center;gap:9px;font-size:16px;line-height:24px;font-weight:500;color:var(--accent-readable);padding:4px 0}
 .text-link>svg{width:18px;height:18px;flex:0 0 18px}
 .text-link:hover{color:var(--text-primary)}
