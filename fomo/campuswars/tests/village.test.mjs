@@ -308,3 +308,23 @@ test('pong balls leave the throwing hand continuously, arc to cups and alternate
     village.animateCrowd(releaseTime+.3);village.world.updateMatrixWorld(true);assert(game.ball.matrixAutoUpdate);assert(game.ball.matrixWorld.elements.every(Number.isFinite));
   }
 });
+
+
+test('fomo eyes banner hangs from both building walls with no ground supports',()=>{
+  for(const count of [5,9]){
+    const data=Array.from({length:count},(_,i)=>({...chapters[i%chapters.length],id:`entry-${i}`}));
+    const scene=createVillage(THREE,data),entrance=scene.world.getObjectByName('fomo-row-entrance');
+    assert.equal(entrance.position.z,114+scene.extension);
+    assert.equal(entrance.position.x,2.75);
+    const brackets=[];entrance.traverse(o=>{if(o.name==='building-banner-anchor')brackets.push(o);});
+    assert.equal(brackets.length,4);
+    assert.deepEqual([...new Set(brackets.map(o=>o.position.x+entrance.position.x))].sort((a,b)=>a-b),[-6,11.5]);
+    const bounds=new THREE.Box3().setFromObject(entrance);assert(bounds.min.y>6,'No poles or other ground supports');
+    const front=entrance.getObjectByName('fomo-eyes-banner-front');
+    front.geometry.computeBoundingBox();
+    assert(front.geometry.boundingBox.min.y+front.position.y>6,'Fabric must clear vehicles and sightlines');
+    assert(Math.abs(front.rotation.y-Math.PI)<1e-9,'Eyes must face the opening camera');
+    assert(entrance.getObjectByName('fomo-eyes-banner-back'));
+    scene.dispose();
+  }
+});

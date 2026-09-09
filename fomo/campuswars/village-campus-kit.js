@@ -1,3 +1,4 @@
+import {createVehicleKit} from './village-vehicles.js?v=35';
 import {createCampusBannerTexture} from './village-floor-logo.js?v=24';
 import {hash,pick} from './village-district-layout.js?v=22';
 // Shared architectural parts, textures and landscape geometry. All static parts
@@ -6,6 +7,8 @@ export function createCampusKit(T){
   const geometries={box:new T.BoxGeometry(1,1,1),wire:new T.CylinderGeometry(1,1,1,3),shoe:new T.CapsuleGeometry(.5,1,1,6),cylinder:new T.CylinderGeometry(1,1,1,12),sphere:new T.SphereGeometry(1,12,8),leaf:new T.SphereGeometry(1,8,5),cone:new T.ConeGeometry(1,1,12),wheel:new T.TorusGeometry(.34,.045,6,14),dome:new T.SphereGeometry(1,24,12,0,Math.PI*2,0,Math.PI/2)};
   geometries.shoe.scale(1,.5,1);
   const maps=new Map(),materials=new Map();
+  let vehicleKit;
+  const vehicles=()=>vehicleKit||(vehicleKit=createVehicleKit(T));
   function texture(kind){
     if(maps.has(kind))return maps.get(kind);
     if(typeof document==='undefined')return null;
@@ -119,12 +122,12 @@ export function createCampusKit(T){
   }
   function bins(p,x,z){for(let i=0;i<2;i++){cylinder(p,x+i*.72,.53,z,.28,.88,i?0x596f86:0x475a4b);cylinder(p,x+i*.72,1,z,.31,.10,0x384746);box(p,x+i*.72,.84,z+.29,.27,.13,.02,0xc2cab9);}}
   function hydrant(p,x,z){cylinder(p,x,.48,z,.14,.75,0xac7650);mesh(p,'sphere',x,.93,z,.18,.15,.18,0xac7650);bar(p,[x-.25,.7,z],[x+.25,.7,z],.10,0xac7650);}
-  function parkedCar(p,x,z,turn=0,seed=0){
-    const g=new T.Group();g.name='parked-campus-car';g.position.set(x,0,z);g.rotation.y=turn;p.add(g);
-    const c=pick([0xe2ded1,0x587385,0x986251,0xaeb8b5,0x47545b,0xb29b7e,0x767e91],seed,x,z,'paint');
-    box(g,0,.65,0,1.72,.55,4.1,c);box(g,0,1.13,-.15,1.48,.62,2.2,c);box(g,0,1.2,-.12,1.5,.36,1.93,0x45606b);box(g,0,1.49,-.14,1.55,.09,2.05,c);
-    for(const a of [-1,1])for(const b of [-1,1]){const wheel=cylinder(g,a*.83,.38,b*1.25,.31,.16,0x303b3e);wheel.rotation.z=Math.PI/2;box(g,a*.52,.7,b*2.06,.30,.14,.03,b>0?0xe7dbb0:0x9e5346);}
+  function parkedCar(p,x,z,turn=0,seed=0,branded=false){
+    const color=pick([0xe2ded1,0x405e77,0x893e36,0xaeb8b5,0x29353f,0xaaa397,0x737b88],seed,x,z,'paint');
+    const car=vehicles().create(p,{color,branded,style:'sedan'}),g=car.group;
+    g.name='parked-campus-car';g.position.set(x,0,z);g.rotation.y=turn;
   }
+
   function streetFurniture(p,x,z,seed=0){
     bins(p,x,z);hydrant(p,x+2.3,z+1.1);
     box(p,x-1.1,.7,z,.65,1.25,.55,0x506580);box(p,x-1.1,.93,z+.29,.5,.45,.02,0xc8c7b4);
@@ -180,13 +183,13 @@ export function createCampusKit(T){
     return floor;
   }
   function disposeChunk(p){p.traverse(m=>{if(m.isInstancedMesh)m.dispose();if(m.userData.ownedMap)m.material.map.dispose();if(m.userData.ownedMaterial)m.material.dispose();if(m.userData.ownedTexture){m.material.map.dispose();m.material.dispose();m.geometry.dispose();}else if(m.userData.ownedGeometry){m.geometry.dispose();if(![...materials.values()].includes(m.material))m.material.dispose();}});}
-  return {geometries,material,instances,mesh,box,cylinder,bar,tree,bench,lamp,table,path,sign,building,disposeChunk,hedge,bins,hydrant,parkedCar,streetFurniture,wire,claimFloor,batch:(p,exclude=[])=>batchCampusGeometry(T,p,exclude)};
+  return {geometries,get vehicles(){return vehicles();},material,instances,mesh,box,cylinder,bar,tree,bench,lamp,table,path,sign,building,disposeChunk,hedge,bins,hydrant,parkedCar,streetFurniture,wire,claimFloor,batch:(p,exclude=[])=>batchCampusGeometry(T,p,exclude)};
 }
 
 export function batchCampusGeometry(T,parent,exclude=[]){
   parent.updateMatrixWorld(true);const skip=new Set(exclude),batches=new Map();
   parent.traverse(m=>{if(!m.isMesh||m.isInstancedMesh||skip.has(m)||m.userData.ownedGeometry||m.userData.ownedTexture)return;
-    const mat=m.material,key=[m.geometry.uuid,mat.type,mat.map?.uuid||'',mat.bumpMap?.uuid||'',mat.roughness,mat.metalness,mat.emissive?.getHex(),mat.emissiveIntensity,mat.side,mat.transparent,mat.opacity,mat.depthWrite,m.castShadow,m.receiveShadow].join(':');
+    const mat=m.material,key=[m.geometry.uuid,mat.type,mat.map?.uuid||'',mat.bumpMap?.uuid||'',mat.roughness,mat.metalness,mat.vertexColors,mat.alphaTest,mat.emissive?.getHex(),mat.emissiveIntensity,mat.side,mat.transparent,mat.opacity,mat.depthWrite,m.castShadow,m.receiveShadow].join(':');
     if(!batches.has(key))batches.set(key,[]);batches.get(key).push(m);
   });
   const inverse=new T.Matrix4().copy(parent.matrixWorld).invert(),matrix=new T.Matrix4();

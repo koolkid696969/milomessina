@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=32';
-import {createDistricts} from './village-districts.js?v=32';
+import {createVillage} from './village-world.js?v=38';
+import {createDistricts} from './village-districts.js?v=35';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=33';
 
 const shell=document.getElementById('village');

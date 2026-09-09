@@ -19,3 +19,31 @@ export function createCampusBannerTexture(T){
   if(document.fonts)Promise.all([document.fonts.load('700 150px Aeonik'),document.fonts.load('600 150px Aeonik')]).then(()=>{paint();map.needsUpdate=true;document.dispatchEvent(new Event('village:artwork'));});
   return map;
 }
+
+// A painted door graphic; it uses the same fomo symbol as the campus banner.
+export function createVehicleLogoTexture(T){
+  if(typeof document==='undefined')return null;
+  const canvas=document.createElement('canvas');canvas.width=768;canvas.height=224;
+  const ctx=canvas.getContext('2d');
+  function paint(){
+    ctx.clearRect(0,0,768,224);ctx.fillStyle='#626cf3';ctx.fillRect(0,8,768,208);
+    ctx.save();ctx.translate(22,14);ctx.scale(1.95,1.95);ctx.fillStyle='#ffffff';for(const path of markPaths)ctx.fill(new Path2D(path));ctx.restore();
+    ctx.fillStyle='#ffffff';ctx.textAlign='left';ctx.textBaseline='middle';ctx.font='700 176px Aeonik, Arial, sans-serif';ctx.letterSpacing='-7px';ctx.fillText('fomo',220,118,515);
+  }
+  paint();const map=new T.CanvasTexture(canvas);map.colorSpace=T.SRGBColorSpace;map.anisotropy=8;
+  document.fonts?.load('700 176px Aeonik').then(()=>{paint();map.needsUpdate=true;document.dispatchEvent(new Event('village:artwork'));});
+  return map;
+}
+
+export function createEntranceEyesTexture(T){
+  if(typeof document==='undefined')return null;
+  const canvas=document.createElement('canvas');canvas.width=2048;canvas.height=512;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#626cf3';ctx.fillRect(0,0,2048,512);
+  // Oversized original eyes, with only stitched edges around the purple fabric.
+  ctx.strokeStyle='#9ca3ff';ctx.lineWidth=2;ctx.setLineDash([9,8]);
+  for(const y of [12,500]){ctx.beginPath();ctx.moveTo(18,y);ctx.lineTo(2030,y);ctx.stroke();}
+  ctx.save();ctx.translate(1024-50*8.5,256-50*8.5);ctx.scale(8.5,8.5);ctx.fillStyle='#ffffff';
+  for(const path of markPaths)ctx.fill(new Path2D(path));ctx.restore();
+  const map=new T.CanvasTexture(canvas);map.colorSpace=T.SRGBColorSpace;map.anisotropy=8;return map;
+}

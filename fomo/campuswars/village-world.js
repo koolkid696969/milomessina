@@ -1,9 +1,10 @@
+import {createVillageEntrance} from './village-entrance.js?v=38';
 import {createPongGames} from './village-pong.js?v=31';
 import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=30';
 import {createCompetition} from './village-competition.js?v=32';
 import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=28';
 import {humanPose} from './village-human-motion.js?v=31';
-import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=24';
+import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=35';
 import {palettes,hash} from './village-district-layout.js?v=22';
 import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=32';
 import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=32';
@@ -219,6 +220,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
   }
   animateCrowd(0);
   const competition=createCompetition(THREE,chapters,anchors);world.add(competition.root);competition.board.position.z+=extension;
+  const entrance=createVillageEntrance(THREE,extension);world.add(entrance);
   const selection=new THREE.Mesh(new THREE.RingGeometry(6.8,7.0,64),new THREE.MeshBasicMaterial({color:0xa2aeff,transparent:true,opacity:.75,side:THREE.DoubleSide,depthWrite:false}));selection.rotation.x=-Math.PI/2;selection.position.y=.21;world.add(selection);
   // Batch repeated architectural parts so phones draw whole sets at once.
   world.updateMatrixWorld(true);

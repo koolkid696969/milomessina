@@ -1,3 +1,4 @@
+import {FOMO_VEHICLE_COLOR} from './village-vehicles.js?v=35';
 import {gaitPhase,humanPose,speechGesture,smooth} from './village-human-motion.js?v=25';
 import {roundedLoop,mod,hash,appearance,palettes,districtSpecs} from './village-district-layout.js?v=22';
 
@@ -135,17 +136,13 @@ export function createCampusTraffic(T,kit,extension=0){
   const root=new T.Group(),dummy=new T.Object3D(),color=new T.Color();
   // Two one-way circuits have separate lane centers and rounded junction turns.
   const loops=[roundedLoop(2.4,-47.6,97.6,47.6+extension,7.8),roundedLoop(-97.6,-47.6,-2.4,47.6+extension,7.8)];
-  const cars=Array.from({length:8},(_,i)=>({loop:i%2,offset:22+i*83,speed:4.4,shuttle:i===3,color:[0xf1e9d6,0x66829e,0xa75a49,0xd6dbd8,0x48585e,0xbaa283,0x8c959e,0x555766][i]}));
+  const cars=Array.from({length:8},(_,i)=>({loop:i%2,offset:22+i*83,speed:4.4,shuttle:i===3,style:i===3?'shuttle':i%3===1?'crossover':'sedan',branded:i%2===1,color:i%2===1?FOMO_VEHICLE_COLOR:[0xf1e9d6,0x66829e,0xa75a49,0xd6dbd8,0x48585e,0xbaa283,0x8c959e,0x555766][i]}));
   const cyclists=Array.from({length:12},(_,i)=>({loop:i%2,offset:i*57+19,speed:2.65,phase:i*2.1}));
   const bikeLoops=[roundedLoop(4.7,-45.3,95.3,45.3+extension,8),roundedLoop(-95.3,-45.3,-4.7,45.3+extension,8)];
   const rounded=new T.CapsuleGeometry(.5,1,3,10);rounded.scale(1,.5,1);
-  const outline=new T.Shape(),r=.11;
-  outline.moveTo(-.5+r,-.5);outline.lineTo(.5-r,-.5);outline.quadraticCurveTo(.5,-.5,.5,-.5+r);outline.lineTo(.5,.5-r);outline.quadraticCurveTo(.5,.5,.5-r,.5);outline.lineTo(-.5+r,.5);outline.quadraticCurveTo(-.5,.5,-.5,.5-r);outline.lineTo(-.5,-.5+r);outline.quadraticCurveTo(-.5,-.5,-.5+r,-.5);
-  const carBody=new T.ExtrudeGeometry(outline,{depth:.84,bevelEnabled:true,bevelThickness:.08,bevelSize:.04,bevelSegments:2,curveSegments:3});carBody.rotateX(-Math.PI/2);carBody.center();
-  const tire=new T.CylinderGeometry(.32,.32,.19,14);tire.rotateZ(Math.PI/2);
   function instances(geo,n){const m=new T.InstancedMesh(geo,kit.material(0xffffff),n);m.instanceMatrix.setUsage(T.DynamicDrawUsage);m.boundingSphere=new T.Sphere(new T.Vector3(0,2,extension/2),145+extension/2);root.add(m);return m;}
-  const chassis=instances(carBody,cars.length*2),glass=instances(kit.geometries.box,cars.length),wheels=instances(tire,cars.length*4),lights=instances(kit.geometries.box,cars.length*4),bikeWheels=instances(kit.geometries.wheel,cyclists.length*2),bikeTubes=instances(kit.geometries.cylinder,cyclists.length*13),riders=instances(rounded,cyclists.length*9),heads=instances(kit.geometries.sphere,cyclists.length*2);
-  cars.forEach((c,i)=>{for(let j=0;j<2;j++)chassis.setColorAt(i*2+j,color.set(c.color));glass.setColorAt(i,color.set(0x3c535e));for(let j=0;j<4;j++){wheels.setColorAt(i*4+j,color.set(0x293137));lights.setColorAt(i*4+j,color.set(j<2?0xffebbc:0xc15644));}});
+  const fleet=kit.vehicles.movingFleet(root,cars);
+  const bikeWheels=instances(kit.geometries.wheel,cyclists.length*2),bikeTubes=instances(kit.geometries.cylinder,cyclists.length*13),riders=instances(rounded,cyclists.length*9),heads=instances(kit.geometries.sphere,cyclists.length*2);
   cyclists.forEach((c,i)=>{for(let j=0;j<2;j++){bikeWheels.setColorAt(i*2+j,color.set(0x303d42));heads.setColorAt(i*2+j,color.set(j?0xe0d9c7:0xc69b7a));}for(let j=0;j<13;j++)bikeTubes.setColorAt(i*13+j,color.set(j<6?0x6b8491:0x899593));for(let j=0;j<9;j++){riders.setColorAt(i*9+j,color.set(j===0?[0xb99269,0x576e99,0x994f47][i%3]:j<5?0xc69b7a:0x43505b));}});
   const a=new T.Vector3(),b=new T.Vector3(),up=new T.Vector3(0,1,0);
   function pose(mesh,i,x,y,z,sx,sy,sz,angle=0){dummy.position.set(x,y,z);dummy.rotation.set(0,angle,0);dummy.scale.set(sx,sy,sz);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);}
@@ -153,13 +150,7 @@ export function createCampusTraffic(T,kit,extension=0){
   function animate(t,focusX=0,focusZ=0){
     // Translate the circuits to the nearest 300-unit campus; no traffic crosses lawns.
     const ox=Math.round(focusX/300)*300,oz=extension?0:Math.round(focusZ/300)*300;root.position.set(ox,0,oz);root.updateMatrix();root.updateMatrixWorld(true);
-    cars.forEach((c,i)=>{
-      const s=loops[c.loop].sample(c.offset+t*c.speed),local=(x,y,z)=>[s.x+x*Math.cos(s.angle)+z*Math.sin(s.angle),y,s.z-x*Math.sin(s.angle)+z*Math.cos(s.angle)];
-      const length=c.shuttle?6.5:3.9;
-      pose(chassis,i*2,...local(0,.68,0),1.65,.7,length,s.angle);pose(chassis,i*2+1,...local(0,c.shuttle?1.63:1.1,-.16),1.48,c.shuttle?1.4:.75,c.shuttle?5.4:2.1,s.angle);
-      pose(glass,i,...local(0,c.shuttle?1.78:1.3,.05),1.5,c.shuttle?.66:.4,c.shuttle?4.9:1.75,s.angle);
-      for(let j=0;j<4;j++){const side=j%2?1:-1,front=j<2?1:-1;pose(wheels,i*4+j,...local(side*.79,.4,front*length*.31),1,1,1,s.angle);pose(lights,i*4+j,...local(side*.53,.75,front*(length*.49)),.32,.16,.06,s.angle);}
-    });
+    fleet.update(cars.map(c=>{const loop=loops[c.loop],distance=c.offset+t*c.speed,p=loop.sample(distance),ahead=loop.sample(distance+1);const turn=Math.atan2(Math.sin(ahead.angle-p.angle),Math.cos(ahead.angle-p.angle));return {...p,steer:Math.max(-.4,Math.min(.4,turn*kit.vehicles.model(c.style).wheelbase*2))};}),t);
     cyclists.forEach((c,i)=>{
       const s=bikeLoops[c.loop].sample(c.offset+t*c.speed),local=(x,y,z)=>[s.x+x*Math.cos(s.angle)+z*Math.sin(s.angle),y,s.z-x*Math.sin(s.angle)+z*Math.cos(s.angle)];
       for(let j=0;j<2;j++)pose(bikeWheels,i*2+j,...local(0,.4,j?.65:-.65),1,1,1,s.angle+Math.PI/2);
@@ -177,7 +168,7 @@ export function createCampusTraffic(T,kit,extension=0){
         tube(riders,i*9+5+j*2,local(side*.12,1.1,-.2),knee,.135);tube(riders,i*9+6+j*2,knee,foot,.1);
       }
     });
-    for(const m of [chassis,glass,wheels,lights,bikeWheels,bikeTubes,riders,heads])m.instanceMatrix.needsUpdate=true;
+    for(const m of [bikeWheels,bikeTubes,riders,heads])m.instanceMatrix.needsUpdate=true;
   }
-  animate(0);return {root,animate,cars,cyclists,loops};
+  animate(0);return {root,animate,cars,cyclists,loops,fleet};
 }

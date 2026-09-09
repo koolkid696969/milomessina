@@ -117,3 +117,19 @@ The added checks cover independent bounded movement with planted feet, exact mem
 ## Live integration verification
 
 The live adapter was checked against the authenticated source (six chapters / 118 joined on September 9, 2026). All 44 automated checks pass. Automated checks cover private-field exclusion, full-roster denominators, stable identities, malformed responses, polling, unchanged updates, failure recovery, hidden tabs, expanded lots, new completed houses, continuous floor sections, crowd bounds and terrain reuse. Desktop browser testing confirmed a selected construction site becomes a completed house and new chapter cards appear without a reload or camera reset. Browser testing uses a local-only fixture to simulate new members and chapters; no test registration is submitted to the source site. Hosting activation still requires the Vercel server environment variable and a deployment.
+
+
+## Refined vehicle fleet
+
+`village-vehicles.js` supplies shared sedan, crossover and campus-shuttle models. Bodywork has beveled edges, tapered noses, real wheel openings, a narrower roof and sloped glazing. Details include grilles, separate front/rear light graphics, door seams and handles, mirrors, wipers, rear plates and five-spoke alloy wheels. Painted panels use a moderately reflective material; glazing, rubber, metal and trim have baked colors. Moving wheels roll with distance and the front pair steer through corners.
+
+Every other moving vehicle (four of eight, including the shuttle) and every other car in each parking row is fomo-branded. Branded cars have uniform fomo-purple bodywork and white fomo graphics on both doors and the roof for aerial visibility. The texture uses the existing fomo symbol and Aeonik wordmark, with a violet background. Other vehicles retain ordinary paint colors. Parked cars share the sedan model; traffic includes all three silhouettes.
+
+Paint, details, wheels and logos share geometry and are instanced. Moving cars use soft contact shadows that travel with them, avoiding stale silhouettes in the campus’s cached sun-shadow map. Static parked cars cast ordinary sun shadows. Vehicle resources are created lazily and released with the district; unloading individual blocks does not dispose shared vehicle assets. Existing traffic circuits, vehicle counts and activity/reduced-motion controls remain intact.
+
+The 52 automated checks include exactly 50% branding across traffic and streamed parking rows, roof logo orientation, matching paint color, vehicle bounds, grounded wheels, outward-facing graphics, mixed branding, wheel rotation/steering and the existing district limits of fewer than 200 mesh objects and 22,000 instances. The visual harness at `tests/vehicle-gallery.html` allows inspection of each model from both sides. Desktop vehicle close-ups and village traffic were reviewed in the browser. Full-scene device FPS has not been benchmarked for this change.
+
+
+## Greek Row entrance banner
+
+A purple fabric banner with the original white fomo eyes hangs directly between the recreation center and residence buildings. Four short suspension cables attach to wall brackets on the facing facades; there are no poles or ground supports. Its placement derives from the buildings’ shared layout, with more than six units of clearance over the street. The eyes face outward on both sides. The banner follows the buildings when live chapter growth extends the row. It uses a static canvas texture, no additional animation loop, and the existing world resource disposal. The entrance is visible during the opening descent and from the settled village view.

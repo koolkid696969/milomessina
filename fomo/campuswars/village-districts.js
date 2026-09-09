@@ -1,6 +1,6 @@
 import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=22';
-import {createCampusKit} from './village-campus-kit.js?v=24';
-import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=32';
+import {createCampusKit} from './village-campus-kit.js?v=35';
+import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=35';
 
 export function createDistricts(T,extension=0){
   const root=new T.Group(),chunks=new Map(),kit=createCampusKit(T);
@@ -83,13 +83,13 @@ export function createDistricts(T,extension=0){
         kit.streetFurniture(p,side*14,-39,side);
         cylinder(p,side*32,3.3,-32,.06,6.6,0x687575);box(p,side*32+.44,5.3,-32,.78,1.7,.045,0x7b83ac);box(p,side*32+.44,5.3,-31.97,.035,1.4,.015,0xd9d4bd);
         for(const dx of [-5,5])tree(p,x+dx,-38,Math.floor(hash(x,dx)*10000),.8);
-        kit.parkedCar(p,side*43,-37,0,side);kit.parkedCar(p,side*47,-37,0,side+8);
+        kit.parkedCar(p,side*43,-37,0,side,false);kit.parkedCar(p,side*47,-37,0,side+8,true);
         kit.bins(p,side*31,30);kit.hedge(p,side*44,33,11);
       }else{
         kit.hedge(p,side*35,42,15);kit.hedge(p,side*46,20,11,Math.PI/2);
         kit.streetFurniture(p,side*15,37,cx*71+cz);
         for(const x of [side*22,side*36]){box(p,x,.34,41,5,.5,.45,0xb1ae9d);for(let i=0;i<3;i++)mesh(p,'leaf',x-1.4+i*1.4,.8,41,.65,.48,.6,pick([0x748363,0x7b8059,0x88785d],cx,cz,x,i));}
-        if(!spine)for(let i=0;i<6;i++)kit.parkedCar(p,side*(18+i*4.8),-40,side>0?Math.PI/2:-Math.PI/2,Math.floor(hash(cx,cz,side,i)*10000));
+        if(!spine)for(let i=0;i<6;i++)kit.parkedCar(p,side*(18+i*4.8),-40,side>0?Math.PI/2:-Math.PI/2,Math.floor(hash(cx,cz,side,i)*10000),i%2===1);
         if(spine){for(const x of [side*16,side*30]){table(p,x,39);kit.bins(p,x+1.8,40.5);}}
       }
       // Lamps and access bollards punctuate long pavements without blocking the road.
@@ -153,6 +153,7 @@ export function createDistricts(T,extension=0){
     for(const chunk of chunks.values())chunk.dispose();
     const resources=new Set();root.traverse(o=>{if(o.geometry)resources.add(o.geometry);if(o.isInstancedMesh)resources.add(o);for(const m of (Array.isArray(o.material)?o.material:[o.material]))if(m){resources.add(m);for(const v of Object.values(m))if(v?.isTexture)resources.add(v);}});
     Object.values(kit.geometries).forEach(g=>resources.add(g));
+    kit.vehicles.resources.forEach(r=>resources.add(r));
     for(const r of resources)if(!r.userData?.sharedResource)r.dispose();chunks.clear();
   }
   return {root,update,animate,chunks,traffic,horizon,dispose};
