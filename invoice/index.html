@@ -517,9 +517,23 @@ function byId(list, id){
   return null;
 }
 
+var SEEDED_IDS = ["ex1","ex2","ex3","ex4","ex5","ex6","exs1","exs2","exs3","exs4","exs5"];
+function wasSeeded(v){ return !!v.example || SEEDED_IDS.indexOf(v.id) > -1; }
+
 function loadLocal(){
   rows = lsGet(LS_ROWS) || [];
   shifts = lsGet(LS_SHIFTS) || [];
+  /* An earlier build seeded a week of made-up spends and shifts, and they
+     were written into this browser's store — dropping the seeding code
+     does not reach data already saved. Anything it planted goes on sight;
+     real lines typed alongside it are untouched. */
+  var planted = rows.filter(wasSeeded).length + shifts.filter(wasSeeded).length;
+  if (planted) {
+    rows = rows.filter(function(r){ return !wasSeeded(r); });
+    shifts = shifts.filter(function(v){ return !wasSeeded(v); });
+    saveAll();
+    toast("Cleared " + planted + " made-up " + (planted === 1 ? "line" : "lines") + ".");
+  }
 }
 
 /* Same call signature as the sheet version, so every button above is
