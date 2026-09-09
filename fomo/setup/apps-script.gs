@@ -75,9 +75,19 @@ function doPost(e) {
 }
 
 /* Open the /exec URL in a browser and you should see this. If you get a
-   Google sign-in page instead, the deployment is not set to "Anyone". */
+   Google sign-in page instead, the deployment is not set to "Anyone".
+
+   `ledger` answers the question you cannot otherwise ask from outside:
+   whether the version actually being SERVED is the one carrying the stipend
+   ledger, or an older deployment that only knows about the forms. Apps
+   Script serves the last deployed version, not the last saved one, so a
+   paste without a redeploy leaves this false. */
 function doGet() {
-  return reply(true, null, { hint: 'fomo campus form receiver is live' });
+  return reply(true, null, {
+    hint: 'fomo campus form receiver is live',
+    ledger: typeof invoiceApi === 'function',
+    clock: typeof shiftIn === 'function'
+  });
 }
 
 /* ── the pieces ──────────────────────────────────────────────── */

@@ -26,6 +26,28 @@ spend logged.
 Until that redeploy happens the page says so plainly on a banner and refuses to
 pretend it saved anything.
 
+### Checking whether it took
+
+Open the `/exec` URL itself in a browser. It answers with a line of JSON:
+
+    {"ok":true,"hint":"fomo campus form receiver is live","ledger":true,"clock":true}
+
+`ledger` and `clock` are the two halves of this tool. **`true` on both means the
+deployed version is the current one.** If either is missing or `false`, the URL is
+still serving older code and the page will keep showing its banner, however many
+times the script was saved — saving is not deploying.
+
+Two traps account for nearly every case:
+
+- **Deploy → New deployment** mints a *different* `/exec` URL and leaves the old
+  one serving the old code. The existing deployment has to be edited instead:
+  **Manage deployments →** pencil **→ Version: New version → Deploy**. If you did
+  end up with a new URL, either delete that deployment and edit the original, or
+  paste the new URL into both `invoice/index.html` and `fomo/assets/form.js`.
+- **The code went into a different script project** than the one this URL belongs
+  to — easy to do with more than one project in the account. `ledger` stays false
+  because the project behind this URL never received it.
+
 ## The passcode
 
 `PASSCODE` at the top of `index.html` is `monkey`. Change it to whatever
