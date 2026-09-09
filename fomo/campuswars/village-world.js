@@ -1,14 +1,16 @@
+import {createPongGames} from './village-pong.js?v=31';
 import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=30';
-import {createCompetition} from './village-competition.js?v=29';
+import {createCompetition} from './village-competition.js?v=32';
 import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=28';
-import {humanPose} from './village-human-motion.js?v=25';
+import {humanPose} from './village-human-motion.js?v=31';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=24';
 import {palettes,hash} from './village-district-layout.js?v=22';
-import {LOTS,toWorld,crowdMembers,activityPose} from './village-layout.js?v=25';
-import {createStreetNetwork} from './village-streets.js?v=28';
-import {createChapterBanner,bannerIdentity} from './village-banners.js?v=27';
+import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=32';
+import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=32';
+import {createChapterBanner,bannerIdentity} from './village-banners.js?v=32';
 
-export function createVillage(THREE,chapters){
+export function createVillage(THREE,chapters,{streets:existingStreet}={}){
+  const lots=createLots(chapters.length),extension=rowExtension(chapters.length);
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
   const materials=new Map(),landscapeKit=createCampusKit(THREE),grassMaterial=createGrassMaterial(THREE),lawns=[];
   function mat(color,emissive=0){const key=color+':'+emissive;if(!materials.has(key))materials.set(key,new THREE.MeshStandardMaterial({color,roughness:.84,emissive,emissiveIntensity:emissive?.45:0}));return materials.get(key);}
@@ -37,7 +39,7 @@ export function createVillage(THREE,chapters){
 
 
 
-  const streets=createStreetNetwork(THREE);world.add(streets);
+  const streets=existingStreet||createStreetNetwork(THREE);setStreetExtension(THREE,streets,extension);world.add(streets);
 
 
   // Street lamps, paths, trees and furniture give the village a lived-in scale.
@@ -48,6 +50,9 @@ export function createVillage(THREE,chapters){
     [-33,-9,10,33].forEach(z=>tree(side*29,z,.85+Math.abs(z)%3*.1));
     [-9,10].forEach(z=>{box(world,side*9,.6,z,1,.2,2.3,0x85694f);box(world,side*9.4,1,z,.13,.65,2.3,0x85694f);[-.8,.8].forEach(d=>box(world,side*9,.3,z+d,.8,.6,.12,0x333747));});
   });
+  for(let row=3;row<Math.ceil(lots.length/2);row++)for(const side of [-1,1]){
+    const z=-19+row*19;landscapeKit.lamp(world,side*7.6,z+9);tree(side*29,z+9,.95);
+  }
   const windowMaterials=[false,true].map(lit=>{const m=new THREE.MeshStandardMaterial({color:lit?0xffdca1:0x34414f,roughness:.5,emissive:0xa36527,emissiveIntensity:lit?.45:.01});m.userData.nightWindow=true;return m;});
   function windowUnit(parent,x,y,z,lit=true){
     box(parent,x,y,z,1.05,1.65,.13,0xe7dfcb);box(parent,x,y,z+.08,.8,1.38,.07,windowMaterials[Number(lit)]);
@@ -104,7 +109,7 @@ export function createVillage(THREE,chapters){
     const hit=box(site,0,2.8,0,12.5,6,12,new THREE.MeshBasicMaterial({visible:false}));hit.userData.chapter=chapter.id;pickables.push(hit);
     return site;
   }
-  LOTS.forEach((lot,index)=>{
+  lots.forEach((lot,index)=>{
     const group=new THREE.Group();group.position.set(lot.x,0,lot.z);group.rotation.y=lot.rotation;world.add(group);
     const chapter=chapters[index],id=chapter?.id||'empty';
     if(!chapter){
@@ -119,27 +124,28 @@ export function createVillage(THREE,chapters){
       anchors.push({id,point:new THREE.Vector3(lot.x,6,lot.z),lot});return;
     }
     const house=new THREE.Group();house.name=`chapter-house-${id}`;group.add(house);
-    const colors=[0xb77458,0xad6952,0xa3604c,0xd5cfbb,0x855d54];const wall=index===3?mat(colors[index]):facade(colors[index]);const width=[11,12.2,10.5,12.2,10.5][index],height=index===4?9.1:7.4,depth=7.5;
+    const style=lot.style;
+    const colors=[0xb77458,0xad6952,0xa3604c,0xd5cfbb,0x855d54];const wall=style===3?mat(colors[style]):facade(colors[style]);const width=[11,12.2,10.5,12.2,10.5][style],height=style===4?9.1:7.4,depth=7.5;
     box(house,0,.38,0,width+1,.6,depth+1,0xc1b5a0);box(house,0,height/2+.6,0,width,height,depth,wall);
     box(house,0,height+.65,0,width+.5,.3,depth+.5,0xe4ddca);box(house,0,4.1,3.85,width+.25,.18,.22,0xcbbb9f);
-    roof(house,0,height+.82,0,width+.8,depth+1.1,2.0,0x343846,index!==4);
+    roof(house,0,height+.82,0,width+.8,depth+1.1,2.0,0x343846,style!==4);
     box(house,-width*.3,height+1.4,-1.8,.85,2,.9,wall);box(house,-width*.3,height+2.45,-1.8,1,.16,1.05,0x76665e);
-    for(let floor=0;floor<(index===4?3:2);floor++)for(let col=0;col<5;col++){
+    for(let floor=0;floor<(style===4?3:2);floor++)for(let col=0;col<5;col++){
       const x=(col-2)*(width/5.8);if(floor===0&&col===2)continue;
-      windowUnit(house,x,1.95+floor*2.75,depth/2+.06,(floor*5+col+index)%4!==0);
+      windowUnit(house,x,1.95+floor*2.75,depth/2+.06,(floor*5+col+style)%4!==0);
     }
     // Side windows are modeled too, so every angle holds up during a walk.
-    [-1,1].forEach(side=>{const wing=new THREE.Group();wing.position.set(side*(width/2+.02),0,0);wing.rotation.y=side*Math.PI/2;house.add(wing);for(let floor=0;floor<2;floor++)[-2.2,0,2.2].forEach((x,j)=>windowUnit(wing,x,1.95+floor*2.75,0,(j+floor+index)%3!==0));});
-    const porchWidth=index===1?10.8:index===3?8:6.8;
+    [-1,1].forEach(side=>{const wing=new THREE.Group();wing.position.set(side*(width/2+.02),0,0);wing.rotation.y=side*Math.PI/2;house.add(wing);for(let floor=0;floor<2;floor++)[-2.2,0,2.2].forEach((x,j)=>windowUnit(wing,x,1.95+floor*2.75,0,(j+floor+style)%3!==0));});
+    const porchWidth=style===1?10.8:style===3?8:6.8;
     box(house,0,.48,4.7,porchWidth+1,.5,2.6,0xbab6ac);
     for(let step=0;step<3;step++)box(house,0,.13+step*.12,6.2-step*.38,3.3,.25,1.1,0xb9b5ac);
-    box(house,0,1.65,3.87,1.25,2.2,.13,[0x693b3e,0x313d60,0x3d3a37,0x343b58,0x6b3340][index]);box(house,.4,1.65,3.99,.07,.07,.05,0xebc36d);
-    const columnCount=index===1?6:4,colHeight=index===4?3.7:6.9;
+    box(house,0,1.65,3.87,1.25,2.2,.13,[0x693b3e,0x313d60,0x3d3a37,0x343b58,0x6b3340][style]);box(house,.4,1.65,3.99,.07,.07,.05,0xebc36d);
+    const columnCount=style===1?6:4,colHeight=style===4?3.7:6.9;
     for(let col=0;col<columnCount;col++){const x=(col/(columnCount-1)-.5)*(porchWidth-.4);cylinder(house,x,colHeight/2+.75,5.35,.2,colHeight,0xece4cf);box(house,x,.65,5.35,.66,.22,.66,0xece4cf);box(house,x,colHeight+.76,5.35,.63,.23,.63,0xece4cf);}
     box(house,0,colHeight+.98,4.7,porchWidth+.8,.55,2.5,0xe5ddc7);
-    if(index!==1)roof(house,0,colHeight+1.25,4.7,porchWidth+1,2.65,1.3,0xe8dfc9,false);
+    if(style!==1)roof(house,0,colHeight+1.25,4.7,porchWidth+1,2.65,1.3,0xe8dfc9,false);
     sign(house,chapter.letters,0,colHeight+.98,6.02,porchWidth*.65,.46);
-    if(index===0||index===3){box(house,0,3.98,4.7,5.8,.15,1.8,0xded7c7);box(house,0,4.8,5.54,5.8,.09,.09,0x3a3a42);for(let x=-2.8;x<=2.8;x+=.35)box(house,x,4.4,5.54,.04,.8,.04,0x3a3a42);}
+    if(style===0||style===3){box(house,0,3.98,4.7,5.8,.15,1.8,0xded7c7);box(house,0,4.8,5.54,5.8,.09,.09,0x3a3a42);for(let x=-2.8;x<=2.8;x+=.35)box(house,x,4.4,5.54,.04,.8,.04,0x3a3a42);}
     const bannerWidth=Math.min(8,porchWidth-.65)*.85,bannerTop=colHeight+.65;
     const banner=createChapterBanner(THREE,chapter,bannerWidth);
     banner.position.set(0,bannerTop-banner.geometry.parameters.height/2,6.18);house.add(banner);pickables.push(banner);
@@ -147,9 +153,9 @@ export function createVillage(THREE,chapters){
     box(house,0,bannerTop+.04,6.18,bannerWidth+.3,.07,.07,0xc3b997);
     [-1,1].forEach(side=>box(house,side*(bannerWidth/2-.12),bannerTop+.17,6.18,.045,.32,.045,0xc3b997));
     [-4.8,4.8].forEach(x=>{ball(group,x,.6,5.8,.65,0x4a5757);box(group,x,.27,5.8,1.3,.25,1.3,0x918a7d);});
-    // Chapter pennant, porch chairs, a table and speakers.
+    // Chapter pennant and speakers; playable tables are placed with the crowd.
     cylinder(group,-6.1,2.4,6.1,.045,4.8,0xc3b997);const flag=box(group,-5.52,4.3,6.1,1.15,.65,.045,bannerIdentity(chapter).primary);flags.push(flag);
-    if(chapter.joined){[-3.8,3.8].forEach(x=>{box(group,x,.6,6.7,.55,1.1,.5,0x232936);[.38,.78].forEach(y=>{const speaker=cylinder(group,x,y,6.98,.17,.025,0x596475);speaker.rotation.x=Math.PI/2;});});box(group,3.8,.72,8.5,1.9,.12,.85,0xa6906d);[-.65,.65].forEach(x=>box(group,3.8+x,.36,8.5,.1,.7,.5,0x4e4a48));for(let cup=0;cup<3;cup++)cylinder(group,3.35+cup*.35,.89,8.5,.07,.2,0xce5757);}
+    if(chapter.joined){[-3.8,3.8].forEach(x=>{box(group,x,.6,6.7,.55,1.1,.5,0x232936);[.38,.78].forEach(y=>{const speaker=cylinder(group,x,y,6.98,.17,.025,0x596475);speaker.rotation.x=Math.PI/2;});});}
     const hit=box(house,0,height/2,0,width+1,height+3,depth+5,new THREE.MeshBasicMaterial({visible:false}));hit.userData.chapter=id;pickables.push(hit);
     // Absolute onboarded counts grow the building, while the lawn and people retain their scale.
     // Smooth saturation keeps future growth inside the plot without a hard size cutoff.
@@ -164,14 +170,15 @@ export function createVillage(THREE,chapters){
     house.userData={chapter:id,joined:chapter.joined,footprint,roofline};
     anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot});
   });
-  world.add(createLawnBlades(THREE,LOTS.slice(0,chapters.length)));
-  const members=crowdMembers(chapters),parts={};
+  world.add(createLawnBlades(THREE,lots.slice(0,chapters.length)));
+  const members=crowdMembers(chapters,lots),parts={};
+  const pong=createPongGames(THREE,members);world.add(pong.root);
   const bodyGeometry=new THREE.CapsuleGeometry(.5,1,3,8);bodyGeometry.scale(1,.5,1);
   const roundParts=new Set(['head','hair','handL','handR','nose']);
   const names=['torso','pelvis','neck','head','hair','nose','armL','armR','foreL','foreR','handL','handR','legL','legR','shinL','shinR','shoeL','shoeR','cup','backpack'];
   for(const name of names){
     const geometry=roundParts.has(name)?landscapeKit.geometries.sphere:name.startsWith('shoe')?landscapeKit.geometries.shoe:name==='cup'?cylinderGeometry:name==='backpack'?landscapeKit.geometries.box:bodyGeometry;
-    const mesh=landscapeKit.instances(world,geometry,members.length,39);mesh.material=mat(0xffffff);mesh.castShadow=false;parts[name]=mesh;
+    const mesh=landscapeKit.instances(world,geometry,members.length,39);mesh.material=mat(0xffffff);mesh.castShadow=false;mesh.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,2,extension/2),Math.hypot(40,40+extension/2));parts[name]=mesh;
     members.forEach((m,i)=>{
       const shirt=name==='torso'||name.startsWith('arm')||(m.jacket&&name.startsWith('fore'));
       const skin=['head','neck','nose'].includes(name)||name.startsWith('hand')||name.startsWith('fore')||(m.shorts&&name.startsWith('shin'));
@@ -203,18 +210,22 @@ export function createVillage(THREE,chapters){
         limb('leg'+side,i,transform(leg.hip),transform(leg.knee),.155*h);
         limb('shin'+side,i,transform(leg.knee),transform(leg.ankle),.11*h);
         part('shoe'+side,[leg.ankle[0],leg.ankle[1]-.055+Math.abs(Math.sin(leg.pitch))*.145,leg.ankle[2]+.045],.15,.13,.29,0,leg.pitch);
-        if(j)part('cup',[arm.hand[0],arm.hand[1]+.04,arm.hand[2]+.025],.065,!state.walking&&hash(m.chapter,m.member,'cup')>.86?.13:0,.065);
+        if(j)part('cup',[arm.hand[0],arm.hand[1]+.04,arm.hand[2]+.025],.065,!state.walking&&m.action!=='pong'&&hash(m.chapter,m.member,'cup')>.86?.13:0,.065);
       }
     });
     Object.values(parts).forEach(mesh=>mesh.instanceMatrix.needsUpdate=true);
+    pong.animate(time);
     flags.forEach((flag,i)=>{flag.rotation.y=Math.sin(time*2+i)*.15;flag.rotation.z=Math.sin(time*3+i)*.035;});
   }
   animateCrowd(0);
-  const competition=createCompetition(THREE,chapters,anchors);world.add(competition.root);
+  const competition=createCompetition(THREE,chapters,anchors);world.add(competition.root);competition.board.position.z+=extension;
   const selection=new THREE.Mesh(new THREE.RingGeometry(6.8,7.0,64),new THREE.MeshBasicMaterial({color:0xa2aeff,transparent:true,opacity:.75,side:THREE.DoubleSide,depthWrite:false}));selection.rotation.x=-Math.PI/2;selection.position.y=.21;world.add(selection);
   // Batch repeated architectural parts so phones draw whole sets at once.
   world.updateMatrixWorld(true);
-  const dynamic=new Set([selection,...pickables,...flags,...Object.values(parts)]);
+  const dynamic=new Set([selection,...pickables,...flags,...Object.values(parts),...pong.games.map(game=>game.ball)]);
+  const resources=new Set();
+  function collect(){world.traverse(o=>{if(o===streets)return;if(o.geometry)resources.add(o.geometry);for(const m of (Array.isArray(o.material)?o.material:[o.material]))if(m){resources.add(m);for(const value of Object.values(m))if(value?.isTexture)resources.add(value);}if(o.isInstancedMesh)resources.add(o);});}
+  collect();Object.values(landscapeKit.geometries).forEach(g=>resources.add(g));materials.forEach(m=>resources.add(m));windowMaterials.forEach(m=>resources.add(m));
   batchCampusGeometry(THREE,world,[...dynamic,...lawns]);
   world.updateMatrixWorld(true);
   world.traverse(object=>{if(!dynamic.has(object)){object.matrixAutoUpdate=false;}});
@@ -222,7 +233,9 @@ export function createVillage(THREE,chapters){
   const emptyAnchor=anchors.find(a=>a.id==='empty');
   const beacon=emptyAnchor?createLotBeacon(THREE,emptyAnchor.lot):null;
   if(beacon){world.add(beacon.root);pickables.push(beacon.board);}
-  const nightLife=createNightLife(THREE,world,anchors,chapters);world.add(nightLife.root);
+  const nightLife=createNightLife(THREE,world,anchors,chapters);world.add(nightLife.root);nightLife.fire.position.z+=extension;
   function animateEffects(time){beacon?.animate(time);if(nightLife.root.visible)nightLife.animate(time);}
-  return {world,streets,pickables,anchors,members,parts,selection,animateCrowd,competition,beacon,nightLife,animateEffects};
+  collect();
+  function dispose(){for(const resource of resources)if(!resource.userData?.sharedResource)resource.dispose();resources.clear();}
+  return {world,streets,lots,extension,dispose,pickables,anchors,members,parts,selection,animateCrowd,competition,beacon,nightLife,animateEffects,pong};
 }

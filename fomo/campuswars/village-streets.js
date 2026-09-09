@@ -1,5 +1,21 @@
 import {createGrassMaterial} from './village-grass.js?v=28';
 import {hash} from './village-district-layout.js?v=22';
+// Insert road sections in the one opaque floor. UVs repeat the straight part
+// while the original end junction and the campus beyond it move outward.
+export function setStreetExtension(T,streets,extension=0) {
+  if ((streets.userData.extension||0)===extension) return;
+  const strips=[[-10000,30,-10000,30]];
+  for(let z=30;z<30+extension;z+=19) strips.push([z,Math.min(z+19,30+extension),-9.5,9.5]);
+  strips.push([30+extension,10000+extension,30,10000]);
+  const positions=[],uvs=[];
+  for(const [start,end,sourceStart,sourceEnd] of strips) {
+    const vertices=[[-10000,-start,0],[10000,-start,0],[-10000,-end,0],[10000,-end,0]];
+    const uv=[[0,(10000-sourceStart)/20000],[1,(10000-sourceStart)/20000],[0,(10000-sourceEnd)/20000],[1,(10000-sourceEnd)/20000]];
+    for(const i of [0,2,1,2,3,1]) {positions.push(...vertices[i]);uvs.push(...uv[i]);}
+  }
+  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));geometry.computeVertexNormals();
+  streets.geometry.dispose();streets.geometry=geometry;streets.userData.extension=extension;
+}
 // A single opaque floor carries all roads, grass, paths and paint. Its larger
 // campus pattern includes pedestrian districts instead of one road per block.
 export function createStreetNetwork(T){

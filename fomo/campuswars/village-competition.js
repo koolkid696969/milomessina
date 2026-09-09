@@ -1,6 +1,6 @@
-import {bannerIdentity} from './village-banner-art.js?v=27';
+import {bannerIdentity} from './village-banner-art.js?v=32';
 
-// These standings use the supplied onboarding snapshot, not unavailable trading P&L.
+// These standings use the chapter onboarding totals, not unavailable trading P&L.
 export function houseStandings(chapters,metric='progress'){
   const rows=chapters.filter(c=>c.active>0).map(c=>({...c,progress:c.joined/c.active}));
   const score=c=>metric==='members'?c.joined:c.progress;
@@ -53,17 +53,17 @@ export function createCompetition(T,chapters,anchors){
     ctx.fillStyle='#FFFFFF';ctx.font='700 121px Aeonik, Arial, sans-serif';ctx.fillText('THE ROW LEADERBOARD',100,211);
     ctx.fillStyle='#AFC0CD';ctx.font='500 40px Aeonik, Arial, sans-serif';ctx.fillText('ONBOARDING PROGRESS',105,315);
     ctx.textAlign='right';ctx.fillText('MEMBERS',w-327,315);ctx.fillText('%',w-110,315);
-    standings.forEach((row,i)=>{
+    standings.slice(0,5).forEach((row,i)=>{
       const y=382+i*166,first=i===0;
       ctx.fillStyle=first?'#263A39':i%2?'#152632':'#12212E';ctx.fillRect(66,y,w-132,148);
       ctx.fillStyle=bannerIdentity(row).primary;ctx.fillRect(66,y,13,148);
       ctx.fillStyle=first?'#E9C873':'#AFC0CD';ctx.textAlign='left';ctx.font='700 67px Aeonik, Arial, sans-serif';ctx.fillText(`#${row.rank}`,107,y+75);
-      ctx.fillStyle='#FFFFFF';ctx.font='700 55px Aeonik, Arial, sans-serif';ctx.fillText(row.name.toUpperCase(),260,y+54);
-      ctx.fillStyle='#ACBDC8';ctx.font='500 34px Aeonik, Arial, sans-serif';ctx.fillText(row.shortSchool.toUpperCase(),260,y+106);
+      ctx.fillStyle='#FFFFFF';ctx.font='700 55px Aeonik, Arial, sans-serif';ctx.fillText(row.name.toUpperCase(),260,y+54,1040);
+      ctx.fillStyle='#ACBDC8';ctx.font='500 34px Aeonik, Arial, sans-serif';ctx.fillText(row.shortSchool.toUpperCase(),260,y+106,1040);
       ctx.textAlign='right';ctx.fillStyle='#D0DCE4';ctx.font='500 58px Aeonik, Arial, sans-serif';ctx.fillText(`${row.joined} / ${row.active}`,w-328,y+76);
       ctx.fillStyle=first?'#E9C873':'#FFFFFF';ctx.font='700 75px Aeonik, Arial, sans-serif';ctx.fillText(`${Math.round(row.progress*100)}%`,w-111,y+76);
     });
-    ctx.textAlign='left';ctx.fillStyle='#AFC0CD';ctx.font='500 32px Aeonik, Arial, sans-serif';ctx.fillText('Registration snapshot · Trading ranks are determined on fomo.',100,h-74);
+    ctx.textAlign='left';ctx.fillStyle='#AFC0CD';ctx.font='500 32px Aeonik, Arial, sans-serif';ctx.fillText(`TOP ${Math.min(5,standings.length)} OF ${standings.length} CHAPTERS · Full standings below the village.`,100,h-74);
     ctx.fillStyle='#E9C873';ctx.font='700 27px Aeonik, Arial, sans-serif';ctx.textAlign='right';ctx.fillText('80% TO QUALIFY',w-100,h-27);
   });
   const face=new T.Mesh(new T.PlaneGeometry(11,7.4),new T.MeshStandardMaterial({color:map?0xffffff:0x152632,map,roughness:.8,emissive:0xffffff,emissiveMap:map,emissiveIntensity:map?.4:0}));

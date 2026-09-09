@@ -11,7 +11,7 @@
 @media(max-width:700px){.house-track.filtered{justify-content:flex-start}.house-track.filtered .house-card{width:185px}.house-track.filtered .house-card:only-child{margin-inline:auto}}
 
 /* A single photographic streetscape keeps light, scale and pavement continuous. */
-.house-track{display:grid;grid-template-columns:repeat(6,minmax(185px,1fr));width:100%;min-width:1110px;position:relative;isolation:isolate;padding-top:20px}
+.house-track{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(185px,1fr);width:100%;min-width:1110px;position:relative;isolation:isolate;padding-top:20px}
 .house-track::before{content:'';position:absolute;inset:74px 0 52px;background:none;z-index:-1;pointer-events:none}
 .house-track>.house-card{display:grid;grid-template-rows:54px auto 40px;align-items:center;justify-items:center;width:100%;padding:0 0 12px;isolation:auto}
 .house-card::after{display:none}.house-label{width:100%;height:54px;transform:none!important}

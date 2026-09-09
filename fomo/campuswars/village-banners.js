@@ -1,5 +1,5 @@
-import {bannerIdentity,paintChapterBanner} from './village-banner-art.js?v=27';
-export {bannerIdentity} from './village-banner-art.js?v=27';
+import {bannerIdentity,paintChapterBanner} from './village-banner-art.js?v=32';
+export {bannerIdentity} from './village-banner-art.js?v=32';
 // Chapter-specific artwork on shared sewn cloth and mounting hardware.
 const hardware=new WeakMap();
 export function createChapterBanner(T,chapter,width){
@@ -25,7 +25,7 @@ export function createChapterBanner(T,chapter,width){
   const banner=new T.Mesh(geometry,new T.MeshPhysicalMaterial({color:map?0xffffff:bannerIdentity(chapter).primary,...(map?{map,bumpMap,bumpScale:.018}:{}),roughness:.88,sheen:.65,sheenColor:0xf0e9db,sheenRoughness:.9,side:T.DoubleSide}));
   banner.name=`chapter-banner-${chapter.id}`;banner.userData={chapter:chapter.id,name:chapter.name,joined:chapter.joined,active:chapter.active,design:bannerIdentity(chapter).key};
   if(!hardware.has(T))hardware.set(T,{geometry:new T.TorusGeometry(.045,.012,6,16),material:new T.MeshStandardMaterial({color:0xb4ab91,metalness:.65,roughness:.35})});
-  const kit=hardware.get(T);
+  const kit=hardware.get(T);kit.geometry.userData.sharedResource=true;kit.material.userData.sharedResource=true;
   for(const x of [-width/2+.14,width/2-.14])for(const y of [-height/2+.14,height/2-.14]){
     const ring=new T.Mesh(kit.geometry,kit.material);ring.position.set(x,y,.038);banner.add(ring);
   }

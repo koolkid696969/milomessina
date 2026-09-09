@@ -131,19 +131,19 @@ export function createCampusPeople(T,kit,kind,cx,cz){
   animate(0);return {root,people,animate,dispose(){capsule.dispose();sphere.dispose();}};
 }
 
-export function createCampusTraffic(T,kit){
+export function createCampusTraffic(T,kit,extension=0){
   const root=new T.Group(),dummy=new T.Object3D(),color=new T.Color();
   // Two one-way circuits have separate lane centers and rounded junction turns.
-  const loops=[roundedLoop(2.4,-47.6,97.6,47.6,7.8),roundedLoop(-97.6,-47.6,-2.4,47.6,7.8)];
+  const loops=[roundedLoop(2.4,-47.6,97.6,47.6+extension,7.8),roundedLoop(-97.6,-47.6,-2.4,47.6+extension,7.8)];
   const cars=Array.from({length:8},(_,i)=>({loop:i%2,offset:22+i*83,speed:4.4,shuttle:i===3,color:[0xf1e9d6,0x66829e,0xa75a49,0xd6dbd8,0x48585e,0xbaa283,0x8c959e,0x555766][i]}));
   const cyclists=Array.from({length:12},(_,i)=>({loop:i%2,offset:i*57+19,speed:2.65,phase:i*2.1}));
-  const bikeLoops=[roundedLoop(4.7,-45.3,95.3,45.3,8),roundedLoop(-95.3,-45.3,-4.7,45.3,8)];
+  const bikeLoops=[roundedLoop(4.7,-45.3,95.3,45.3+extension,8),roundedLoop(-95.3,-45.3,-4.7,45.3+extension,8)];
   const rounded=new T.CapsuleGeometry(.5,1,3,10);rounded.scale(1,.5,1);
   const outline=new T.Shape(),r=.11;
   outline.moveTo(-.5+r,-.5);outline.lineTo(.5-r,-.5);outline.quadraticCurveTo(.5,-.5,.5,-.5+r);outline.lineTo(.5,.5-r);outline.quadraticCurveTo(.5,.5,.5-r,.5);outline.lineTo(-.5+r,.5);outline.quadraticCurveTo(-.5,.5,-.5,.5-r);outline.lineTo(-.5,-.5+r);outline.quadraticCurveTo(-.5,-.5,-.5+r,-.5);
   const carBody=new T.ExtrudeGeometry(outline,{depth:.84,bevelEnabled:true,bevelThickness:.08,bevelSize:.04,bevelSegments:2,curveSegments:3});carBody.rotateX(-Math.PI/2);carBody.center();
   const tire=new T.CylinderGeometry(.32,.32,.19,14);tire.rotateZ(Math.PI/2);
-  function instances(geo,n){const m=new T.InstancedMesh(geo,kit.material(0xffffff),n);m.instanceMatrix.setUsage(T.DynamicDrawUsage);m.boundingSphere=new T.Sphere(new T.Vector3(0,2,0),145);root.add(m);return m;}
+  function instances(geo,n){const m=new T.InstancedMesh(geo,kit.material(0xffffff),n);m.instanceMatrix.setUsage(T.DynamicDrawUsage);m.boundingSphere=new T.Sphere(new T.Vector3(0,2,extension/2),145+extension/2);root.add(m);return m;}
   const chassis=instances(carBody,cars.length*2),glass=instances(kit.geometries.box,cars.length),wheels=instances(tire,cars.length*4),lights=instances(kit.geometries.box,cars.length*4),bikeWheels=instances(kit.geometries.wheel,cyclists.length*2),bikeTubes=instances(kit.geometries.cylinder,cyclists.length*13),riders=instances(rounded,cyclists.length*9),heads=instances(kit.geometries.sphere,cyclists.length*2);
   cars.forEach((c,i)=>{for(let j=0;j<2;j++)chassis.setColorAt(i*2+j,color.set(c.color));glass.setColorAt(i,color.set(0x3c535e));for(let j=0;j<4;j++){wheels.setColorAt(i*4+j,color.set(0x293137));lights.setColorAt(i*4+j,color.set(j<2?0xffebbc:0xc15644));}});
   cyclists.forEach((c,i)=>{for(let j=0;j<2;j++){bikeWheels.setColorAt(i*2+j,color.set(0x303d42));heads.setColorAt(i*2+j,color.set(j?0xe0d9c7:0xc69b7a));}for(let j=0;j<13;j++)bikeTubes.setColorAt(i*13+j,color.set(j<6?0x6b8491:0x899593));for(let j=0;j<9;j++){riders.setColorAt(i*9+j,color.set(j===0?[0xb99269,0x576e99,0x994f47][i%3]:j<5?0xc69b7a:0x43505b));}});
@@ -152,7 +152,7 @@ export function createCampusTraffic(T,kit){
   function tube(mesh,i,from,to,r){a.set(...from);b.set(...to);const dir=b.clone().sub(a);dummy.position.copy(a).add(b).multiplyScalar(.5);dummy.quaternion.setFromUnitVectors(up,dir.clone().normalize());dummy.scale.set(r,dir.length(),r);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);}
   function animate(t,focusX=0,focusZ=0){
     // Translate the circuits to the nearest 300-unit campus; no traffic crosses lawns.
-    const ox=Math.round(focusX/300)*300,oz=Math.round(focusZ/300)*300;root.position.set(ox,0,oz);root.updateMatrix();root.updateMatrixWorld(true);
+    const ox=Math.round(focusX/300)*300,oz=extension?0:Math.round(focusZ/300)*300;root.position.set(ox,0,oz);root.updateMatrix();root.updateMatrixWorld(true);
     cars.forEach((c,i)=>{
       const s=loops[c.loop].sample(c.offset+t*c.speed),local=(x,y,z)=>[s.x+x*Math.cos(s.angle)+z*Math.sin(s.angle),y,s.z-x*Math.sin(s.angle)+z*Math.cos(s.angle)];
       const length=c.shuttle?6.5:3.9;

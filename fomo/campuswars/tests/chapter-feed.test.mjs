@@ -1,0 +1,67 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {parseChapterAdmin,fetchChapterSnapshot} from '../../../server/campuswars-source.mjs';
+import {startChapterFeed,validateSnapshot} from '../chapter-feed.js';
+import handler from '../../../api/campuswars.mjs';
+
+const row = ({id='12345678-abcd-abcd-abcd-123456789012',name='Phi Delta Theta',school='Florida International University',joined=1,active=55}={}) => `<tr><td><div class="ch">${name}</div><div class="sc">${school} · Fraternity</div></td><td>PRIVATE NAME</td><td>private@example.com</td><td><span class="prog">${joined} / ${Math.ceil(active*.8)}</span><div class="dim">${active} actives</div></td><td>PRIVATE NOMINATION</td><td>Sep 9, 2026</td><td><input value="PRIVATE INVITE"><button data-del="${id}">Delete</button></td></tr>`;
+const table = rows => `<table><thead><tr>${['Chapter','Who registered','Contact','Progress','Best / worst','Registered','Join link'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+const snapshot = joined => ({live:true,updatedAt:'2026-09-09T13:00:00Z',chapters:parseChapterAdmin(table(row({joined})))});
+
+test('admin adapter uses full rosters and exposes only approved chapter aggregates',()=>{
+  const chapters=parseChapterAdmin(table(row()));
+  assert.equal(chapters.length,1);assert.equal(chapters[0].active,55);assert.equal(chapters[0].joined,1);assert.equal(chapters[0].letters,'ΦΔΘ');
+  assert.deepEqual(Object.keys(chapters[0]).sort(),['id','name','letters','school','shortSchool','type','joined','active','registered','house'].sort());
+  assert(!/PRIVATE|private@example|INVITE/.test(JSON.stringify(chapters)));
+});
+test('different schools keep distinct chapter identities and old share links survive',()=>{
+  const chapters=parseChapterAdmin(table(row()+row({id:'22345678-abcd-abcd-abcd-123456789012',school:'University of Tampa'})));
+  assert.equal(chapters[0].id,'phi-delta-theta-tampa');assert.notEqual(chapters[0].id,chapters[1].id);
+  assert.equal(parseChapterAdmin(table(row({name:'Alpha &amp; Omega',school:'St. John&#39;s University'})))[0].school,"St. John's University");
+});
+test('login pages, incomplete rows, duplicate identities and invalid totals fail closed',()=>{
+  for(const html of ['Authentication required','<html>Service unavailable</html>',table(row().replace('55 actives','unavailable')),table(row()+row()),table(row().replace('1 / 44','-1 / 44'))])assert.throws(()=>parseChapterAdmin(html));
+  assert.deepEqual(parseChapterAdmin(table('')),[]);
+});
+test('server reads the fixed authenticated source without following redirects or leaking credentials',async()=>{
+  const result=await fetchChapterSnapshot({password:'test-only-password',fetchImpl:async(url,options)=>{
+    assert.equal(url,'https://www.aryatoufanian.com/admin/');assert.equal(options.redirect,'error');assert.equal(options.cache,'no-store');
+    assert(options.headers.Authorization.startsWith('Basic '));return {ok:true,text:async()=>table(row())};
+  }});
+  assert.equal(result.live,true);assert.equal(result.chapters.length,1);assert(!JSON.stringify(result).includes('password'));
+  await assert.rejects(fetchChapterSnapshot({password:'test-only',fetchImpl:async()=>({ok:false,status:401})}));
+});
+test('browser rejects malformed updates instead of replacing the last good village',()=>{
+  for(const change of [{live:false},{chapters:null},{updatedAt:'invalid'},{chapters:[{...snapshot(1).chapters[0],joined:-1}]},{chapters:[...snapshot(1).chapters,...snapshot(1).chapters]}])assert.throws(()=>validateSnapshot({...snapshot(1),...change}));
+});
+test('refresh applies new data, skips unchanged payloads, recovers after failure and pauses hidden pages',async()=>{
+  const updates=[],statuses=[],timers=new Map();let n=0,handler,calls=0,fail=false,current=snapshot(1);
+  const doc={hidden:false,addEventListener:(_,fn)=>handler=fn,removeEventListener(){handler=null;}};
+  const flush=()=>new Promise(resolve=>setImmediate(resolve));
+  const feed=startChapterFeed({documentRef:doc,onUpdate:s=>updates.push(s),onStatus:s=>statuses.push(s),schedule:(fn,delay)=>{timers.set(++n,{fn,delay});return n;},cancel:id=>timers.delete(id),fetchImpl:async()=>{calls++;return {ok:!fail,json:async()=>current};}});
+  await flush();assert.equal(updates.length,1);assert([...timers.values()].some(t=>t.delay===30000));
+  await feed.refresh();assert.equal(updates.length,1);
+  current=snapshot(15);await feed.refresh();assert.equal(updates.at(-1).chapters[0].joined,15);
+  fail=true;await feed.refresh();assert.equal(updates.length,2);assert.equal(statuses.at(-1).live,false);
+  fail=false;await feed.refresh();assert.equal(statuses.at(-1).live,true);
+  doc.hidden=true;handler();const previous=calls;await feed.refresh();assert.equal(calls,previous);assert.equal(timers.size,0);
+  doc.hidden=false;handler();await flush();assert.equal(calls,previous+1);feed.stop();assert.equal(timers.size,0);
+});
+
+test('hosted endpoint rejects writes, hides upstream failures and coalesces concurrent reads',async()=>{
+  const password=process.env.CAMPUSWARS_ADMIN_PASSWORD,originalFetch=globalThis.fetch;
+  const response=()=>({headers:{},code:200,setHeader(k,v){this.headers[k]=v;},status(c){this.code=c;return this;},json(body){this.body=body;return this;}});
+  try {
+    delete process.env.CAMPUSWARS_ADMIN_PASSWORD;
+    const missing=response();await handler({method:'GET'},missing);assert.equal(missing.code,503);assert.equal(missing.headers['Cache-Control'],'no-store');
+    const write=response();await handler({method:'POST'},write);assert.equal(write.code,405);
+    process.env.CAMPUSWARS_ADMIN_PASSWORD='test-only';
+    globalThis.fetch=async()=>{throw new Error('PRIVATE secret source error');};
+    const failed=response();await handler({method:'GET'},failed);assert.equal(failed.code,502);assert(!JSON.stringify(failed.body).includes('PRIVATE'));
+    let requests=0,release;const held=new Promise(resolve=>release=resolve);
+    globalThis.fetch=async()=>{requests++;await held;return {ok:true,text:async()=>table(row())};};
+    const a=response(),b=response();const pending=Promise.all([handler({method:'GET'},a),handler({method:'GET'},b)]);release();await pending;
+    assert.equal(requests,1);assert.equal(a.code,200);assert.deepEqual(a.body,b.body);
+    await handler({method:'GET'},response());assert.equal(requests,1);
+  } finally {globalThis.fetch=originalFetch;if(password===undefined)delete process.env.CAMPUSWARS_ADMIN_PASSWORD;else process.env.CAMPUSWARS_ADMIN_PASSWORD=password;}
+});

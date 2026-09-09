@@ -1,15 +1,15 @@
 import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=22';
 import {createCampusKit} from './village-campus-kit.js?v=24';
-import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=25';
+import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=32';
 
-export function createDistricts(T){
+export function createDistricts(T,extension=0){
   const root=new T.Group(),chunks=new Map(),kit=createCampusKit(T);
   const {box,mesh,cylinder,bar,tree:plantTree,bench,lamp,table,path,sign}=kit;
   function tree(p,x,z,seed,size){
     const blocked=(p.userData.specs||[]).some(s=>{const dx=x-(s.x-p.position.x),dz=z-(s.z-p.position.z),a=s.rotation;return Math.abs(dx*Math.cos(a)-dz*Math.sin(a))<s.width/2+2&&Math.abs(dx*Math.sin(a)+dz*Math.cos(a))<s.depth/2+3;});
     if(!blocked)plantTree(p,x,z,seed,size);
   }
-  const traffic=createCampusTraffic(T,kit);root.add(traffic.root);
+  const traffic=createCampusTraffic(T,kit,extension);root.add(traffic.root);
   function bikeRack(p,x,z){
     for(let i=0;i<5;i++){
       const a=x+i*.75;bar(p,[a,.1,z],[a,.9,z],.035,0x7a898b);bar(p,[a,.9,z],[a,.9,z+1],.035,0x7a898b);bar(p,[a,.9,z+1],[a,.1,z+1],.035,0x7a898b);
@@ -117,6 +117,7 @@ export function createDistricts(T){
     cylinder(p,237,26,185,6,6,0xaebdb5);mesh(p,'dome',237,29,185,6,2,6,0xaebdb5);
     box(p,-248,16,55,8,32,8,0x9b9e8e);for(const x of [-251,-245])for(const z of [52,58])box(p,x,35,z,.6,6,.6,0xaeb3a3);mesh(p,'cone',-248,40,55,6,6,6,0x829790);
     for(const z of [-155,-115]){cylinder(p,247,20,z,.35,40,0x9cacab);box(p,247,40,z,13,1.5,.6,0x859794);for(let i=0;i<6;i++)box(p,242+i*2,40,z+.4,1.5,1.1,.3,0xc6d0bd);}
+    if(extension)for(const child of p.children)if(child.position.z>30)child.position.z+=extension;
     kit.batch(p);p.updateMatrixWorld(true);p.traverse(o=>o.matrixAutoUpdate=false);return p;
   }
   const horizon=distantCampus();root.add(horizon);
@@ -127,13 +128,17 @@ export function createDistricts(T){
     landscape(p,kind,cx,cz);
     fillDetails(p,kind,cx,cz);
     const activity=createCampusPeople(T,kit,kind,cx,cz);p.add(activity.root);
+    if(extension){
+      if(cz>0)p.position.z+=extension;
+      else if(cz===0)for(const child of p.children)if(child!==activity.root && child.position.z>=30)child.position.z+=extension;
+    }
     kit.batch(p);
     p.updateMatrixWorld(true);p.traverse(o=>o.matrixAutoUpdate=false);
     return {group:p,kind,specs,people:activity.people,animate:activity.animate,dispose(){activity.dispose();kit.disposeChunk(p);}};
   }
   let lastKey='';
   function update(x,z){
-    const center=districtAt(x,z),key=`${center.x},${center.z}`;if(key===lastKey)return false;lastKey=key;
+    const center=districtAt(x,z>30?Math.max(30,z-extension):z),key=`${center.x},${center.z}`;if(key===lastKey)return false;lastKey=key;
     const wanted=new Set();
     for(let dx=-1;dx<=1;dx++)for(let dz=-1;dz<=1;dz++){const a=center.x+dx,b=center.z+dz,id=`${a},${b}`;wanted.add(id);if(!chunks.has(id))chunks.set(id,makeChunk(a,b));}
     for(const [id,chunk] of chunks)if(!wanted.has(id)){chunk.group.removeFromParent();chunk.dispose();chunks.delete(id);}
@@ -144,5 +149,11 @@ export function createDistricts(T){
     traffic.animate(time,x,z);
   }
   update(0,0);
-  return {root,update,animate,chunks,traffic,horizon};
+  function dispose(){
+    for(const chunk of chunks.values())chunk.dispose();
+    const resources=new Set();root.traverse(o=>{if(o.geometry)resources.add(o.geometry);if(o.isInstancedMesh)resources.add(o);for(const m of (Array.isArray(o.material)?o.material:[o.material]))if(m){resources.add(m);for(const v of Object.values(m))if(v?.isTexture)resources.add(v);}});
+    Object.values(kit.geometries).forEach(g=>resources.add(g));
+    for(const r of resources)if(!r.userData?.sharedResource)r.dispose();chunks.clear();
+  }
+  return {root,update,animate,chunks,traffic,horizon,dispose};
 }

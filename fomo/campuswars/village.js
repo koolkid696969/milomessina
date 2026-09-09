@@ -1,11 +1,11 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=30';
-import {createDistricts} from './village-districts.js?v=25';
+import {createVillage} from './village-world.js?v=32';
+import {createDistricts} from './village-districts.js?v=32';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
 const loading=document.getElementById('village-loading');
-const chapters=JSON.parse(document.getElementById('chapters-data').textContent).chapters;
+let chapters=JSON.parse(document.getElementById('chapters-data').textContent).chapters;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Opening composition calibrated from the supplied street-level reference.
 const openingView={target:[1.808,2,-8.101],theta:2.956047,phi:.224457,radius:46.627674};
@@ -26,8 +26,8 @@ function startVillage(){
   const ambient=new THREE.HemisphereLight(0xd4e2ed,0x857768,1.55);scene.add(ambient);
   const sun=new THREE.DirectionalLight(0xffe5c6,2.6);sun.position.set(-35,55,30);sun.castShadow=true;sun.shadow.mapSize.set(coarse?1024:2048,coarse?1024:2048);sun.shadow.radius=1.4;Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:150});sun.shadow.normalBias=.05;sun.shadow.bias=-.00015;scene.add(sun);scene.add(sun.target);
   const fill=new THREE.DirectionalLight(0xc4d2e0,.5);fill.position.set(30,15,-25);scene.add(fill);
-  const village=createVillage(THREE,chapters);scene.add(village.world);
-  const districts=createDistricts(THREE);scene.add(districts.root);
+  let village=createVillage(THREE,chapters);scene.add(village.world);
+  let districts=createDistricts(THREE,village.extension);scene.add(districts.root);
   let autoOrbit=!reduced,entrancePending=!reduced,entranceActive=false,entranceTime=0;
   function takeControl(){
     autoOrbit=false;entrancePending=false;
@@ -48,13 +48,23 @@ function startVillage(){
     village.nightLife.setNight(night);viewDirty=true;wake();
   });
   function resetView(){wantedTarget.set(...openingView.target);wantedRadius=openingView.radius;wantedPhi=openingView.phi;wantedTheta=openingView.theta;wake();}
-  function choose(id,focus=false){
+  function choose(id,focus=false,emit=true){
     const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
     village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);
     if(focus){takeControl();wantedTarget.set(anchor.lot.x*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=anchor.lot.x<0?1.08:-1.08;}
-    document.dispatchEvent(new CustomEvent('village:select',{detail:{id}}));wake();
+    if(emit)document.dispatchEvent(new CustomEvent('village:select',{detail:{id}}));wake();
   }
   document.addEventListener('chapter:select',e=>choose(e.detail.id,Boolean(e.detail.focus)));
+  document.addEventListener('chapters:update',event=>{
+    const previous=village,next=createVillage(THREE,event.detail.chapters,{streets:previous.streets});
+    chapters=event.detail.chapters;scene.remove(previous.world);scene.add(next.world);village=next;previous.dispose();
+    if(previous.extension!==next.extension){scene.remove(districts.root);districts.dispose();districts=createDistricts(THREE,next.extension);scene.add(districts.root);}
+    village.nightLife.setNight(nightToggle.getAttribute('aria-pressed')==='true');
+    village.animateCrowd(partyTime);village.animateEffects(partyTime);
+    const requested=event.detail.selectedId||selected;
+    choose(village.anchors.some(a=>a.id===requested)?requested:chapters[0]?.id||'empty',false);
+    renderer.shadowMap.needsUpdate=true;viewDirty=true;wake();
+  });
   document.addEventListener('party:pause',e=>{paused=e.detail.paused;wake();});
   document.getElementById('village-overview').addEventListener('click',()=>{takeControl();resetView();});
   document.getElementById('village-leaderboard').addEventListener('click',()=>{
@@ -130,7 +140,7 @@ function startVillage(){
     }
     if(!paused&&visible&&!document.hidden){
       partyTime+=dt;village.animateEffects(partyTime);
-      if(Math.hypot(target.x,target.z)<110)village.animateCrowd(partyTime);
+      village.animateCrowd(partyTime);
       districts.animate(partyTime,target.x,target.z);
     }
     renderer.render(scene,camera);lastRender=now;
@@ -139,6 +149,7 @@ function startVillage(){
     if(visible&&!document.hidden&&(!paused||settling||entranceActive))wake();
   }
   resize();resetView();
-  const initial=new URLSearchParams(location.hash.slice(1)).get('chapter');choose(village.anchors.some(a=>a.id===initial)?initial:selected,false);
+  // Do not overwrite a new chapter's deep link before its first live response.
+  const initial=new URLSearchParams(location.hash.slice(1)).get('chapter');choose(village.anchors.some(a=>a.id===initial)?initial:selected,false,false);
   loading.hidden=true;shell.classList.add('village-ready');wake();
 }

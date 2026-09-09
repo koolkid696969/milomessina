@@ -1,9 +1,10 @@
 'use strict';
 (() => {
-  const { chapters } = JSON.parse(document.getElementById('chapters-data').textContent);
+  let { chapters } = JSON.parse(document.getElementById('chapters-data').textContent);
   const byId = new Map(chapters.map(chapter => [chapter.id, chapter]));
   const neighborhood = document.getElementById('neighborhood');
-  const cards = [...document.querySelectorAll('.house-card')];
+  let cards = [...document.querySelectorAll('.house-card')];
+  const cardTemplate = cards[0].cloneNode(true);
   const panel = document.getElementById('chapter-panel');
   const panelShare = document.getElementById('panel-share');
   const panelClaim = document.getElementById('panel-claim');
@@ -97,7 +98,7 @@
   neighborhood.addEventListener('click', event => {
     if (dragged) {event.preventDefault();event.stopImmediatePropagation();dragged = false;}
   }, true);
-  cards.forEach(card => {
+  function bindCard(card) {
     card.addEventListener('click', () => selectChapter(card.dataset.chapter));
     card.addEventListener('keydown', event => {
       if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
@@ -108,7 +109,8 @@
       visible[next].focus({preventScroll: true});
       selectChapter(visible[next].dataset.chapter, {scroll: true});
     });
-  });
+  }
+  cards.forEach(bindCard);
 
   const toast = document.querySelector('.toast');
   let toastTimer;
@@ -123,7 +125,7 @@
     const url = chapter ? `${canonicalUrl}#chapter=${encodeURIComponent(chapter.id)}` : canonicalUrl;
     const data = {
       title: chapter ? `${chapter.letters} — fomo Campus Wars` : 'Get your frat paid — fomo Campus Wars',
-      text: chapter ? `${chapter.name}: ${chapter.joined} in, ${Math.max(0, target - chapter.joined)} more to hit 80% in this registration snapshot. Let’s get the house on fomo.` : 'There’s an empty lot for our chapter in the Greek village. $500,000 committed. Who’s getting our house on the map?',
+      text: chapter ? `${chapter.name}: ${chapter.joined} in, ${Math.max(0, target - chapter.joined)} more to hit 80%. Let’s get the house on fomo.` : 'There’s an empty lot for our chapter in the Greek village. $500,000 committed. Who’s getting our house on the map?',
       url
     };
     if (navigator.share) {
@@ -155,11 +157,53 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=30').catch(error => {
+  import('./village.js?v=32').catch(error => {
     console.error('Unable to load Greek village:', error);
     document.getElementById('village-loading').textContent = 'The village couldn’t load. Browse every chapter’s progress below.';
     document.getElementById('village').classList.add('village-unavailable');
   });
+  let lastUpdated;
+  function updateChapters(snapshot) {
+    const focusedChapter = document.activeElement?.closest('.house-card')?.dataset.chapter;
+    // Preserve existing lot order across refreshes, including a changed source sort.
+    const next = new Map(snapshot.chapters.map(c => [c.id,c]));
+    chapters = [...chapters.filter(c => next.has(c.id)).map(c => next.get(c.id)), ...snapshot.chapters.filter(c => !byId.has(c.id))];
+    byId.clear();chapters.forEach(c => byId.set(c.id,c));
+    const track = document.getElementById('house-track'), empty = cards.find(c => c.dataset.chapter === 'empty');
+    const existing = new Map(cards.map(c => [c.dataset.chapter,c]));
+    for (const card of cards) if (card !== empty && !byId.has(card.dataset.chapter)) card.remove();
+    for (const chapter of chapters) {
+      let card = existing.get(chapter.id);
+      if (!card) {card = cardTemplate.cloneNode(true);card.dataset.chapter = chapter.id;bindCard(card);}
+      card.querySelector('.house-label strong').textContent = chapter.letters;
+      card.querySelector('.house-label span').textContent = chapter.shortSchool;
+      const progress = chapter.joined / chapter.active * 100;
+      const line = card.querySelector('.house-progress > span');
+      const count = document.createElement('b');count.textContent = chapter.joined;
+      const percent = document.createElement('em');percent.textContent = `${Math.round(progress)}%`;
+      line.replaceChildren(count,document.createTextNode(` / ${chapter.active} in `),percent);
+      card.querySelector('.progress-track i').style.width = `${Math.min(100,progress)}%`;
+      card.setAttribute('aria-label',`${chapter.name}, ${chapter.school}: ${chapter.joined} of ${chapter.active} members joined`);
+      track.insertBefore(card,empty);
+    }
+    cards = [...track.querySelectorAll('.house-card')];
+    const current = {...snapshot,chapters};
+    const requestedChapter = new URLSearchParams(location.hash.slice(1)).get('chapter');
+    if (requestedChapter === 'empty' || byId.has(requestedChapter)) selectedId = requestedChapter;
+    if (selectedId !== 'empty' && !byId.has(selectedId)) selectedId = chapters[0]?.id || 'empty';
+    document.getElementById('chapters-data').textContent = JSON.stringify(current);
+    document.dispatchEvent(new CustomEvent('chapters:update',{detail:{...current,selectedId}}));
+    selectChapter(selectedId,{writeHash:false,emit:false});
+    if (focusedChapter) cards.find(card => card.dataset.chapter === focusedChapter)?.focus({preventScroll:true});
+  }
+  import('./chapter-feed.js?v=32').then(({startChapterFeed}) => startChapterFeed({
+    onUpdate:updateChapters,
+    onStatus(status) {
+      if (status.live) lastUpdated = status.updatedAt;
+      const time = lastUpdated ? new Date(lastUpdated).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}) : '';
+      document.getElementById('chapter-sync').textContent = status.live ? `Live onboarding · Updated ${time} · Refreshes every 30 seconds` : lastUpdated ? `Updates reconnecting · Showing data from ${time}` : 'Connecting to live onboarding · Showing saved registrations';
+    }
+  })).catch(() => {document.getElementById('chapter-sync').textContent = 'Live updates unavailable · Showing saved registrations';});
   if ('IntersectionObserver' in window) {
     const dock = document.querySelector('.mobile-dock');
     new IntersectionObserver(([entry]) => dock.classList.toggle('visible', !entry.isIntersecting), {threshold:0}).observe(document.getElementById('village'));

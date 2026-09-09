@@ -8,7 +8,7 @@ const identities={
   'tau-kappa-epsilon-tampa':{key:'cherry-varsity',primary:'#AD2624',secondary:'#919194',ink:'#FFFFFF',paper:'#FFFFFF'}
 };
 const fallback={key:'chapter-classic',primary:'#252A51',secondary:'#C6BD9F',ink:'#FFFFFF',paper:'#FFFFFF'};
-export function bannerIdentity(chapter){return identities[chapter.id]||fallback;}
+export function bannerIdentity(chapter){return identities[chapter.id]||Object.entries(identities).find(([id])=>id.startsWith(chapter.name.toLowerCase().replaceAll(" ","-")+"-"))?.[1]||fallback;}
 
 export function paintChapterBanner(ctx,chapter,w,h){
   const b=bannerIdentity(chapter),serif='Georgia, serif',sans='Aeonik, Arial, sans-serif';

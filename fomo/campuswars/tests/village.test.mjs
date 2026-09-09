@@ -54,7 +54,7 @@ test('most members stay in conversation groups with only five chapter walkers',(
   assert.equal(village.members.filter(m=>m.walking).length,5);
   const standing=village.members.filter(m=>!m.walking);assert(standing.every(m=>m.groupSize>=2));
   for(const member of standing){const a=activityPose(member,0),b=activityPose(member,15);assert.equal(a.x,b.x);assert.equal(a.z,b.z);assert(Math.abs(a.breath)<.01&&Math.abs(b.breath)<.01);}
-  const groups=Map.groupBy(standing,m=>m.chapter+':'+m.groupPhase);
+  const groups=Map.groupBy(standing.filter(m=>m.action!=='pong'),m=>m.chapter+':'+m.groupPhase);
   for(const t of [0,4,13,27])for(const group of groups.values())assert.equal(group.filter(m=>activityPose(m,t).speaking).length,1);
   for(const member of village.members.filter(m=>m.walking)){const a=activityPose(member,0),b=activityPose(member,10);assert(Math.hypot(a.x-b.x,a.z-b.z)>1);}
 });
@@ -225,7 +225,7 @@ test('chapter walkers keep an even pace and clear their conversation groups',()=
   const members=crowdMembers(chapters);
   for(const p of members.filter(m=>m.walking))for(let t=0;t<70;t+=.2){
     const a=activityPose(p,t),b=activityPose(p,t+.001);
-    assert(Math.abs(Math.hypot(b.x-a.x,b.z-a.z)/.001-.76)<.001);
+    assert(Math.abs(Math.hypot(b.x-a.x,b.z-a.z)/.001-p.motionProfile.walkSpeed)<.001);
     assert(Math.cos(a.rotation)*(b.z-a.z)+Math.sin(a.rotation)*(b.x-a.x)>0);
     for(const other of members.filter(m=>!m.walking&&m.chapter===p.chapter))assert(Math.hypot(a.x-other.x,a.z-other.z)>.5);
   }
@@ -261,4 +261,50 @@ test('party windows restore their daylight materials and the largest house gets 
   village.animateEffects(1);const before=nightLife.flames[0].scale.toArray();village.animateEffects(1.2);assert.notDeepEqual(nightLife.flames[0].scale.toArray(),before);
   nightLife.setNight(false);assert(!nightLife.root.visible);
   assert.deepEqual([...nightLife.windows.keys()].map(m=>[m.color.getHex(),m.emissive.getHex(),m.emissiveIntensity]),day);
+});
+
+test('chapter members have independent, bounded movement ranges and timing with planted feet',()=>{
+  const people=village.members.filter(m=>!m.walking&&m.action!=='pong');
+  assert.equal(new Set(people.map(m=>JSON.stringify(m.motionProfile))).size,people.length);
+  const ranges=[],signatures=[];
+  for(const person of people){
+    const samples=Array.from({length:240},(_,i)=>humanPose(person,{walking:false},i*.4));
+    const x=samples.map(p=>p.hip[0]),range=Math.max(...x)-Math.min(...x);ranges.push(range);
+    assert(range>.02&&range<.09);assert(samples.every(p=>p.legs.every((l,i)=>l.ankle.every((v,j)=>v===samples[0].legs[i].ankle[j]))));
+    signatures.push(samples.slice(0,20).map(p=>p.headYaw.toFixed(5)).join(','));
+  }
+  assert(Math.max(...ranges)-Math.min(...ranges)>.035);assert.equal(new Set(signatures).size,people.length);
+  const walkers=village.members.filter(m=>m.walking);assert.equal(new Set(walkers.map(m=>m.motionProfile.walkSpeed)).size,walkers.length);
+});
+
+test('beer pong uses existing members and keeps players and bystanders clear of each table',async()=>{
+  const {PONG_TABLE}=await import('../village-layout.js');
+  assert.equal(village.pong.games.length,3);assert.equal(village.members.filter(m=>m.action==='pong').length,6);
+  for(const game of village.pong.games){
+    assert.equal(game.players.length,2);assert.equal(game.cups.length,12);
+    assert(game.players.every(p=>village.members.includes(p)&&p.chapter===game.chapter));
+    for(const member of village.members.filter(m=>m.chapter===game.chapter&&!m.walking)){
+      const dx=member.x-member.lot.x,dz=member.z-member.lot.z,a=member.lot.rotation;
+      const x=dx*Math.cos(a)-dz*Math.sin(a),z=dx*Math.sin(a)+dz*Math.cos(a);
+      assert(Math.abs(x-PONG_TABLE.x)>PONG_TABLE.width/2+.2||Math.abs(z-PONG_TABLE.z)>PONG_TABLE.length/2+.2);
+    }
+  }
+});
+
+test('pong balls leave the throwing hand continuously, arc to cups and alternate players independently',async()=>{
+  const {pongTurn,PONG_TABLE}=await import('../village-layout.js');
+  const clocks=village.pong.games.map(g=>pongTurn(g.chapter,0).elapsed);assert.equal(new Set(clocks).size,clocks.length);
+  for(const game of village.pong.games){
+    const shot=pongTurn(game.chapter,20),releaseTime=20-shot.elapsed+shot.release,player=game.players[shot.seat];
+    village.pong.animate(releaseTime-1e-5);const before=game.ball.position.clone();
+    village.pong.animate(releaseTime);const start=game.ball.position.clone();assert(start.distanceTo(before)<.001);
+    assert(start.distanceTo(village.pong.handPosition(player,releaseTime))<1e-8);
+    village.pong.animate(releaseTime+shot.flight/2);const mid=game.ball.position.clone();
+    village.pong.animate(releaseTime+shot.flight);const end=game.ball.position.clone();assert(mid.y>(start.y+end.y)/2+.8);
+    assert(Math.abs(end.y-(PONG_TABLE.height+.19))<1e-8);
+    assert(game.cups.some(cup=>{const p=cup.position.clone();p.y=PONG_TABLE.height+.19;p.applyAxisAngle(new THREE.Vector3(0,1,0),player.lot.rotation).add(new THREE.Vector3(player.lot.x,0,player.lot.z));return end.distanceTo(p)<1e-8;}));
+    village.pong.animate(releaseTime+shot.flight+.2);assert(!game.ball.visible);
+    assert.notEqual(pongTurn(game.chapter,releaseTime+6).seat,shot.seat);
+    village.animateCrowd(releaseTime+.3);village.world.updateMatrixWorld(true);assert(game.ball.matrixAutoUpdate);assert(game.ball.matrixWorld.elements.every(Number.isFinite));
+  }
 });

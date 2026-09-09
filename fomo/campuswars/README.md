@@ -1,18 +1,30 @@
 # fomo Campus Wars
 
-Static landing page for `https://milomessina.com/fomo/campuswars/`, using the existing GitHub/Vercel deployment. Three.js 0.180.0 is pinned in `vendor/` with its MIT license. There are no new dependencies, runtime endpoints, external assets, or build steps.
+Static landing page for `https://milomessina.com/fomo/campuswars/`, using the existing GitHub/Vercel deployment. Three.js 0.180.0 is pinned in `vendor/` with its MIT license. The page has no new dependencies or build step. `/api/campuswars` is a Vercel Node function that reads the authenticated registration source on the server.
 
-## Chapter snapshot and registration
+## Automatic chapter updates
 
-`chapters.json` and the identical embedded HTML snapshot contain the five actual registrations supplied by the user: Sigma Chi 60/100, Kappa Sigma 34/69, Phi Delta Theta 21/50, Phi Kappa Psi 2/90, and Tau Kappa Epsilon 0/60. They total 117 joined out of 369 active members. This is a registration snapshot, not a live feed. Only those five chapters report membership. All other buildings and campus visitors are scenery.
+`site.js` starts `chapter-feed.js` immediately and checks `/api/campuswars` every 30 seconds while the tab is visible. Returning to a hidden tab triggers an immediate refresh. Changes update roster cards, the selected detail panel, share text, houses, construction, banners, exact member crowds, rankings and the claim lot without reloading or resetting the camera. Unchanged chapter payloads do not rebuild the scene. Party mode and activity pause survive updates. A failed request retains the current data and shows a reconnecting status; the next refresh retries.
 
-Qualification is `ceil(active * 0.8)`. Progress divides joined by the full roster and marks the 80% threshold separately. Keep the JSON and embedded snapshot synchronized. Personal contact details and trader nominations are excluded.
+The function reads `https://www.aryatoufanian.com/admin/` with HTTP Basic authentication. `server/campuswars-source.mjs` recognizes the chapter table by its headers and returns an explicit allowlist of chapter identities, school, registration date and aggregate counts. It never returns registrant names, emails, phone numbers, nominations, member records or invite links. The admin progress denominator is the **80% target**; the adapter reads the separately labeled **actives** value for the full roster. Malformed or incomplete tables fail closed. Warm function instances coalesce concurrent reads and cache successful totals for at most 30 seconds. The client also imposes a timeout and validates snapshots.
 
-Registration links continue to `https://www.aryatoufanian.com/fomo/onboard/`. This site does not create registrations or chapter invite links. Existing members get their chapter invite from their lead. The headline is `$500,000 committed`, supplied by the user; chapter qualification and individual prize rules retain their existing amounts.
+Existing chapter IDs and share links remain valid. New chapters use stable source UUIDs, so the same fraternity at different universities gets separate houses. Existing lot order survives source reorderings during an open session. Exactly one empty claim lot follows the registered chapters.
+
+`chapters.json` and the embedded HTML remain the original five-chapter fallback (117 joined / 369 active). They are labeled saved registrations until the first successful refresh. The authenticated source was read successfully during implementation and had six chapters / 118 joined, including Phi Delta Theta at Florida International University (1 / 55). This observation is not a hardcoded live total.
+
+### Hosting activation
+
+1. In the Vercel project serving `milomessina.com`, set the server environment variable `CAMPUSWARS_ADMIN_PASSWORD` to the admin password supplied by the owner. Set it for Production and any Preview environment that needs live data. `CAMPUSWARS_ADMIN_USERNAME` is optional and defaults to `village`.
+2. Deploy this repository from its root, including `api/campuswars.mjs` and `server/campuswars-source.mjs`. No package install is required. The function duration is configured in `vercel.json`.
+3. Verify `/api/campuswars` responds with `live: true`, `updatedAt` and chapter aggregates, then verify the village shows “Live onboarding.” Without the server secret, the endpoint returns 503 and the page explicitly shows saved data.
+
+Environment values take effect on a new deployment ([Vercel documentation](https://vercel.com/docs/environment-variables)). Never put the password in a client script, static JSON, URL, or committed environment file. No cron task or running Codex session is needed: each visitor's page polls the hosted function, which reads current registrations automatically.
+
+Registration links continue to `https://www.aryatoufanian.com/fomo/onboard/`. Joining happens on that site. Qualification remains `ceil(active * 0.8)`, and the page's existing prize rules are unchanged.
 
 ## Village and controls
 
-The six chapter lots and street grid retain their existing positions. Houses use Georgian/classical architecture with brick, columns, porticoes, balconies, shutters, roofs and porches. Chapters with fewer than 15 joined members have foundations, exposed timber, scaffolding and staged materials; a completed house appears at 15. House footprint and height grow with the absolute number onboarded, with bounded dimensions that fit the lots.
+The first six lot positions are preserved. `createLots()` adds alternating houses every 19 units along the boulevard, always followed by one claim lot. `rowExtension()` extends the row in 19-unit sections as needed. The existing single opaque floor inserts straight street sections; its end junction, leaderboard, bonfire and northern campus move outward. Traffic loops lengthen with the row, and crowd rendering bounds include the added lots. Removed village scenes release their owned rendering resources while retaining the terrain and shared banner hardware. Houses use Georgian/classical architecture with brick, columns, porticoes, balconies, shutters, roofs and porches. Chapters with fewer than 15 joined members have foundations, exposed timber, scaffolding and staged materials; a completed house appears at 15. House footprint and height grow with the absolute number onboarded, with bounded dimensions that fit the lots.
 
 House-mounted cloth banners now have five distinct compositions using the real fraternity palettes: blue/gold Sigma Chi, scarlet/emerald Kappa Sigma, blue/silver Phi Delta Theta, cardinal/hunter-green Phi Kappa Psi, and cherry/gray TKE. Each shows Greek letters, chapter name and the real member count. Original artwork and source references are documented in [banner-references.md](banner-references.md); [tests/banner-gallery.html](tests/banner-gallery.html) provides a flat visual review. Their 2048-pixel textures use Aeonik, woven detail, stitching and modeled eyelets. Counter-scaling preserves lettering proportions as houses grow. The original `fomo /campus` lockup now hangs across the main domed library at (0, −120), on a 29-unit-wide façade banner. It uses a 3072-pixel texture and sits in front of the columns, suspended below the cornice. The previous ground logo is removed.
 
@@ -20,7 +32,7 @@ On first entry into view, the camera descends from a high, wide campus view into
 
 The empty lot has a single purple floor reading `YOUR HOUSE / CLICK TO START` across its full 15×18 surface. A hollow, flared light shaft uses a vertical alpha gradient, additive blending and BackSide rendering at 0.115–0.165 opacity. Two expanding ground rings share a 2.6-second heartbeat, four survey stakes mark the corners, and a floating “CLAIM THIS LOT” board faces the street. Both the board and floor open registration. Clicking any part of that floor follows the existing chapter registration link. The chapter roster and signup links remain usable if WebGL fails. Native sharing falls back to clipboard and then a selectable URL.
 
-`village-competition.js` ranks the five registered houses by onboarding percentage using this snapshot. Equal percentages share competition ranks; the empty lot is excluded. Floating roof badges show each rank, with gold styling, a warm spotlight and a faint light shaft on the leading house. A freestanding leaderboard sits beside the three-way intersection at `(17.5, 0, 41.8)`, facing the houses. The Leaderboard button moves the camera to its front, fitting the board to the viewport. The board explicitly labels onboarding progress; no trading results or live updates are implied.
+`village-competition.js` ranks all registered houses by onboarding percentage using the latest available data. Equal percentages share competition ranks; the empty lot is excluded. Floating roof badges show each rank, with gold styling, a warm spotlight and a faint light shaft on the leading house. A freestanding leaderboard sits beside the three-way intersection at `(17.5, 0, 41.8)`, facing the houses. The Leaderboard button moves the camera to its front, fitting the board to the viewport. The board shows the top five of the current chapter count; all chapters have rank badges and roster cards. It explicitly labels onboarding progress, not trading results.
 
 ## A fuller, lived-in campus
 
@@ -37,7 +49,7 @@ The density pass adds:
 
 `village-district-layout.js` supplies deterministic hashing and appearance palettes. Instance seeds replace repeating clothing stripes: 24 shirt colors, eight skin tones, eight hair colors, varied hair length, 0.9–1.1 height, jackets, shorts/pants and backpacks. Building tints and lit windows vary by seed. Trees use broad, narrow and conifer silhouettes with varied scale, rotation and trunk lean.
 
-`village-layout.js` still creates exactly one person per joined chapter member. The 112 standing members occupy wider conversation groups of varied sizes, including pairs and a larger cluster, scattered over the lawn and porch. Placement scores prioritize body clearance. Five chapter members stroll. A single speaker per group makes small gestures while listeners breathe and nod; nobody jumps or holds both arms overhead.
+`village-layout.js` still creates exactly one person per joined chapter member. The 106 conversational members occupy wider conversation groups of varied sizes, including pairs and a larger cluster, scattered over the lawn and porch. Placement scores prioritize body clearance. Six existing members play beer pong at three tables, and five chapter members stroll. A single speaker per group makes small gestures while listeners breathe and nod; nobody jumps or holds both arms overhead.
 
 ## Human motion and appearance
 
@@ -64,10 +76,10 @@ Active people now update on every rendered frame, removing the separate 24 Hz ti
 Run:
 
 ```sh
-node --test fomo/campuswars/tests/village*.test.mjs
+node --test fomo/campuswars/tests/*.test.mjs
 ```
 
-All 29 tests pass, including onboarding ranks, ties, leader selection, the four-second entrance, interruption and reduced motion, beacon transforms and picking, and restoration of day materials after night mode. They cover exact chapter counts, six selectable lots, construction thresholds, reproducible crowds and hashed campus builds, clothing diversity, conversation turns and body clearance, pavement-bound traffic, building/parking separation, nine-block resource bounds, permanent horizon identity, and finite transforms through all new activities and distant streaming positions. Sampled scene bounds remain below 200 mesh objects and 22,000 instances; browser draw calls are measured separately below.
+All 32 tests pass, including onboarding ranks, ties, leader selection, the four-second entrance, interruption and reduced motion, beacon transforms and picking, and restoration of day materials after night mode. They cover exact chapter counts, six selectable lots, construction thresholds, reproducible crowds and hashed campus builds, clothing diversity, conversation turns and body clearance, pavement-bound traffic, building/parking separation, nine-block resource bounds, permanent horizon identity, and finite transforms through all new activities and distant streaming positions. Sampled scene bounds remain below 200 mesh objects and 22,000 instances; browser draw calls are measured separately below.
 
 Density-pass measurements below predate the later empty-lot floor, library banner and surrounding-page edits. Measured in an isolated headless Chrome 142 WebGL browser using SwiftShader, with the same 1320×720 scene viewport, opening/close-up camera positions, frozen reduced-motion state and warmed cached shadows for both builds. Counters are `renderer.info.render` from the actual rendered frame, not scene-object estimates. Baseline is commit `161e653` immediately before this density pass. Its measurements differ from the older figures in the brief.
 
@@ -93,3 +105,15 @@ The village appears immediately below the navigation. “Get your frat paid” a
 ## Party mode
 
 The separate Party mode button switches to a dusk sky and fog, cooler ambient light, blazing chapter windows, violet and amber uplights on the largest completed house, and a flickering bonfire at the open end of the row. Daylight materials restore when toggled off. Activity pause and reduced motion also freeze the beacon and fire; night lighting remains available without animation. Effects are added after static batching so their transforms remain animated, and add no shadow-map passes. Desktop day/night and lot close-ups plus the new controls at 390px were visually checked in the local browser with no console errors. Updated device FPS has not been benchmarked.
+
+## Individual chapter motion and beer pong
+
+Each member has deterministic, independent timing and movement ranges for breathing, weight shifts, torso turns, head nods, glances, and gestures. Idle movements have individual pauses; conversation groups also vary their speaking cadence. Standing feet stay planted while the body shifts subtly. Walkers each retain a steady but distinct speed of 0.59–0.87 units per second.
+
+`village-pong.js` adds a table on each completed house’s front lawn, with two existing members, two triangular racks of six red cups, and an animated ball. Players alternate on chapter-specific schedules; the ball releases from the modeled throwing hand, arcs toward a cup, then disappears before the next turn. These are decorative games with reusable cup racks. Placement reserves room for each table and both players, away from the central path and walking loop. Tables and cups batch with static scenery; only the three balls animate. The existing activity pause, reduced-motion setting and offscreen handling apply to the games.
+
+The added checks cover independent bounded movement with planted feet, exact member counts, table clearance, ball-release continuity, arcing shots and alternating turns. Day and night close-ups were inspected in the local browser without console errors. Device FPS was not benchmarked.
+
+## Live integration verification
+
+The live adapter was checked against the authenticated source (six chapters / 118 joined on September 9, 2026). All 44 automated checks pass. Automated checks cover private-field exclusion, full-roster denominators, stable identities, malformed responses, polling, unchanged updates, failure recovery, hidden tabs, expanded lots, new completed houses, continuous floor sections, crowd bounds and terrain reuse. Desktop browser testing confirmed a selected construction site becomes a completed house and new chapter cards appear without a reload or camera reset. Browser testing uses a local-only fixture to simulate new members and chapters; no test registration is submitted to the source site. Hosting activation still requires the Vercel server environment variable and a deployment.
