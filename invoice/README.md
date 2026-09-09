@@ -28,12 +28,16 @@ var BACKEND = 'sheet';
 Nothing else changes. Both backends answer the same calls, so every button on
 the page behaves identically either way.
 
-## The example data
+## Starting out
 
-A ledger with nothing in it shows nothing, so the first visit is seeded with a
-week of plausible spends and shifts. Every one is tagged `example` in the table,
-and **Clear example data** in the ledger toolbar removes the lot in one press.
-It only appears while examples are still there.
+The ledger starts empty and only ever holds what someone actually logs. Nothing
+is seeded, so the totals and charts stay at zero until the first spend goes in
+and the first shift is clocked.
+
+Every control writes straight through: adding a spend, marking one paid, settling
+a whole person, clocking in and out, and both deletes — which ask once before they
+go, so a mis-click costs nothing. **Refresh** re-reads the store, which matters
+when the page is open in more than one tab on the same browser.
 
 ## The passcode
 
