@@ -1366,6 +1366,7 @@ document.getElementById("t-hours-csv").addEventListener("click", function(){
    and commits pushed to somebody else's repository. */
 var GH_WEEKS = 13, GH_CACHE = "fomo.github.cache", GH_LOGINS = "fomo.github.logins";
 var GH_FRESH = 15 * 60 * 1000, GH_MAX_REPOS = 6, GH_MAX_PAGES = 3;
+var GH_SEEDED = "fomo.github.seeded";
 var GH_DEFAULTS = { "Milo": "koolkid696969", "Bijan": "Code-Atreides", "Jesse": "jsebaiz, jessebaiz" };
 var logins = {}, ghData = {}, ghErrors = {}, ghAt = 0, ghBusy = false;
 
@@ -1408,12 +1409,36 @@ function ghNameSet(p){
 
 function loadGh(){
   try {
-    var saved = localStorage.getItem(GH_LOGINS);
-    logins = saved ? (JSON.parse(saved) || {}) : {};
-    if (!saved) PEOPLE.forEach(function(p){ if (GH_DEFAULTS[p]) logins[p] = GH_DEFAULTS[p]; });
+    logins = JSON.parse(localStorage.getItem(GH_LOGINS) || "{}") || {};
     var c = JSON.parse(localStorage.getItem(GH_CACHE) || "null");
     if (c && c.at) { ghData = c.data || {}; ghErrors = c.err || {}; ghAt = c.at; }
   } catch(e){ logins = {}; ghData = {}; ghErrors = {}; ghAt = 0; }
+  applyDefaults();
+}
+
+/* Seeding only a browser that had never opened the page was wrong: everyone
+   who had already used it kept the roster from their first visit, so adding
+   somebody to GH_DEFAULTS never reached them. Each person's default is
+   applied once instead, and once more if it changes — which lets a new name
+   through to browsers already carrying a roster, while a username somebody
+   deliberately cleared stays cleared. */
+function applyDefaults(){
+  var applied = {};
+  try { applied = JSON.parse(localStorage.getItem(GH_SEEDED) || "{}") || {}; } catch(e){}
+  var changed = false;
+  PEOPLE.forEach(function(p){
+    if (!GH_DEFAULTS[p] || applied[p] === GH_DEFAULTS[p]) return;
+    if (!logins[p]) logins[p] = GH_DEFAULTS[p];
+    applied[p] = GH_DEFAULTS[p];
+    changed = true;
+  });
+  if (!changed) return;
+  /* the roster grew, so anything cached was counted without them */
+  ghAt = 0;
+  try {
+    localStorage.setItem(GH_SEEDED, JSON.stringify(applied));
+    localStorage.setItem(GH_LOGINS, JSON.stringify(logins));
+  } catch(e){}
 }
 function saveGh(){
   try {
@@ -1638,13 +1663,13 @@ function renderGh(){
     var sub = document.createElement("div");
     sub.className = "sub2" + (ghErrors[p] ? " bad" : "");
     if (ghErrors[p]) sub.textContent = ghErrors[p];
-    else if (!logins[p]) sub.textContent = "not linked — no username, so nothing measured";
+    else if (!logins[p]) sub.textContent = "";
     else if (!byPerson[p]) sub.textContent = (ghData[p] && ghData[p].repos === 0)
       ? "no public repository pushed this quarter"
       : "nothing public in this window";
     else sub.textContent = ((ghData[p] || {}).days || {})[today]
       ? ((ghData[p] || {}).days || {})[today] + " today" : "0 today";
-    card.appendChild(sub);
+    if (sub.textContent) card.appendChild(sub);
     people.appendChild(card);
   });
 

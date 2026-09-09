@@ -166,9 +166,15 @@ closed again on save.
 > this repository is public, so anyone who opens either can read the handles.
 > Treat them as public, because they are. They seed the fields on a first
 visit only; once someone edits or clears one in their browser, that stands.
-Anyone not listed reads as **not linked** and shows a dash rather than a zero —
-no username means nothing was measured, which is not the same as having pushed
-nothing.
+Anyone not listed shows a dash rather than a zero, and no caption: no username
+means nothing was measured, which is not the same as having pushed nothing.
+
+Each person's default is applied to a browser once, and once more if it later
+changes. Seeding only browsers that had never opened the page was wrong — anyone
+already using it kept the roster from their first visit, so a name added to
+`GH_DEFAULTS` never reached them. A username somebody deliberately clears still
+stays cleared, and picking up a new name drops the cached counts so the next read
+includes them.
 
 ### Where the numbers come from
 
