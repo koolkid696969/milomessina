@@ -165,9 +165,18 @@ function notify(tabName, row) {
 /* ── the stipend ledger, behind /invoice ─────────────────────── */
 
 var INVOICE_TAB = 'invoice';
+/* `shared` goes on the end on purpose. Rows are read positionally, so a
+   column added anywhere else would shift every value in every row written
+   before it. Appending leaves old rows reading exactly as they did, with an
+   empty `shared` — which the page treats as "no split recorded". */
 var INVOICE_COLS = ['id', 'logged', 'date', 'who', 'what', 'category',
-                    'amount', 'status', 'note', 'receipt', 'reimbursed'];
+                    'amount', 'status', 'note', 'receipt', 'reimbursed', 'shared'];
 var INVOICE_PEOPLE = ['Milo', 'Bijan', 'Jesse', 'Luchi'];
+
+/* Who a line can be *for*. Arya reimburses the ledger rather than being paid
+   out of it, so he is never in INVOICE_PEOPLE — but plenty of what the
+   interns buy is bought for him, and `shared` has to be able to say so. */
+var INVOICE_SHARERS = INVOICE_PEOPLE.concat(['Arya']);
 var INVOICE_CATS = ['lunch', 'coffee', 'ai', 'software', 'travel', 'supplies', 'other'];
 
 /* Every action answers with the whole ledger, so the page never has to
@@ -241,6 +250,17 @@ function invoiceSheet() {
   if (!ss) throw new Error('no spreadsheet — set SHEET_ID, or run this script from inside the sheet');
 
   var sh = ss.getSheetByName(INVOICE_TAB);
+
+  /* A tab built before a column existed keeps the header row it was made
+     with, and then the page reads a column the sheet never labelled. Since
+     columns are only ever appended, widening the header is enough to bring
+     an old tab up to date — the rows below it do not move. */
+  if (sh && sh.getLastColumn() < INVOICE_COLS.length) {
+    var have = sh.getLastColumn();
+    sh.getRange(1, have + 1, sh.getMaxRows(), INVOICE_COLS.length - have).setNumberFormat('@');
+    sh.getRange(1, 1, 1, INVOICE_COLS.length).setValues([INVOICE_COLS]).setFontWeight('bold');
+  }
+
   if (!sh) {
     sh = ss.insertSheet(INVOICE_TAB);
     /* Left to itself Sheets reads 2026-09-08 as a date object and an
@@ -263,6 +283,14 @@ function invoiceClean(b) {
   var date = String(b.date || '').trim();
   var receipt = String(b.receipt || '').trim();
 
+  /* Unknown names are dropped rather than refused: a line that is otherwise
+     good should not bounce over who it was for, and a silent drop shows up
+     on screen as a missing name where a refusal shows up as lost typing. */
+  var shared = String(b.shared || '').split(',').map(function (n) { return n.trim(); })
+    .filter(function (n, i, all) {
+      return INVOICE_SHARERS.indexOf(n) > -1 && all.indexOf(n) === i;
+    });
+
   if (INVOICE_PEOPLE.indexOf(who) === -1) return { error: 'that name is not on the bootcamp' };
   if (!what) return { error: 'that line needs a description' };
   if (!(amount > 0) || amount > 100000) return { error: 'that amount does not look right' };
@@ -280,7 +308,8 @@ function invoiceClean(b) {
     status: 'pending',
     note: String(b.note || '').slice(0, 120),
     receipt: /^https?:\/\//i.test(receipt) ? receipt.slice(0, 500) : '',
-    reimbursed: ''
+    reimbursed: '',
+    shared: shared.join(', ')
   }};
 }
 
@@ -322,7 +351,8 @@ function invoicePublic(r) {
   return {
     id: r.id, logged: String(r.logged), date: r.date, who: String(r.who),
     what: String(r.what), category: String(r.category), amount: r.amount,
-    status: r.status, note: String(r.note), receipt: String(r.receipt)
+    status: r.status, note: String(r.note), receipt: String(r.receipt),
+    shared: String(r.shared || '')
   };
 }
 

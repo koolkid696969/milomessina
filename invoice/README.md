@@ -154,6 +154,7 @@ The `invoice` tab:
 | `note` | optional |
 | `receipt` | a link, if one was pasted in — see below |
 | `reimbursed` | when it was marked paid |
+| `shared` | who the line was *for* — see below. Blank on anything logged before this column existed |
 
 The `hours` tab:
 
@@ -192,6 +193,33 @@ Photos need `BACKEND = 'device'`. The sheet keeps a 500-character cell, not
 an image, so on `'sheet'` the picker is switched off and says so rather than
 taking a photo it would have to throw away. Rows carrying an old `https://`
 receipt link still render as a link, either way.
+
+## Who a spend was for
+
+Who paid and who a spend was *for* are two different questions, and the form
+asks them separately. **who paid** is one of the four interns — they are the
+ones owed money back. **who it was for** is a row of toggles underneath, and
+it includes **Arya**, because a good deal of what gets bought is bought for
+him.
+
+Whoever is paying starts ticked, since the usual case is buying your own along
+with everyone else's. Untick yourself and the line reads as bought purely for
+someone else — that is how "I got Arya a coffee and nothing for me" is
+recorded rather than fudged into the note.
+
+The page then shows the per-head figure: a $14 coffee run ticked for Milo and
+Arya reads **split 2 ways · $7.00 each**, on the line and in the CSV. A panel
+called **who it was spent on** totals it per person across the ledger.
+
+**None of this changes what anybody is owed.** Whoever fronted the money is
+owed all of it, split or not — the bootcamp is what reimburses them, so the
+split is a record of where the money went, not a claim on anyone. The
+who-fronted-it panel and the settle buttons are untouched by it.
+
+Lines with nobody ticked are left out of the per-person totals rather than
+guessed at. A spend that does not say who it was for is not evidence that the
+payer had it alone, and the panel's caption says how many lines it is actually
+describing so a chart drawn from three of forty is not read as all forty.
 
 ## The clock
 

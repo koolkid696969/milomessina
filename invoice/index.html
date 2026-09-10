@@ -122,6 +122,10 @@ section{margin-top:clamp(22px,3vw,34px)}
   font-size:.88rem;font-weight:500;transition:background .18s,color .18s,border-color .18s,transform .18s}
 .chip:hover{border-color:var(--violet);color:var(--text)}
 .chip[aria-pressed="true"]{background:var(--violet);border-color:var(--violet);color:#fff}
+.chip.sm{padding:6px 13px;font-size:.81rem}
+.chip.sm[aria-pressed="true"]{background:var(--s2, var(--violet));border-color:transparent}
+.split-hint{font-size:.78rem;color:var(--muted-2);margin-top:8px}
+.split-hint b{color:var(--muted);font-weight:500}
 .grid{display:grid;grid-template-columns:1.6fr .9fr .7fr .8fr;gap:12px}
 .grid.pair{grid-template-columns:1fr 1fr}
 @media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}
@@ -181,6 +185,9 @@ tbody tr:hover{background:var(--raise)}
 td.date{font-family:var(--mono);font-size:.8rem;color:var(--muted);white-space:nowrap}
 td.amt{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;font-size:.95rem}
 td.who{font-weight:500;white-space:nowrap}
+td.amt small{display:block;margin-top:3px;font-size:.74rem;font-weight:400;color:var(--muted-2)}
+.what .split{color:var(--muted-2)}
+.what .split b{color:var(--muted);font-weight:500}
 .what{display:flex;flex-direction:column;gap:3px}
 .what b{font-weight:500}
 .what small{color:var(--muted-2);font-size:.78rem}
@@ -415,6 +422,11 @@ td.tnum.run{color:var(--good)}
           <span class="lbl">who paid</span>
           <div class="who" id="who" role="group" aria-label="Who paid"></div>
         </div>
+        <div class="field">
+          <span class="lbl">who it was for</span>
+          <div class="who" id="split" role="group" aria-label="Who the spend was for"></div>
+          <span class="split-hint" id="split-hint"></span>
+        </div>
         <div class="grid">
           <label class="field"><span class="lbl">what was it</span>
             <input id="f-what" name="what" placeholder="e.g. team lunch at Sweetgreen" maxlength="90" required></label>
@@ -459,6 +471,15 @@ td.tnum.run{color:var(--good)}
       <div class="panel-h" style="padding:2px 0 0"><h2>where it went</h2></div>
       <div class="bars" id="by-cat"></div>
       <div class="scale" id="cat-scale"><span>$0</span><span></span></div>
+    </div>
+  </section>
+
+  <section id="head-section" hidden>
+    <div class="panel chart">
+      <div class="panel-h" style="padding:2px 0 0"><h2>who it was spent on</h2>
+        <span class="note" id="head-note"></span></div>
+      <div class="bars" id="by-head"></div>
+      <div class="scale" id="head-scale"><span>$0</span><span></span></div>
     </div>
   </section>
 
@@ -561,6 +582,15 @@ var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxDR-3zqJEQgFEY0a-f7RR_K
 var PASSCODE = 'monkey';
 
 var PEOPLE = ["Milo","Bijan","Jesse","Luchi"];
+
+/* Who a spend can be *for*, as opposed to who paid for it.
+
+   Arya runs the bootcamp and reimburses it, so he is never who paid — but a
+   good deal of what gets bought is bought for him, and a coffee run that
+   covered him should say so rather than reading as one intern drinking two
+   coffees. Anyone here can be on the receiving end of a line; only PEOPLE
+   can front one. */
+var SHARERS = PEOPLE.concat(["Arya"]);
 var CATS = [
   {id:"lunch",    label:"lunch & food",  v:"--s1"},
   {id:"coffee",   label:"coffee",        v:"--s2"},
@@ -591,6 +621,25 @@ function clockNow(){
   return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
 }
 function safeUrl(u){ u = String(u||"").trim(); return /^https?:\/\//i.test(u) ? u : ""; }
+
+/* ---------- splitting a line between the people it was for ----------
+
+   `shared` is a comma-separated list of names, and every line written before
+   this existed has none — which is why an empty one means "no split
+   recorded" and not "this was for nobody". Those lines keep behaving exactly
+   as they did: one amount, no per-head figure, left out of the who-it-was-on
+   totals rather than guessed at. */
+function sharedOf(r){
+  return String(r && r.shared || "").split(",").map(function(n){ return n.trim(); })
+    .filter(function(n){ return SHARERS.indexOf(n) > -1; });
+}
+function headsOf(r){ return sharedOf(r).length; }
+/* the money is split evenly; the remainder is a rounding artefact, so the
+   per-head figure is shown to the cent and never re-totalled from */
+function eachOf(r){
+  var n = headsOf(r);
+  return n > 1 ? (Number(r.amount) || 0) / n : 0;
+}
 function cat(id){ return CAT[id] || CAT.other; }
 function toast(msg, bad){
   var t = document.getElementById("toast");
@@ -686,7 +735,8 @@ function apiLocal(action, p){
       rows.push({
         id:newId(), who:p.who, what:p.what, category:p.category,
         amount:Math.round((Number(p.amount)||0) * 100) / 100, date:p.date,
-        note:p.note || "", receipt:p.receipt || "", status:"pending", logged:now
+        note:p.note || "", receipt:p.receipt || "", shared:p.shared || "",
+        status:"pending", logged:now
       });
 
     } else if (action === "update") {
@@ -754,7 +804,8 @@ function apiSheet(action, payload){
         return {
           id: String(r.id), who: r.who, what: r.what, category: r.category,
           amount: Number(r.amount) || 0, date: r.date, note: r.note,
-          receipt: r.receipt, status: r.status === "reimbursed" ? "reimbursed" : "pending",
+          receipt: r.receipt, shared: r.shared || "",
+          status: r.status === "reimbursed" ? "reimbursed" : "pending",
           logged: r.logged
         };
       });
@@ -790,6 +841,7 @@ PEOPLE.forEach(function(p){
     picked = p;
     Array.prototype.forEach.call(whoBox.children, function(c){ c.setAttribute("aria-pressed", String(c === b)); });
     try { localStorage.setItem("fomo.who", p); } catch(e){}
+    resetSplit();
     hint("");
   });
   whoBox.appendChild(b);
@@ -801,6 +853,56 @@ try {
     Array.prototype.forEach.call(whoBox.children, function(c){ c.setAttribute("aria-pressed", String(c.textContent === saved)); });
   }
 } catch(e){}
+
+/* ---------- who the spend was for ----------
+
+   Separate from who paid, because they are separate questions and the answer
+   is usually not the same shape: one person hands over the card, any number
+   of people get something out of it. Whoever is paying starts ticked, since
+   the common case is buying your own along with everyone else's — but they
+   can untick themselves, which is how "I got Arya a coffee and nothing for
+   me" gets recorded rather than fudged into the note. */
+var splitBox = document.getElementById("split");
+var sharedWith = {};
+
+function splitNames(){
+  return SHARERS.filter(function(n){ return sharedWith[n]; });
+}
+function renderSplit(){
+  Array.prototype.forEach.call(splitBox.children, function(c){
+    c.setAttribute("aria-pressed", String(!!sharedWith[c.textContent]));
+  });
+  var names = splitNames(), h = document.getElementById("split-hint");
+  var amt = Math.round(parseFloat(document.getElementById("f-amt").value) * 100) / 100;
+  if (!names.length) {
+    h.innerHTML = "Nobody ticked — the line is logged whole, with no split.";
+  } else if (names.length === 1) {
+    h.innerHTML = "All of it on <b>" + esc(names[0]) + "</b>.";
+  } else {
+    h.innerHTML = "Split " + names.length + " ways" +
+      (isFinite(amt) && amt > 0 ? " — <b>" + esc(money(amt / names.length)) + " each</b>" : "") +
+      " · " + esc(names.join(", "));
+  }
+}
+SHARERS.forEach(function(n){
+  var b = document.createElement("button");
+  b.type = "button"; b.className = "chip sm"; b.textContent = n;
+  b.setAttribute("aria-pressed","false");
+  b.addEventListener("click", function(){
+    if (sharedWith[n]) delete sharedWith[n]; else sharedWith[n] = true;
+    renderSplit();
+  });
+  splitBox.appendChild(b);
+});
+/* changing who paid starts the split over rather than leaving the last
+   person's name ticked on somebody else's line */
+function resetSplit(){
+  sharedWith = {};
+  if (picked) sharedWith[picked] = true;
+  renderSplit();
+}
+document.getElementById("f-amt").addEventListener("input", renderSplit);
+resetSplit();
 
 var fCat = document.getElementById("f-cat"), tCat = document.getElementById("t-cat"), tWho = document.getElementById("t-who");
 CATS.forEach(function(c){ fCat.appendChild(new Option(c.label, c.id)); tCat.appendChild(new Option(c.label, c.id)); });
@@ -836,10 +938,11 @@ document.getElementById("form").addEventListener("submit", function(ev){
   if (!isFinite(amt) || amt <= 0) { hint("Enter an amount greater than zero.", true); return; }
   var btn = document.getElementById("f-submit");
   btn.disabled = true; busy = true; btn.textContent = "Adding…";
+  var names = splitNames();
   api("add", {
     who: picked, what: what, category: document.getElementById("f-cat").value,
     amount: amt, date: date, note: document.getElementById("f-note").value.trim(),
-    receipt: pendingShot || ""
+    receipt: pendingShot || "", shared: names.join(", ")
   }).then(function(){
     document.getElementById("f-what").value = "";
     document.getElementById("f-amt").value = "";
@@ -847,8 +950,10 @@ document.getElementById("form").addEventListener("submit", function(ev){
     pendingShot = null;
     document.getElementById("f-file").value = "";
     showPicked();
+    resetSplit();
     hint("");
-    toast(money(amt) + " logged for " + picked + ".");
+    toast(money(amt) + " logged for " + picked +
+      (names.length > 1 ? " — " + money(amt / names.length) + " each across " + names.length + "." : "."));
   })["catch"](function(e){ hint("That didn't save — " + fail(e) + ".", true); })
    .then(function(){ btn.disabled = false; busy = false; btn.textContent = "Add to ledger"; });
 });
@@ -910,12 +1015,15 @@ document.getElementById("t-refresh").addEventListener("click", function(){
 document.getElementById("t-csv").addEventListener("click", function(){
   var list = visible();
   if (!list.length) { toast("Nothing to export with these filters.", true); return; }
-  var head = ["date","who","what","category","amount_usd","status","note","receipt"];
+  var head = ["date","who","what","category","amount_usd","status","note","receipt","for","split_ways","each_usd"];
   var q = function(v){ return '"' + String(v == null ? "" : v).replace(/"/g,'""') + '"'; };
   var csv = head.join(",") + "\r\n" + list.map(function(r){
+    var names = sharedOf(r);
     return [r.date, r.who, r.what, cat(r.category).label, (Number(r.amount)||0).toFixed(2),
       r.status === "reimbursed" ? "reimbursed" : "owed", r.note || "",
-      !r.receipt ? "" : (/^data:/.test(r.receipt) ? "photo attached" : r.receipt)].map(q).join(",");
+      !r.receipt ? "" : (/^data:/.test(r.receipt) ? "photo attached" : r.receipt),
+      names.join(" + "), names.length || "",
+      names.length ? ((Number(r.amount)||0) / names.length).toFixed(2) : ""].map(q).join(",");
   }).join("\r\n") + "\r\n";
   var url = URL.createObjectURL(new Blob(["﻿" + csv], {type:"text/csv;charset=utf-8"}));
   var a = document.createElement("a");
@@ -1148,6 +1256,54 @@ function render(){
   document.getElementById("person-scale").lastElementChild.textContent =
     shortMoney(total > 0 ? pMax : 0);
 
+  /* ---------- who it was spent on ----------
+
+     Who fronted a line and who it was for are different questions, and this
+     is the second one. Only lines carrying a split count: a line with nobody
+     ticked is not evidence that the payer ate it alone, so guessing would
+     put money against a name on no evidence. The caption says how much of
+     the ledger is actually being described, because a bar chart drawn from
+     three of forty lines invites being read as all of them. */
+  var byHead = {}, headTotal = 0, splitLines = 0;
+  SHARERS.forEach(function(n){ byHead[n] = 0; });
+  list.forEach(function(r){
+    var names = sharedOf(r);
+    if (!names.length) return;
+    splitLines++;
+    var each = (Number(r.amount) || 0) / names.length;
+    names.forEach(function(n){ byHead[n] += each; headTotal += each; });
+  });
+  var headRank = SHARERS.map(function(n){ return {id:n, v:byHead[n]}; })
+    .filter(function(h){ return h.v > 0.005; })
+    .sort(function(a,b){ return b.v - a.v; });
+
+  document.getElementById("head-section").hidden = !headRank.length;
+  if (headRank.length) {
+    document.getElementById("head-note").textContent =
+      money(headTotal) + " across " + splitLines + (splitLines === 1 ? " line" : " lines") +
+      " with a split recorded" +
+      (splitLines < list.length ? " — the other " + (list.length - splitLines) + " don't say who they were for" : "");
+    var hMax = headRank[0].v, hBox = document.getElementById("by-head");
+    hBox.innerHTML = "";
+    headRank.forEach(function(h){
+      var row = document.createElement("div"); row.className = "row-b";
+      var nm = document.createElement("div"); nm.className = "nm"; nm.textContent = h.id;
+      var track = document.createElement("div"); track.className = "track";
+      var seg = document.createElement("div");
+      seg.className = "seg";
+      seg.style.width = Math.max(h.v / hMax * 100, 1.5) + "%";
+      seg.style.background = PEOPLE.indexOf(h.id) > -1 ? "var(--violet)" : "var(--s3)";
+      track.appendChild(seg);
+      bindTip(track, h.id, [money(h.v) + " spent on them",
+        Math.round(h.v / headTotal * 100) + "% of the split spend"]);
+      var amt = document.createElement("div"); amt.className = "amt";
+      amt.innerHTML = esc(money(h.v)) + "<small>" + Math.round(h.v / headTotal * 100) + "%</small>";
+      row.appendChild(nm); row.appendChild(track); row.appendChild(amt);
+      hBox.appendChild(row);
+    });
+    document.getElementById("head-scale").lastElementChild.textContent = shortMoney(hMax);
+  }
+
   var cBox = document.getElementById("by-cat");
   cBox.innerHTML = "";
   if (!catRank.length) {
@@ -1180,6 +1336,13 @@ function render(){
       '<td class="date">' + esc(niceDate(r.date)) + "</td>" +
       '<td class="who">' + esc(r.who || "—") + "</td>" +
       '<td><div class="what"><b>' + esc(r.what || "—") + "</b>" +
+        (function(){
+          var names = sharedOf(r);
+          if (!names.length) return "";
+          return '<small class="split">' + (names.length > 1
+            ? "split " + names.length + " ways · <b>" + esc(names.join(", ")) + "</b>"
+            : "for <b>" + esc(names[0]) + "</b>") + "</small>";
+        })() +
         (r.note ? "<small>" + esc(r.note) + "</small>" : "") +
         (r.receipt && /^data:image\//.test(r.receipt)
           ? '<small><button type="button" class="rcpt" data-shot="' + esc(r.id) + '">' +
@@ -1187,7 +1350,8 @@ function render(){
           : url ? '<small><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">receipt →</a></small>' : "") +
       "</div></td>" +
       '<td><span class="tag"><i style="background:var(' + meta.v + ')"></i>' + esc(meta.label) + "</span></td>" +
-      '<td class="amt">' + esc(money(r.amount)) + "</td>" +
+      '<td class="amt">' + esc(money(r.amount)) +
+        (headsOf(r) > 1 ? "<small>" + esc(money(eachOf(r))) + " each</small>" : "") + "</td>" +
       '<td><span class="pill ' + (done ? "good" : "owed") + '"><i></i>' + (done ? "reimbursed" : "owed") + "</span></td>" +
       '<td><div class="acts">' +
         (done
@@ -1926,7 +2090,7 @@ function sendCarry(extraRows, extraShifts){
     chain = chain.then(function(){
       return apiSheet("add", {
         who:r.who, what:r.what, category:r.category, amount:r.amount,
-        date:r.date, note:r.note || "",
+        date:r.date, note:r.note || "", shared:r.shared || "",
         /* the sheet holds a 500-character cell, not an image */
         receipt: /^data:/.test(r.receipt || "") ? "" : (r.receipt || "")
       });
