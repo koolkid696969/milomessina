@@ -14,6 +14,7 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const returningFromHistory = document.documentElement.classList.contains('intro-return');
 let introComplete = returningFromHistory;
 let active = false, usedFallback = false, finishTimer, raf = 0;
+let playRetry, playAttempts = 0;
 let videoFrame = 0, lastPaint = -1, lastStage = -1, lastOutro = -1;
 
 function paint(mediaTime = video.currentTime || 0) {
@@ -63,11 +64,28 @@ function syncPlayback() {
   }
   if (active) { paint(); schedulePaint(); }
 }
+function cancelPlayRetry() {
+  clearTimeout(playRetry);
+  playRetry = undefined;
+}
 function play() {
   if (!active || document.hidden) return;
+  cancelPlayRetry();
+  video.defaultMuted = true;
   video.muted = true;
+  video.playsInline = true;
+  video.autoplay = true;
+  video.controls = false;
   const pending = video.play();
-  if (pending) pending.catch(() => { if (active) syncPlayback(); });
+  if (pending) pending.catch(() => {
+    if (!active || document.hidden) return;
+    syncPlayback();
+    // Retry startup races after visibility/layout settles, without a click.
+    // A browser's explicit autoplay restriction still takes precedence.
+    if (playAttempts < 4) {
+      playRetry = setTimeout(play, 250 * 2 ** playAttempts++);
+    }
+  });
 }
 function rememberVisit() {
   try {
@@ -77,6 +95,7 @@ function rememberVisit() {
 function restorePage() {
   clearTimeout(finishTimer);
   active = false;
+  cancelPlayRetry();
   cancelPaint();
   video.pause();
   opening.hidden = true;
@@ -94,6 +113,7 @@ function finish({scroll = true, cinematic = false} = {}) {
   if (!active) return;
   active = false;
   introComplete = true;
+  cancelPlayRetry();
   rememberVisit();
   cancelPaint();
   video.pause();
@@ -124,6 +144,7 @@ function finish({scroll = true, cinematic = false} = {}) {
 function start({replay: replaying = false} = {}) {
   clearTimeout(finishTimer);
   active = true; usedFallback = false;
+  cancelPlayRetry(); playAttempts = 0;
   lastPaint = lastStage = lastOutro = -1;
   transition.hidden = false;
   transition.classList.remove('is-leaving');
@@ -140,7 +161,7 @@ function start({replay: replaying = false} = {}) {
   if (video.error) recoverVideo(); else play();
   syncPlayback();
 }
-video.addEventListener('playing', syncPlayback);
+video.addEventListener('playing', () => { cancelPlayRetry(); playAttempts = 0; syncPlayback(); });
 video.addEventListener('pause', syncPlayback);
 video.addEventListener('loadeddata', syncPlayback);
 video.addEventListener('ended', () => finish({cinematic: true}));
@@ -154,13 +175,14 @@ function recoverVideo() {
 }
 video.addEventListener('error', recoverVideo);
 video.addEventListener('canplay', () => { if (active && video.paused) play(); });
+video.addEventListener('loadedmetadata', () => { if (active && video.paused) play(); });
 document.getElementById('skip-intro').addEventListener('click', () => finish());
 document.querySelector('.skip-link').addEventListener('click', () => finish({scroll: false}));
 document.addEventListener('keydown', event => { if (event.key === 'Escape') finish(); else if (active && video.paused) play(); });
 document.addEventListener('pointerdown', () => { if (active && video.paused) play(); });
 document.addEventListener('visibilitychange', () => {
   if (!active) return;
-  if (document.hidden) video.pause();
+  if (document.hidden) { cancelPlayRetry(); video.pause(); }
   else play();
 });
 replay.hidden = false;

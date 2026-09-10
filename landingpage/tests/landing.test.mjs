@@ -113,3 +113,26 @@ test('a returned visitor can still choose Replay intro',()=>{
   const h=harness({navigationType:'back_forward',historyState:{campusLanding:{introDone:true,scrollY:1800}}});
   h.fire('replay-intro:click');assert.equal(h.node('opening').hidden,false);assert.equal(h.video.paused,false);assert.equal(h.video.currentTime,0);
 });
+
+
+test('startup playback retries without requiring a click and keeps inline muted defaults',async()=>{
+  const h=harness({blocked:true});await Promise.resolve();
+  assert.equal(h.video.defaultMuted,true);assert.equal(h.video.muted,true);
+  assert.equal(h.video.playsInline,true);assert.equal(h.video.controls,false);
+  assert.equal(h.timers.size,1);
+  h.allowPlayback();h.flush();assert.equal(h.video.paused,false);
+});
+test('blocked autoplay retries are bounded and cannot restart a skipped intro',async()=>{
+  const h=harness({blocked:true});await Promise.resolve();
+  for(let i=0;i<4;i++){h.flush();await Promise.resolve();}
+  assert.equal(h.timers.size,0);
+  const skipped=harness({blocked:true});await Promise.resolve();
+  skipped.fire('skip-intro:click');skipped.allowPlayback();skipped.flush();
+  assert.equal(skipped.video.paused,true);assert.equal(skipped.node('opening').hidden,true);
+});
+test('the intro video remains visible during initial autoplay eligibility checks',()=>{
+  const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const css=fs.readFileSync(new URL('../styles.css',import.meta.url),'utf8');
+  assert.doesNotMatch(html+css,/\.opening-video\{opacity:0\}/);
+  assert.match(html,/<video[^>]+poster=/);
+});

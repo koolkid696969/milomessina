@@ -16,24 +16,29 @@
   document.documentElement.classList.add(returning ? 'intro-return' : 'intro-initial');
 })();
 </script>
-<style>.intro-return #opening{display:none!important}.intro-initial body{overflow:hidden}.intro-initial .opening{position:fixed;inset:0;z-index:20}.opening{position:relative;height:100svh;background:#101724}.opening-poster,.opening-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.opening-poster img{width:100%;height:100%;object-fit:cover}.opening-video{opacity:0}.opening-video.has-frame{opacity:1}</style>
+<style>.intro-return #opening{display:none!important}.intro-initial body{overflow:hidden}.intro-initial .opening{position:fixed;inset:0;z-index:20}.opening{position:relative;height:100svh;background:#101724}.opening-poster,.opening-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.opening-poster img{width:100%;height:100%;object-fit:cover}.opening-video{opacity:1}.opening-video.has-frame{opacity:1}</style>
 <noscript><style>#opening{display:none!important}</style></noscript>
 <link rel="preload" as="image" href="/landingpage/assets/intro-desktop-hd.webp" media="(min-width:701px)" fetchpriority="high">
 <link rel="preload" as="image" href="/landingpage/assets/intro-mobile-hd.webp" media="(max-width:700px)" fetchpriority="high">
 <link rel="preload" as="font" type="font/ttf" href="/fomo/campuswars/assets/aeonik-700.ttf" crossorigin>
-<link rel="stylesheet" href="/landingpage/styles.css?v=33">
-<script type="module" src="/landingpage/main.js?v=34"></script>
+<link rel="stylesheet" href="/landingpage/styles.css?v=34">
+<script type="module" src="/landingpage/main.js?v=35"></script>
 </head>
 <body>
 <a class="skip-link" href="#programs">Skip to programs</a>
 <section class="opening" id="opening" aria-label="Greek village opening film">
   <picture class="opening-poster" aria-hidden="true"><source media="(max-width:700px)" srcset="/landingpage/assets/intro-mobile-hd.webp"><img src="/landingpage/assets/intro-desktop-hd.webp" width="1280" height="720" alt="" fetchpriority="high"></picture>
-  <video id="intro-video" class="opening-video" muted autoplay playsinline preload="auto" aria-label="Greek village drone intro"></video>
+  <video id="intro-video" class="opening-video" muted autoplay playsinline preload="auto" webkit-playsinline disablepictureinpicture poster="/landingpage/assets/intro-desktop-hd.webp" aria-label="Greek village drone intro"></video>
   <script>
   (() => {
     const video = document.getElementById('intro-video');
     if (document.documentElement.classList.contains('intro-return')) return;
+    video.defaultMuted = true;
     video.muted = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    video.controls = false;
+    video.poster = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile-hd.webp' : '/landingpage/assets/intro-desktop-hd.webp';
     video.src = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile-hd.mp4' : '/landingpage/assets/intro-desktop-smooth.mp4';
     video.addEventListener('loadeddata', () => video.classList.add('has-frame'), {once:true});
     video.play().catch(() => {});
