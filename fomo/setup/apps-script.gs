@@ -34,7 +34,7 @@ var CONFIG = {
      the same string as PASSCODE in invoice/index.html and the endpoint
      turns away requests that do not carry it. Like SHARED_SECRET it
      rides along in the page source: a turnstile, not a password. */
-  INVOICE_KEY: ''
+  INVOICE_KEY: 'monkey'
 };
 
 /* ── the endpoint ────────────────────────────────────────────── */
@@ -86,7 +86,8 @@ function doGet() {
   return reply(true, null, {
     hint: 'fomo campus form receiver is live',
     ledger: typeof invoiceApi === 'function',
-    clock: typeof shiftIn === 'function'
+    clock: typeof shiftIn === 'function',
+    shiftimport: typeof shiftImport === 'function'
   });
 }
 
@@ -211,6 +212,10 @@ function invoiceApi(body) {
   } else if (action === 'clockin' || action === 'clockout') {
     var clockErr = action === 'clockin' ? shiftIn(body.who) : shiftOut(body.who);
     if (clockErr) return reply(false, clockErr);
+
+  } else if (action === 'shiftimport') {
+    var impErr = shiftImport(body.shifts);
+    if (impErr) return reply(false, impErr);
 
   } else if (action === 'shiftdelete') {
     var ssh = shiftSheet();
@@ -380,6 +385,66 @@ function shiftOut(who) {
   var minutes = Math.max(0, Math.round((end.getTime() - started.getTime()) / 60000));
   sh.getRange(open._row, SHIFT_COLS.indexOf('end') + 1).setValue(end.toISOString());
   sh.getRange(open._row, SHIFT_COLS.indexOf('minutes') + 1).setValue(minutes);
+  return null;
+}
+
+/* A browser that was keeping its own ledger, handing it over.
+
+   These shifts cannot come in through shiftIn: it stamps the server's own
+   clock, on purpose, so a shift that started an hour ago on somebody's
+   laptop would arrive as one that started now — an hour of work turned
+   into an hour of nothing. They carry their own start and end instead.
+
+   Nothing about that makes it a free-for-all. The roster is checked the
+   same way, a second open shift for someone already on the clock is
+   refused the same way, and a shift already on the tab is skipped rather
+   than written twice, so pressing the button again after a half-finished
+   send costs nothing. */
+function shiftImport(list) {
+  if (!list || !list.length) return 'nothing to import';
+
+  var sh = shiftSheet();
+  var have = shiftRead(sh), open = {}, seen = {};
+  for (var i = 0; i < have.length; i++) {
+    if (!have[i].end) open[have[i].who] = true;
+    seen[have[i].who + '|' + String(have[i].start).slice(0, 16)] = true;
+  }
+
+  var add = [];
+  for (var j = 0; j < list.length; j++) {
+    var v = list[j] || {};
+    var who = String(v.who || '');
+    if (INVOICE_PEOPLE.indexOf(who) === -1) continue;
+
+    var start = new Date(v.start);
+    if (isNaN(start.getTime())) continue;
+
+    var key = who + '|' + start.toISOString().slice(0, 16);
+    if (seen[key]) continue;
+
+    var end = v.end ? new Date(v.end) : null;
+    if (end && (isNaN(end.getTime()) || end.getTime() < start.getTime())) end = null;
+
+    /* two open shifts for one person is the state the clock refuses to
+       reach by hand; an import must not reach it either */
+    if (!end) {
+      if (open[who]) continue;
+      open[who] = true;
+    }
+
+    seen[key] = true;
+    add.push([
+      Utilities.getUuid().slice(0, 8),
+      who,
+      Utilities.formatDate(start, Session.getScriptTimeZone(), 'yyyy-MM-dd'),
+      start.toISOString(),
+      end ? end.toISOString() : '',
+      end ? Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000)) : ''
+    ]);
+  }
+
+  if (!add.length) return null;
+  sh.getRange(sh.getLastRow() + 1, 1, add.length, SHIFT_COLS.length).setValues(add);
   return null;
 }
 

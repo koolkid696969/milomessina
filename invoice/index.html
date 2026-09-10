@@ -207,6 +207,7 @@ td.who{font-weight:500;white-space:nowrap}
 .banner{margin-top:22px;padding:13px 16px;border:1px solid var(--line-2);border-radius:var(--r-m);
   background:var(--surface-2);font-size:.86rem;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
 .banner b{color:var(--text);font-weight:500}
+.banner #banner-do{margin-left:auto;flex:none;align-self:center;white-space:nowrap}
 #tip{position:fixed;z-index:60;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s;
   background:var(--surface-2);border:1px solid var(--line-2);border-radius:var(--r-s);padding:8px 11px;
   font-size:.78rem;box-shadow:var(--shadow);max-width:240px}
@@ -397,7 +398,7 @@ td.tnum.run{color:var(--good)}
     <div><span class="lbl">biggest line</span><span class="v" id="k-cat">—</span><span class="sub" id="k-cat-sub">by category</span></div>
   </div>
 
-  <div class="banner" id="banner" hidden><span>⚠</span><span id="banner-txt"></span></div>
+  <div class="banner" id="banner" hidden><span>⚠</span><span id="banner-txt"></span><button type="button" class="mini" id="banner-do" hidden></button></div>
 
   <section>
     <div class="panel">
@@ -602,12 +603,33 @@ function toast(msg, bad){
    'device' keeps everything in this browser's own storage: nothing to
    deploy, nothing to configure, and it works the moment the page loads.
    The catch is in the name — the ledger lives on whichever computer it
-   was typed on, so two people opening the page do not see the same one.
+   was typed on, so two people opening the page do not see the same one,
+   and nobody sees anybody else's clock.
 
    'sheet' switches to the Apps Script endpoint below, which is the shared
-   version: one ledger everyone reads and writes. It needs the script in
-   fomo/setup/apps-script.gs deployed first — invoice/README.md covers it. */
-var BACKEND = 'device';
+   version: one ledger everyone reads and writes. It is what makes the
+   clock cards mean "who is working right now" instead of "who is working
+   on this laptop". It needs the script in fomo/setup/apps-script.gs
+   deployed first — invoice/README.md covers it.
+
+   'auto' is both, in the only order that is safe. The page opens on this
+   browser's own store, so it is never blank and never waiting, and then
+   asks the endpoint whether the version actually deployed behind it
+   carries the ledger. If it does, the page moves itself over and the
+   clocks go live for everyone. If it does not — the usual reason being a
+   script pasted but never redeployed — it stays on device storage and
+   says so, rather than breaking on a URL that cannot answer it. Flipping
+   a constant at exactly the right moment was the one step nobody could
+   take from their own laptop; this removes it. */
+var BACKEND = 'auto';
+
+/* BACKEND is the wish, `mode` is the fact. Under 'auto' it starts at
+   device and is raised to sheet only once the endpoint has proved it can
+   serve the ledger, so everything below asks `mode`, never BACKEND. */
+var mode = BACKEND === 'sheet' ? 'sheet' : 'device';
+
+/* what this browser was holding at the moment it moved to the sheet */
+var carried = null;
 
 var LS_ROWS = "fomo.ledger.rows", LS_SHIFTS = "fomo.ledger.shifts";
 
@@ -704,17 +726,17 @@ function apiLocal(action, p){
       render();
       return reject(new Error("this browser is out of room. Delete a receipt photo or an old line and try again"));
     }
-    setLive(true, "saved on this device"); hideBanner();
+    setLive(true, "on this device only"); hideBanner();
     render();
     resolve({ok:true});
   });
 }
 
 function api(action, payload){
-  return BACKEND === "sheet" ? apiSheet(action, payload) : apiLocal(action, payload);
+  return mode === "sheet" ? apiSheet(action, payload) : apiLocal(action, payload);
 }
 
-/* ---------- the shared sheet, when BACKEND is switched to it ---------- */
+/* ---------- the shared sheet, once the page is on it ---------- */
 function apiSheet(action, payload){
   var body = {_api:"invoice", action:action, _key:PASSCODE};
   if (payload) Object.keys(payload).forEach(function(k){ body[k] = payload[k]; });
@@ -739,7 +761,7 @@ function apiSheet(action, payload){
       shifts = (out.shifts || []).map(function(v){
         return {id:String(v.id), who:String(v.who), start:v.start, end:v.end, minutes:Number(v.minutes)||0};
       });
-      setLive(true, "synced " + clockNow());
+      setLive(true, "shared · synced " + clockNow());
       hideBanner();
       render();
     }
@@ -751,7 +773,7 @@ function fail(err){
   /* On device storage there is no sheet to be out of touch with, and
      saveAll has already said the useful thing about what went wrong —
      overwriting it here with connection advice would just mislead. */
-  if (BACKEND !== "sheet") return msg;
+  if (mode !== "sheet") return msg;
   setLive(false, "not synced");
   showBanner("<b>The ledger isn't reaching the sheet.</b> " + esc(msg) +
     ". Nothing was lost — check your connection and hit Refresh.");
@@ -876,11 +898,11 @@ document.getElementById("by-person").addEventListener("click", function(ev){
 document.getElementById("t-refresh").addEventListener("click", function(){
   var b = this; b.disabled = true; b.textContent = "Refreshing…";
   var done = function(){ b.disabled = false; b.textContent = "Refresh"; };
-  if (BACKEND === "sheet") {
+  if (mode === "sheet") {
     api("list")["catch"](function(e){ toast(fail(e), true); }).then(done);
   } else {
     /* a second tab on this browser writes the same store */
-    loadLocal(); render(); setLive(true, "saved on this device");
+    loadLocal(); render(); setLive(true, "on this device only");
     toast("Reloaded from this browser's storage."); done();
   }
 });
@@ -989,12 +1011,20 @@ document.getElementById("f-file").addEventListener("change", function(){
 });
 
 /* The shared sheet stores a 500-character cell, not a photo. Rather than
-   take one and quietly drop it on the way, say so and leave it off. */
-if (BACKEND === "sheet") {
-  document.getElementById("f-pick").disabled = true;
-  document.getElementById("f-pick").style.opacity = ".5";
-  document.getElementById("f-drop").textContent =
-    "Receipt photos need device storage — on the shared sheet this stays empty.";
+   take one and quietly drop it on the way, say so and leave it off.
+   Under 'auto' the move to the sheet happens after the page is already
+   up, so this runs again then instead of only once at load. */
+function applyModeUi(){
+  var sheet = mode === "sheet", pick = document.getElementById("f-pick");
+  pick.disabled = sheet;
+  pick.style.opacity = sheet ? ".5" : "";
+  if (sheet) {
+    document.getElementById("f-drop").textContent =
+      "Receipt photos need device storage — on the shared sheet this stays empty.";
+  } else if (!pendingShot) {
+    document.getElementById("f-drop").textContent =
+      "Snap the receipt — it is shrunk before it is stored.";
+  }
 }
 
 /* ---------- looking at one ---------- */
@@ -1258,9 +1288,13 @@ function renderClock(){
     card.appendChild(btn); card.appendChild(wkline);
     box.appendChild(card);
   });
-  document.getElementById("clock-note").textContent = onNow
-    ? onNow + (onNow === 1 ? " intern is" : " interns are") + " on the clock right now"
-    : "Press a name in when they arrive, out when they leave.";
+  /* The cards look identical either way, and reading them as the team's
+     when they are only this browser's is the mistake worth a sentence. */
+  document.getElementById("clock-note").textContent = mode === "sheet"
+    ? (onNow ? onNow + (onNow === 1 ? " intern is" : " interns are") + " on the clock right now"
+             : "Press a name in when they arrive, out when they leave.")
+    : (onNow ? onNow + (onNow === 1 ? " shift is" : " shifts are") + " running on this browser — nobody else's clock reaches this page"
+             : "This browser's clock only — nobody else's reaches this page.");
 }
 
 /* Only the numbers move between renders, so the ticking touches nothing else. */
@@ -1762,11 +1796,163 @@ function setLive(ok, txt){
   document.getElementById("live-dot").className = "dot" + (ok ? "" : " off");
   document.getElementById("live-txt").textContent = txt;
 }
-function showBanner(html){
+var bannerDo = null;
+function showBanner(html, label, fn){
   document.getElementById("banner-txt").innerHTML = html;
+  var b = document.getElementById("banner-do");
+  bannerDo = fn || null;
+  b.hidden = !bannerDo;
+  b.disabled = false;
+  if (bannerDo) b.textContent = label;
   document.getElementById("banner").hidden = false;
 }
-function hideBanner(){ document.getElementById("banner").hidden = true; }
+/* A banner carrying a button is waiting on a person, not on the sheet: a
+   sync that succeeds in the meantime must not clear it out from under
+   them mid-click. Only the thing that put it there takes it down. */
+function hideBanner(force){
+  if (bannerDo && !force) return;
+  bannerDo = null;
+  document.getElementById("banner-do").hidden = true;
+  document.getElementById("banner").hidden = true;
+}
+document.getElementById("banner-do").addEventListener("click", function(){
+  if (bannerDo) bannerDo();
+});
+
+/* ---------- moving over to the shared sheet ----------
+
+   The clock only answers "who is working right now" if everyone is
+   reading one store. Device storage cannot do that however it is dressed
+   up: a shift clocked on Arya's laptop is a row in Arya's browser and has
+   never left it, so no amount of polling on somebody else's screen will
+   find it. The move to the sheet is the feature; the rest of this section
+   is making the move cost nobody anything. */
+
+/* Whether that URL is serving the current script — the one question that
+   cannot be answered by trying it and seeing. An old deployment answers
+   an ordinary ok:true while knowing nothing about ledgers, so the page
+   would switch onto it and then go blank. doGet names the halves it
+   carries; both, or we stay put. */
+function probeSheet(){
+  return fetch(ENDPOINT, {method:"GET"}).then(function(res){
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }).then(function(out){
+    return !!(out && out.ok === true && out.ledger === true && out.clock === true);
+  })["catch"](function(){
+    /* offline, blocked, or an endpoint that isn't there: none of them are
+       a reason to take the ledger away from someone mid-week */
+    return false;
+  });
+}
+
+function goSheet(){
+  mode = "sheet";
+  applyModeUi();
+  setLive(true, "shared · syncing…");
+  api("list").then(function(){ offerCarry(false); })["catch"](function(e){ fail(e); });
+  if (!poll) poll = setInterval(function(){
+    if (busy || document.hidden) return;
+    api("list")["catch"](function(){ /* the banner already says it */ });
+  }, 30000);
+}
+
+/* ---------- carrying this browser's ledger up with it ----------
+
+   Everything typed while the page was on device storage is still in this
+   browser and was on screen a second ago; the switch is what takes it off
+   the page. Nothing is deleted and nothing is sent up behind anyone's
+   back — the page says what it is holding and puts one button under it. */
+
+function onSheetRow(r){
+  for (var i = 0; i < rows.length; i++){
+    var x = rows[i];
+    if (x.who === r.who && x.date === r.date && x.what === r.what &&
+        Math.round((Number(x.amount)||0)*100) === Math.round((Number(r.amount)||0)*100)) return true;
+  }
+  return false;
+}
+/* a shift is the same shift if it is the same person starting the same
+   minute — the sheet regenerates ids, so they cannot be compared */
+function onSheetShift(v){
+  var st = Date.parse(v.start) || 0;
+  for (var i = 0; i < shifts.length; i++){
+    if (shifts[i].who === v.who && Math.abs((Date.parse(shifts[i].start)||0) - st) < 60000) return true;
+  }
+  return false;
+}
+
+function offerCarry(retry){
+  if (!carried) return;
+  /* recomputed against whatever the sheet holds right now, so a retry
+     after a half-finished send picks up only what is still missing */
+  var extraRows = carried.rows.filter(function(r){ return !onSheetRow(r); });
+  var extraShifts = carried.shifts.filter(function(v){ return !onSheetShift(v); });
+
+  if (!extraRows.length && !extraShifts.length) {
+    carried = null;
+    if (retry) { hideBanner(true); toast("Everything on this browser is on the sheet."); }
+    return;
+  }
+
+  var bits = [];
+  if (extraShifts.length) bits.push(extraShifts.length + (extraShifts.length === 1 ? " shift" : " shifts"));
+  if (extraRows.length) bits.push(extraRows.length + (extraRows.length === 1 ? " spend" : " spends"));
+  var running = extraShifts.filter(function(v){ return !v.end; }).length;
+
+  showBanner("<b>The clocks are shared from now on.</b> " + bits.join(" and ") +
+    " logged on this browser " + (bits.length > 1 || extraShifts.length + extraRows.length > 1 ? "are" : "is") +
+    " not on the shared sheet yet" +
+    (running ? ", including " + (running === 1 ? "a shift that is still running" : running + " shifts still running") : "") +
+    ". Still saved here either way — send " + (extraShifts.length + extraRows.length === 1 ? "it" : "them") +
+    " up and everyone sees " + (extraShifts.length + extraRows.length === 1 ? "it" : "them") + ".",
+    retry ? "Try again" : "Send them up",
+    function(){ sendCarry(extraRows, extraShifts); });
+}
+
+function sendCarry(extraRows, extraShifts){
+  var btn = document.getElementById("banner-do");
+  btn.disabled = true; btn.textContent = "Sending…";
+  busy = true;
+
+  var shots = extraRows.filter(function(r){ return /^data:/.test(r.receipt || ""); }).length;
+
+  /* Spends go up through the ordinary add. Shifts cannot: clockin stamps
+     the server's own clock, so a shift that started an hour ago would
+     arrive as one that started now and read as an hour nobody worked.
+     shiftimport carries its own start and end instead. */
+  var chain = Promise.resolve();
+  extraRows.forEach(function(r){
+    chain = chain.then(function(){
+      return apiSheet("add", {
+        who:r.who, what:r.what, category:r.category, amount:r.amount,
+        date:r.date, note:r.note || "",
+        /* the sheet holds a 500-character cell, not an image */
+        receipt: /^data:/.test(r.receipt || "") ? "" : (r.receipt || "")
+      });
+    });
+  });
+  if (extraShifts.length) {
+    chain = chain.then(function(){
+      return apiSheet("shiftimport", {shifts: extraShifts.map(function(v){
+        return {who:v.who, start:v.start, end:v.end || ""};
+      })});
+    });
+  }
+
+  chain.then(function(){
+    carried = null;
+    hideBanner(true);
+    toast("Carried over — everyone sees " + (extraShifts.length + extraRows.length === 1 ? "it" : "them") + " now." +
+      (shots ? " " + shots + " receipt photo" + (shots === 1 ? "" : "s") + " stayed on this device; the sheet holds a link, not an image." : ""));
+  })["catch"](function(e){
+    var msg = (e && e.message) ? e.message : "something went wrong";
+    toast("Nothing more was carried over — " + msg + ".", true);
+    /* whatever did land is on the sheet now; offerCarry works out what is
+       still missing rather than sending anything a second time */
+    offerCarry(true);
+  }).then(function(){ busy = false; });
+}
 
 /* ---------- the gate ---------- */
 function open_(){
@@ -1775,21 +1961,52 @@ function open_(){
   document.getElementById("app").hidden = false;
   if (BACKEND === "sheet") {
     render();
-    api("list")["catch"](function(e){ fail(e); });
-    poll = setInterval(function(){
-      if (busy || document.hidden) return;
-      api("list")["catch"](function(){ /* the banner already says it */ });
-    }, 30000);
+    goSheet();
   } else {
+    /* Device storage first, always: it is already here, so the page is
+       usable in the same frame it opens in and an open shift keeps
+       ticking while the endpoint is still being asked about. */
     loadLocal();
-    setLive(true, "saved on this device");
+    applyModeUi();
     render();
+    if (BACKEND !== "auto") {
+      setLive(true, "on this device only");
+    } else {
+      setLive(true, "on this device · checking");
+      probeSheet().then(function(ok){
+        if (ok) {
+          /* hold what this browser has before the sheet's copy replaces
+             it on screen — it is the only chance to offer to send it up */
+          carried = {rows: rows.slice(), shifts: shifts.slice()};
+          goSheet();
+          return;
+        }
+        setLive(true, "on this device only");
+        showBanner("<b>The clocks aren't shared yet.</b> This browser is keeping its own ledger, so these " +
+          "cards are the shifts clocked <em>here</em> and nobody else's — someone clocking in on their own " +
+          "laptop cannot show up on this page. The endpoint answers, but the version deployed behind it is " +
+          "the forms-only one. Redeploy <b>fomo/setup/apps-script.gs</b> — Deploy → Manage deployments → " +
+          "New version — and this page moves itself over, on its own, next time it loads.");
+      });
+    }
   }
   loadGh();
   buildGhLink();
   renderGh();
   refreshGh(false);
   tick = setInterval(tickClock, 1000);
+
+  /* A hidden tab stops ticking and stops polling, which is right — neither
+     is worth doing to a screen nobody is looking at. What it leaves behind
+     is a page that, the moment you come back to it, shows a frozen timer
+     and news up to thirty seconds old. On a board whose whole job is who
+     is working right now, that is the one moment it has to be current, so
+     catch it coming back and do both at once. */
+  document.addEventListener("visibilitychange", function(){
+    if (document.hidden) return;
+    tickClock();
+    if (mode === "sheet" && !busy) api("list")["catch"](function(){ /* the banner already says it */ });
+  });
 }
 document.getElementById("gate-form").addEventListener("submit", function(ev){
   ev.preventDefault();

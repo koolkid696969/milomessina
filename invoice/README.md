@@ -9,24 +9,56 @@ It works the moment it loads. Nothing to deploy, nothing to configure.
 
 ## Where it saves
 
-`BACKEND` at the top of the page's script decides, and it ships as `'device'`.
+`BACKEND` at the top of the page's script decides, and it ships as `'auto'`.
 
 **`'device'`** keeps everything in that browser's own storage. It is instant and
 private, and the catch is in the name: **the ledger lives on whichever computer
 it was typed on.** Arya's laptop and Milo's laptop hold different ledgers, and
-clearing site data clears it. Treat the CSV exports as the way anything leaves
+clearing site data clears it. This is also why **nobody sees anybody else's
+clock** on device storage: a shift clocked on one laptop is a row in that
+browser and has never left it. Treat the CSV exports as the way anything leaves
 one machine.
 
 **`'sheet'`** is the shared version: one ledger in a Google Sheet that everyone
-reads and writes, surviving any one browser. It costs one deploy — see below.
-Switch by changing the constant:
+reads and writes, surviving any one browser. It is what makes the clock cards
+mean *who is working right now* rather than *who is working on this laptop*. It
+costs one deploy — see below.
 
-```js
-var BACKEND = 'sheet';
-```
+**`'auto'`**, the default, is both in the only order that is safe. The page
+opens on this browser's own store — never blank, never waiting, an open shift
+still ticking — and then asks the endpoint whether the version actually deployed
+behind it carries the ledger. If it does, the page moves itself over and the
+clocks go live for everyone. If it does not, it stays on device storage and says
+so in a banner naming the fix, rather than breaking on a URL that cannot answer
+it.
 
-Nothing else changes. Both backends answer the same calls, so every button on
-the page behaves identically either way.
+That last part is the point. Apps Script serves the last *deployed* version, so
+`'sheet'` set before the redeploy is a page that loads to an error; `'sheet'`
+set after means someone has to edit and ship this file at exactly the right
+moment. `'auto'` removes the ordering: deploy the page whenever, deploy the
+script whenever, and the clocks come on by themselves on the next load.
+
+Nothing else changes. All three answer the same calls, so every button on the
+page behaves identically either way.
+
+### The first load after the switch
+
+Whatever was typed while the page was on device storage is still in that
+browser — but the sheet has never seen it, so the switch is what takes it off
+the screen. The page notices, counts it, and offers one button:
+
+> **The clocks are shared from now on.** 3 shifts and 2 spends logged on this
+> browser are not on the shared sheet yet, including 2 shifts still running.
+> Still saved here either way — send them up and everyone sees them.
+
+Nothing goes up until that is pressed, and nothing local is deleted either way.
+A shift that is still running arrives still running, **carrying the time it
+actually started** — this is why the Apps Script needs a `shiftimport` action
+rather than reusing `clockin`, which stamps the server's own clock and would
+turn an hour already worked into an hour of nothing. Anything already on the
+sheet is skipped rather than written twice, so pressing it again after a
+half-finished send costs nothing. Receipt photos stay behind, since the sheet
+holds a 500-character cell and not an image; the page says how many.
 
 ## Starting out
 
@@ -48,6 +80,13 @@ It travels in the page source, so it is a turnstile that keeps the ledger off
 the open web — **not** a password. Anyone who reads the source can find it. Set
 it to `''` to drop the gate entirely.
 
+`INVOICE_KEY` in the Apps Script is set to the same string, so the **endpoint**
+turns away requests that don't carry it, not just the page. That matters more
+than it looks: the `/exec` URL is open to anyone who has it, and without the key
+a stranger could read the ledger and clock people in and out without ever
+loading `/invoice`. Change one and change the other, or the page locks itself
+out of its own sheet.
+
 ## Switching on the shared sheet
 
 The ledger endpoint lives in `fomo/setup/apps-script.gs`, alongside the receiver
@@ -57,7 +96,21 @@ same sheet, through the same deployment, so there is no second URL.
 1. Open the sheet → **Extensions → Apps Script**.
 2. Replace `Code.gs` with the current `fomo/setup/apps-script.gs`.
 3. **Deploy → Manage deployments →** pencil icon **→ Version: New version → Deploy**.
-4. Set `BACKEND` to `'sheet'` in `invoice/index.html`.
+4. Nothing. On `'auto'` the page picks it up by itself on the next load, and
+   offers to carry that browser's ledger up with it.
+
+> **This is already done.** The live deployment
+> (`AKfycbxDR-3zqJEQgFEY0a-…`) was moved to a new version on Sep 10, 2026 and
+> the endpoint reports `ledger`, `clock` and `shiftimport` all true. The steps
+> above are here for the next time the script changes.
+>
+> The reason it was needed is worth remembering, because it will happen again.
+> The project had **two active deployments**. Somebody pasted the ledger code
+> and cut a new version on Sep 9 — but that version went to the *other*
+> deployment, and the URL this site actually calls stayed on Sep 7's forms-only
+> code. From the outside it looked exactly like nothing had been deployed. When
+> a redeploy seems to have no effect, check the deployment ID against `ENDPOINT`
+> before touching anything else.
 
 Step 3 is the one that matters. Apps Script serves the last *deployed* version,
 not the last saved one, so pasting the code and hitting save changes nothing.
@@ -70,10 +123,12 @@ serving the old code, which looks exactly like nothing happened.
 
 Open the `/exec` URL itself in a browser:
 
-    {"ok":true,"hint":"fomo campus form receiver is live","ledger":true,"clock":true}
+    {"ok":true,"hint":"fomo campus form receiver is live","ledger":true,"clock":true,"shiftimport":true}
 
-`ledger` and `clock` are the two halves of this tool. **`true` on both means the
-deployed version is the current one.** If either is missing or `false`, that URL
+`ledger` and `clock` are the two halves of this tool, and `shiftimport` is the
+carry-over described above. **`true` on all three means the deployed version is
+the current one** — and it is the same check the page itself runs on every load
+before deciding whether to go shared. If any is missing or `false`, that URL
 is still serving older code. Either you ended up with a second deployment, or
 the paste went into a different script project than the one this URL belongs to.
 
@@ -143,6 +198,16 @@ receipt link still render as a link, either way.
 Press a name in when they arrive and out when they leave. The card runs a live
 timer while someone is on the clock, and the hours panel below totals the week
 and all time. Hours export to CSV separately from the money.
+
+On the shared sheet these are everybody's clocks: the page re-reads them every
+30 seconds, so a name pressed in on somebody else's laptop turns green here
+without anyone reloading. A tab in the background stops both the ticking and
+the re-reading — neither is worth doing to a screen nobody is looking at — and
+does both the instant it comes back to the front, so what you are looking at
+when you look at it is current rather than up to half a minute old.
+
+On device storage they are only that browser's, and the line above the cards
+says so rather than letting four empty cards read as four people not working.
 
 Someone can only be clocked in once at a time — a second press is refused. A
 shift nobody closed shows up in red after 16 hours, saying so rather than
