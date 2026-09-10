@@ -64,7 +64,28 @@ export async function fetchChapterSnapshot({password, username='village', fetchI
     headers:{Authorization:`Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`, Accept:'text/html', 'Cache-Control':'no-cache'},
     redirect:'error', signal:AbortSignal.timeout(20000), cache:'no-store'
   });
+  if (response.status===401||response.status===403) throw new Error('Chapter source authentication failed');
   if (!response.ok) throw new Error('Chapter source unavailable');
   const chapters = parseChapterAdmin(await response.text());
   return {source:'Chapter registrations', live:true, updatedAt:now().toISOString(), chapters};
+}
+
+
+// Only fixed diagnostic codes may leave the server; never return source HTML,
+// arbitrary exception messages, credentials or registration records.
+export function chapterSourceErrorCode(error){
+  const codes={
+    'Chapter source authentication failed':'SOURCE_AUTH',
+    'Chapter source unavailable':'SOURCE_HTTP',
+    'Chapter table unavailable':'SOURCE_TABLE',
+    'Chapter source format changed':'SOURCE_FIELD',
+    'Incomplete chapter row':'SOURCE_ROW',
+    'Missing chapter school':'SOURCE_SCHOOL',
+    'Missing chapter totals':'SOURCE_TOTALS',
+    'Invalid chapter totals':'SOURCE_VALUES',
+    'Duplicate chapter identity':'SOURCE_DUPLICATE',
+    'Chapter source is not configured':'SOURCE_CONFIG'
+  };
+  if(error?.name==='TimeoutError'||error?.name==='AbortError')return 'SOURCE_TIMEOUT';
+  return codes[error?.message]||'SOURCE_CONNECTION';
 }

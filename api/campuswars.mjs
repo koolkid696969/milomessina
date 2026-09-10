@@ -1,4 +1,4 @@
-import {fetchChapterSnapshot} from '../server/campuswars-source.mjs';
+import {fetchChapterSnapshot,chapterSourceErrorCode} from '../server/campuswars-source.mjs';
 
 // One upstream read per warm instance per 30 seconds; concurrent requests share it.
 let latest = null, pending = null;
@@ -12,8 +12,8 @@ export default async function handler(req, res) {
       await pending;
     }
     return res.status(200).json(latest);
-  } catch {
+  } catch(error) {
     // Do not include upstream HTML, credentials or private records in errors.
-    return res.status(502).json({error:'Chapter updates are temporarily unavailable'});
+    return res.status(502).json({error:'Chapter updates are temporarily unavailable',code:chapterSourceErrorCode(error)});
   }
 }
