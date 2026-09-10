@@ -40,7 +40,7 @@ export function districtSpecs(cx,cz){
     add('hall',27,19,23,23,8,-Math.PI/2,'');
     add('townhouse',28,-24,22,13,7+seed%2,0,'');
   }else{
-    add('shops',-27,-24,28,14,5+seed%3,Math.PI/2,'CAMPUS MARKET');
+    add('exchange',-27,-24,28,14,10,Math.PI/2,'CAMPUS MARKET');
     add('townhouse',27,-18,27,19,8,-Math.PI/2,'');
     add('union',-27,22,29,20,7,Math.PI/2,'STUDENT SERVICES');
     add('hall',29,24,21,17,9,-Math.PI/2,'');

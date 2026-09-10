@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import * as THREE from '../vendor/three.module.min.js';
+import {EXCHANGE_VIEW} from '../village-market.js';
 import {createMoneyRain} from '../village-money-rain.js';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from '../village-intro.js';
 
@@ -12,7 +13,7 @@ function cameraHarness(reduced=false,initialHash='',deferWarmup=false){
   element('chapters-data').textContent='{"chapters":[]}';
   const canvas=element('canvas');
   class Renderer{constructor(){this.domElement=canvas;this.shadowMap={};}setPixelRatio(){}setSize(){}render(scene,view){camera=view;}}
-  const sandbox={prewarmVillage:()=>({then(done){finishWarmup=done;if(!deferWarmup)done();return {catch(){}};}}),createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:(_T,input)=>(builds.push(input),{dispose(){},world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:1,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
+  const sandbox={EXCHANGE_VIEW,prewarmVillage:()=>({then(done){finishWarmup=done;if(!deferWarmup)done();return {catch(){}};}}),createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:(_T,input)=>(builds.push(input),{dispose(){},world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:1,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
   const source=fs.readFileSync(new URL('../village.js',import.meta.url),'utf8').replace(/^import .*;$/gm,'');
   vm.runInNewContext(source,sandbox);
   let now=100;
@@ -162,4 +163,13 @@ test('live rosters arriving during compilation are coalesced and warmed before p
   assert.equal(h.step(1),undefined);
   h.finishWarmup();assert.equal(h.element('village-loading').hidden,true);
   assert(h.step(.02).y>75);
+});
+
+test('Exchange cancels the intro and frames the northeast market',()=>{
+  const h=cameraHarness();h.show(true);h.step(1);h.fire('village-exchange:click');
+  const p=h.step(5),v=EXCHANGE_VIEW;
+  assert.equal(h.element('village-intro').hidden,true);
+  assert(Math.abs(p.x-(v.x+Math.sin(v.theta)*Math.cos(v.phi)*v.radius))<.01);
+  assert(Math.abs(p.z-(v.z+Math.cos(v.theta)*Math.cos(v.phi)*v.radius))<.01);
+  h.reset();assert(h.step(5).distanceTo(p)>80);
 });

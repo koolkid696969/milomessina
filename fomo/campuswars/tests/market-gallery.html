@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Campus Market review</title>
+<style>body{margin:0;background:#d5ddd9;font:14px Arial;color:#18352f}header{padding:14px 20px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;background:#edf0e8}button,select{padding:7px 12px}canvas{display:block}#status{font-size:12px}</style>
+<header><strong>Campus Market</strong><button id="play">Pause ticker</button><select id="view"><option value="street">Street view</option><option value="plaza">Chart & plaza</option><option value="night">Night view</option></select><span id="status">Connecting to fomo…</span><a href="https://fomo.family/">fomo.family ↗</a></header>
+<script type="module">
+import * as T from '../vendor/three.module.min.js';
+import {createCampusKit} from '../village-campus-kit.js';
+import {createMarketExchange} from '../village-market.js?v=50';
+import {startMarketFeed,marketStatus} from '../market-feed.js?v=50';
+const scene=new T.Scene(),kit=createCampusKit(T),exchange=createMarketExchange(T,kit,{x:0,z:0,rotation:0});scene.add(exchange.root);
+scene.background=new T.Color('#9facb2');const ambient=new T.HemisphereLight(0xe4f2f3,0x72795b,2.1);scene.add(ambient);
+const sun=new T.DirectionalLight(0xffe8c5,2.8);sun.position.set(-20,35,30);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-32,right:32,top:32,bottom:-32,near:1,far:100});sun.shadow.normalBias=.03;scene.add(sun);
+kit.box(scene,0,-.1,0,150,.2,150,0x9baf8a);kit.box(scene,0,.04,21,150,.15,10,0x64757c);for(let x=-60;x<65;x+=8)kit.box(scene,x,.13,21,4,.02,.15,0xd6d6bf);
+kit.batch(exchange.root);
+const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;document.body.append(renderer.domElement);
+const camera=new T.PerspectiveCamera(44,1,.1,200);camera.position.set(24,15,46);camera.lookAt(0,4,3);
+let playing=true,time=0,last=0;
+document.getElementById('play').onclick=()=>{playing=!playing;document.getElementById('play').textContent=playing?'Pause ticker':'Play ticker';};
+document.getElementById('view').onchange=e=>{const plaza=e.target.value==='plaza',night=e.target.value==='night';camera.position.set(...(plaza?[-9,6,28]:[24,15,46]));camera.lookAt(...(plaza?[-4,4,10]:[0,4,3]));scene.background.set(night?'#1c2b40':'#9facb2');ambient.intensity=night?.5:2.1;sun.intensity=night?.3:2.8;};
+function resize(){renderer.setSize(innerWidth,innerHeight-document.querySelector('header').offsetHeight);camera.aspect=renderer.domElement.clientWidth/renderer.domElement.clientHeight;camera.updateProjectionMatrix();}addEventListener('resize',resize);resize();
+startMarketFeed({onUpdate(state){exchange.setMarket(state);document.getElementById('status').textContent=marketStatus(state)+' · fomo';document.body.dataset.feed=state.status;}});
+function frame(now){if(playing)time+=Math.min((now-last)/1000,.1);last=now;exchange.animate(time);renderer.render(scene,camera);requestAnimationFrame(frame);}requestAnimationFrame(frame);document.body.dataset.ready='true';
+</script></html>

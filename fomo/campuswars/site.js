@@ -17,6 +17,13 @@
   }
   drawerToggle.addEventListener('click', () => setDrawer(drawer.hidden));
   document.getElementById('drawer-close').addEventListener('click', () => {setDrawer(false);drawerToggle.focus();});
+  const marketPanel=document.getElementById('market-panel');
+  function showMarket(open){marketPanel.hidden=!open;document.getElementById('village-exchange').setAttribute('aria-expanded',String(open));}
+  document.getElementById('village-exchange').addEventListener('click',()=>{setDrawer(false);showMarket(true);});
+  document.getElementById('market-close').addEventListener('click',()=>{showMarket(false);document.getElementById('village-exchange').focus();});
+  for(const id of ['village-overview','village-leaderboard','village-chapters'])document.getElementById(id).addEventListener('click',()=>showMarket(false));
+  document.addEventListener('village:introstart',()=>showMarket(false));
+  document.addEventListener('keydown',event=>{if(event.key==='Escape')showMarket(false);});
   const about = document.getElementById('about-dialog');
   document.getElementById('village-about').addEventListener('click', () => about.showModal());
   document.getElementById('about-close').addEventListener('click', () => about.close());
@@ -167,7 +174,19 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=48').catch(error => {
+  import('./village.js?v=50').then(async()=>{
+    try{
+      const {startMarketFeed,marketStatus,marketPrice}=await import('./market-feed.js?v=50');
+      const options={onUpdate(state){
+        document.dispatchEvent(new CustomEvent('market:update',{detail:state}));
+        const sol=state.markets.find(m=>m.symbol==='SOL');
+        document.getElementById('market-summary').textContent=`${sol?'SOL '+marketPrice(sol.price)+' · ':''}${marketStatus(state)}`;
+      }};
+      let feed=startMarketFeed(options);
+      addEventListener('pagehide',()=>feed.stop());
+      addEventListener('pageshow',event=>{if(event.persisted)feed=startMarketFeed(options);});
+    }catch{document.getElementById('market-summary').textContent='Fomo feed unavailable';}
+  }).catch(error => {
     console.error('Unable to load Greek village:', error);
     document.getElementById('village-loading').textContent = 'The village couldn’t load. Open Chapters to browse progress or join Greek Wars.';
     document.getElementById('village').classList.remove('intro-playing');
