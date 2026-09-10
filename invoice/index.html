@@ -1996,17 +1996,25 @@ document.getElementById("banner-do").addEventListener("click", function(){
    cannot be answered by trying it and seeing. An old deployment answers
    an ordinary ok:true while knowing nothing about ledgers, so the page
    would switch onto it and then go blank. doGet names the halves it
-   carries; both, or we stay put. */
+   carries; both, or we stay put.
+
+   Three answers, not two, because "the script behind this URL is out of
+   date" and "the URL did not answer me" want opposite things done about
+   them. The first is a person's job — redeploy. The second is nobody's:
+   Apps Script serves one of Google's own error pages often enough, under
+   load or a held lock, that treating it as a verdict on the deployment
+   sends someone off to fix a thing that was never broken. */
 function probeSheet(){
   return fetch(ENDPOINT, {method:"GET"}).then(function(res){
     if (!res.ok) throw new Error("HTTP " + res.status);
     return res.json();
   }).then(function(out){
-    return !!(out && out.ok === true && out.ledger === true && out.clock === true);
+    if (out && out.ok === true && out.ledger === true && out.clock === true) return "shared";
+    return "old";
   })["catch"](function(){
-    /* offline, blocked, or an endpoint that isn't there: none of them are
-       a reason to take the ledger away from someone mid-week */
-    return false;
+    /* offline, blocked, rate-limited, or an HTML error page where the JSON
+       should have been — none of it an answer about the deployment */
+    return "unreachable";
   });
 }
 
@@ -2137,21 +2145,40 @@ function open_(){
       setLive(true, "on this device only");
     } else {
       setLive(true, "on this device · checking");
-      probeSheet().then(function(ok){
-        if (ok) {
-          /* hold what this browser has before the sheet's copy replaces
-             it on screen — it is the only chance to offer to send it up */
-          carried = {rows: rows.slice(), shifts: shifts.slice()};
-          goSheet();
-          return;
-        }
-        setLive(true, "on this device only");
-        showBanner("<b>The clocks aren't shared yet.</b> This browser is keeping its own ledger, so these " +
-          "cards are the shifts clocked <em>here</em> and nobody else's — someone clocking in on their own " +
-          "laptop cannot show up on this page. The endpoint answers, but the version deployed behind it is " +
-          "the forms-only one. Redeploy <b>fomo/setup/apps-script.gs</b> — Deploy → Manage deployments → " +
-          "New version — and this page moves itself over, on its own, next time it loads.");
-      });
+      var tries = 0;
+      (function attempt(){
+        probeSheet().then(function(verdict){
+          if (verdict === "shared") {
+            /* hold what this browser has before the sheet's copy replaces
+               it on screen — it is the only chance to offer to send it up */
+            carried = {rows: rows.slice(), shifts: shifts.slice()};
+            goSheet();
+            return;
+          }
+          if (verdict === "old") {
+            setLive(true, "on this device only");
+            showBanner("<b>The clocks aren't shared yet.</b> This browser is keeping its own ledger, so these " +
+              "cards are the shifts clocked <em>here</em> and nobody else's — someone clocking in on their own " +
+              "laptop cannot show up on this page. The endpoint answers, but the version deployed behind it is " +
+              "the forms-only one. Redeploy <b>fomo/setup/apps-script.gs</b> — Deploy → Manage deployments → " +
+              "New version — and this page moves itself over, on its own, next time it loads.");
+            return;
+          }
+          /* Unreachable. One flaky answer used to leave the page on device
+             storage for the rest of the session, under a banner telling
+             someone to go redeploy a script that was fine. Keep asking
+             instead, backing off to a minute, so a page left open comes
+             right by itself. */
+          tries++;
+          setLive(true, "on this device · retrying");
+          if (tries === 1) {
+            showBanner("<b>Couldn't reach the shared sheet.</b> This is the ledger saved on this browser " +
+              "in the meantime, so what you add stays here until the two meet. Nothing is lost either way — " +
+              "the page keeps asking, and moves over on its own the moment it gets an answer.");
+          }
+          setTimeout(attempt, Math.min(60000, 10000 * tries));
+        });
+      })();
     }
   }
   loadGh();
