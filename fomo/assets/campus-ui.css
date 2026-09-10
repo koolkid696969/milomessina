@@ -1,0 +1,64 @@
+/* Shared campus identity, navigation, and controls. */
+:root{--campus-bg:#060510;--campus-surface:#12111a;--campus-text:#f7f7f7;--campus-muted:#a5a7b2;--campus-accent:#516af6;--campus-border:#cbd0eb26}
+html{scroll-padding-top:132px}
+body.campus-page{--ink:var(--campus-bg);--ink-2:var(--campus-surface);--text:var(--campus-text);--muted:var(--campus-muted);--muted-2:#989cae;--line:var(--campus-border);--surface:var(--campus-surface);--violet-hi:#a2b0ff;background:var(--campus-bg);color:var(--campus-text)}
+.campus-page #stars,.campus-page .aurora,.campus-page:after{display:none}
+.campus-page main{background:radial-gradient(ellipse 85% 500px at 50% 0%,#516af629,transparent 75%)}
+.campus-page h1,.campus-page h2,.campus-page h3,.campus-page h4{font-weight:700;line-height:1.1;text-transform:none}
+.campus-page .h1 .grad{background:none;color:#a2b0ff;-webkit-text-fill-color:currentColor}
+.campus-page .h1{line-height:1.06}
+.campus-page .btn,.campus-page .button{border-radius:12px;min-height:48px;font-size:1rem;line-height:1.4;font-weight:700;padding:13px 22px;gap:10px;transition:background .15s,transform .15s}
+.campus-page .btn-p,.campus-page .button.primary{background:var(--campus-accent);color:white;border:1px solid transparent;box-shadow:none}
+.campus-page .btn-p:hover,.campus-page .button.primary:hover{background:#637af7;box-shadow:none;transform:translateY(-1px)}
+.campus-page .btn-g{background:var(--campus-surface);color:var(--campus-text);border:1px solid var(--campus-border);box-shadow:none}
+.campus-page .card,.campus-page .paycard,.campus-page .req,.campus-page .idea,.campus-page .seat{background:var(--campus-surface);border-radius:16px;border-color:var(--campus-border)}
+.campus-page .seat.on{background:#516af626;border-color:#8192ff}
+.campus-page .f .hint,.campus-page .f>span em,.campus-page .count,.campus-page .seat small{color:#a5a7b2;font-size:.8125rem}
+.campus-page input::placeholder,.campus-page textarea::placeholder{color:#989cae;opacity:1}
+.campus-page .paycard h4,.campus-page .req h4,.campus-page .calc-lab,.campus-page .when{font-size:.875rem}
+.campus-page .top p,.campus-page .lede{color:var(--campus-muted)}
+.campus-page :is(a,button,input,select,textarea,summary):focus-visible{outline:3px solid #a2b0ff;outline-offset:4px}
+.campus-page section{scroll-margin-top:0}
+.campus-page .program.internship{scroll-margin-top:0}
+.campus-page .masthead{min-height:calc(100svh - 116px)}
+.campus-header,.campus-page header.campus-header,.campus-page header.campus-header.stuck{display:block;position:sticky;top:0;z-index:100;background:#060510f5;backdrop-filter:blur(18px);border-bottom:1px solid var(--campus-border);padding:0;min-height:0}
+.campus-header .campus-top{display:flex;align-items:center;gap:16px;min-height:64px;max-width:1280px;margin:auto;padding:10px 32px}
+.campus-header .logo,.campus-header .brand{display:flex;align-items:center;gap:8px;flex-shrink:0;font-size:1.25rem;font-weight:700;letter-spacing:-.04em;line-height:1;min-height:40px;color:#f7f7f7}
+.campus-header .logo>span,.campus-header .brand>span{color:#a5a7b2}
+.campus-header .logo-mark{display:grid;place-items:center;width:32px;height:32px;color:#cbd0eb;flex-shrink:0}
+.campus-header .logo-mark svg{width:100%;height:100%;display:block}
+.campus-header .campus-actions{display:flex;align-items:center;gap:12px;margin-left:auto}
+.campus-header .campus-actions .btn,.campus-header .replay{font-size:.875rem;min-height:40px;padding:9px 14px}
+.campus-header .campus-back{font-size:.875rem;color:#a2b0ff;line-height:1.4}
+.campus-programs{display:flex;align-items:center;justify-content:center;gap:8px;padding:0 20px 8px;margin:0;max-width:none;position:static}
+.campus-programs a{display:block;padding:10px 16px;font-size:.875rem;line-height:20px;border-radius:8px;color:#b9bdcd;white-space:nowrap}
+.campus-programs a:hover,.campus-programs a[aria-current=page]{background:#516af626;color:#f7f7f7}
+.campus-sections{position:relative;font-size:.875rem}
+.campus-sections summary{cursor:pointer;padding:10px 12px;border:1px solid var(--campus-border);border-radius:8px;color:#f7f7f7;white-space:nowrap;list-style:none}
+.campus-sections summary::-webkit-details-marker{display:none}
+.campus-sections summary:after{content:' ▾'}
+.campus-sections[open] summary:after{content:' ▴'}
+.campus-sections .nav-links{display:flex!important;position:absolute!important;inset:auto 0 auto auto!important;top:calc(100% + 8px)!important;flex-direction:column;align-items:stretch;gap:2px;width:max-content;min-width:195px;max-width:calc(100vw - 40px);padding:8px;margin:0;background:#12111a;border:1px solid var(--campus-border);border-radius:12px;box-shadow:0 12px 36px #0006}
+.campus-sections .nav-links :is(a,button){display:block!important;text-align:left;white-space:normal;padding:12px;font-size:.875rem;color:#f7f7f7;border-radius:6px;opacity:1}
+.campus-sections .nav-links :is(a,button):hover{background:#516af626}
+.campus-sections .nav-links a:after{display:none}
+.campus-note{font-size:.875rem;line-height:1.6;color:#a5a7b2;margin-top:16px}
+.commitment-scope{font-size:1.125rem;color:#a5a7b2;margin-top:14px;line-height:1.4}
+.campus-skip{position:fixed;left:16px;top:12px;z-index:300;transform:translateY(-180%);padding:12px 18px;background:#516af6;color:white;border-radius:8px}
+.campus-skip:focus{transform:none}
+.campus-page .bignum b,.campus-page .calc-pay{background:none;color:#f7f7f7;-webkit-text-fill-color:currentColor}
+.campus-page .bignum:before{display:none}
+.campus-page .film-top .wordmark>span{display:inline}
+.campus-page .film-top .wordmark{font-size:1.25rem}
+@media(max-width:650px){
+  .campus-header .campus-top{padding:10px 20px;gap:10px;flex-wrap:wrap}
+  .campus-header .campus-actions{gap:8px}
+  .campus-header .logo,.campus-header .brand{font-size:1.125rem;gap:5px}
+  .campus-header .logo-mark{width:27px;height:27px}
+  .campus-header .campus-actions .btn{padding:9px 11px}
+  .campus-header .campus-actions:has(.campus-sections)>.btn{display:none}
+  .campus-programs{gap:2px;padding-inline:12px}
+  .campus-programs a{padding:10px 13px}
+  .campus-page .btn,.campus-page .button{font-size:1rem}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.campus-page *{scroll-behavior:auto!important}.intro-initial body{overflow:auto}.intro-initial .opening{display:none}}

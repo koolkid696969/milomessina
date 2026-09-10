@@ -12,7 +12,7 @@ function harness({reduced=false,hash='',blocked=false,frameCallbacks=false,hidde
       getBoundingClientRect(){return {left:300,top:240,width:600,height:112};},
       classList:{values:new Set(),add(...names){names.forEach(n=>this.values.add(n));},remove(...names){names.forEach(n=>this.values.delete(n));},contains(name){return this.values.has(name);}},
       addEventListener(type,fn){events.set(`${id}:${type}`,fn);},
-      setAttribute(key,value){this[key]=value;},getAttribute(key){return this[key]||null;},
+      setAttribute(key,value){this[key]=value;},getAttribute(key){return this[key]||null;},hasAttribute(key){return this[key]!==undefined;},
       focus(){this.focused=true;},scrollIntoView(){this.scrolled=true;}
     });
     return nodes.get(id);
@@ -45,8 +45,24 @@ test('intro streams a video immediately without constructing the 3D village',()=
   assert.match(html,/<video[^>]*muted autoplay playsinline preload="auto"/);
   assert.match(html,/class="opening-poster"/);assert.doesNotMatch(html,/<iframe|Getting campus ready|pause-intro|Play intro/);
 });
-test('every fresh visit opens the intro, including section links and reduced-motion preferences',()=>{
-  for(const options of [{},{reduced:true},{hash:'#internship'},{hash:'#greek-wars'},{hash:'#programs',reduced:true}]){const h=harness(options);assert.ok(h.video.src);assert.equal(h.video.paused,false);assert.equal(h.node('opening').hidden,false);assert.equal(h.node('page').inert,true);}
+test('fresh visits open the intro when motion is enabled',()=>{
+  for(const options of [{},{hash:'#internship'},{hash:'#greek-wars'}]){const h=harness(options);assert.ok(h.video.src);assert.equal(h.video.paused,false);assert.equal(h.node('opening').hidden,false);assert.equal(h.node('page').inert,true);}
+});
+test('reduced motion opens the requested content without loading a video, but allows explicit replay',()=>{
+  const h=harness({reduced:true,hash:'#internship'});
+  assert.equal(h.video.src,undefined);assert.equal(h.video.paused,true);assert.equal(h.node('opening').hidden,true);
+  assert.equal(h.node('page').inert,false);assert.equal(h.node('internship').scrolled,true);assert.equal(h.node('internship').focused,true);
+  h.fire('replay-intro:click');assert.equal(h.video.paused,false);assert.equal(h.node('opening').hidden,false);
+});
+test('finishing or skipping the intro honors a requested section',()=>{
+  for(const end of [h=>h.fire('skip-intro:click'),h=>{h.fire('intro-video:ended');h.flush();}]){
+    const h=harness({hash:'#internship'});end(h);
+    assert.equal(h.node('internship').scrolled,true);assert.equal(h.node('internship').focused,true);
+    assert.equal(h.node('page').inert,false);
+  }
+});
+test('a malformed section URL falls back to the hero',()=>{
+  const h=harness({hash:'#%E0%A4%A'});h.fire('skip-intro:click');assert.equal(h.node('programs').focused,true);
 });
 test('caption and progress timing follow the actual video clock',()=>{
   const h=harness();h.step(3);assert.equal(h.node('film-title').textContent,"IF YOU'RE IN A CHAPTER.");h.step(6.8);assert.equal(h.node('film-progress').style.transform,'scaleX(0.5)');

@@ -7,7 +7,7 @@
 <meta name="description" content="Apply for one of the five seats on your campus team: president, growth, partnerships, content or culture.">
 <meta name="theme-color" content="#060510">
 <meta name="robots" content="noindex">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
+<link rel="icon" href="/fomo/assets/favicon.svg">
 <link rel="stylesheet" href="/fomo/assets/base.css">
 <style>
 /* the campus page's own palette and radii, so this reads as the same site */
@@ -60,24 +60,22 @@ footer{border-top:0}
 
 @media(max-width:620px){.top{text-align:left}.top p{margin-inline:0}}
 </style>
+<link rel="stylesheet" href="/fomo/assets/campus-ui.css?v=1">
+<script src="/fomo/assets/campus-ui.js?v=1" defer></script>
 </head>
-<body>
+<body class="campus-page">
+<a class="campus-skip" href="#main-content">Skip to content</a>
 
 <canvas id="stars"></canvas>
 <div class="aurora"><i></i><i></i><i></i></div>
 
-<header id="hdr">
-  <nav class="nav">
-    <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
-    <a class="back" href="/fomo">&larr; <span class="long">back to </span>campus</a>
-  </nav>
-</header>
+<header class="campus-header" id="hdr"><div class="campus-top"><a class="logo" href="/landingpage/" aria-label="fomo campus — all programs"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a><div class="campus-actions"><a class="campus-back" href="/fomo/">← Internship details</a></div></div><nav class="campus-programs" aria-label="Campus programs"><a href="/fomo/campuswars/">Greek Wars</a><a href="/fomo/" aria-current="page">Internship</a><a href="/fomo/submit/">Creators</a></nav></header>
 
-<main>
+<main id="main-content" tabindex="-1">
 <div class="wrap">
 
   <div class="top rv">
-    <h1 class="h1">apply to run<br><span class="lock">fomo<span class="grad">/campus</span></span></h1>
+    <h1 class="h1">Apply to run<br><span class="lock">fomo<span class="grad">/campus</span></span></h1>
     <p id="sub">one seat, five minutes. we read every application and reply either way.</p>
   </div>
 
@@ -86,7 +84,7 @@ footer{border-top:0}
     <input class="hp" type="text" name="_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
 
     <section class="step rv">
-      <h3>which one do you want?</h3>
+      <h3>Which one do you want?</h3>
       <fieldset class="fset">
         <legend>the seat you want</legend>
         <div class="seatpick" id="seatpick">
@@ -102,7 +100,7 @@ footer{border-top:0}
     </section>
 
     <section class="step rv">
-      <h3>who's applying.</h3>
+      <h3>Who's applying.</h3>
       <fieldset class="fset">
         <legend>who you are</legend>
         <div class="frow">
@@ -114,9 +112,15 @@ footer{border-top:0}
             <span class="err"></span></label>
         </div>
         <div class="frow">
+          <label class="f"><span>Phone</span>
+            <input type="tel" name="phone" required autocomplete="tel" inputmode="tel" placeholder="(555) 123-4567">
+            <span class="hint">So we can text you about the interview — we don't call unprompted.</span>
+            <span class="err"></span></label>
           <label class="f"><span>University</span>
             <input type="text" id="university" name="university" required placeholder="University of Michigan">
             <span class="err"></span></label>
+        </div>
+        <div class="frow">
           <label class="f"><span>Graduating in</span>
             <select name="grad_year" required>
               <option value="">select a year</option>
@@ -129,7 +133,7 @@ footer{border-top:0}
     </section>
 
     <section class="step rv">
-      <h3>where you post.</h3>
+      <h3>Where you post.</h3>
       <p class="say">All optional. No following is required for any seat.</p>
       <fieldset class="fset">
         <legend>where you already post</legend>
@@ -146,7 +150,7 @@ footer{border-top:0}
     </section>
 
     <section class="step rv">
-      <h3>the part we actually read.</h3>
+      <h3>The part we actually read.</h3>
       <fieldset class="fset">
         <legend>the part we actually read</legend>
         <label class="f"><span>Why this seat, and why you? <span class="count" data-count-for="why"></span></span>
@@ -169,14 +173,14 @@ footer{border-top:0}
     </section>
 
     <section class="step rv">
-      <h3>two boxes, then you're done.</h3>
+      <h3>Two boxes, then you're done.</h3>
       <fieldset class="fset">
         <legend>before you send it</legend>
         <div class="checks">
           <label class="chk"><input type="checkbox" name="confirm_student" required>
             <span>I'm currently enrolled at the university above.</span><span class="err"></span></label>
           <label class="chk"><input type="checkbox" name="confirm_advice" required>
-            <span>I understand ambassadors don't give financial advice.</span><span class="err"></span></label>
+            <span>I understand campus team members don't give financial advice.</span><span class="err"></span></label>
         </div>
       </fieldset>
 
@@ -188,7 +192,7 @@ footer{border-top:0}
 
   <div class="done">
     <div class="tick">✓</div>
-    <h2>application in.</h2>
+    <h2>Application in.</h2>
     <p class="msg">We reply either way, usually inside a week. If your campus already has the seat filled we'll tell you what else is open.</p>
     <div class="dump" style="display:none"></div>
   </div>
@@ -205,7 +209,7 @@ footer{border-top:0}
 </footer>
 
 <script src="/fomo/assets/schools.js?v=1"></script>
-<script src="/fomo/assets/form.js?v=3"></script>
+<script src="/fomo/assets/form.js?v=5"></script>
 <script>
 /* one entry per seat: the line under the picker, the question we ask for it,
    and how to answer it. everything else about the role lives on /fomo. */
@@ -242,7 +246,7 @@ function paint(){
   document.getElementById('qLabel').innerHTML=s.q+' <span class="count" data-count-for="roleq"></span>';
   document.getElementById('qHint').textContent=s.qh;
   document.getElementById('roleq').placeholder=s.ph;
-  document.querySelectorAll('#seatpick .seat').forEach(b=>b.classList.toggle('on',b.dataset.s===seat));
+  document.querySelectorAll('#seatpick .seat').forEach(b=>{const selected=b.dataset.s===seat;b.classList.toggle('on',selected);b.setAttribute('aria-pressed',String(selected));});
   document.title='apply · '+s.name+' — fomo campus';
   /* the label is rewritten above, so its counter has to be re-wired each time */
   const c=document.querySelector('[data-count-for="roleq"]');

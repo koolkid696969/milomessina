@@ -77,7 +77,7 @@ function wireForm(form,opts){
     let bad=null;
     /* the optional link and email fields are checked too when they're filled in,
        so a half-typed handle never lands in the sheet as data we can't use */
-    form.querySelectorAll('[required],input[type=url],input[type=email]').forEach(el=>{
+    form.querySelectorAll('[required],input[type=url],input[type=email],input[type=tel]').forEach(el=>{
       const v=(el.type==='checkbox')?el.checked:el.value.trim();
       if(!v){
         if(!el.hasAttribute('required')){clearErr(el);return}
@@ -87,6 +87,13 @@ function wireForm(form,opts){
         showErr(el,'That file is over 10MB. Export it smaller, or send it to the campus team directly.');bad=bad||el;return}
       if(el.type==='email'&&!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(el.value.trim())){
         showErr(el,"That doesn't look like an email address.");bad=bad||el;return}
+      /* people type numbers as (313) 555-0142, +44 7700 900 123, 313.555.0142.
+         we only care that there are enough digits to actually dial. */
+      if(el.type==='tel'){
+        const digits=el.value.replace(/\D/g,'');
+        if(digits.length<10||digits.length>15){
+          showErr(el,'That needs to be a full phone number, area code included.');bad=bad||el;return}
+      }
       if(el.type==='url'){
         let u=el.value.trim();
         if(!/^https?:\/\//i.test(u)){u='https://'+u;el.value=u}

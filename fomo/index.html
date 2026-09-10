@@ -6,7 +6,7 @@
 <title>fomo campus — five roles, sixty days</title>
 <meta name="description" content="fomo Campus puts a five-person startup team inside every school: Campus President, Growth, Partnerships, Content and Culture. Read the five roles, the eight-week goal map, and apply to one seat.">
 <meta name="theme-color" content="#08070F">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
+<link rel="icon" href="/fomo/assets/favicon.svg">
 <link rel="stylesheet" href="/fomo/assets/fonts.css">
 <style>
 :root{
@@ -427,36 +427,28 @@ body::after{display:none}
 .map td.on{color:var(--text)}
 
 </style>
+<link rel="stylesheet" href="/fomo/assets/campus-ui.css?v=1">
+<script src="/fomo/assets/campus-ui.js?v=1" defer></script>
 </head>
-<body>
+<body class="campus-page">
+<a class="campus-skip" href="#top">Skip to content</a>
 
 <canvas id="stars"></canvas>
 <div class="aurora"><i></i><i></i><i></i></div>
 
-<header id="hdr">
-  <nav class="nav">
-    <button class="logo" data-jump="top" type="button"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></button>
-    <div class="nav-links">
-      <button data-jump="role" type="button">the five roles</button>
-      <button data-jump="get" type="button">what you get</button>
-      <button data-jump="map" type="button">the 8 weeks</button>
-      <a class="navcta" href="/fomo/apply">apply &rarr;</a>
-    </div>
-    <button class="burger" aria-label="menu">☰</button>
-  </nav>
-</header>
+<header class="campus-header" id="hdr"><div class="campus-top"><a class="logo" href="/landingpage/" aria-label="fomo campus — all programs"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a><div class="campus-actions"><details class="campus-sections"><summary>On this page</summary><nav class="nav-links" aria-label="Internship sections"><button data-jump="role" type="button">The five roles</button><button data-jump="get" type="button">What you get</button><button data-jump="map" type="button">The eight-week plan</button><a href="/fomo/apply/" data-apply-link>Apply →</a></nav></details><a class="btn btn-p" href="/fomo/apply/" data-apply-link>Apply →</a></div></div><nav class="campus-programs" aria-label="Campus programs"><a href="/fomo/campuswars/">Greek Wars</a><a href="/fomo/" aria-current="page">Internship</a><a href="/fomo/submit/">Creators</a></nav></header>
 
-<main id="top">
+<main id="top" tabindex="-1">
 
 <section class="hero">
   <div class="wrap">
     <div class="hero-grid">
       <div>
-        <h1 class="h1">own fomo<br>at your campus.</h1>
+        <h1 class="h1">Own fomo<br>at your campus.</h1>
         <p class="lede">we hand you the brand, a budget and the playbook, then step away. <br class="lede-br">sixty days to make fomo spread without us.</p>
         <div class="hero-cta">
           <button class="btn btn-p" data-jump="role" type="button">see the five roles &rarr;</button>
-          <button class="btn btn-g" data-jump="map" type="button">the 8-week map</button>
+          <button class="btn btn-g" data-jump="map" type="button">The eight-week plan</button>
         </div>
 
         <div class="hero-stats">
@@ -473,40 +465,40 @@ body::after{display:none}
   <div class="wrap">
     <div class="shead rv">
       <span class="eyebrow">01 &mdash; who fits each role</span>
-      <h2>read all five.<br>apply to one.</h2>
+      <h2>Read all five.<br>Apply to one.</h2>
     </div>
 
     <div class="roles rv" id="roles">
       <button class="rcard" data-r="pres" style="--rc:rgba(255,196,107,.26);--rc-txt:#FFC46B;--rc-line:rgba(255,196,107,.55)" type="button">
         <span class="rc-n">01</span><i class="rc-ic">&#11045;</i>
-        <h4>campus president</h4>
+        <h4>Campus president</h4>
         <span class="rc-open">the lead role &rarr;</span>
       </button>
       <button class="rcard" data-r="growth" style="--rc:rgba(25,217,124,.24);--rc-txt:#19D97C;--rc-line:rgba(25,217,124,.55)" type="button">
         <span class="rc-n">02</span><i class="rc-ic">&#8599;</i>
-        <h4>growth</h4>
+        <h4>Growth</h4>
         <span class="rc-open">the numbers role &rarr;</span>
       </button>
       <button class="rcard" data-r="partner" style="--rc:rgba(255,77,143,.24);--rc-txt:#FF4D8F;--rc-line:rgba(255,77,143,.55)" type="button">
         <span class="rc-n">03</span><i class="rc-ic">&sect;</i>
-        <h4>partnerships</h4>
+        <h4>Partnerships</h4>
         <span class="rc-open">the closing role &rarr;</span>
       </button>
       <button class="rcard on" data-r="content" style="--rc:rgba(81,106,246,.3);--rc-txt:#A3B0FF;--rc-line:#516AF6" type="button">
         <span class="rc-n">04</span><i class="rc-ic">&#9654;</i>
-        <h4>content</h4>
+        <h4>Content</h4>
         <span class="rc-open">the influencer role &rarr;</span>
       </button>
       <button class="rcard" data-r="culture" style="--rc:rgba(111,215,255,.24);--rc-txt:#6FD7FF;--rc-line:rgba(111,215,255,.55)" type="button">
         <span class="rc-n">05</span><i class="rc-ic">&#10687;</i>
-        <h4>culture</h4>
+        <h4>Culture</h4>
         <span class="rc-open">the people role &rarr;</span>
       </button>
     </div>
 
     <div class="rpanel rv" id="r-pres" style="--rc-txt:#FFC46B">
       <div>
-        <h3>runs the team.<br>main line to fomo HQ.</h3>
+        <h3>Runs the team.<br>main line to fomo HQ.</h3>
         <a class="btn btn-p" href="/fomo/apply?role=pres" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
@@ -523,7 +515,7 @@ body::after{display:none}
     </div>
     <div class="rpanel rv" id="r-growth" style="--rc-txt:#19D97C">
       <div>
-        <h3>gets people to download it<br>and actually use it.</h3>
+        <h3>Gets people to download it<br>and actually use it.</h3>
         <a class="btn btn-p" href="/fomo/apply?role=growth" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
@@ -540,7 +532,7 @@ body::after{display:none}
     </div>
     <div class="rpanel rv" id="r-partner" style="--rc-txt:#FF4D8F">
       <div>
-        <h3>gets fomo into orgs,<br>teams and events.</h3>
+        <h3>Gets fomo into orgs,<br>teams and events.</h3>
         <a class="btn btn-p" href="/fomo/apply?role=partner" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
@@ -557,7 +549,7 @@ body::after{display:none}
     </div>
     <div class="rpanel on rv" id="r-content" style="--rc-txt:#A3B0FF">
       <div>
-        <h3>runs the school's page.<br>mic in hand.</h3>
+        <h3>Runs the school's page.<br>mic in hand.</h3>
         <a class="btn btn-p" href="/fomo/apply?role=content" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
@@ -574,7 +566,7 @@ body::after{display:none}
     </div>
     <div class="rpanel rv" id="r-culture" style="--rc-txt:#6FD7FF">
       <div>
-        <h3>makes the fomo<br>influencer dinners happen.</h3>
+        <h3>Makes the fomo<br>influencer dinners happen.</h3>
         <a class="btn btn-p" href="/fomo/apply?role=culture" style="margin-top:26px">apply for this seat &rarr;</a>
       </div>
       <div class="rp-side">
@@ -596,7 +588,7 @@ body::after{display:none}
   <div class="wrap">
     <div class="shead rv">
       <span class="eyebrow">02 &mdash; what you get out of it</span>
-      <h2>real job experience.</h2>
+      <h2>Real job experience.</h2>
     </div>
 
     <div class="li-panel rv">
@@ -607,8 +599,8 @@ body::after{display:none}
             <span class="li-logo"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>
             <div class="li-body">
               <h5 id="liTitle">Campus Content Lead</h5>
-              <p>fomo &middot; Contract</p>
-              <small>Sep 2026 &ndash; Present &middot; 2 mos</small>
+              <p>fomo &middot; Campus team</p>
+              <small>Illustrative role experience</small>
               <small id="liSkills">Skills: Content Strategy &middot; Social Media &middot; Video Production</small>
             </div>
           </div>
@@ -648,8 +640,8 @@ body::after{display:none}
 <section id="map">
   <div class="wrap">
     <div class="shead rv">
-      <span class="eyebrow">03 &mdash; the 8-week goal map</span>
-      <h2>sixty days,<br>written down.</h2>
+      <span class="eyebrow">03 &mdash; the eight-week plan</span>
+      <h2>Your first eight weeks,<br>written down.</h2>
     </div>
 
     <div class="map-m rv" data-core>
@@ -670,7 +662,7 @@ body::after{display:none}
       </div>
     </div>
 
-    <p class="path-note rv">Goals are the bar, not the ceiling. <b>HQ adjusts them per school size.</b></p>
+    <p class="path-note rv">The eight-week plan covers your first 56 days. Days 57–60 are for the final report and handoff. Goals are the bar, not the ceiling. <b>HQ adjusts them per school size.</b></p>
   </div>
 </section>
 
@@ -678,10 +670,10 @@ body::after{display:none}
   <div class="wrap">
     <div class="cta rv">
       <span class="eyebrow" style="justify-content:center">applications open</span>
-      <h2>pick a seat.</h2>
+      <h2>Pick a seat.</h2>
       <p>one application, one role. tell us which of the five you want and why you're the person for it.</p>
       <div class="cta-btns">
-        <a class="btn btn-p" href="/fomo/apply">apply for a seat &rarr;</a>
+        <a class="btn btn-p" href="/fomo/apply/" data-apply-link>apply for a seat &rarr;</a>
         <button class="btn btn-g" data-jump="role" type="button">read the five roles again</button>
       </div>
     </div>
@@ -732,7 +724,7 @@ const rObs=new IntersectionObserver(es=>es.forEach(e=>{
 }),{threshold:0,rootMargin:'0px 0px -120px 0px'});
 document.querySelectorAll('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%4*60)+'ms';rObs.observe(el);});
 
-/* ── THE 8-WEEK GOAL MAP ────────────────────────────────
+/* ── THE EIGHT-WEEK PLAN ────────────────────────────────
    One row per week, one column per seat. Straight out of the program doc. */
 const MAP=[
  ['Team locked, chat live, first meeting','Learn the app cold','Build target list (25 orgs)','Accounts live, first 3 posts','Build creator list (30 names)'],
@@ -742,7 +734,7 @@ const MAP=[
  ['Coordinate first big activation','Referral competition','Deliver first partnership','Cover the activation','Dinner #1'],
  ['Double down on what worked','Convert dinner + event traffic','2 more in discussion','Repeat the winning format','Post-dinner follow-up'],
  ['Push toward the big event','Push toward 400','Lock a major campus event','Biggest content week','Line up dinner #2'],
- ['60-day report + next quarter plan','400 active users','3 confirmed total','100k+ total views','2 dinners done, roster built']
+ ['Prepare final report + next quarter plan','400 active users','3 confirmed total','100k+ total views','2 dinners done, roster built']
 ];
 const SEATKEYS=['pres','growth','partner','content','culture'];
 const ROLES={
@@ -839,7 +831,8 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitMap);
 /* picking a seat swaps the panel, the LinkedIn card and the goal-map column */
 function setRole(key){
   if(!ROLES[key])return;
-  document.querySelectorAll('#roles .rcard').forEach(c=>c.classList.toggle('on',c.dataset.r===key));
+  document.querySelectorAll('#roles .rcard').forEach(c=>{const selected=c.dataset.r===key;c.classList.toggle('on',selected);c.setAttribute('aria-pressed',String(selected));});
+  document.querySelectorAll('[data-apply-link]').forEach(link=>{link.href='/fomo/apply/?role='+encodeURIComponent(key);});
   document.querySelectorAll('.rpanel').forEach(pn=>pn.classList.toggle('on',pn.id==='r-'+key));
   document.querySelectorAll('.map [data-c]').forEach(el=>el.classList.toggle('on',el.dataset.c===key));
   const r=ROLES[key];

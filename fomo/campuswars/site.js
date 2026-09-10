@@ -134,7 +134,7 @@
     const target = chapter ? Math.ceil(chapter.active * 0.8) : 0;
     const url = chapter ? `${canonicalUrl}#chapter=${encodeURIComponent(chapter.id)}` : canonicalUrl;
     const data = {
-      title: chapter ? `${chapter.letters} — fomo Greek Wars` : 'Get your frat paid — fomo Greek Wars',
+      title: chapter ? `${chapter.letters} — fomo Greek Wars` : 'Get your chapter paid — fomo Greek Wars',
       text: chapter ? `${chapter.name}: ${chapter.joined} in, ${Math.max(0, target - chapter.joined)} more to hit 80%. Let’s get the house on fomo.` : 'There’s an empty lot for our chapter in the Greek village. $500,000 committed. Who’s getting our house on the map?',
       url
     };
@@ -167,7 +167,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=44').catch(error => {
+  import('./village.js?v=45').catch(error => {
     console.error('Unable to load Greek village:', error);
     document.getElementById('village-loading').textContent = 'The village couldn’t load. Open Chapters to browse progress or join Greek Wars.';
     document.getElementById('village').classList.remove('intro-playing');

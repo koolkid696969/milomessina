@@ -49,8 +49,8 @@ export function createCompetition(T,chapters,anchors){
   box(0,5.0,0,11.4,7.8,.40);box(0,9.01,0,11.7,.20,.65);
   const map=canvasTexture(T,2048,1376,(ctx,w,h)=>{
     ctx.fillStyle='#101D29';ctx.fillRect(0,0,w,h);ctx.textBaseline='middle';ctx.textAlign='left';
-    ctx.fillStyle='#E9C873';ctx.fillRect(0,0,w,12);ctx.font='700 47px Aeonik, Arial, sans-serif';ctx.fillText('FOMO / CAMPUS WARS',100,91);
-    ctx.fillStyle='#FFFFFF';ctx.font='700 121px Aeonik, Arial, sans-serif';ctx.fillText('THE ROW LEADERBOARD',100,211);
+    ctx.fillStyle='#E9C873';ctx.fillRect(0,0,w,12);ctx.font='700 47px Aeonik, Arial, sans-serif';ctx.fillText('FOMO / GREEK WARS',100,91);
+    ctx.fillStyle='#FFFFFF';ctx.font='700 121px Aeonik, Arial, sans-serif';ctx.fillText('ONBOARDING PROGRESS',100,211);
     ctx.fillStyle='#AFC0CD';ctx.font='500 40px Aeonik, Arial, sans-serif';ctx.fillText('ONBOARDING PROGRESS',105,315);
     ctx.textAlign='right';ctx.fillText('MEMBERS',w-327,315);ctx.fillText('%',w-110,315);
     standings.slice(0,5).forEach((row,i)=>{
@@ -63,7 +63,7 @@ export function createCompetition(T,chapters,anchors){
       ctx.textAlign='right';ctx.fillStyle='#D0DCE4';ctx.font='500 58px Aeonik, Arial, sans-serif';ctx.fillText(`${row.joined} / ${row.active}`,w-328,y+76);
       ctx.fillStyle=first?'#E9C873':'#FFFFFF';ctx.font='700 75px Aeonik, Arial, sans-serif';ctx.fillText(`${Math.round(row.progress*100)}%`,w-111,y+76);
     });
-    ctx.textAlign='left';ctx.fillStyle='#AFC0CD';ctx.font='500 32px Aeonik, Arial, sans-serif';ctx.fillText(`TOP ${Math.min(5,standings.length)} OF ${standings.length} CHAPTERS · Full standings below the village.`,100,h-74);
+    ctx.textAlign='left';ctx.fillStyle='#AFC0CD';ctx.font='500 32px Aeonik, Arial, sans-serif';ctx.fillText(`TOP ${Math.min(5,standings.length)} OF ${standings.length} CHAPTERS · Open Chapters for the full list.`,100,h-74);
     ctx.fillStyle='#E9C873';ctx.font='700 27px Aeonik, Arial, sans-serif';ctx.textAlign='right';ctx.fillText('80% TO QUALIFY',w-100,h-27);
   });
   const face=new T.Mesh(new T.PlaneGeometry(11,7.4),new T.MeshStandardMaterial({color:map?0xffffff:0x152632,map,roughness:.8,emissive:0xffffff,emissiveMap:map,emissiveIntensity:map?.4:0}));

@@ -18,6 +18,18 @@ let active = false, usedFallback = false, finishTimer, raf = 0;
 let playRetry, playAttempts = 0;
 let videoFrame = 0, lastPaint = -1, lastStage = -1, lastOutro = -1;
 
+function focusDestination() {
+  let target = programs;
+  try {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (id) target = document.getElementById(id) || programs;
+  } catch {}
+  if (target === programs) window.scrollTo({top: 0, behavior: 'instant'});
+  else target.scrollIntoView({behavior: 'instant', block: 'start'});
+  if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+  target.focus({preventScroll: true});
+}
+
 function alignTransition() {
   if (transition.hidden) return;
   // Follow the hero's real layout, including its header and responsive spacing.
@@ -135,8 +147,7 @@ function finish({scroll = true, cinematic = false} = {}) {
     document.body.classList.remove('intro-active');
     page.inert = false;
     if (scroll) {
-      window.scrollTo({top: 0, behavior: 'instant'});
-      programs.focus({preventScroll: true});
+      focusDestination();
     }
     if (cinematic && !reduced.matches) {
       alignTransition();
@@ -206,7 +217,15 @@ window.addEventListener('pageshow', event => {
   else if (event.persisted && active) play();
 });
 if (returningFromHistory) restorePage();
+else if (reduced.matches) {
+  introComplete = true;
+  restorePage();
+  focusDestination();
+  rememberVisit();
+}
 else { rememberVisit(); start(); }
+
+reduced.addEventListener('change', event => { if (event.matches && active) finish(); });
 
 if ('IntersectionObserver' in window && !reduced.matches) {
   const reveal = new IntersectionObserver(entries => {

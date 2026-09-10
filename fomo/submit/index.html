@@ -6,7 +6,7 @@
 <title>get paid for views — fomo campus</title>
 <meta name="description" content="Apply with your TikTok if you have made UGC ads before, or send a campus concept video. Creator approval earns a one-time $25 bonus and unlocks $2 per 1,000 qualifying views, up to $5,000 per approved video.">
 <meta name="theme-color" content="#08070F">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B091F'/%3E%3Cpath d='M36.97 24.36c7.13 0 12.82 3.59 15.97 9.24-4.19 4.44-7.29 10.16-8.48 16.4-1.19 6.24-.28 11.96 2.21 16.4-5.32 5.65-12.38 9.24-19.51 9.24-8.73 0-15.3-5.38-17.7-13.32h17.39c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H14.18c5.44-7.94 14.07-13.32 22.79-13.32Z' fill='%23EAEDFF'/%3E%3Cpath d='M72.33 24.36c12.75 0 20.89 11.48 18.18 25.64-2.71 14.16-15.24 25.64-27.99 25.64-8.73 0-15.3-5.38-17.7-13.32h19.34c.57 0 1.16-.46 1.32-1.03l6.48-22.59c.16-.57-.17-1.03-.73-1.03H49.53c5.44-7.94 14.07-13.32 22.8-13.32Z' fill='%23EAEDFF'/%3E%3C/svg%3E">
+<link rel="icon" href="/fomo/assets/favicon.svg">
 <link rel="stylesheet" href="/fomo/assets/base.css">
 <style>
 /* laid out like the campus page — same hero, same numbered sections, same
@@ -60,7 +60,7 @@ header.stuck{background:rgba(8,7,15,.82);backdrop-filter:blur(18px) saturate(150
 
 /* ── what your video needs ───────────────────────────
    five cards, numbered, read top to bottom in a glance */
-.reqs{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.reqs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media(max-width:1100px){.reqs{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:760px){.reqs{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:520px){.reqs{grid-template-columns:1fr;gap:9px}}
@@ -223,32 +223,24 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
   addEventListener('pageshow',function(e){if(e.persisted)place()});
 })();
 </script>
+<link rel="stylesheet" href="/fomo/assets/campus-ui.css?v=1">
+<script src="/fomo/assets/campus-ui.js?v=1" defer></script>
 </head>
-<body>
+<body class="campus-page">
+<a class="campus-skip" href="#main-content">Skip to content</a>
 
 <canvas id="stars"></canvas>
 <div class="aurora"><i></i><i></i><i></i></div>
 
-<header id="hdr">
-  <nav class="nav">
-    <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
-    <div class="nav-links">
-      <a href="#join">how to join</a>
-      <a href="#pays">what you earn</a>
-      <a href="#next">what happens next</a>
-      <a href="#ideas">ideas</a>
-      <a class="btn btn-p btn-sm navcta" href="#send">apply to create &rarr;</a>
-    </div>
-  </nav>
-</header>
+<header class="campus-header" id="hdr"><div class="campus-top"><a class="logo" href="/landingpage/" aria-label="fomo campus — all programs"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a><div class="campus-actions"><details class="campus-sections"><summary>On this page</summary><nav class="nav-links" aria-label="Creator program sections"><a href="#join">How to join</a><a href="#needs">Video requirements</a><a href="#pays">What you earn</a><a href="#next">What happens next</a><a href="#ideas">Ideas</a><a href="#send">Apply or submit →</a></nav></details><a class="btn btn-p" href="#send">Apply or submit →</a></div></div><nav class="campus-programs" aria-label="Campus programs"><a href="/fomo/campuswars/">Greek Wars</a><a href="/fomo/">Internship</a><a href="/fomo/submit/" aria-current="page">Creators</a></nav></header>
 
-<main>
+<main id="main-content" tabindex="-1">
 
 <section class="hero">
   <div class="wrap">
     <div class="inner">
-      <h1 class="h1">get paid<br><span class="grad">for views.</span></h1>
-      <p class="lede">Made UGC ads before? Send your <b>TikTok</b>. If not, send a <b>concept video</b> explaining your ideas and what you can create on campus. Get approved, earn <b>$25</b>, and unlock pay per view.</p>
+      <h1 class="h1">Get paid<br><span class="grad">for views.</span></h1>
+      <p class="lede">Made UGC ads before? Send your <b>TikTok</b>. If not, send a <b>concept video</b> explaining your ideas and what you can create on campus. Get approved, receive <b>$25</b>, and unlock pay per view for original, organic TikTok videos.</p>
       <div class="bignum">
         <span class="lab">up to</span>
         <b>$5,000</b>
@@ -265,61 +257,36 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
 
 <section id="join">
   <div class="wrap">
-    <div class="shead rv"><h2>two ways to apply.</h2><p>We review your application first. Once you’re approved, you earn a one-time <b>$25</b> bonus and get access to pay per view.</p></div>
+    <div class="shead rv"><h2>Two ways to apply.</h2><p>We review your application first. The one-time <b>$25</b> bonus is paid when you’re approved. You can then earn from original, organic TikTok videos.</p></div>
     <div class="pay rv">
-      <div class="paycard"><h4>already made UGC ads?</h4><p>Send your TikTok profile so we can review your previous UGC ad work. Prior UGC ad experience is the requirement for this route.</p><a class="btn btn-p" href="#send" data-creator-route="ugc_application">apply with TikTok &rarr;</a></div>
-      <div class="paycard"><h4>new to UGC?</h4><p>Make a concept video explaining your content ideas and what you can create on campus for fomo. Send a link we can watch.</p><a class="btn btn-p" href="#send" data-creator-route="concept_application">send a concept &rarr;</a></div>
+      <div class="paycard"><h4>Already made UGC ads?</h4><p>Send your TikTok profile so we can review your previous UGC ad work. Prior UGC ad experience is the requirement for this route.</p><a class="btn btn-p" href="#send" data-creator-route="ugc_application">apply with TikTok &rarr;</a></div>
+      <div class="paycard"><h4>New to UGC?</h4><p>Make a concept video explaining your content ideas and what you can create on campus for fomo. Send a link we can watch.</p><a class="btn btn-p" href="#send" data-creator-route="concept_application">send a concept &rarr;</a></div>
     </div>
   </div>
 </section>
 
 <section id="needs">
   <div class="wrap">
-    <div class="shead rv">
-      <h2>what your video needs.</h2>
-      <p>Once you’re accepted, these are the requirements for videos submitted for pay per view. Your application concept video only needs to explain your ideas and what you can create on campus.</p>
-    </div>
-
+    <div class="shead rv"><h2>What your video needs.</h2><p>Once you’re approved, submit real, original content made for TikTok. Choose your own format and topic.</p></div>
     <div class="reqs rv">
-      <div class="req">
-        <b>01</b>
-        <h4>rep your school</h4>
-        <p>Wear your school's merch or get its logo, name, or colors on screen so it's obvious which campus you're posting from.</p>
-      </div>
-      <div class="req">
-        <b>02</b>
-        <h4>show your face</h4>
-        <p>Bring your personality. You need to appear on camera &mdash; voiceovers, faceless edits, and reposts aren't eligible.</p>
-      </div>
-      <div class="req">
-        <b>03</b>
-        <h4>bring campus into it</h4>
-        <p>Talk with real people: interviews, street questions, reactions, or conversations with you and someone else in frame.</p>
-      </div>
-      <div class="req">
-        <b>04</b>
-        <h4>make fomo the story</h4>
-        <p>Show what people are trading in the app, the calls that worked, the ones that didn't, and what students are saying about them.</p>
-      </div>
-      <div class="req">
-        <b>05</b>
-        <h4>tag @fomo</h4>
-        <p>Include @fomo in the caption or on screen so we can find your post, review it, and track qualifying views.</p>
-      </div>
+      <div class="req"><b>01</b><h4>Original content</h4><p>Make your own video and post it on your TikTok account. Solo videos, conversations, and everyday moments are welcome.</p></div>
+      <div class="req"><b>02</b><h4>Organic views</h4><p>Reach real viewers without paid promotion or purchased views. Only organic views count toward your payout.</p></div>
+      <div class="req"><b>03</b><h4>TikTok only</h4><p>No cross-posting or reposts. Submit each original TikTok video once, and keep it public until its views are counted 30 days after submission.</p></div>
     </div>
+    <p class="campus-note">Application concept videos are reviewed for admission, not paid on views. You can share an accessible concept link before posting a paid video.</p>
   </div>
 </section>
 
 <section id="pays">
   <div class="wrap">
     <div class="shead rv">
-      <h2>how much you'll earn.</h2>
-      <p>One rate, however far it goes: <b>$2 for every 1,000 qualifying views</b>, up to <b>$5,000</b> on a single video. You earn a one-time <b>$25</b> bonus when your creator application is approved. That approval also unlocks pay per view.</p>
+      <h2>How much you'll earn.</h2>
+      <p>One rate, however far it goes: <b>$2 for every 1,000 qualifying views</b>, up to <b>$5,000</b> on a single video. Your one-time <b>$25</b> bonus is paid when your creator application is approved. That approval also unlocks pay per view.</p>
     </div>
 
     <div class="pay rv">
       <div class="paycard">
-        <h4>the rates</h4>
+        <h4>The rates</h4>
         <div class="krow"><span>On every approved video, per 1,000 qualifying views</span><b>$2.00</b></div>
         <div class="krow"><span>Maximum per approved video</span><b>$5,000</b></div>
         <div class="krow"><span>One-time bonus when you’re approved as a creator</span><b>$25</b></div>
@@ -328,13 +295,13 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
       </div>
 
       <div class="paycard">
-        <span class="calc-lab">if this video lands at</span>
-        <div class="calc-views" id="eV">100K views</div>
-        <input type="range" class="sl" id="eS" min="0" max="1000" value="575" style="--p:57.5%" aria-label="estimated views">
-        <div class="sl-ends"><span>1K</span><span>3M+</span></div>
-        <span class="calc-lab" style="margin-top:20px">you get</span>
+        <span class="calc-lab">Estimated qualifying views</span>
+        <div class="calc-views" id="eV">100K qualifying views</div>
+        <input type="range" class="sl" id="eS" aria-describedby="calculator-note" min="0" max="1000" value="575" style="--p:57.5%" aria-label="Estimated qualifying views">
+        <div class="sl-ends"><span>1K</span><span>3M</span></div>
+        <span class="calc-lab" style="margin-top:20px">Estimated video earnings</span>
         <div class="calc-pay" id="eP">$200</div>
-        <p class="calc-note">Drag to show payout.</p>
+        <p class="calc-note" id="calculator-note">Estimate for one approved video, based on qualifying views. The one-time $25 creator bonus is separate.</p>
       </div>
     </div>
   </div>
@@ -344,32 +311,32 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
 <section id="next">
   <div class="wrap">
     <div class="shead rv">
-      <h2>what happens next.</h2>
+      <h2>What happens next.</h2>
       <p>Four steps, and you hear from us at every one of them. Nothing here depends on you chasing us.</p>
     </div>
 
     <ol class="steps rv">
       <li class="step">
         <b>01</b>
-        <h4>you apply</h4>
+        <h4>You apply</h4>
         <p>Link your TikTok if you’ve made UGC ads before. Otherwise, send a concept video explaining your ideas and what you can create on campus. Make sure we can open your link.</p>
         <span class="when">same minute</span>
       </li>
       <li class="step">
         <b>02</b>
-        <h4>we review it by hand</h4>
-        <p>We review your previous UGC ads or your concept and email you a decision within <b>five business days</b>. If approved, you earn <b>$25</b> and can start submitting videos for pay per view.</p>
+        <h4>We review it by hand</h4>
+        <p>We review your previous UGC ads or your concept and email you a decision within <b>five business days</b>. If approved, you receive <b>$25</b> at approval and can start submitting original TikTok videos for pay per view. The approval bonus does not wait for the 30-day video measurement period.</p>
         <span class="when">within 5 business days</span>
       </li>
       <li class="step">
         <b>03</b>
-        <h4>you post, we count</h4>
-        <p>After creator approval, post videos that meet the requirements above and send us each link. For each approved post, we read its <b>total qualifying view count</b> 30 days after submission, including views it already had.</p>
+        <h4>You post, we count</h4>
+        <p>After creator approval, post videos that meet the requirements above and send us each link. For each approved post, we read its <b>total qualifying view count</b> 30 days after submission, including eligible organic views it already had. Paid promotion and purchased views do not count. Cross-posted videos, reposts, and repeat submissions are ineligible.</p>
         <span class="when">30 days after each post submission</span>
       </li>
       <li class="step">
         <b>04</b>
-        <h4>you get paid</h4>
+        <h4>You get paid</h4>
         <p>The video lands in the <b>next payout after day 30</b>, on the 1st or the 15th, sent to the payment account you gave us and itemised so you can see what this video earned.</p>
         <span class="when">1st or 15th</span>
       </li>
@@ -380,8 +347,8 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
 <section id="ideas">
   <div class="wrap">
     <div class="shead rv">
-      <h2>three that<br>already work.</h2>
-      <p>you don't have to use these. but if you're staring at your phone with no idea what to film, start here.</p>
+      <h2>Three ideas<br>to make your own.</h2>
+      <p>These are optional starting points. Make something real in your own style and post it only on TikTok.</p>
     </div>
 
     <div class="ideas rv">
@@ -396,7 +363,7 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
 
       <div class="idea">
         <span class="tag">street / dorm</span>
-        <h4>girls guessing crypto terms</h4>
+        <h4>Girls guessing crypto terms</h4>
         <p>Hand someone a word they've never heard and film the guess. Real answers beat anything you could script.</p>
         <ul>
           <li>&ldquo;What do you think <b>rugged</b> means?&rdquo;</li>
@@ -407,8 +374,8 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
 
       <div class="idea">
         <span class="tag">phone call</span>
-        <h4>girl calls her dad</h4>
-        <p>One question, one real reaction, no second take. Don't warn him it's for a video.</p>
+        <h4>Girl calls her dad</h4>
+        <p>One question, one real reaction, no second take. Make sure he is comfortable being included.</p>
         <ul>
           <li>&ldquo;Dad, what would you say if I dated a memecoin trader?&rdquo;</li>
         </ul>
@@ -420,7 +387,7 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
 <section id="send">
   <div class="wrap">
     <div class="subhead rv">
-      <h2>send your application<br>or your next video.</h2>
+      <h2>Send your application<br>or your next video.</h2>
     </div>
 
     <div class="formwrap rv">
@@ -444,14 +411,7 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
               <span class="hint" id="link-hint">Choose a submission type above, then paste your link.</span>
               <span class="err"></span></label>
             <div class="frow">
-              <label class="f" id="platform-field"><span>Platform</span>
-                <select name="platform" id="plat" required>
-                  <option value="">pick one</option>
-                  <option>TikTok</option><option>Instagram Reels</option>
-                  <option>YouTube Shorts</option>
-                </select>
-                <span class="hint" id="platHint">These three are the eligible platforms.</span>
-                <span class="err"></span></label>
+              <div class="f" id="platform-field"><span>Platform</span><input type="hidden" name="platform" id="plat" value="TikTok"><p class="campus-note">TikTok · original, organic videos only</p></div>
               <label class="f"><span id="handle-label">Your social handle</span>
                 <input type="text" name="handle" id="creator-handle" required placeholder="@yourhandle">
                 <span class="err"></span></label>
@@ -469,7 +429,7 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
                 <span class="err"></span></label>
             </div>
             <div class="frow">
-              <label class="f"><span>School</span>
+              <label class="f"><span>University</span>
                 <input type="text" id="school" name="school" required placeholder="University of Michigan">
                 <span class="err"></span></label>
               <label class="f"><span>Pay me with</span>
@@ -480,8 +440,8 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
                 <span class="err"></span></label>
             </div>
             <div class="frow">
-              <label class="f"><span>Your username on it</span>
-                <input type="text" name="payout_handle" required placeholder="@your-venmo">
+              <label class="f"><span>Your payment username</span>
+                <input type="text" name="payout_handle" required placeholder="Your Venmo or PayPal username">
                 <span class="hint">The username only &mdash; never a card, account or routing number.</span>
                 <span class="err"></span></label>
             </div>
@@ -492,7 +452,7 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
               <span id="submission-confirmation">The account or video is mine, the information is accurate, and my link is accessible for review.</span><span class="err"></span></label>
           </div>
 
-          <p class="presubmit" id="submission-explanation">We email you a decision within five business days. Creator approval earns a one-time $25 bonus and unlocks pay per view. Sending an application does not automatically approve you.</p>
+          <p class="presubmit" id="submission-explanation">We email you a decision within five business days. The one-time $25 bonus is paid when you are approved. Approval unlocks pay per view for original, organic TikTok videos. Sending an application does not automatically approve you.</p>
 
           <div class="actions">
             <button class="btn btn-p" type="submit" id="submission-button">send for review &rarr;</button>
@@ -503,7 +463,7 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
 
       <div class="done">
         <div class="tick">&#10003;</div>
-        <h2>sent for review.</h2>
+        <h2>Sent for review.</h2>
         <p class="msg">We email you a decision within five business days. If your creator application is approved, you earn $25 and get access to pay per view. For approved creators submitting a post, qualifying views are measured 30 days after submission.</p>
         <p style="font-family:var(--mono);font-size:.7rem;color:var(--muted-2)">
           <a href="/fomo/submit" style="color:var(--violet-hi);text-decoration:underline">Back to the creator program</a>.</p>
@@ -519,14 +479,14 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
   <div class="wrap">
     <div class="f-grid">
       <div>
-        <a class="logo" href="/fomo"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
+        <a class="logo" href="/landingpage/"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a>
       </div>
     </div>
   </div>
 </footer>
 
 <script src="/fomo/assets/schools.js?v=1"></script>
-<script src="/fomo/assets/form.js?v=3"></script>
+<script src="/fomo/assets/form.js?v=5"></script>
 <script>
 /* payout estimate — same maths as the rate table above it */
 (function(){
@@ -540,10 +500,10 @@ input::placeholder,textarea::placeholder{color:#8087AC;opacity:1}
            :x>=1000?(x/1000).toFixed(x>=1e5?0:1).replace(/\.0$/,'')+'K':x;
   /* $2 per 1,000 views, capped at $5,000 — the $25 joining bonus lands once,
      when a creator is accepted, so it is not part of this */
-  function pay(x){return Math.min(Math.round(x/1000*2),5000);}
+  function pay(x){return Math.min(Math.round(x/1000*2*100)/100,5000);}
   function paint(){const t=+sl.value,x=toViews(t);
     sl.style.setProperty('--p',(t/10)+'%');
-    v.textContent=fmt(x)+' views';p.textContent='$'+pay(x).toLocaleString();}
+    v.textContent=fmt(x)+' qualifying views';p.textContent='$'+pay(x).toLocaleString();sl.setAttribute('aria-valuetext',x.toLocaleString()+' qualifying views; estimated earnings $'+pay(x).toLocaleString());}
   sl.addEventListener('input',paint);paint();
 })();
 
@@ -561,6 +521,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
   });
 });
 </script>
-<script type="module" src="/fomo/submit/creator-form.js?v=1"></script>
+<script type="module" src="/fomo/submit/creator-form.js?v=3"></script>
 </body>
 </html>
