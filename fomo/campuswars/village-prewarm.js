@@ -1,9 +1,16 @@
-import {MONEY_START} from './village-money-rain.js?v=42';
+import {MONEY_START} from './village-money-rain.js?v=55';
 
 // Prepare both light-count variants and upload effect geometry/textures while
 // the loading cover is still up. Use the real canvas so output/tone-mapping
 // shader variants match playback; a one-pixel scissor limits fragment work.
-export async function prewarmVillage(T,renderer,scene,camera,applyLighting,moneyRain){
+export async function prewarmVillage(T,renderer,scene,camera,applyLighting,moneyRain,{mobile=false}={}){
+  // Upload only the visible daytime scene on phones. Warming every offscreen
+  // banner and both lighting variants together can exhaust Safari's GPU memory.
+  if(mobile){
+    applyLighting(0);moneyRain.clear();
+    renderer.render(scene,camera);
+    return;
+  }
   const scissor=renderer.getScissor(new T.Vector4()),scissorTest=renderer.getScissorTest();
   const culled=new Map();
   scene.traverse(object=>{

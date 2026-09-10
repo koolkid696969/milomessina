@@ -1,4 +1,4 @@
-import {PONG_TABLE,pongTurn,activityPose} from './village-layout.js?v=54';
+import {PONG_TABLE,pongTurn,activityPose} from './village-layout.js?v=55';
 import {humanPose} from './village-human-motion.js?v=31';
 
 // Tables and players share one layout and clock, including ball release from the hand.

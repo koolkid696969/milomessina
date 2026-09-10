@@ -1,4 +1,5 @@
-import {createGrassMaterial} from './village-grass.js?v=28';
+import {villageQuality} from './village-quality.js?v=55';
+import {createGrassMaterial} from './village-grass.js?v=55';
 import {hash} from './village-district-layout.js?v=22';
 // Insert road sections in the one opaque floor. UVs repeat the straight part
 // while the original end junction and the campus beyond it move outward.
@@ -21,7 +22,7 @@ export function setStreetExtension(T,streets,extension=0) {
 export function createStreetNetwork(T){
   let map,grassMask;
   if(typeof document!=='undefined'){
-    const canvas=document.createElement('canvas');canvas.width=canvas.height=4096;
+    const canvas=document.createElement('canvas');canvas.width=canvas.height=villageQuality().terrainResolution;
     const ctx=canvas.getContext('2d'),unit=canvas.width/300;ctx.scale(unit,unit);
     const maskCanvas=document.createElement('canvas');maskCanvas.width=maskCanvas.height=1024;
     const mask=maskCanvas.getContext('2d');mask.scale(1024/300,1024/300);mask.fillStyle='#ffffff';mask.fillRect(0,0,300,300);let lawnPaint=true;

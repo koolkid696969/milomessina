@@ -1,4 +1,4 @@
-import {rankedHouseSizes} from './village-house-sizing.js?v=54';
+import {rankedHouseSizes} from './village-house-sizing.js?v=55';
 import {hash,appearance,roundedLoop} from './village-district-layout.js?v=22';
 import {gaitPhase,speechGesture,smooth} from './village-human-motion.js?v=48';
 import {constructionAssignment,constructionActivity} from './village-construction-layout.js?v=51';

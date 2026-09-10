@@ -176,7 +176,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=54').then(async()=>{
+  import('./village.js?v=55').then(async()=>{
     try{
       const {startMarketFeed,marketStatus,marketPrice}=await import('./market-feed.js?v=50');
       const options={onUpdate(state){
@@ -229,7 +229,7 @@
     selectChapter(selectedId,{writeHash:false,emit:false});
     if (focusedChapter) cards.find(card => card.dataset.chapter === focusedChapter)?.focus({preventScroll:true});
   }
-  Promise.all([import('./chapter-feed.js?v=32'),import('./village-competition.js?v=54')]).then(([{startChapterFeed},{houseStandings}]) => {
+  Promise.all([import('./chapter-feed.js?v=32'),import('./village-competition.js?v=55')]).then(([{startChapterFeed},{houseStandings}]) => {
     rankChapters=houseStandings;
     chapterFeed=startChapterFeed({
     onUpdate:updateChapters,

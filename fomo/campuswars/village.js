@@ -1,11 +1,12 @@
+import {villageQuality} from './village-quality.js?v=55';
 import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=53';
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=54';
+import {createVillage} from './village-world.js?v=55';
 import {createDistricts} from './village-districts.js?v=50';
 import {EXCHANGE_VIEW} from './village-market.js?v=50';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
-import {createMoneyRain} from './village-money-rain.js?v=42';
-import {prewarmVillage} from './village-prewarm.js?v=43';
+import {createMoneyRain} from './village-money-rain.js?v=55';
+import {prewarmVillage} from './village-prewarm.js?v=55';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
@@ -14,8 +15,9 @@ let chapters=JSON.parse(document.getElementById('chapters-data').textContent).ch
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const MAX_ZOOM_RADIUS=320;
 
+const quality=villageQuality();
 let renderer;
-try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});}catch(error){
+try{renderer=new THREE.WebGLRenderer({antialias:quality.antialias,alpha:false,powerPreference:'high-performance'});}catch(error){
   loading.textContent='This device can’t open the 3D village. Open Chapters to see progress, or join Greek Wars.';
   shell.classList.add('village-unavailable');
 }
@@ -23,14 +25,14 @@ if(renderer)startVillage();
 function startVillage(){
   let ready=false,pendingChapterUpdate=null;
   const coarse=matchMedia('(pointer: coarse)').matches;
-  let renderScale=Math.min(devicePixelRatio,coarse?1.5:2),slowFrames=0;
+  let renderScale=Math.min(devicePixelRatio,quality.pixelRatio),slowFrames=0;
   renderer.setPixelRatio(renderScale);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   viewport.prepend(renderer.domElement);const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','3D Greek village. Drag to rotate, shift-drag to pan, or select a house. Use Street view to click along the block. In Street view, W and S or up and down move, left and right look around. Escape resets the view.');
   const scene=new THREE.Scene();scene.background=new THREE.Color(0x98a7ba);scene.fog=new THREE.FogExp2(0x98a7ba,.0022);
   const camera=new THREE.PerspectiveCamera(48,1,1,650);
   const ambient=new THREE.HemisphereLight(0xd4e2ed,0x857768,1.55);scene.add(ambient);
-  const sun=new THREE.DirectionalLight(0xffe5c6,2.6);sun.position.set(-35,55,30);sun.castShadow=true;sun.shadow.mapSize.set(coarse?1024:2048,coarse?1024:2048);sun.shadow.radius=1.4;Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:150});sun.shadow.normalBias=.05;sun.shadow.bias=-.00015;scene.add(sun);scene.add(sun.target);
+  const sun=new THREE.DirectionalLight(0xffe5c6,2.6);sun.position.set(-35,55,30);sun.castShadow=true;sun.shadow.mapSize.set(quality.shadowSize,quality.shadowSize);sun.shadow.radius=1.4;Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:150});sun.shadow.normalBias=.05;sun.shadow.bias=-.00015;scene.add(sun);scene.add(sun.target);
   const fill=new THREE.DirectionalLight(0xc4d2e0,.5);fill.position.set(30,15,-25);scene.add(fill);
   let village=createVillage(THREE,chapters);scene.add(village.world);
   const moneyRain=createMoneyRain(THREE,chapters,village.anchors);scene.add(moneyRain.root);
@@ -258,6 +260,7 @@ function startVillage(){
       shadowX=lightX;shadowZ=lightZ;sun.position.set(lightX-35,55,lightZ+30);sun.target.position.set(lightX,0,lightZ);renderer.shadowMap.needsUpdate=true;
     }
     if(!paused&&!(entranceActive&&entrancePaused)&&visible&&!document.hidden){
+      if(!entranceActive&&!reduced)moneyRain.updateRewards(dt,nightToggle.getAttribute('aria-pressed')==='true'?1:0);
       partyTime+=dt;village.animateEffects(partyTime);
       village.animateCrowd(partyTime);
       districts.animate(partyTime,target.x,target.z);
@@ -267,24 +270,33 @@ function startVillage(){
     const settling=(streetMode&&(Math.abs(streetZ-streetWantedZ)>.01||camera.position.distanceTo(new THREE.Vector3(0,2.6,streetWantedZ))>.01))||target.distanceTo(wantedTarget)>.01||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     if(visible&&!document.hidden&&(!paused||settling||entranceActive))wake();
   }
+  canvas.addEventListener('webglcontextlost',event=>{
+    event.preventDefault();ready=false;cancelAnimationFrame(raf);raf=0;
+    loading.hidden=false;loading.textContent='Restoring the village… You can still open Chapters.';
+    shell.classList.remove('village-ready','intro-playing');shell.classList.add('village-unavailable');
+  });
+  canvas.addEventListener('webglcontextrestored',()=>{prepare().catch(showLoadingError);});
   resize();resetView();
   // Do not overwrite a new chapter's deep link before its first live response.
   const initial=new URLSearchParams(location.hash.slice(1)).get('chapter');choose(village.anchors.some(a=>a.id===initial)?initial:selected,false,false);
   camera.position.set(0,104,104);camera.lookAt(target);camera.updateMatrixWorld();
-  function prepare(){return prewarmVillage(THREE,renderer,scene,camera,applyLighting,moneyRain).then(()=>{
+  function prepare(){return prewarmVillage(THREE,renderer,scene,camera,applyLighting,moneyRain,{mobile:quality.mobile}).then(()=>{
     if(pendingChapterUpdate){
       const event=pendingChapterUpdate;pendingChapterUpdate=null;updateChapters(event);
       return prepare();
     }
+    if(renderer.getContext?.().isContextLost())return;
     ready=true;lastTime=0;lastRender=0;
     applyLighting(nightToggle.getAttribute('aria-pressed')==='true'?1:0);
-    loading.hidden=true;shell.classList.add('village-ready');
+    loading.hidden=true;shell.classList.remove('village-unavailable');shell.classList.add('village-ready');
+    if(entranceActive)shell.classList.add('intro-playing');
     if(visible&&entrancePending)beginIntro();
     wake();
   });}
-  prepare().catch(error=>{
+  function showLoadingError(error){
     console.error('Unable to prepare Greek village:',error);
     loading.textContent='The village couldn’t load. Open Chapters to browse progress or join Greek Wars.';
-    shell.classList.add('village-unavailable');
-  });
+    loading.hidden=false;shell.classList.add('village-unavailable');
+  }
+  prepare().catch(showLoadingError);
 }

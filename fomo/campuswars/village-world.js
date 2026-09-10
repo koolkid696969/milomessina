@@ -1,18 +1,18 @@
-import {rankedHouseSizes} from './village-house-sizing.js?v=54';
+import {rankedHouseSizes} from './village-house-sizing.js?v=55';
 import {assignHouseFinishes} from './village-house-colors.js?v=52';
 import {createVillageEntrance} from './village-entrance.js?v=38';
-import {createPongGames} from './village-pong.js?v=31';
-import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=54';
-import {createCompetition,houseStandings} from './village-competition.js?v=54';
-import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=28';
+import {createPongGames} from './village-pong.js?v=55';
+import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=55';
+import {createCompetition,houseStandings} from './village-competition.js?v=55';
+import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=55';
 import {humanPose} from './village-human-motion.js?v=48';
-import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=54';
+import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=55';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=35';
 import {palettes,hash} from './village-district-layout.js?v=22';
-import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=54';
-import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=32';
-import {createChapterBanner,bannerIdentity} from './village-banners.js?v=54';
-import {createSchoolBanner} from './village-school-banners.js?v=54';
+import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=55';
+import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=55';
+import {createChapterBanner,bannerIdentity} from './village-banners.js?v=55';
+import {createSchoolBanner} from './village-school-banners.js?v=55';
 
 export function createVillage(THREE,chapters,{streets:existingStreet,houseFinishes:previousFinishes}={}){
   // Physical addresses follow the same percentage standings as the rank badges.

@@ -30,3 +30,10 @@ test('night and day compile and render with effects before restoring playback st
 test('failed warmup still restores lighting, effects, culling and the canvas',async()=>{
   const h=harness(true);await assert.rejects(h.run(),/context lost/);h.assertRestored();
 });
+
+
+test('mobile startup renders daytime with normal culling without compiling or uploading the entire world',async()=>{
+  const scene=new THREE.Scene(),mesh=new THREE.Mesh();scene.add(mesh);let renders=0,cleared=false;
+  await prewarmVillage(THREE,{render(){renders++;assert(mesh.frustumCulled);assert(cleared);}},scene,new THREE.PerspectiveCamera(),night=>assert.equal(night,0),{clear(){cleared=true;}},{mobile:true});
+  assert.equal(renders,1);
+});

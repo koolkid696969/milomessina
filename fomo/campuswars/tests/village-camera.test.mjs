@@ -1,3 +1,4 @@
+import {villageQuality} from '../village-quality.js';
 import {createStreetNavigation,streetStops,streetStep} from '../village-street-navigation.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,7 +15,7 @@ function cameraHarness(reduced=false,initialHash='',deferWarmup=false){
   element('chapters-data').textContent='{"chapters":[]}';
   const canvas=element('canvas');canvas.getBoundingClientRect=()=>({left:0,top:0,width:1200,height:650});canvas.hasPointerCapture=()=>false;
   class Renderer{constructor(){this.domElement=canvas;this.shadowMap={};}setPixelRatio(){}setSize(){}render(scene,view){scene.updateMatrixWorld(true);camera=view;}}
-  const sandbox={createStreetNavigation,streetStops,streetStep,EXCHANGE_VIEW,prewarmVillage:()=>({then(done){finishWarmup=done;if(!deferWarmup)done();return {catch(){}};}}),createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:(_T,input)=>(builds.push(input),{dispose(){},extension:0,world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:1,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
+  const sandbox={villageQuality,createStreetNavigation,streetStops,streetStep,EXCHANGE_VIEW,prewarmVillage:()=>({then(done){finishWarmup=done;if(!deferWarmup)done();return {catch(){}};}}),createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:(_T,input)=>(builds.push(input),{dispose(){},extension:0,world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:1,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
   const source=fs.readFileSync(new URL('../village.js',import.meta.url),'utf8').replace(/^import .*;$/gm,'');
   vm.runInNewContext(source,sandbox);
   let now=100;
@@ -199,4 +200,13 @@ test('clicking the unmarked road moves the camera to that street stop',()=>{
   const pointer={button:0,pointerId:1,clientX:(point.x+1)*600,clientY:(1-point.y)*325};
   h.fire('canvas:pointerdown',pointer);h.fire('canvas:pointerup',pointer);
   const arrived=h.step(.02);assert(Math.abs(arrived.z-z)<1e-9);assert(Math.abs(arrived.y-2.6)<1e-9);
+});
+
+test('a lost graphics context shows recovery text and restoration resumes rendering',()=>{
+  const h=cameraHarness();h.show(true);h.step(.02);let prevented=false;
+  h.fire('canvas:webglcontextlost',{preventDefault(){prevented=true;}});
+  assert(prevented);assert.equal(h.element('village-loading').hidden,false);
+  assert.match(h.element('village-loading').textContent,/Restoring/);
+  h.fire('canvas:webglcontextrestored');
+  assert.equal(h.element('village-loading').hidden,true);assert(h.step(.02));
 });

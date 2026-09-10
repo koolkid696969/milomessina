@@ -1,3 +1,4 @@
+import {chapterGoalReached} from './village-rewards.js?v=55';
 // Original chapter compositions informed by public fraternity brand references.
 // Color provenance and design notes: banner-references.md. These are not official flags.
 const identities={
@@ -22,7 +23,8 @@ export function paintChapterBanner(ctx,chapter,w,h){
     ctx.fillStyle=color;ctx.fillText(value,x*w,y*h);
   };
   const star=(x,y,r,color)=>{ctx.beginPath();for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,s=(i%2?.42:1)*r*h;const px=x*w+Math.cos(a)*s,py=y*h+Math.sin(a)*s;i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.closePath();ctx.fillStyle=color;ctx.fill();};
-  const count=(x,y,size,color,width=.4)=>text(`${chapter.joined} / ${Math.ceil(chapter.active*.8)}`,x,y,size,color,width,sans,'700');
+  const reached=chapterGoalReached(chapter),targetLabel=reached?'80% GOAL REACHED':'80% MEMBER TARGET';
+  const count=(x,y,size,color,width=.4)=>text(reached?'$500 PAID':`${chapter.joined} / ${Math.ceil(chapter.active*.8)}`,x,y,size,color,width,sans,'700');
   const name=chapter.name.toUpperCase(),school=chapter.shortSchool.toUpperCase();
   rect(0,0,1,1,b.primary);
   switch(b.key){
@@ -35,7 +37,7 @@ export function paintChapterBanner(ctx,chapter,w,h){
       text(chapter.letters,.23,.47,.49,b.paper,.35,serif);
       text(name,.695,.24,.12,b.ink,.49,serif);
       count(.695,.49,.30,b.paper,.48);
-      text('80% MEMBER TARGET',.695,.68,.058,b.ink,.48,sans,'700',3);
+      text(targetLabel,.695,.68,.058,b.ink,.48,sans,'700',3);
       text(school,.5,.88,.084,b.ink,.86,sans,'700',3);
       break;
     }
@@ -49,7 +51,7 @@ export function paintChapterBanner(ctx,chapter,w,h){
       text('KAPPA SIGMA',.71,.20,.105,b.paper,.43,serif);
       line([[.52,.31],[.90,.31]],b.gold,4);
       count(.71,.51,.29,b.paper,.44);
-      text('80% MEMBER TARGET',.71,.73,.055,b.paper,.42,sans,'700',3);
+      text(targetLabel,.71,.73,.055,b.paper,.42,sans,'700',3);
       text(school,.71,.88,.062,b.paper,.44);
       line([[.035,.08],[.035,.92]],b.gold,3);
       break;
@@ -64,7 +66,7 @@ export function paintChapterBanner(ctx,chapter,w,h){
       line([[.22,.565],[.78,.565]],b.silver,3);
       count(.5,.70,.26,b.primary,.65);
       rect(.067,.86,.866,.14,b.secondary);
-      text(`${school}  /  80% MEMBER TARGET`,.5,.922,.05,b.primary,.80,sans,'700',2);
+      text(`${school}  /  ${targetLabel}`,.5,.922,.05,b.primary,.80,sans,'700',2);
       break;
     }
     case 'cardinal-rose': {
@@ -83,7 +85,7 @@ export function paintChapterBanner(ctx,chapter,w,h){
       text(chapter.letters,.5,.40,.30,b.paper,.52,serif);
       rect(.30,.585,.40,.205,b.paper);
       count(.5,.69,.21,b.primary,.36);
-      text('80% MEMBER TARGET',.5,.865,.054,b.paper,.53,sans,'700',2);
+      text(targetLabel,.5,.865,.054,b.paper,.53,sans,'700',2);
       text(school,.5,.95,.041,b.paper,.5);
       break;
     }
@@ -96,13 +98,13 @@ export function paintChapterBanner(ctx,chapter,w,h){
       text(chapter.letters,.285,.52,.40,b.paper,.46,sans,'900');
       text(school,.265,.84,.067,b.paper,.39,sans,'700',2);
       count(.795,.42,.29,'#151515',.33);
-      text('80% TARGET',.785,.66,.069,'#151515',.32,sans,'900',2);
+      text(reached?'GOAL REACHED':'80% TARGET',.785,.66,.069,'#151515',.32,sans,'900',2);
       text('ON FOMO',.77,.78,.069,'#151515',.32,sans,'900',2);
       rect(.70,.90,.24,.017,b.primary);
       break;
     }
     default:
-      text(name,.5,.18,.1,b.paper);text(chapter.letters,.27,.49,.38,b.paper,.36,serif);count(.70,.5,.3,b.paper,.43);text(`${school} / 80% MEMBER TARGET`,.5,.83,.065,b.paper);
+      text(name,.5,.18,.1,b.paper);text(chapter.letters,.27,.49,.38,b.paper,.36,serif);count(.70,.5,.3,b.paper,.43);text(`${school} / ${targetLabel}`,.5,.83,.065,b.paper);
   }
   // Fine fibers, recessed hems and edge stitching unify the physical cloth only.
   for(let y=0;y<h;y+=5){ctx.fillStyle=y%10?'#FFFFFF09':'#10182007';ctx.fillRect(0,y,w,1);}
