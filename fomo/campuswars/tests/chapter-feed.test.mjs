@@ -86,3 +86,14 @@ test('an older cached village cannot replace a newer bundled snapshot',async()=>
   const updates=[];const feed=startChapterFeed({initialSnapshot:{updatedAt:'2026-09-10T00:00:00Z'},storageRef:{getItem:()=>JSON.stringify(snapshot(1))},onUpdate:value=>updates.push(value),onStatus(){},documentRef:{hidden:false,addEventListener(){},removeEventListener(){}},schedule:()=>1,cancel(){},fetchImpl:async()=>({ok:false})});
   await new Promise(resolve=>setImmediate(resolve));assert.equal(updates.length,0);feed.stop();
 });
+
+
+test('admin field readers accept status and layout classes added around their semantic class',()=>{
+  const original=table(row({joined:44}));
+  const expected=parseChapterAdmin(original);
+  for(const html of [
+    original.replace('class="ch"','class="ch title"').replace('class="sc"',"class='muted sc small'").replace('class="prog"','class="prog hit"'),
+    original.replace('class="prog"','class="complete prog"')
+  ])assert.deepEqual(parseChapterAdmin(html),expected);
+  assert.throws(()=>parseChapterAdmin(original.replace('class="prog"','class="progress"')));
+});

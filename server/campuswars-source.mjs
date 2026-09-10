@@ -17,7 +17,7 @@ function text(html) {
   }).replace(/\s+/g, ' ').trim();
 }
 function field(html, className) {
-  const match = html.match(new RegExp(`<([a-z]+)\\b[^>]*class=["']${className}["'][^>]*>([\\s\\S]*?)<\\/\\1>`, 'i'));
+  const match = html.match(new RegExp(`<([a-z]+)\\b[^>]*class=["'](?:[^"']*\\s)?${className}(?:\\s[^"']*)?["'][^>]*>([\\s\\S]*?)<\\/\\1>`, 'i'));
   if (!match) throw new Error('Chapter source format changed');
   return text(match[2]);
 }
