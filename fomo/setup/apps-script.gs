@@ -21,6 +21,14 @@ var CONFIG = {
      them unless you share them. */
   UPLOAD_FOLDER: 'fomo campus — report uploads',
 
+  /* Where /invoice receipt photos land — a separate folder, because
+     unlike the report uploads above these are deliberately readable by
+     anyone holding the link. The whole team has to be able to open a
+     receipt off the ledger, and the ledger is shared. Sharing is set on
+     each file rather than the folder, so nothing else in your Drive is
+     touched by it. */
+  RECEIPT_FOLDER: 'fomo campus — receipts',
+
   /* Blank = no email. Put an address here to get a heads-up on every
      submission; the row is in the sheet either way. */
   NOTIFY_EMAIL: '',
@@ -142,15 +150,40 @@ function writeRow(tabName, row) {
   }));
 }
 
+/* The report form's uploads, unchanged: private to the owner's Drive. */
 function saveUpload(f) {
-  var it = DriveApp.getFoldersByName(CONFIG.UPLOAD_FOLDER);
-  var folder = it.hasNext() ? it.next() : DriveApp.createFolder(CONFIG.UPLOAD_FOLDER);
+  return driveSave(f, CONFIG.UPLOAD_FOLDER, false);
+}
+
+/* A receipt off /invoice. Shared by link on purpose — a ledger four people
+   read is no use if only one of them can open the photo proving the line. */
+function saveReceipt(f) {
+  return driveSave(f, CONFIG.RECEIPT_FOLDER, true);
+}
+
+function driveSave(f, folderName, share) {
+  if (!f || !f.data) throw new Error('no file');
+  /* The page shrinks a photo to about 100KB before it ever gets here, so
+     anything this size is not a receipt and is refused rather than parked
+     in Drive. base64 runs about a third bigger than the bytes it carries. */
+  if (String(f.data).length > 8 * 1024 * 1024) throw new Error('that photo is too large');
+
+  var it = DriveApp.getFoldersByName(folderName);
+  var folder = it.hasNext() ? it.next() : DriveApp.createFolder(folderName);
   var blob = Utilities.newBlob(
     Utilities.base64Decode(f.data),
     f.type || 'application/octet-stream',
     f.name || 'upload'
   );
-  return folder.createFile(blob).getUrl();
+  var file = folder.createFile(blob);
+  if (share) {
+    /* If the domain forbids link sharing this throws, and the line is worth
+       more than the thumbnail: keep the file, hand back the URL, and let it
+       ask whoever clicks for access rather than losing the whole spend. */
+    try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); }
+    catch (e) {}
+  }
+  return file.getUrl();
 }
 
 function notify(tabName, row) {
@@ -190,6 +223,17 @@ function invoiceApi(body) {
   var paidCol = INVOICE_COLS.indexOf('reimbursed') + 1;
 
   if (action === 'add') {
+    /* A photo arrives as base64 and leaves as a Drive link. The sheet holds
+       the link and never the image — a cell tops out at 50,000 characters
+       and a receipt is comfortably past that even shrunk. */
+    if (body.receiptFile && body.receiptFile.data) {
+      try {
+        body.receipt = saveReceipt(body.receiptFile);
+      } catch (err) {
+        return reply(false, 'the photo could not be saved: ' +
+          (err && err.message ? err.message : String(err)));
+      }
+    }
     var line = invoiceClean(body);
     if (line.error) return reply(false, line.error);
     sh.appendRow(INVOICE_COLS.map(function (c) {

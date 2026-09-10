@@ -122,10 +122,17 @@ section{margin-top:clamp(22px,3vw,34px)}
   font-size:.88rem;font-weight:500;transition:background .18s,color .18s,border-color .18s,transform .18s}
 .chip:hover{border-color:var(--violet);color:var(--text)}
 .chip[aria-pressed="true"]{background:var(--violet);border-color:var(--violet);color:#fff}
+/* smaller than the who-paid chips, same violet when on: it is the same
+   act of picking a name, and a second accent colour for it just reads as
+   a warning about something */
 .chip.sm{padding:6px 13px;font-size:.81rem}
-.chip.sm[aria-pressed="true"]{background:var(--s2, var(--violet));border-color:transparent}
 .split-hint{font-size:.78rem;color:var(--muted-2);margin-top:8px}
 .split-hint b{color:var(--muted);font-weight:500}
+/* A file input has to stay rendered to be clickable from script. Safari on
+   iOS will not open the picker for one that is display:none — which is what
+   the hidden attribute does — so it is moved out of sight instead. */
+.offscreen{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;
+  clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;padding:0;margin:-1px}
 .grid{display:grid;grid-template-columns:1.6fr .9fr .7fr .8fr;gap:12px}
 .grid.pair{grid-template-columns:1fr 1fr}
 @media(max-width:900px){.grid{grid-template-columns:1fr 1fr}}
@@ -243,6 +250,20 @@ footer .sep{opacity:.4}
 .field select::-ms-expand,.tools select::-ms-expand{display:none}
 /* the popup is the OS's own; colour-scheme handles macOS, these two carry Windows */
 .field select option,.tools select option{background:var(--surface);color:var(--text)}
+
+/* Safari on iOS zooms the page in when a control it is focusing has text
+   under 16px, and never zooms back out. At .92rem every field here was
+   under it, so tapping the date lurched the page sideways and left it
+   there with the picker over the top. 16px exactly, and it stays put.
+
+   The viewport meta deliberately does not carry maximum-scale to stop it
+   instead — that would take pinch-zoom away from everyone to fix a font
+   size. Date and time inputs also get a floor on their height, because
+   iOS renders them shorter than a text input given the chance. */
+@media(max-width:760px){
+  .field input,.field select,.tools select,.tools input{font-size:16px}
+  .field input[type="date"]{min-height:46px}
+}
 
 /* ---------- the clock ---------- */
 .clock-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
@@ -442,7 +463,7 @@ td.tnum.run{color:var(--good)}
             <input id="f-note" placeholder="e.g. covered Bijan + Jesse too" maxlength="120"></label>
           <div class="field"><span class="lbl">receipt photo (optional)</span>
             <div class="shot-row">
-              <input id="f-file" type="file" accept="image/*" hidden>
+              <input id="f-file" type="file" accept="image/*" class="offscreen">
               <button type="button" class="pick" id="f-pick"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15.5V6a1.5 1.5 0 0 1 1.5-1.5h2L8 2.8h4l1.5 1.7h2A1.5 1.5 0 0 1 17 6v9.5A1.5 1.5 0 0 1 15.5 17h-11A1.5 1.5 0 0 1 3 15.5Z"/><circle cx="10" cy="10.4" r="2.9"/></svg>Add a photo</button>
               <span class="picked" id="f-picked"></span>
             </div>
@@ -907,8 +928,23 @@ resetSplit();
 var fCat = document.getElementById("f-cat"), tCat = document.getElementById("t-cat"), tWho = document.getElementById("t-who");
 CATS.forEach(function(c){ fCat.appendChild(new Option(c.label, c.id)); tCat.appendChild(new Option(c.label, c.id)); });
 PEOPLE.forEach(function(p){ tWho.appendChild(new Option(p, p)); });
+/* `max` is today's date, which stops a spend being logged into next week —
+   but it was worked out once, when the page loaded. A phone does not
+   reload a tab for days, so by the morning the ceiling was yesterday and
+   the one date anybody actually wanted was the one the field refused.
+   Recomputed whenever the page is looked at again. */
+var dateTouched = false;
+document.getElementById("f-date").addEventListener("input", function(){ dateTouched = true; });
+
+function refreshDate(){
+  var el = document.getElementById("f-date"), now = today();
+  if (el.max === now) return;
+  el.max = now;
+  /* roll the default forward, but never over a date somebody chose */
+  if (!dateTouched) el.value = now;
+}
 document.getElementById("f-date").value = today();
-document.getElementById("f-date").max = today();
+refreshDate();
 
 function hint(msg, bad){
   var h = document.getElementById("f-hint");
@@ -939,11 +975,17 @@ document.getElementById("form").addEventListener("submit", function(ev){
   var btn = document.getElementById("f-submit");
   btn.disabled = true; busy = true; btn.textContent = "Adding…";
   var names = splitNames();
-  api("add", {
+  var payload = {
     who: picked, what: what, category: document.getElementById("f-cat").value,
     amount: amt, date: date, note: document.getElementById("f-note").value.trim(),
-    receipt: pendingShot || "", shared: names.join(", ")
-  }).then(function(){
+    receipt: "", shared: names.join(", ")
+  };
+  if (pendingShot) {
+    if (mode === "sheet") payload.receiptFile = shotPayload(pendingShot, date);
+    else payload.receipt = pendingShot;
+  }
+  if (pendingShot && mode === "sheet") btn.textContent = "Uploading…";
+  api("add", payload).then(function(){
     document.getElementById("f-what").value = "";
     document.getElementById("f-amt").value = "";
     document.getElementById("f-note").value = "";
@@ -951,6 +993,10 @@ document.getElementById("form").addEventListener("submit", function(ev){
     document.getElementById("f-file").value = "";
     showPicked();
     resetSplit();
+    /* the date stays put between lines — several spends from one day is the
+       normal way this gets filled in — but the ceiling is brought current
+       in case the tab has been open since yesterday */
+    refreshDate();
     hint("");
     toast(money(amt) + " logged for " + picked +
       (names.length > 1 ? " — " + money(amt / names.length) + " each across " + names.length + "." : "."));
@@ -1070,6 +1116,16 @@ function shrinkShot(file){
   });
 }
 
+/* The sheet takes a photo the way the report form always has: base64 in,
+   Drive link out. Device storage keeps the data URI itself. */
+function shotPayload(dataUri, date){
+  return {
+    name: "receipt-" + (date || today()) + ".jpg",
+    type: "image/jpeg",
+    data: String(dataUri).split(",")[1] || ""
+  };
+}
+
 function shotSize(dataUri){
   var kb = Math.round(dataUri.length * 0.75 / 1024);
   return kb > 1024 ? (kb / 1024).toFixed(1) + " MB" : kb + " KB";
@@ -1080,7 +1136,7 @@ function showPicked(){
   box.innerHTML = "";
   if (!pendingShot) {
     document.getElementById("f-pick").lastChild.nodeValue = "Add a photo";
-    document.getElementById("f-drop").textContent = "Snap the receipt — it is shrunk before it is stored.";
+    applyModeUi();
     return;
   }
   var img = document.createElement("img");
@@ -1118,21 +1174,20 @@ document.getElementById("f-file").addEventListener("change", function(){
   });
 });
 
-/* The shared sheet stores a 500-character cell, not a photo. Rather than
-   take one and quietly drop it on the way, say so and leave it off.
-   Under 'auto' the move to the sheet happens after the page is already
-   up, so this runs again then instead of only once at load. */
+/* A photo goes to a different place depending on where the ledger lives —
+   this browser's own store, or Drive with the sheet holding the link — but
+   it is taken the same way in both, so the button stays on either way.
+
+   It used to be switched off on the sheet, on the grounds that a cell
+   cannot hold an image. True, and beside the point: the cell holds a link
+   and Drive holds the image, which is what the report form has always
+   done. Under 'auto' the move to the sheet happens after the page is
+   already up, so this runs again then rather than only once at load. */
 function applyModeUi(){
-  var sheet = mode === "sheet", pick = document.getElementById("f-pick");
-  pick.disabled = sheet;
-  pick.style.opacity = sheet ? ".5" : "";
-  if (sheet) {
-    document.getElementById("f-drop").textContent =
-      "Receipt photos need device storage — on the shared sheet this stays empty.";
-  } else if (!pendingShot) {
-    document.getElementById("f-drop").textContent =
-      "Snap the receipt — it is shrunk before it is stored.";
-  }
+  if (pendingShot) return;
+  document.getElementById("f-drop").textContent = mode === "sheet"
+    ? "Snap the receipt — it is shrunk, then saved to Drive so the whole team can open it."
+    : "Snap the receipt — it is shrunk before it is stored on this device.";
 }
 
 /* ---------- looking at one ---------- */
@@ -2096,12 +2151,15 @@ function sendCarry(extraRows, extraShifts){
   var chain = Promise.resolve();
   extraRows.forEach(function(r){
     chain = chain.then(function(){
-      return apiSheet("add", {
+      var up = {
         who:r.who, what:r.what, category:r.category, amount:r.amount,
-        date:r.date, note:r.note || "", shared:r.shared || "",
-        /* the sheet holds a 500-character cell, not an image */
-        receipt: /^data:/.test(r.receipt || "") ? "" : (r.receipt || "")
-      });
+        date:r.date, note:r.note || "", shared:r.shared || "", receipt:""
+      };
+      /* a photo taken while this browser was on its own goes up to Drive
+         with the line, rather than being left behind as it once was */
+      if (/^data:/.test(r.receipt || "")) up.receiptFile = shotPayload(r.receipt, r.date);
+      else up.receipt = r.receipt || "";
+      return apiSheet("add", up);
     });
   });
   if (extraShifts.length) {
@@ -2116,7 +2174,7 @@ function sendCarry(extraRows, extraShifts){
     carried = null;
     hideBanner(true);
     toast("Carried over — everyone sees " + (extraShifts.length + extraRows.length === 1 ? "it" : "them") + " now." +
-      (shots ? " " + shots + " receipt photo" + (shots === 1 ? "" : "s") + " stayed on this device; the sheet holds a link, not an image." : ""));
+      (shots ? " " + shots + " receipt photo" + (shots === 1 ? "" : "s") + " went up to Drive with them." : ""));
   })["catch"](function(e){
     var msg = (e && e.message) ? e.message : "something went wrong";
     toast("Nothing more was carried over — " + msg + ".", true);
@@ -2195,6 +2253,7 @@ function open_(){
      catch it coming back and do both at once. */
   document.addEventListener("visibilitychange", function(){
     if (document.hidden) return;
+    refreshDate();
     tickClock();
     if (mode === "sheet" && !busy) api("list")["catch"](function(){ /* the banner already says it */ });
   });

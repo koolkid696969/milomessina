@@ -189,10 +189,30 @@ When it does fill, the line is **not** added: the store is rolled back to
 what was last written and the page says which. Nothing appears on screen
 that was not saved. Deleting a line with a photo on it frees the room again.
 
-Photos need `BACKEND = 'device'`. The sheet keeps a 500-character cell, not
-an image, so on `'sheet'` the picker is switched off and says so rather than
-taking a photo it would have to throw away. Rows carrying an old `https://`
-receipt link still render as a link, either way.
+Where the photo ends up depends on where the ledger lives, but it is taken
+the same way either way and the button is on in both.
+
+On **device storage** it stays in that browser as a data URI, and the ledger
+shows it as a thumbnail you can tap.
+
+On the **shared sheet** it goes to Drive — the `fomo campus — receipts`
+folder — and the sheet holds the link, which is what the report form has
+always done with its uploads. Each receipt file is set to *anyone with the
+link can view*, because a ledger four people read is no use if only one of
+them can open the photo proving a line. Sharing is set per file, so the
+folder itself and the rest of your Drive are untouched, and the private
+`fomo campus — report uploads` folder is deliberately kept separate. If your
+account forbids link sharing the upload still succeeds and the link simply
+asks the viewer for access, rather than losing the whole spend over a
+thumbnail.
+
+Rows carrying an old `https://` receipt link still render as a link, either
+way.
+
+The file input is deliberately **not** `display:none`. Safari on iOS will not
+open the picker for an input it is not rendering, so it is moved off-screen
+instead — a hidden-attribute file input is the classic reason "add a photo"
+does nothing on an iPhone.
 
 ## Who a spend was for
 
