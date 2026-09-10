@@ -4,12 +4,12 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {INTRO_DURATION,introCaptionAt} from '../../fomo/campuswars/village-intro.js';
 
-function harness({reduced=false,hash='',blocked=false,frameCallbacks=false,hidden=false}={}) {
+function harness({reduced=false,hash='',blocked=false,frameCallbacks=false,hidden=false,navigationType='navigate',historyState=null}={}) {
   const nodes=new Map(),events=new Map(),timers=new Map();let timerId=0,animation,frameId=0;const frames=new Map();
   function node(id) {
     if(!nodes.has(id))nodes.set(id,{
       hidden:false,inert:false,offsetHeight:800,style:{setProperty(key,value){this[key]=value;}},
-      classList:{add(){},remove(){}},
+      classList:{values:new Set(),add(...names){names.forEach(n=>this.values.add(n));},remove(...names){names.forEach(n=>this.values.delete(n));},contains(name){return this.values.has(name);}},
       addEventListener(type,fn){events.set(`${id}:${type}`,fn);},
       setAttribute(key,value){this[key]=value;},getAttribute(key){return this[key]||null;},
       focus(){this.focused=true;},scrollIntoView(){this.scrolled=true;}
@@ -24,14 +24,19 @@ function harness({reduced=false,hash='',blocked=false,frameCallbacks=false,hidde
   if(frameCallbacks){video.requestVideoFrameCallback=fn=>{frames.set(++frameId,fn);return frameId;};video.cancelVideoFrameCallback=id=>frames.delete(id);}
   const doc={body:node('body'),documentElement:node('html'),getElementById:node,querySelector:node,hidden,
     addEventListener(type,fn){events.set(`document:${type}`,fn);}};
-  vm.runInNewContext(fs.readFileSync(new URL('../main.js',import.meta.url),'utf8').replace(/^import .*;\n/,''),{
-    INTRO_DURATION,introCaptionAt,document:doc,
-    window:{scrollY:800,scrollTo(){},addEventListener(type,fn){events.set(`window:${type}`,fn);}},location:{hash},
+  const history={state:historyState,replaceState(state){this.state=state;}};
+  const win={scrollY:800,scrollTo({top}){this.scrollY=top;},addEventListener(type,fn){events.set(`window:${type}`,fn);}};
+  const context=vm.createContext({
+    INTRO_DURATION,introCaptionAt,document:doc,history,performance:{getEntriesByType:()=>[{type:navigationType}]},
+    window:win,location:{hash},
     matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced,addEventListener(type,fn){events.set('media:'+type,fn);}}),
     setTimeout(fn,delay){timers.set(++timerId,{fn,delay});return timerId;},clearTimeout(id){timers.delete(id);},
     requestAnimationFrame(fn){animation=fn;return 1;},cancelAnimationFrame(){animation=null;}
   });
-  return {node,doc,video,timers,frames,allowPlayback(){blocked=false;},renderFrame(time){const pending=[...frames.values()];frames.clear();pending.forEach(fn=>fn(0,{mediaTime:time}));},fire(name,event={}){events.get(name)(event);},flush(){const pending=[...timers.values()];timers.clear();pending.forEach(t=>t.fn());},step(time){video.currentTime=time;animation?.();}};
+  const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  vm.runInContext(html.match(/<script id="intro-entry">([\s\S]*?)<\/script>/)[1],context);
+  vm.runInContext(fs.readFileSync(new URL('../main.js',import.meta.url),'utf8').replace(/^import .*;\n/,''),context);
+  return {node,doc,video,timers,frames,history,win,allowPlayback(){blocked=false;},renderFrame(time){const pending=[...frames.values()];frames.clear();pending.forEach(fn=>fn(0,{mediaTime:time}));},fire(name,event={}){events.get(name)(event);},flush(){const pending=[...timers.values()];timers.clear();pending.forEach(t=>t.fn());},step(time){video.currentTime=time;animation?.();}};
 }
 test('intro streams a video immediately without constructing the 3D village',()=>{
   const h=harness();assert.equal(h.video.src,'/landingpage/assets/intro-desktop-smooth.mp4');assert.equal(h.video.paused,false);assert.equal(h.node('page').inert,true);
@@ -87,7 +92,24 @@ test('media errors try the compatible video without automatically skipping the i
   h.fire('intro-video:error');assert.equal(h.node('page').inert,true);
   h.fire('skip-intro:click');assert.equal(h.node('page').inert,false);
 });
-test('back navigation replays the intro from the beginning',()=>{
+test('cached Back navigation preserves the completed intro and section position',()=>{
   const h=harness();h.video.currentTime=13.6;h.fire('intro-video:ended');h.flush();h.flush();
-  h.fire('window:pageshow',{persisted:true});assert.equal(h.node('opening').hidden,false);assert.equal(h.video.currentTime,0);assert.equal(h.video.paused,false);
+  h.win.scrollY=2400;h.fire('window:pagehide');h.fire('window:pageshow',{persisted:true});
+  assert.equal(h.node('opening').hidden,true);assert.equal(h.video.currentTime,13.6);assert.equal(h.video.paused,true);assert.equal(h.win.scrollY,2400);
+});
+test('uncached Back navigation restores the section without loading the video',()=>{
+  const h=harness({navigationType:'back_forward',historyState:{otherState:'preserved',campusLanding:{introDone:true,scrollY:1800}}});
+  assert.equal(h.node('opening').hidden,true);assert.equal(h.video.src,undefined);assert.equal(h.node('page').inert,false);assert.equal(h.win.scrollY,1800);
+  h.fire('window:pageshow',{persisted:false});assert.equal(h.win.scrollY,1800);
+  h.fire('window:pagehide');assert.equal(h.history.state.otherState,'preserved');
+});
+test('reloads and fresh visits still play even if the history entry was previously completed',()=>{
+  for(const navigationType of ['reload','navigate']){
+    const h=harness({navigationType,historyState:{campusLanding:{introDone:true,scrollY:1800}}});
+    assert.equal(h.node('opening').hidden,false);assert.equal(h.video.paused,false);assert.equal(h.history.state.campusLanding.introDone,false);
+  }
+});
+test('a returned visitor can still choose Replay intro',()=>{
+  const h=harness({navigationType:'back_forward',historyState:{campusLanding:{introDone:true,scrollY:1800}}});
+  h.fire('replay-intro:click');assert.equal(h.node('opening').hidden,false);assert.equal(h.video.paused,false);assert.equal(h.video.currentTime,0);
 });

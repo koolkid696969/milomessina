@@ -11,6 +11,8 @@ const title = document.getElementById('film-title');
 const description = document.getElementById('film-description');
 const transition = document.getElementById('intro-transition');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+const returningFromHistory = document.documentElement.classList.contains('intro-return');
+let introComplete = returningFromHistory;
 let active = false, usedFallback = false, finishTimer, raf = 0;
 let videoFrame = 0, lastPaint = -1, lastStage = -1, lastOutro = -1;
 
@@ -67,9 +69,32 @@ function play() {
   const pending = video.play();
   if (pending) pending.catch(() => { if (active) syncPlayback(); });
 }
+function rememberVisit() {
+  try {
+    history.replaceState({...history.state, campusLanding: {introDone: introComplete, scrollY: window.scrollY}}, '');
+  } catch {}
+}
+function restorePage() {
+  clearTimeout(finishTimer);
+  active = false;
+  cancelPaint();
+  video.pause();
+  opening.hidden = true;
+  opening.inert = true;
+  transition.hidden = true;
+  document.documentElement.classList.remove('intro-initial', 'intro-return');
+  document.body.classList.remove('intro-active');
+  page.classList.remove('hero-arriving');
+  page.inert = false;
+  let scrollY = 0;
+  try { scrollY = history.state?.campusLanding?.scrollY || 0; } catch {}
+  window.scrollTo({top: scrollY, behavior: 'instant'});
+}
 function finish({scroll = true, cinematic = false} = {}) {
   if (!active) return;
   active = false;
+  introComplete = true;
+  rememberVisit();
   cancelPaint();
   video.pause();
   opening.inert = true;
@@ -140,8 +165,13 @@ document.addEventListener('visibilitychange', () => {
 });
 replay.hidden = false;
 replay.addEventListener('click', () => { start({replay: true}); document.getElementById('skip-intro').focus({preventScroll: true}); });
-window.addEventListener('pageshow', event => { if (event.persisted) start({replay: true}); });
-start();
+window.addEventListener('pagehide', rememberVisit);
+window.addEventListener('pageshow', event => {
+  if (returningFromHistory || (event.persisted && introComplete)) restorePage();
+  else if (event.persisted && active) play();
+});
+if (returningFromHistory) restorePage();
+else { rememberVisit(); start(); }
 
 if ('IntersectionObserver' in window && !reduced.matches) {
   const reveal = new IntersectionObserver(entries => {
