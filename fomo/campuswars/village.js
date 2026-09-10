@@ -16,6 +16,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const MAX_ZOOM_RADIUS=320;
 
 const quality=villageQuality();
+const STREET_FOV=quality.mobile?82:48;
 let renderer;
 try{renderer=new THREE.WebGLRenderer({antialias:quality.antialias,alpha:false,powerPreference:'high-performance'});}catch(error){
   loading.textContent='This device can’t open the 3D village. Open Chapters to see progress, or join Greek Wars.';
@@ -77,7 +78,7 @@ function startVillage(){
   function finishIntro(){
     const wasPlaying=entranceActive;
     entrancePending=false;entranceActive=false;intro.hidden=true;shell.classList.remove('intro-playing');
-    moneyRain.clear();introRoll=0;camera.fov=48;camera.updateProjectionMatrix();
+    moneyRain.clear();introRoll=0;camera.fov=streetMode?STREET_FOV:48;camera.updateProjectionMatrix();
     applyLighting(document.getElementById('night-toggle').getAttribute('aria-pressed')==='true'?1:0);
     if(['intro-skip','intro-pause','intro-join'].some(id=>document.activeElement===document.getElementById(id)))canvas.focus({preventScroll:true});
     if(wasPlaying)document.dispatchEvent(new CustomEvent('village:introend'));
@@ -160,12 +161,14 @@ function startVillage(){
     if(!streetMode)return;
     streetMode=false;streetNav.root.visible=false;streetControls.hidden=true;streetButton.setAttribute('aria-pressed','false');streetButton.textContent='Street view';
     shell.classList.remove('street-view');canvas.style.cursor='';
+    camera.fov=48;camera.updateProjectionMatrix();
     target.set(0,2,streetZ);wantedTarget.copy(target);radius=wantedRadius=30;phi=wantedPhi=.45;
   }
   function moveStreet(z){
     takeControl();
     if(!streetMode){
       streetMode=true;streetNav.root.visible=true;streetControls.hidden=false;streetButton.setAttribute('aria-pressed','true');streetButton.textContent='Exit street view';shell.classList.add('street-view');
+      camera.fov=STREET_FOV;camera.updateProjectionMatrix();
       streetZ=z;theta=wantedTheta=0;phi=wantedPhi=0;canvas.focus({preventScroll:true});
     }
     const stops=streetStops(village.extension);streetWantedZ=Math.max(stops[0],Math.min(stops.at(-1),z));viewDirty=true;wake();
