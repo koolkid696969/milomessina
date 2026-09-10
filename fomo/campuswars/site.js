@@ -196,7 +196,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=58').then(async()=>{
+  import('./village.js?v=59').then(async()=>{
     try{
       const {startMarketFeed,marketStatus,marketPrice}=await import('./market-feed.js?v=50');
       const options={onUpdate(state){

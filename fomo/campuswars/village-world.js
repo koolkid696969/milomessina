@@ -155,8 +155,8 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
   function limb(name,i,from,to,r){a.set(...from);b.set(...to);direction.subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);const length=direction.length();dummy.quaternion.setFromUnitVectors(up,direction.normalize());dummy.scale.set(r,length+.025,r);dummy.updateMatrix();parts[name].setMatrixAt(i,dummy.matrix);}
   function animateCrowd(time){
     members.forEach((m,i)=>{
-      const state=activityPose(m,time),rig=humanPose(m,state,time),angle=state.rotation,h=m.height;
-      const transform=([x,y,z])=>[state.x+(x*Math.cos(angle)+z*Math.sin(angle))*h,y*h+(state.ground??m.ground??0),state.z+(-x*Math.sin(angle)+z*Math.cos(angle))*h];
+      const state=activityPose(m,time),rig=humanPose(m,state,time),angle=state.rotation,h=m.height,cos=Math.cos(angle),sin=Math.sin(angle);
+      const transform=([x,y,z])=>[state.x+(x*cos+z*sin)*h,y*h+(state.ground??m.ground??0),state.z+(-x*sin+z*cos)*h];
       const part=(name,point,x,y,z,yaw=0,pitch=0)=>posePart(name,i,...transform(point),x*h,y*h,z*h,angle+yaw,pitch);
       part('torso',rig.chest,.40,.52,.25,rig.twist,rig.lean);
       part('pelvis',rig.hip,.29,.20,.23,-rig.twist*.5);

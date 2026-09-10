@@ -1,8 +1,8 @@
 import {villageQuality} from './village-quality.js?v=56';
 import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=53';
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=56';
-import {createDistricts} from './village-districts.js?v=50';
+import {createVillage} from './village-world.js?v=59';
+import {createDistricts} from './village-districts.js?v=59';
 import {EXCHANGE_VIEW} from './village-market.js?v=50';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
 import {createMoneyRain} from './village-money-rain.js?v=55';
@@ -25,9 +25,9 @@ try{renderer=new THREE.WebGLRenderer({antialias:quality.antialias,alpha:false,po
 if(renderer)startVillage();
 function startVillage(){
   let ready=false,pendingChapterUpdate=null;
-  let renderScale=Math.min(devicePixelRatio,quality.pixelRatio),slowFrames=0;
+  const renderScale=Math.min(devicePixelRatio,quality.pixelRatio);
   renderer.setPixelRatio(renderScale);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   viewport.prepend(renderer.domElement);const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','3D Greek village. Drag to rotate, shift-drag to pan, or select a house. Pinch with two fingers to zoom. Use Street view to click along the block. In Street view, W and S or up and down move, left and right look around. Escape resets the view.');
   const scene=new THREE.Scene();scene.background=new THREE.Color(0x98a7ba);scene.fog=new THREE.FogExp2(0x98a7ba,.0022);
   const camera=new THREE.PerspectiveCamera(48,1,1,650);
@@ -45,9 +45,11 @@ function startVillage(){
   let litAtNight=false;
   function applyLighting(amount){
     scene.background.set(0x98a7ba).lerp(dusk.sky,amount);scene.fog.color.copy(scene.background);scene.fog.density=.0022+amount*.001;
-    ambient.color.set(0xd4e2ed).lerp(dusk.ambient,amount);ambient.groundColor.set(0x857768).lerp(dusk.ground,amount);ambient.intensity=1.55-amount*.9;
-    sun.color.set(0xffe5c6).lerp(dusk.sun,amount);sun.intensity=2.6-amount*2.28;
-    fill.color.set(0xc4d2e0).lerp(dusk.fill,amount);fill.intensity=.5-amount*.15;
+    // Lift dusk's indirect light so brickwork and people retain detail at
+    // street level, using the existing lights and the same daylight exposure.
+    ambient.color.set(0xd4e2ed).lerp(dusk.ambient,amount);ambient.groundColor.set(0x857768).lerp(dusk.ground,amount);ambient.intensity=1.55-amount*.72;
+    sun.color.set(0xffe5c6).lerp(dusk.sun,amount);sun.intensity=2.6-amount*2.18;
+    fill.color.set(0xc4d2e0).lerp(dusk.fill,amount);fill.intensity=.5-amount*.07;
     const night=amount>.45;
     if(night!==litAtNight){litAtNight=night;village.nightLife.setNight(night);}
   }
@@ -243,12 +245,11 @@ function startVillage(){
   function wake(){if(ready&&!raf&&!document.hidden)raf=requestAnimationFrame(frame);}
   function frame(now){
     raf=0;
+    if(!visible||document.hidden){lastTime=0;return;}
     const cameraMoving=(streetMode&&(Math.abs(streetZ-streetWantedZ)>.01||camera.position.distanceTo(new THREE.Vector3(0,2.6,streetWantedZ))>.01))||target.distanceToSquared(wantedTarget)>.0001||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     // Active people update on every rendered frame. Only paused scenery is capped.
     if(paused&&!cameraMoving&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
-    // Start sharp; reduce only pixel density if sustained slow frames appear.
-    if(visible&&!document.hidden&&lastRender&&now-lastRender>55)slowFrames++;else slowFrames=Math.max(0,slowFrames-1);
-    if(slowFrames>24&&renderScale>quality.minPixelRatio){renderScale=Math.max(quality.minPixelRatio,renderScale-.25);renderer.setPixelRatio(renderScale);slowFrames=0;}
+    // Preserve pixel density: optimize invisible work instead of blurring the view.
     const elapsed=lastTime?Math.max(0,(now-lastTime)/1000):0;
     const dt=Math.min(elapsed,.05);lastTime=now;
     if(autoOrbit&&!entranceActive&&!paused&&visible&&!document.hidden)wantedTheta+=dt*.06;
@@ -284,8 +285,10 @@ function startVillage(){
       if(!entranceActive&&!reduced)moneyRain.updateRewards(dt,nightToggle.getAttribute('aria-pressed')==='true'?1:0);
       partyTime+=dt;village.animateEffects(partyTime);
       village.animateCrowd(partyTime);
-      districts.animate(partyTime,target.x,target.z);
     }
+    // Refresh newly visible crowds even while activity is paused; their pose
+    // must match the frozen clock when the user turns or moves the camera.
+    districts.animate(partyTime,target.x,target.z,camera);
     renderer.render(scene,camera);lastRender=now;
     viewDirty=false;
     const settling=(streetMode&&(Math.abs(streetZ-streetWantedZ)>.01||camera.position.distanceTo(new THREE.Vector3(0,2.6,streetWantedZ))>.01))||target.distanceTo(wantedTarget)>.01||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;

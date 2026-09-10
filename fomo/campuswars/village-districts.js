@@ -1,6 +1,6 @@
 import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=50';
 import {createCampusKit} from './village-campus-kit.js?v=35';
-import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=50';
+import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=59';
 import {createMarketExchange} from './village-market.js?v=50';
 
 export function createDistricts(T,extension=0){
@@ -140,7 +140,16 @@ export function createDistricts(T,extension=0){
     }
     kit.batch(p);
     p.updateMatrixWorld(true);p.traverse(o=>o.matrixAutoUpdate=false);
-    return {group:p,kind,specs,exchanges,people:activity.people,animate(time){activity.animate(time);exchanges.forEach(e=>e.animate(time));},dispose(){exchanges.forEach(e=>e.dispose());activity.dispose();kit.disposeChunk(p);}};
+    // Use the same conservative bounds as the crowd's instance batches. These
+    // include every route and prop, so skipping a whole invisible batch cannot
+    // leave an old pose visible. Absolute-time poses catch up before drawing.
+    const activityBounds=activity.root.children.find(o=>o.isInstancedMesh).boundingSphere.clone().applyMatrix4(activity.root.matrixWorld);
+    let animatedAt=0,marketAt;
+    return {group:p,kind,specs,exchanges,activityBounds,people:activity.people,animate(time,animatePeople=true){
+      if(animatePeople&&time!==animatedAt){activity.animate(time);animatedAt=time;}
+      // Market screens have separate building bounds, outside the crowd batch.
+      if(time!==marketAt){exchanges.forEach(e=>e.animate(time));marketAt=time;}
+    },dispose(){exchanges.forEach(e=>e.dispose());activity.dispose();kit.disposeChunk(p);}};
   }
   let lastKey='';
   function update(x,z){
@@ -150,9 +159,15 @@ export function createDistricts(T,extension=0){
     for(const [id,chunk] of chunks)if(!wanted.has(id)){chunk.group.removeFromParent();chunk.dispose();chunks.delete(id);}
     root.updateMatrixWorld(true);return true;
   }
-  function animate(time,x=0,z=0){
-    for(const chunk of chunks.values())if(Math.hypot(chunk.group.position.x-x,chunk.group.position.z-z)<165)chunk.animate(time);
-    traffic.animate(time,x,z);
+  const frustum=new T.Frustum(),projection=new T.Matrix4();
+  let trafficTime,trafficX,trafficZ;
+  function animate(time,x=0,z=0,camera=null){
+    if(camera)frustum.setFromProjectionMatrix(projection.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse));
+    for(const chunk of chunks.values()){
+      const inView=camera?frustum.intersectsSphere(chunk.activityBounds):Math.hypot(chunk.group.position.x-x,chunk.group.position.z-z)<165;
+      chunk.animate(time,inView);
+    }
+    if(time!==trafficTime||x!==trafficX||z!==trafficZ){traffic.animate(time,x,z);trafficTime=time;trafficX=x;trafficZ=z;}
   }
   update(0,0);
   function dispose(){

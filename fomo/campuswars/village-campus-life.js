@@ -91,9 +91,9 @@ export function createCampusPeople(T,kit,kind,cx,cz){
   function limb(mesh,i,from,to,r){a.set(...from);b.set(...to);direction.subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);const length=direction.length();dummy.quaternion.setFromUnitVectors(up,direction.normalize());dummy.scale.set(r,length+.025,r);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);}
   function animate(time){
     people.forEach((p,i)=>{
-      const s=campusPose(p,time),rig=humanPose(p,s,time),h=p.height;
+      const s=campusPose(p,time),rig=humanPose(p,s,time),h=p.height,cos=Math.cos(s.angle),sin=Math.sin(s.angle);
       const ground=p.action==='basketball'?.33:p.action==='skate'?.14:p.action==='doorway'?.27:.045;
-      const local=([x,y,z])=>[s.x+(x*Math.cos(s.angle)+z*Math.sin(s.angle))*h,y*h+ground+(s.hidden?-20:0),s.z+(-x*Math.sin(s.angle)+z*Math.cos(s.angle))*h];
+      const local=([x,y,z])=>[s.x+(x*cos+z*sin)*h,y*h+ground+(s.hidden?-20:0),s.z+(-x*sin+z*cos)*h];
       const part=(mesh,index,point,x,y,z,yaw=0,pitch=0)=>pose(mesh,index,...local(point),x*h,y*h,z*h,s.angle+yaw,pitch);
       part(body,i*11,rig.chest,.40,.52,.25,rig.twist,rig.lean);
       part(body,i*11+9,rig.hip,.29,.20,.23,-rig.twist*.5);
@@ -144,15 +144,15 @@ export function createCampusTraffic(T,kit,extension=0){
   const fleet=kit.vehicles.movingFleet(root,cars);
   const bikeWheels=instances(kit.geometries.wheel,cyclists.length*2),bikeTubes=instances(kit.geometries.cylinder,cyclists.length*13),riders=instances(rounded,cyclists.length*9),heads=instances(kit.geometries.sphere,cyclists.length*2);
   cyclists.forEach((c,i)=>{for(let j=0;j<2;j++){bikeWheels.setColorAt(i*2+j,color.set(0x303d42));heads.setColorAt(i*2+j,color.set(j?0xe0d9c7:0xc69b7a));}for(let j=0;j<13;j++)bikeTubes.setColorAt(i*13+j,color.set(j<6?0x6b8491:0x899593));for(let j=0;j<9;j++){riders.setColorAt(i*9+j,color.set(j===0?[0xb99269,0x576e99,0x994f47][i%3]:j<5?0xc69b7a:0x43505b));}});
-  const a=new T.Vector3(),b=new T.Vector3(),up=new T.Vector3(0,1,0);
+  const a=new T.Vector3(),b=new T.Vector3(),direction=new T.Vector3(),up=new T.Vector3(0,1,0);
   function pose(mesh,i,x,y,z,sx,sy,sz,angle=0){dummy.position.set(x,y,z);dummy.rotation.set(0,angle,0);dummy.scale.set(sx,sy,sz);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);}
-  function tube(mesh,i,from,to,r){a.set(...from);b.set(...to);const dir=b.clone().sub(a);dummy.position.copy(a).add(b).multiplyScalar(.5);dummy.quaternion.setFromUnitVectors(up,dir.clone().normalize());dummy.scale.set(r,dir.length(),r);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);}
+  function tube(mesh,i,from,to,r){a.set(...from);b.set(...to);direction.subVectors(b,a);const length=direction.length();dummy.position.copy(a).add(b).multiplyScalar(.5);dummy.quaternion.setFromUnitVectors(up,direction.normalize());dummy.scale.set(r,length,r);dummy.updateMatrix();mesh.setMatrixAt(i,dummy.matrix);}
   function animate(t,focusX=0,focusZ=0){
     // Translate the circuits to the nearest 300-unit campus; no traffic crosses lawns.
     const ox=Math.round(focusX/300)*300,oz=extension?0:Math.round(focusZ/300)*300;root.position.set(ox,0,oz);root.updateMatrix();root.updateMatrixWorld(true);
     fleet.update(cars.map(c=>{const loop=loops[c.loop],distance=c.offset+t*c.speed,p=loop.sample(distance),ahead=loop.sample(distance+1);const turn=Math.atan2(Math.sin(ahead.angle-p.angle),Math.cos(ahead.angle-p.angle));return {...p,steer:Math.max(-.4,Math.min(.4,turn*kit.vehicles.model(c.style).wheelbase*2))};}),t);
     cyclists.forEach((c,i)=>{
-      const s=bikeLoops[c.loop].sample(c.offset+t*c.speed),local=(x,y,z)=>[s.x+x*Math.cos(s.angle)+z*Math.sin(s.angle),y,s.z-x*Math.sin(s.angle)+z*Math.cos(s.angle)];
+      const s=bikeLoops[c.loop].sample(c.offset+t*c.speed),cos=Math.cos(s.angle),sin=Math.sin(s.angle),local=(x,y,z)=>[s.x+x*cos+z*sin,y,s.z-x*sin+z*cos];
       for(let j=0;j<2;j++)pose(bikeWheels,i*2+j,...local(0,.4,j?.65:-.65),1,1,1,s.angle+Math.PI/2);
       const rear=local(0,.4,-.65),front=local(0,.4,.65),crank=local(0,.45,-.03),seat=local(0,1.04,-.25),bar=local(0,1.04,.46);
       [[rear,crank],[rear,seat],[seat,crank],[seat,bar],[bar,crank],[bar,front],[bar,local(0,1.19,.42)],[local(-.23,1.19,.42),local(.23,1.19,.42)],[local(-.12,1.06,-.25),local(.12,1.06,-.25)]].forEach(([a,b],j)=>tube(bikeTubes,i*13+j,a,b,.032));

@@ -2,6 +2,14 @@
 
 Static landing page for `https://milomessina.com/fomo/campuswars/`, using the existing GitHub/Vercel deployment. Three.js 0.180.0 is pinned in `vendor/` with its MIT license. The page has no new dependencies or build step. `/api/campuswars` is a Vercel Node function that reads the authenticated registration source on the server.
 
+## Graphics and performance refinement
+
+Rendering now keeps its initial device pixel ratio (up to 2× on desktop and mobile) instead of permanently reducing resolution after slow frames. Cached sun shadows use soft PCF filtering at their existing resolutions. Party mode has slightly stronger indirect and fill lighting so street-level people and architecture remain readable, with no extra lights or rendering passes. All models, textures, populations, activities, and controls are retained.
+
+Campus crowds outside the camera frustum skip pose calculations and instance-buffer uploads. Conservative bounds match their existing rendering bounds, including routes and props. Newly visible crowds refresh to the current absolute animation time before rendering, including camera movement while activity is paused. Market tickers remain independent of crowd visibility. Paused poses are cached; fully hidden views perform no rendering. Shared trigonometry and reusable vectors also reduce repeated calculations and temporary allocations in chapter crowds, campus people, and cyclists.
+
+An interleaved local Node benchmark of the opening camera measured campus activity updates at **3.56 ms before / 2.78 ms after (22% less CPU time)**: median of five 90-frame samples after warmup, with the preceding source as the baseline. All nine campus chunks and 424 campus people remain; seven chunks / 358 people need animation in this view. This isolates CPU animation work, excludes GPU rendering, and is not a device FPS claim. All 111 tests pass, including exact visible-pose equivalence, paused-camera catch-up, translated culling bounds, fixed resolution under slow frames, and hidden-view suspension. Desktop daylight, night lighting, and street controls were visually checked in the local preview, including a 390 × 844 phone viewport, without rendering errors.
+
 ## Automatic chapter updates
 
 `site.js` starts `chapter-feed.js` immediately and checks `/api/campuswars` every 30 seconds while the tab is visible. Returning to a hidden tab triggers an immediate refresh. Changes update roster cards, the selected detail panel, share text, houses, construction, banners, exact member crowds, rankings and the claim lot without reloading or resetting the camera. Unchanged chapter payloads do not rebuild the scene. Party mode and activity pause survive updates. A failed request retains the current data and shows a reconnecting status; the next refresh retries.
@@ -95,7 +103,7 @@ The motion tests check ground-contact sliding, stride-boundary continuity, leg l
 
 Repeated campus geometry uses the batching/instancing helpers in `village-campus-kit.js`. Static geometry batches share material properties and use per-instance colors; animated people and their props share instance buffers. Distant scenery is batched once. Wires use thin triangular prisms, distant foliage has a modest polygon count, and tiny shoes use simpler rounded geometry to fund the additional population. Removed chunks dispose their instance buffers and owned materials/textures while shared resources remain cached.
 
-Active people now update on every rendered frame, removing the separate 24 Hz timer that could reduce visible animation to approximately 15 Hz when combined with the old 30 Hz rendering cap. Pause, reduced-motion preferences, hidden-document and offscreen controls remain in `village.js`; no new animation loop was introduced. Adaptive pixel ratio remains 2× maximum desktop / 1.5× touch, stepping down under sustained slow frames. Cached shadow maps remain 2048px desktop / 1024px touch.
+Active people now update on every rendered frame, removing the separate 24 Hz timer that could reduce visible animation to approximately 15 Hz when combined with the old 30 Hz rendering cap. Pause, reduced-motion preferences, hidden-document and offscreen controls remain in `village.js`; no new animation loop was introduced. Rendering now retains its initial pixel ratio up to 2× on desktop and touch devices. Cached shadow maps remain 2048px desktop / 1024px touch.
 
 ## Verification and measured rendering budget
 
