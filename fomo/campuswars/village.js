@@ -1,6 +1,6 @@
-import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=51';
+import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=52';
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=51';
+import {createVillage} from './village-world.js?v=52';
 import {createDistricts} from './village-districts.js?v=50';
 import {EXCHANGE_VIEW} from './village-market.js?v=50';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
@@ -26,7 +26,7 @@ function startVillage(){
   let renderScale=Math.min(devicePixelRatio,coarse?1.5:2),slowFrames=0;
   renderer.setPixelRatio(renderScale);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
-  viewport.prepend(renderer.domElement);const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','3D Greek village. Drag to rotate, shift-drag to pan, or select a house. Use Street view to click along the block. In Street view, up and down move, left and right look around. Escape resets the view.');
+  viewport.prepend(renderer.domElement);const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','3D Greek village. Drag to rotate, shift-drag to pan, or select a house. Use Street view to click along the block. In Street view, W and S or up and down move, left and right look around. Escape resets the view.');
   const scene=new THREE.Scene();scene.background=new THREE.Color(0x98a7ba);scene.fog=new THREE.FogExp2(0x98a7ba,.0022);
   const camera=new THREE.PerspectiveCamera(48,1,1,650);
   const ambient=new THREE.HemisphereLight(0xd4e2ed,0x857768,1.55);scene.add(ambient);
@@ -118,13 +118,12 @@ function startVillage(){
   function resetView(){leaveStreet();wantedTarget.set(...openingView.target);wantedRadius=openingView.radius;wantedPhi=openingView.phi;wantedTheta=openingView.theta;wake();}
   function choose(id,focus=false,emit=true){
     const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
-    village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);
     if(focus){takeControl();leaveStreet();wantedTarget.set(anchor.lot.x*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=anchor.lot.x<0?1.08:-1.08;}
     if(emit)document.dispatchEvent(new CustomEvent('village:select',{detail:{id,interactive:focus}}));wake();
   }
   document.addEventListener('chapter:select',e=>choose(e.detail.id,Boolean(e.detail.focus)));
   function updateChapters(event){
-    const previous=village,next=createVillage(THREE,event.detail.chapters,{streets:previous.streets});
+    const previous=village,next=createVillage(THREE,event.detail.chapters,{streets:previous.streets,houseFinishes:previous.houseFinishes});
     chapters=event.detail.chapters;scene.remove(previous.world);scene.add(next.world);village=next;previous.dispose();
     if(previous.extension!==next.extension){scene.remove(districts.root);districts.dispose();districts=createDistricts(THREE,next.extension);districts.setMarket(marketState);scene.add(districts.root);}
     if(previous.extension!==next.extension){
@@ -166,7 +165,7 @@ function startVillage(){
     takeControl();
     if(!streetMode){
       streetMode=true;streetNav.root.visible=true;streetControls.hidden=false;streetButton.setAttribute('aria-pressed','true');shell.classList.add('street-view');
-      streetZ=z;theta=wantedTheta=0;phi=wantedPhi=0;
+      streetZ=z;theta=wantedTheta=0;phi=wantedPhi=0;canvas.focus({preventScroll:true});
     }
     const stops=streetStops(village.extension);streetWantedZ=Math.max(stops[0],Math.min(stops.at(-1),z));viewDirty=true;wake();
   }
@@ -174,7 +173,6 @@ function startVillage(){
   streetButton.addEventListener('click',()=>{if(streetMode){resetView();return;}const stops=streetStops(village.extension);moveStreet(stops.reduce((a,b)=>Math.abs(b-target.z)<Math.abs(a-target.z)?b:a));});
   document.getElementById('street-forward').addEventListener('click',()=>stepStreet(true));
   document.getElementById('street-back').addEventListener('click',()=>stepStreet(false));
-  document.getElementById('street-turn').addEventListener('click',()=>{takeControl();wantedTheta+=Math.PI;wake();});
   document.getElementById('street-exit').addEventListener('click',()=>{resetView();streetButton.focus();});
   document.getElementById('village-zoom-in').addEventListener('click',()=>{takeControl();leaveStreet();wantedRadius=Math.max(20,wantedRadius*.8);wake();});
   document.getElementById('village-zoom-out').addEventListener('click',()=>{takeControl();leaveStreet();wantedRadius=Math.min(MAX_ZOOM_RADIUS,wantedRadius*1.25);wake();});
@@ -193,9 +191,10 @@ function startVillage(){
   });
   canvas.addEventListener('pointercancel',()=>{drag=null;});canvas.addEventListener('lostpointercapture',()=>{drag=null;});
   canvas.addEventListener('wheel',e=>{if(document.activeElement!==canvas&&!document.fullscreenElement)return;e.preventDefault();takeControl();if(streetMode){stepStreet(e.deltaY>0);return;}wantedRadius=Math.max(20,Math.min(MAX_ZOOM_RADIUS,wantedRadius*Math.exp(e.deltaY*.001)));wake();},{passive:false});
-  canvas.addEventListener('keydown',event=>{
+  function handleViewKey(event){
     takeControl();
     if(event.code==='Escape'||event.code==='Home'){event.preventDefault();resetView();return;}
+    if(streetMode&&['KeyW','KeyS'].includes(event.code)){event.preventDefault();stepStreet(event.code==='KeyW');return;}
     if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.code))return;
     event.preventDefault();
     if(streetMode&&(event.code==='ArrowUp'||event.code==='ArrowDown')){stepStreet(event.code==='ArrowUp');return;}
@@ -204,7 +203,9 @@ function startVillage(){
     if(event.code==='ArrowUp')wantedPhi=Math.min(1.3,wantedPhi+.07);
     if(event.code==='ArrowDown')wantedPhi=Math.max(.22,wantedPhi-.07);
     wake();
-  });
+  }
+  canvas.addEventListener('keydown',handleViewKey);
+  for(const control of [streetControls,streetButton])control.addEventListener('keydown',event=>{if(streetMode)handleViewKey(event);});
   function releasePointer(){drag=null;}
   canvas.addEventListener('blur',releasePointer);addEventListener('blur',releasePointer);
   function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;if(!w||!h)return;viewDirty=true;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();wake();}

@@ -180,13 +180,15 @@ test('street navigation moves at eye level, turns around, honors ends and exits 
   const start=h.step(4);assert(Math.abs(start.y-2.6)<.01);assert(Math.abs(start.x)<.01);
   assert.equal(h.element('street-controls').hidden,false);
   h.fire('street-forward:click');const forward=h.step(3);assert(forward.z<start.z);assert(Math.abs(forward.y-2.6)<.01);
-  h.fire('street-turn:click');h.step(2);h.fire('street-forward:click');const back=h.step(3);assert(back.z>forward.z);
+  for(let i=0;i<24;i++)h.fire('canvas:keydown',{code:'ArrowRight',preventDefault(){}});h.step(2);h.fire('street-forward:click');const back=h.step(3);assert(back.z>forward.z);
   for(let i=0;i<10;i++)h.fire('street-forward:click');assert(h.step(3).z<=28.51);assert.equal(h.element('street-forward').disabled,true);
   h.fire('street-exit:click');assert.equal(h.element('street-controls').hidden,true);assert(h.step(3).y>3);
 });
 test('street view remains usable with reduced motion and keyboard navigation',()=>{
   const h=cameraHarness(true);h.show(true);h.step(.02);h.fire('village-street:click');const at=h.step(.02);assert(Math.abs(at.y-2.6)<1e-9);
   h.fire('canvas:keydown',{code:'ArrowUp',preventDefault(){}});const next=h.step(.02);assert.equal(at.z-next.z,9.5);
+  h.fire('canvas:keydown',{code:'KeyS',preventDefault(){}});assert(Math.abs(h.step(.02).z-at.z)<1e-9);
+  h.fire('canvas:keydown',{code:'KeyW',preventDefault(){}});assert(Math.abs(h.step(.02).z-next.z)<1e-9);
   h.fire('canvas:keydown',{code:'Escape',preventDefault(){}});assert.equal(h.element('street-controls').hidden,true);
 });
 

@@ -8,12 +8,11 @@ export function streetStep(z,direction,extension=0){
 }
 export function createStreetNavigation(T,extension=0){
   const root=new T.Group(),pickables=[];root.name='street-navigation';root.visible=false;
-  const material=new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.82,depthWrite:false,side:T.DoubleSide});
-  const ring=new T.RingGeometry(.77,1.02,32),bar=new T.BoxGeometry(.85,.035,.15);
+  const material=new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.55,depthWrite:false,side:T.DoubleSide});
+  const ring=new T.RingGeometry(.82,.91,32);
   for(const z of streetStops(extension)){
     const marker=new T.Group();marker.position.set(0,.25,z);root.add(marker);
     const circle=new T.Mesh(ring,material);circle.rotation.x=-Math.PI/2;marker.add(circle);
-    for(const side of [-1,1]){const arrow=new T.Mesh(bar,material);arrow.position.set(side*.29,.015,0);arrow.rotation.y=side*-.65;marker.add(arrow);}
     const hit=new T.Mesh(new T.CircleGeometry(1.65,16),new T.MeshBasicMaterial({visible:false,side:T.DoubleSide}));hit.rotation.x=-Math.PI/2;hit.userData.streetZ=z;marker.add(hit);pickables.push(hit);
   }
   return {root,pickables,update(z,theta){for(const marker of root.children){marker.visible=Math.abs(marker.position.z-z)>4&&Math.abs(marker.position.z-z)<39;marker.rotation.y=Math.cos(theta)>0?0:Math.PI;}},dispose(){const geometry=new Set(),materials=new Set();root.traverse(o=>{if(o.geometry)geometry.add(o.geometry);if(o.material)materials.add(o.material);});geometry.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());}};

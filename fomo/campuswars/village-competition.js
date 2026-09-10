@@ -35,7 +35,6 @@ export function createCompetition(T,chapters,anchors){
     const anchor=anchors.find(a=>a.id===leader.id);
     if(anchor){
       spotlight=new T.SpotLight(0xffe3a6,360,40,.48,.8,2);spotlight.name='leading-house-spotlight';spotlight.position.set(anchor.lot.x-2,anchor.point.y+9,anchor.lot.z+3);spotlight.target.position.set(anchor.lot.x,4,anchor.lot.z);root.add(spotlight,spotlight.target);
-      const halo=new T.Mesh(new T.RingGeometry(7.15,7.3,64),new T.MeshBasicMaterial({color:0xeac36b,transparent:true,opacity:.58,depthWrite:false,side:T.DoubleSide}));halo.name='leading-house-halo';halo.rotation.x=-Math.PI/2;halo.position.set(anchor.lot.x,.22,anchor.lot.z);root.add(halo);
       // A very faint dust-lit shaft makes the spotlight visible in daylight.
       const beamHeight=spotlight.position.y-3,beam=new T.Mesh(new T.CylinderGeometry(.12,6.5,beamHeight,32,1,true),new T.MeshBasicMaterial({color:0xffdfa2,transparent:true,opacity:.025,depthWrite:false,side:T.DoubleSide,blending:T.AdditiveBlending}));
       beam.name='leader-light-shaft';beam.position.set(anchor.lot.x,3+beamHeight/2,anchor.lot.z);root.add(beam);
