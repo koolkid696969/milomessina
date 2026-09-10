@@ -65,3 +65,24 @@ test('hosted endpoint rejects writes, hides upstream failures and coalesces conc
     await handler({method:'GET'},response());assert.equal(requests,1);
   } finally {globalThis.fetch=originalFetch;if(password===undefined)delete process.env.CAMPUSWARS_ADMIN_PASSWORD;else process.env.CAMPUSWARS_ADMIN_PASSWORD=password;}
 });
+
+
+test('a saved full village survives reload during an outage, then live recovery replaces and saves it',async()=>{
+  const values=new Map(),updates=[],statuses=[];let fail=false,current=snapshot(19);
+  const options={storageRef:{getItem:key=>values.get(key),setItem:(key,value)=>values.set(key,value)},onUpdate:value=>updates.push(value),onStatus:value=>statuses.push(value),documentRef:{hidden:false,addEventListener(){},removeEventListener(){}},schedule:()=>1,cancel(){},fetchImpl:async()=>({ok:!fail,json:async()=>current})};
+  const first=startChapterFeed(options);await new Promise(resolve=>setImmediate(resolve));first.stop();
+  assert.equal(values.size,1);fail=true;updates.length=0;
+  const second=startChapterFeed(options);await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(updates.length,1);assert.equal(updates[0].chapters[0].joined,19);assert.equal(updates[0].live,false);assert.equal(statuses.at(-1).live,false);
+  current=snapshot(25);fail=false;await second.refresh();assert.equal(updates.at(-1).chapters[0].joined,25);assert.equal(statuses.at(-1).live,true);second.stop();
+});
+test('corrupt or inaccessible storage cannot prevent live chapter loading',async()=>{
+  for(const storageRef of [{getItem:()=>'{broken',setItem(){}},{getItem(){throw Error('denied');},setItem(){throw Error('full');}}]){
+    const updates=[];const feed=startChapterFeed({storageRef,onUpdate:value=>updates.push(value),onStatus(){},documentRef:{hidden:false,addEventListener(){},removeEventListener(){}},schedule:()=>1,cancel(){},fetchImpl:async()=>({ok:true,json:async()=>snapshot(7)})});
+    await new Promise(resolve=>setImmediate(resolve));assert.equal(updates[0].chapters[0].joined,7);feed.stop();
+  }
+});
+test('an older cached village cannot replace a newer bundled snapshot',async()=>{
+  const updates=[];const feed=startChapterFeed({initialSnapshot:{updatedAt:'2026-09-10T00:00:00Z'},storageRef:{getItem:()=>JSON.stringify(snapshot(1))},onUpdate:value=>updates.push(value),onStatus(){},documentRef:{hidden:false,addEventListener(){},removeEventListener(){}},schedule:()=>1,cancel(){},fetchImpl:async()=>({ok:false})});
+  await new Promise(resolve=>setImmediate(resolve));assert.equal(updates.length,0);feed.stop();
+});

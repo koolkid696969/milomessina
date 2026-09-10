@@ -221,3 +221,25 @@ test('mobile street view stays wide while moving and looking, and restores the o
   h.fire('street-exit:click');h.step(.02);assert.equal(h.lens(),48);
   const desktop=cameraHarness(true);desktop.show(true);desktop.step(.02);desktop.fire('village-street:click');desktop.step(.02);assert.equal(desktop.lens(),48);
 });
+
+
+test('pinch and zoom buttons zoom within mobile street view and a pinch never steps down the road',()=>{
+  const h=cameraHarness(true,'',false,true);h.show(true);h.step(.02);h.fire('village-street:click');const start=h.step(.02);
+  const touch=(id,x)=>({pointerType:'touch',pointerId:id,button:0,clientX:x,clientY:300});
+  h.fire('canvas:pointerdown',touch(1,100));h.fire('canvas:pointerdown',touch(2,200));
+  h.fire('canvas:pointermove',touch(2,300));h.step(.02);assert(h.lens()<82);
+  h.fire('canvas:pointermove',touch(2,150));h.step(.02);assert(h.lens()>82);
+  h.fire('canvas:pointerup',touch(2,150));h.fire('canvas:pointerup',touch(1,100));assert(h.step(.02).distanceTo(start)<.001);
+  h.fire('village-zoom-in:click');h.step(.02);const zoomed=h.lens();assert(zoomed<100);assert.equal(h.element('street-controls').hidden,false);
+  h.fire('street-forward:click');h.step(.02);assert.equal(h.lens(),zoomed);
+  h.fire('village-zoom-out:click');h.step(.02);assert(h.lens()>zoomed);
+  h.fire('street-exit:click');h.step(.02);assert.equal(h.lens(),48);
+});
+test('pinching the overview changes zoom and cancellation releases the gesture',()=>{
+  const h=cameraHarness(true,'',false,true);h.show(true);h.step(.02);h.drag();const start=h.step(.02);
+  const touch=(id,x)=>({pointerType:'touch',pointerId:id,button:0,clientX:x,clientY:300});
+  h.fire('canvas:pointerdown',touch(1,100));h.fire('canvas:pointerdown',touch(2,200));h.fire('canvas:pointermove',touch(2,300));
+  const zoomed=h.step(.02);assert(zoomed.y<start.y);
+  h.fire('canvas:pointercancel',touch(2,300));h.fire('canvas:pointerup',touch(1,100));
+  h.fire('village-zoom-out:click');assert(h.step(.02).y>zoomed.y);
+});

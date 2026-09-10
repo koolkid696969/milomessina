@@ -8,8 +8,21 @@ export function validateSnapshot(value) {
   return value;
 }
 
-export function startChapterFeed({onUpdate, onStatus, fetchImpl=fetch, documentRef=document, interval=30000, schedule=setTimeout, cancel=clearTimeout}) {
+const SNAPSHOT_KEY='campuswars:last-good-chapters:v1';
+function browserStorage(){try{return globalThis.localStorage;}catch{return null;}}
+
+export function startChapterFeed({initialSnapshot,storageRef=browserStorage(),onUpdate, onStatus, fetchImpl=fetch, documentRef=document, interval=30000, schedule=setTimeout, cancel=clearTimeout}) {
   let timer, stopped=false, running=false, controller, signature='';
+  // Restore public chapter aggregates before the first network request. Storage
+  // is optional: Safari private mode and quota failures must not stop the feed.
+  try{
+    const cached=validateSnapshot(JSON.parse(storageRef?.getItem(SNAPSHOT_KEY)||'null'));
+    if(!initialSnapshot?.updatedAt||Date.parse(cached.updatedAt)>Date.parse(initialSnapshot.updatedAt)){
+      onUpdate({...cached,live:false});signature=JSON.stringify(cached.chapters);
+      onStatus({live:false,updatedAt:cached.updatedAt});
+    }
+  }catch{}
+
   async function refresh() {
     if (stopped || running || documentRef.hidden) return;
     cancel(timer); running=true; controller=new AbortController();
@@ -21,6 +34,7 @@ export function startChapterFeed({onUpdate, onStatus, fetchImpl=fetch, documentR
       if (stopped) return;
       const next=JSON.stringify(snapshot.chapters);
       if (next!==signature) {onUpdate(snapshot); signature=next;}
+      try{storageRef?.setItem(SNAPSHOT_KEY,JSON.stringify(snapshot));}catch{}
       onStatus({live:true,updatedAt:snapshot.updatedAt});
     } catch {
       if (!stopped) onStatus({live:false});

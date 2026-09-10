@@ -1,6 +1,7 @@
 'use strict';
 (() => {
-  let { chapters } = JSON.parse(document.getElementById('chapters-data').textContent);
+  const savedSnapshot=JSON.parse(document.getElementById('chapters-data').textContent);
+  let {chapters}=savedSnapshot;
   let chapterFeed,rankChapters;
   const byId = new Map(chapters.map(chapter => [chapter.id, chapter]));
   const neighborhood = document.getElementById('neighborhood');
@@ -195,7 +196,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=57').then(async()=>{
+  import('./village.js?v=58').then(async()=>{
     try{
       const {startMarketFeed,marketStatus,marketPrice}=await import('./market-feed.js?v=50');
       const options={onUpdate(state){
@@ -214,7 +215,7 @@
     document.getElementById('village-intro').hidden = true;
     document.getElementById('village').classList.add('village-unavailable');
   });
-  let lastUpdated;
+  let lastUpdated=savedSnapshot.updatedAt;
   function updateChapters(snapshot) {
     const focusedChapter = document.activeElement?.closest('.house-card')?.dataset.chapter;
     // Match the displayed house ranks, including identical progress ties.
@@ -248,12 +249,14 @@
     selectChapter(selectedId,{writeHash:false,emit:false});
     if (focusedChapter) cards.find(card => card.dataset.chapter === focusedChapter)?.focus({preventScroll:true});
   }
-  Promise.all([import('./chapter-feed.js?v=32'),import('./village-competition.js?v=55')]).then(([{startChapterFeed},{houseStandings}]) => {
+  Promise.all([import('./chapter-feed.js?v=58'),import('./village-competition.js?v=55')]).then(([{startChapterFeed},{houseStandings}]) => {
     rankChapters=houseStandings;
+    updateChapters(savedSnapshot);
     chapterFeed=startChapterFeed({
+    initialSnapshot:savedSnapshot,
     onUpdate:updateChapters,
     onStatus(status) {
-      if (status.live) lastUpdated = status.updatedAt;
+      if (status.updatedAt) lastUpdated = status.updatedAt;
       const time = lastUpdated ? new Date(lastUpdated).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}) : '';
       document.getElementById('chapter-sync').textContent = status.live ? `Live onboarding · Updated ${time} · Refreshes every 30 seconds` : lastUpdated ? `Updates reconnecting · Showing data from ${time}` : 'Connecting to live onboarding · Showing saved registrations';
     }
