@@ -17,3 +17,10 @@ The five original logo files live in `assets/schools/`; visitors do not request 
 Each completed house has cloth on both side walls, with side windows spaced around it. Construction sites display the same school banners on side scaffolds. The banners open their chapter when selected, and house growth preserves their aspect ratio. Shared mounting geometry keeps the scene within its existing mesh budget. Late logo/font loads repaint the texture and wake paused views; disposed scenes ignore late callbacks.
 
 `tests/school-banner-gallery.html` renders the five school designs using the production painter. `tests/school-banners.test.mjs` checks university matching, asset availability, side placement, selection, growth proportions and disposal.
+
+
+## Automatic artwork for newly registered universities
+
+`school-artwork.js` resolves the registration's full school name through Wikipedia title redirects, rejects missing/disambiguation/non-school pages, and ranks matching wordmark/logo files ahead of seals. Exact school-name matches receive priority. It uses the public [MediaWiki images API](https://www.mediawiki.org/wiki/API:Images) and [imageinfo API](https://www.mediawiki.org/wiki/API:Imageinfo), with [CORS](https://www.mediawiki.org/wiki/API:Cross-site_requests). Images are restricted to Wikimedia upload/thumbnail hosts and loaded anonymously. The result retains the original file-description URL as its provenance.
+
+The original five local logos remain preferred. Other schools receive a deterministic split, border or stripe design, then a color sampled from their resolved mark. This is a generated banner composition, not a claim that the whole banner is official merchandise. An unsuccessful lookup keeps readable school-name artwork and retries on later live scene updates after a short cache interval. Names must resolve to an institutional Wikipedia article; unavailable schools are not assigned a guessed emblem.

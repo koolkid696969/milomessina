@@ -1,18 +1,21 @@
 import {createVillageEntrance} from './village-entrance.js?v=38';
 import {createPongGames} from './village-pong.js?v=31';
 import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=30';
-import {createCompetition} from './village-competition.js?v=33';
+import {createCompetition,houseStandings} from './village-competition.js?v=33';
 import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=28';
 import {humanPose} from './village-human-motion.js?v=48';
-import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=48';
+import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=51';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=35';
 import {palettes,hash} from './village-district-layout.js?v=22';
 import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=48';
 import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=32';
 import {createChapterBanner,bannerIdentity} from './village-banners.js?v=47';
-import {createSchoolBanner} from './village-school-banners.js?v=47';
+import {createSchoolBanner} from './village-school-banners.js?v=51';
 
 export function createVillage(THREE,chapters,{streets:existingStreet}={}){
+  // Physical addresses follow the same percentage standings as the rank badges.
+  const ranked=houseStandings(chapters),rankedIds=new Set(ranked.map(c=>c.id));
+  chapters=[...ranked,...chapters.filter(c=>!rankedIds.has(c.id)).sort((a,b)=>a.id.localeCompare(b.id))];
   const lots=createLots(chapters.length),extension=rowExtension(chapters.length);
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
   const materials=new Map(),landscapeKit=createCampusKit(THREE),grassMaterial=createGrassMaterial(THREE),lawns=[];
@@ -77,7 +80,8 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
       anchors.push({id,point:new THREE.Vector3(lot.x,6,lot.z),lot});return;
     }
     const house=new THREE.Group();house.name=`chapter-house-${id}`;group.add(house);
-    const style=lot.style;
+    const originalStyle=['blue-and-gold','star-and-crescent','azure-academic','cardinal-rose','cherry-varsity'].indexOf(bannerIdentity(chapter).key);
+    const style=originalStyle<0?Math.floor(hash(id,'house-style')*5):originalStyle;
     const colors=[0xb77458,0xad6952,0xa3604c,0xd5cfbb,0x855d54];const wall=style===3?mat(colors[style]):facade(colors[style]);const width=[11,12.2,10.5,12.2,10.5][style],height=style===4?9.1:7.4,depth=7.5;
     box(house,0,.38,0,width+1,.6,depth+1,0xc1b5a0);box(house,0,height/2+.6,0,width,height,depth,wall);
     box(house,0,height+.65,0,width+.5,.3,depth+.5,0xe4ddca);box(house,0,4.1,3.85,width+.25,.18,.22,0xcbbb9f);

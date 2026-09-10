@@ -1,5 +1,6 @@
+import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=51';
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=48';
+import {createVillage} from './village-world.js?v=51';
 import {createDistricts} from './village-districts.js?v=50';
 import {EXCHANGE_VIEW} from './village-market.js?v=50';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
@@ -25,7 +26,7 @@ function startVillage(){
   let renderScale=Math.min(devicePixelRatio,coarse?1.5:2),slowFrames=0;
   renderer.setPixelRatio(renderScale);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
-  viewport.prepend(renderer.domElement);const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','3D Greek village. Drag to rotate, shift-drag to pan, or select a house. Arrow keys rotate the view; Escape resets it.');
+  viewport.prepend(renderer.domElement);const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','3D Greek village. Drag to rotate, shift-drag to pan, or select a house. Use Street view to click along the block. In Street view, up and down move, left and right look around. Escape resets the view.');
   const scene=new THREE.Scene();scene.background=new THREE.Color(0x98a7ba);scene.fog=new THREE.FogExp2(0x98a7ba,.0022);
   const camera=new THREE.PerspectiveCamera(48,1,1,650);
   const ambient=new THREE.HemisphereLight(0xd4e2ed,0x857768,1.55);scene.add(ambient);
@@ -33,6 +34,9 @@ function startVillage(){
   const fill=new THREE.DirectionalLight(0xc4d2e0,.5);fill.position.set(30,15,-25);scene.add(fill);
   let village=createVillage(THREE,chapters);scene.add(village.world);
   const moneyRain=createMoneyRain(THREE,chapters,village.anchors);scene.add(moneyRain.root);
+  let streetNav=createStreetNavigation(THREE,village.extension);scene.add(streetNav.root);
+  let streetMode=false,streetZ=28.5,streetWantedZ=28.5;
+  const streetButton=document.getElementById('village-street'),streetControls=document.getElementById('street-controls');
   let districts=createDistricts(THREE,village.extension);scene.add(districts.root);
   let marketState;
   const dusk={sky:new THREE.Color(0x25233f),ambient:new THREE.Color(0x9a9fdc),ground:new THREE.Color(0x453649),sun:new THREE.Color(0xc49ab1),fill:new THREE.Color(0x858dff)};
@@ -79,6 +83,7 @@ function startVillage(){
   }
   function beginIntro(){
     if(!ready)return;
+    leaveStreet();
     entrancePending=false;entranceActive=true;entrancePaused=false;entranceTime=0;captionIndex=-1;lastTime=0;
     document.getElementById('intro-pause').textContent='Pause intro';
     document.getElementById('intro-pause').setAttribute('aria-pressed','false');
@@ -110,11 +115,11 @@ function startVillage(){
     nightToggle.setAttribute('aria-pressed',String(night));shell.classList.toggle('village-night',night);
     applyLighting(night?1:0);viewDirty=true;wake();
   });
-  function resetView(){wantedTarget.set(...openingView.target);wantedRadius=openingView.radius;wantedPhi=openingView.phi;wantedTheta=openingView.theta;wake();}
+  function resetView(){leaveStreet();wantedTarget.set(...openingView.target);wantedRadius=openingView.radius;wantedPhi=openingView.phi;wantedTheta=openingView.theta;wake();}
   function choose(id,focus=false,emit=true){
     const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
     village.selection.position.set(anchor.lot.x,.22,anchor.lot.z);
-    if(focus){takeControl();wantedTarget.set(anchor.lot.x*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=anchor.lot.x<0?1.08:-1.08;}
+    if(focus){takeControl();leaveStreet();wantedTarget.set(anchor.lot.x*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=anchor.lot.x<0?1.08:-1.08;}
     if(emit)document.dispatchEvent(new CustomEvent('village:select',{detail:{id,interactive:focus}}));wake();
   }
   document.addEventListener('chapter:select',e=>choose(e.detail.id,Boolean(e.detail.focus)));
@@ -122,6 +127,10 @@ function startVillage(){
     const previous=village,next=createVillage(THREE,event.detail.chapters,{streets:previous.streets});
     chapters=event.detail.chapters;scene.remove(previous.world);scene.add(next.world);village=next;previous.dispose();
     if(previous.extension!==next.extension){scene.remove(districts.root);districts.dispose();districts=createDistricts(THREE,next.extension);districts.setMarket(marketState);scene.add(districts.root);}
+    if(previous.extension!==next.extension){
+      scene.remove(streetNav.root);streetNav.dispose();streetNav=createStreetNavigation(THREE,next.extension);scene.add(streetNav.root);streetNav.root.visible=streetMode;
+      const stops=streetStops(next.extension);streetWantedZ=Math.max(stops[0],Math.min(stops.at(-1),streetWantedZ));
+    }
     moneyRain.setChapters(chapters,village.anchors);
     village.nightLife.setNight(litAtNight);
     village.animateCrowd(partyTime);village.animateEffects(partyTime);
@@ -137,36 +146,59 @@ function startVillage(){
   document.addEventListener('party:pause',e=>{paused=e.detail.paused;wake();});
   document.getElementById('village-overview').addEventListener('click',()=>{takeControl();resetView();});
   document.getElementById('village-exchange').addEventListener('click',()=>{
-    takeControl();const view=EXCHANGE_VIEW;
+    takeControl();leaveStreet();const view=EXCHANGE_VIEW;
     wantedTarget.set(view.x,view.y,view.z);wantedTheta=view.theta;wantedPhi=view.phi;
     wantedRadius=Math.max(view.radius,18/(Math.tan(camera.fov*Math.PI/360)*camera.aspect));wake();
   });
   document.getElementById('village-leaderboard').addEventListener('click',()=>{
-    takeControl();const board=village.competition.board;
+    takeControl();leaveStreet();const board=village.competition.board;
     wantedTarget.set(board.position.x,5,board.position.z);
     wantedTheta=board.rotation.y;wantedPhi=.08;
     wantedRadius=Math.max(16,7/(Math.tan(camera.fov*Math.PI/360)*camera.aspect));wake();
   });
-  document.getElementById('village-zoom-in').addEventListener('click',()=>{takeControl();wantedRadius=Math.max(20,wantedRadius*.8);wake();});
-  document.getElementById('village-zoom-out').addEventListener('click',()=>{takeControl();wantedRadius=Math.min(MAX_ZOOM_RADIUS,wantedRadius*1.25);wake();});
+  function leaveStreet(){
+    if(!streetMode)return;
+    streetMode=false;streetNav.root.visible=false;streetControls.hidden=true;streetButton.setAttribute('aria-pressed','false');
+    shell.classList.remove('street-view');canvas.style.cursor='';
+    target.set(0,2,streetZ);wantedTarget.copy(target);radius=wantedRadius=30;phi=wantedPhi=.45;
+  }
+  function moveStreet(z){
+    takeControl();
+    if(!streetMode){
+      streetMode=true;streetNav.root.visible=true;streetControls.hidden=false;streetButton.setAttribute('aria-pressed','true');shell.classList.add('street-view');
+      streetZ=z;theta=wantedTheta=0;phi=wantedPhi=0;
+    }
+    const stops=streetStops(village.extension);streetWantedZ=Math.max(stops[0],Math.min(stops.at(-1),z));viewDirty=true;wake();
+  }
+  function stepStreet(forward){moveStreet(streetStep(streetWantedZ,(Math.cos(wantedTheta)>=0?-1:1)*(forward?1:-1),village.extension));}
+  streetButton.addEventListener('click',()=>{if(streetMode){resetView();return;}const stops=streetStops(village.extension);moveStreet(stops.reduce((a,b)=>Math.abs(b-target.z)<Math.abs(a-target.z)?b:a));});
+  document.getElementById('street-forward').addEventListener('click',()=>stepStreet(true));
+  document.getElementById('street-back').addEventListener('click',()=>stepStreet(false));
+  document.getElementById('street-turn').addEventListener('click',()=>{takeControl();wantedTheta+=Math.PI;wake();});
+  document.getElementById('street-exit').addEventListener('click',()=>{resetView();streetButton.focus();});
+  document.getElementById('village-zoom-in').addEventListener('click',()=>{takeControl();leaveStreet();wantedRadius=Math.max(20,wantedRadius*.8);wake();});
+  document.getElementById('village-zoom-out').addEventListener('click',()=>{takeControl();leaveStreet();wantedRadius=Math.min(MAX_ZOOM_RADIUS,wantedRadius*1.25);wake();});
   const expand=document.getElementById('village-expand');expand.hidden=!shell.requestFullscreen;
   expand.addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await shell.requestFullscreen();}catch{expand.disabled=true;expand.title='Full screen is unavailable in this browser.';}});
   document.addEventListener('fullscreenchange',()=>{expand.textContent=document.fullscreenElement?'Exit full screen ↙':'Full screen ↗';resize();});
   canvas.addEventListener('pointerdown',e=>{if(e.button!==0)return;takeControl();canvas.focus({preventScroll:true});drag={id:e.pointerId,x:e.clientX,y:e.clientY,pan:e.shiftKey};dragDistance=0;canvas.setPointerCapture(e.pointerId);});
-  canvas.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;dragDistance+=Math.abs(dx)+Math.abs(dy);if(drag.pan){const scale=radius*.0015;wantedTarget.x+=(-dx*Math.cos(theta)+dy*Math.sin(theta))*scale;wantedTarget.z+=(dx*Math.sin(theta)+dy*Math.cos(theta))*scale;}else{wantedTheta-=dx*.006;wantedPhi=Math.max(.22,Math.min(1.3,wantedPhi+dy*.004));}drag.x=e.clientX;drag.y=e.clientY;wake();});
+  canvas.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;dragDistance+=Math.abs(dx)+Math.abs(dy);if(drag.pan&&!streetMode){const scale=radius*.0015;wantedTarget.x+=(-dx*Math.cos(theta)+dy*Math.sin(theta))*scale;wantedTarget.z+=(dx*Math.sin(theta)+dy*Math.cos(theta))*scale;}else{wantedTheta-=dx*.006;wantedPhi=Math.max(streetMode?-.65:.22,Math.min(streetMode?.65:1.3,wantedPhi+dy*.004));}drag.x=e.clientX;drag.y=e.clientY;wake();});
   function rayAt(e){const rect=canvas.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-((e.clientY-rect.top)/rect.height)*2+1);raycaster.setFromCamera(pointer,camera);}
   canvas.addEventListener('pointerup',e=>{
     if(!drag||drag.id!==e.pointerId)return;drag=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);
-    if(dragDistance>8)return;rayAt(e);const hit=raycaster.intersectObjects(village.pickables,false)[0];
-    if(hit){if(hit.object.userData.action==='register'){document.getElementById('panel-claim').click();return;}choose(hit.object.userData.chapter,true);return;}
+    if(dragDistance>8)return;rayAt(e);
+    if(streetMode){const step=raycaster.intersectObjects(streetNav.pickables.filter(o=>o.parent.visible),false)[0];if(step){moveStreet(step.object.userData.streetZ);return;}}
+    const hit=raycaster.intersectObjects(village.pickables,false)[0];
+    if(hit){if(hit.object.userData.action==='register'){document.getElementById('panel-claim').click();return;}choose(hit.object.userData.chapter,!streetMode);return;}
   });
   canvas.addEventListener('pointercancel',()=>{drag=null;});canvas.addEventListener('lostpointercapture',()=>{drag=null;});
-  canvas.addEventListener('wheel',e=>{if(document.activeElement!==canvas&&!document.fullscreenElement)return;e.preventDefault();takeControl();wantedRadius=Math.max(20,Math.min(MAX_ZOOM_RADIUS,wantedRadius*Math.exp(e.deltaY*.001)));wake();},{passive:false});
+  canvas.addEventListener('wheel',e=>{if(document.activeElement!==canvas&&!document.fullscreenElement)return;e.preventDefault();takeControl();if(streetMode){stepStreet(e.deltaY>0);return;}wantedRadius=Math.max(20,Math.min(MAX_ZOOM_RADIUS,wantedRadius*Math.exp(e.deltaY*.001)));wake();},{passive:false});
   canvas.addEventListener('keydown',event=>{
     takeControl();
     if(event.code==='Escape'||event.code==='Home'){event.preventDefault();resetView();return;}
     if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.code))return;
     event.preventDefault();
+    if(streetMode&&(event.code==='ArrowUp'||event.code==='ArrowDown')){stepStreet(event.code==='ArrowUp');return;}
     if(event.code==='ArrowLeft')wantedTheta-=.13;
     if(event.code==='ArrowRight')wantedTheta+=.13;
     if(event.code==='ArrowUp')wantedPhi=Math.min(1.3,wantedPhi+.07);
@@ -187,7 +219,7 @@ function startVillage(){
   function wake(){if(ready&&!raf&&!document.hidden)raf=requestAnimationFrame(frame);}
   function frame(now){
     raf=0;
-    const cameraMoving=target.distanceToSquared(wantedTarget)>.0001||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
+    const cameraMoving=(streetMode&&(Math.abs(streetZ-streetWantedZ)>.01||camera.position.distanceTo(new THREE.Vector3(0,2.6,streetWantedZ))>.01))||target.distanceToSquared(wantedTarget)>.0001||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     // Active people update on every rendered frame. Only paused scenery is capped.
     if(paused&&!cameraMoving&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
     // Start sharp; reduce only pixel density if sustained slow frames appear.
@@ -205,7 +237,15 @@ function startVillage(){
     }else{
       const ease=reduced?1:1-Math.exp(-cameraDt*7);target.lerp(wantedTarget,ease);theta+=(wantedTheta-theta)*ease;phi+=(wantedPhi-phi)*ease;radius+=(wantedRadius-radius)*ease;
     }
-    camera.position.set(target.x+Math.sin(theta)*Math.cos(phi)*radius,target.y+Math.sin(phi)*radius,target.z+Math.cos(theta)*Math.cos(phi)*radius);
+    if(streetMode){
+      const ease=reduced?1:1-Math.exp(-cameraDt*7);streetZ+=(streetWantedZ-streetZ)*ease;
+      camera.position.lerp(new THREE.Vector3(0,2.6,streetZ),ease);
+      target.set(camera.position.x-Math.sin(theta)*Math.cos(phi)*10,camera.position.y-Math.sin(phi)*10,camera.position.z-Math.cos(theta)*Math.cos(phi)*10);wantedTarget.copy(target);
+      streetNav.update(streetZ,theta);
+      const direction=Math.cos(wantedTheta)>=0?-1:1;
+      document.getElementById('street-forward').disabled=streetStep(streetWantedZ,direction,village.extension)===streetWantedZ;
+      document.getElementById('street-back').disabled=streetStep(streetWantedZ,-direction,village.extension)===streetWantedZ;
+    }else camera.position.set(target.x+Math.sin(theta)*Math.cos(phi)*radius,target.y+Math.sin(phi)*radius,target.z+Math.cos(theta)*Math.cos(phi)*radius);
     camera.lookAt(target);if(introRoll)camera.rotateZ(introRoll);camera.updateMatrixWorld();
     // Keep nearby rank labels from covering an entire house when the camera approaches.
     for(const badge of village.competition.badges){
@@ -223,7 +263,7 @@ function startVillage(){
     }
     renderer.render(scene,camera);lastRender=now;
     viewDirty=false;
-    const settling=target.distanceTo(wantedTarget)>.01||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
+    const settling=(streetMode&&(Math.abs(streetZ-streetWantedZ)>.01||camera.position.distanceTo(new THREE.Vector3(0,2.6,streetWantedZ))>.01))||target.distanceTo(wantedTarget)>.01||Math.abs(radius-wantedRadius)>.01||Math.abs(theta-wantedTheta)>.001||Math.abs(phi-wantedPhi)>.001;
     if(visible&&!document.hidden&&(!paused||settling||entranceActive))wake();
   }
   resize();resetView();

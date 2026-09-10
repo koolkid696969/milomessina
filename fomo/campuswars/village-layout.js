@@ -1,6 +1,6 @@
 import {hash,appearance,roundedLoop} from './village-district-layout.js?v=22';
 import {gaitPhase,speechGesture,smooth} from './village-human-motion.js?v=48';
-import {constructionAssignment,constructionActivity} from './village-construction-layout.js?v=48';
+import {constructionAssignment,constructionActivity} from './village-construction-layout.js?v=51';
 const lawnRoute=roundedLoop(-7.9,7,7.9,14.4,1.15);
 // Ease over the low lawn/path edges; the walking loop clears the porch steps.
 export function lawnGround(x,z){const edge=smooth((12-z)/.25);return .045+.085*smooth((7.5-Math.abs(x))/.25)*edge+.07*smooth((.825-Math.abs(x))/.2)*edge;}

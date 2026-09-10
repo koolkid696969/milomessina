@@ -7,10 +7,13 @@ const roles=['hammer','masonry','drill','saw'];
 export function constructionPlan(chapter){
   const seed=(key)=>hash(chapter.id,key);
   const form=forms[Math.floor(seed('construction-design')*forms.length)];
-  const width=8.6+seed('build-width')*1.2,depth=5+seed('build-depth');
+  const width=7.8+seed('build-width')*2,depth=5+seed('build-depth');
   const side=seed('build-side')>.5?1:-1,split=.35+seed('build-split')*.25;
   const wallHeight=2.7+seed('build-height')*.7;
   return {key:chapter.id,form,width,depth,side,split,wallHeight,
+    staging:['excavator','gantry','pipe-yard','site-office','formwork'][Math.floor(seed('build-staging')*5)],
+    accent:[0xd59a32,0x507c86,0xa55c43,0x6c7394,0x708352][Math.floor(seed('build-accent')*5)],
+    scaffoldHeight:.9+seed('build-platform')*.95,
     timber:[0xc69d68,0xaa7d49,0xd7b587,0xb48c60][Math.floor(seed('build-wood')*4)],
     masonry:[0xb17458,0xc0b7a3,0x92584b,0xa39885][Math.floor(seed('build-brick')*4)],
     scaffoldZ:(seed('build-scaffold')-.5)*1.2,

@@ -1,6 +1,6 @@
-import {constructionPlan,constructionStation} from './village-construction-layout.js?v=48';
+import {constructionPlan,constructionStation} from './village-construction-layout.js?v=51';
 import {createChapterBanner} from './village-banners.js?v=47';
-import {createSchoolBanner} from './village-school-banners.js?v=47';
+import {createSchoolBanner} from './village-school-banners.js?v=51';
 
 export function createConstructionSite(T,chapter,{box,cylinder,sign,pickables}){
   const site=new T.Group(),plan=constructionPlan(chapter);
@@ -31,6 +31,47 @@ export function createConstructionSite(T,chapter,{box,cylinder,sign,pickables}){
     slab(0,0,w*.60,d);slab(0,0,w,d*.60);
   }else slab(0,0,w,d);
 
+  if(chapter.joined===0){
+    // Unstaffed site preparation: large silhouettes visible from the row overview.
+    const staging=new T.Group();staging.name=`site-preparation-${plan.staging}`;site.add(staging);
+    const part=(x,y,z,sw,sh,sd,color=plan.accent)=>box(staging,x,y,z,sw,sh,sd,color);
+    if(plan.staging==='excavator'){
+      for(const x of [-.68,.68])part(x,.52,0,.43,.45,2.25,0x353b40);
+      part(0,.85,0,1.65,.45,1.7);part(-.35,1.53,-.25,.82,1.05,1.05);
+      part(-.35,1.63,.29,.62,.65,.04,0x375361);part(-.35,2.1,-.25,.98,.12,1.2);
+      beam([.55,1.2,.3],[.6,2.6,1.3],.28,plan.accent);beam([.6,2.6,1.3],[.6,.73,2.3],.23,plan.accent);
+      part(.6,.52,2.3,.82,.4,.65,0x586068);
+    }else if(plan.staging==='gantry'){
+      for(const x of [-2.6,2.6]){part(x,1.85,0,.22,3.0,.24);part(x,.5,0,1.25,.22,1.6,steel);}
+      part(0,3.35,0,5.6,.32,.36);part(side,3.05,0,.7,.36,.62,steel);
+      part(side,2.3,0,.045,1.3,.045,steel);part(side,1.6,0,1.4,.16,.62,timber);
+      for(let i=0;i<4;i++)part(-side*1.4,.55+i*.20,-1.15,1.7,.17,.6,timber);
+    }else if(plan.staging==='pipe-yard'){
+      for(const x of [-2,0,2]){
+        const ring=new T.Mesh(new T.TorusGeometry(.62,.19,8,16),new T.MeshStandardMaterial({color:concrete,roughness:.95}));
+        ring.position.set(x,1.13,0);staging.add(ring);
+        part(x,.47,0,1.6,.17,1.3,timber);
+      }
+      for(let i=0;i<3;i++)part(-1+i,.6,1.7,.7,.4,.7,masonry);
+    }else if(plan.staging==='site-office'){
+      part(-side*1.4,1.2,-.6,2.5,1.75,1.8);part(-side*1.4,2.13,-.6,2.75,.14,2.05,0xe4ddcb);
+      part(-side*1.4,1.45,.32,1.5,.64,.06,0x324e62);
+      part(side*1.6,.9,.8,1.8,.13,1.15,timber);
+      for(const x of [side*1.6-.7,side*1.6+.7])part(x,.62,.8,.1,.55,.8,steel);
+      part(side*1.6,.98,.8,1.5,.025,.95,0x6887a0);
+    }else{
+      for(let i=0;i<3;i++){
+        const x=-2.4+i*2.4;
+        part(x,.75,0,1.7,.8,1.8,timber);part(x,.77,0,1.4,.82,1.5,0x62584a);
+        for(const dx of [-.8,.8])part(x+dx,1.35,0,.07,1.2,1.7,steel);
+      }
+    }
+    // Survey stakes and bright strings outline a different inset on each plan.
+    for(const x of [-w*.42,w*.42]){
+      for(const z of [-d*.38,d*.38])box(site,x,.73,z,.06,.7,.06,plan.accent);
+      box(site,x,1.02,0,.025,.025,d*.76,0xf3cc68);
+    }
+  }
   // Common edge work stations remain accessible around every footprint.
   for(const face of [-1,1])box(site,0,.4,face*d/2,w,.34,.24,concrete);
   const frameTop=chapter.joined?1.55+p*(h+1.1):.75;
@@ -73,7 +114,7 @@ export function createConstructionSite(T,chapter,{box,cylinder,sign,pickables}){
     }
   }
   // Side yard: asymmetrical scaffold, hoist, ladder and chapter-specific stock racks.
-  const sx=side*(w/2+.65),sz=plan.scaffoldZ,platform=1.25+p*1.45;
+  const sx=side*(w/2+.65),sz=plan.scaffoldZ,platform=plan.scaffoldHeight+p*1.45;
   for(const dx of [-.34,.34])for(const dz of [-1.5,1.5])beam([sx+dx,.13,sz+dz],[sx+dx,platform+1.05,sz+dz],.055,steel);
   box(site,sx,platform,sz,.85,.10,3.25,0x978a73);
   for(const dx of [-.34,.34]){beam([sx+dx,.25,sz-1.5],[sx+dx,platform+1.0,sz+1.5],.045,steel);beam([sx+dx,platform+1.0,sz-1.5],[sx+dx,.25,sz+1.5],.045,steel);}

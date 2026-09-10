@@ -38,3 +38,21 @@ test('street geometry inserts continuous sections without overlapping floors',()
   for(let i=0;i<g.attributes.normal.count;i++)assert(g.attributes.normal.getZ(i)>.99);
   village.dispose();
 });
+
+test('rising chapters move toward the leaders with their crowds, banners and stable architecture',()=>{
+  const input=chapters(8).map((c,i)=>({...c,joined:15+i,active:100}));
+  const old=createVillage(THREE,input),oldAnchor=old.anchors.find(a=>a.id==='test-0');
+  assert.equal(oldAnchor.lot.z,38);
+  const promoted=input.map(c=>c.id==='test-0'?{...c,joined:90}:c);
+  const next=createVillage(THREE,promoted,{streets:old.streets}),anchor=next.anchors.find(a=>a.id==='test-0');
+  assert.deepEqual([anchor.lot.x,anchor.lot.z],[-20,-19]);
+  assert.equal(next.competition.leaderId,'test-0');
+  assert(next.members.filter(m=>m.chapter==='test-0').every(m=>m.lot===anchor.lot));
+  next.world.updateMatrixWorld(true);
+  const banner=next.world.getObjectByName('chapter-banner-test-0');
+  assert(Math.abs(banner.getWorldPosition(new THREE.Vector3()).z-anchor.lot.z)<10);
+  assert.deepEqual(next.anchors.map(a=>a.id),['test-0','test-7','test-6','test-5','test-4','test-3','test-2','test-1','empty']);
+  const reordered=createVillage(THREE,[...promoted].reverse());
+  assert.deepEqual(reordered.anchors.map(a=>[a.id,a.lot.x,a.lot.z]),next.anchors.map(a=>[a.id,a.lot.x,a.lot.z]));
+  old.dispose();next.dispose();reordered.dispose();
+});

@@ -72,3 +72,11 @@ test('tool rigs animate, materials are delivered, and crew resources disappear o
   assert(finished.world.getObjectByName('chapter-house-construction-test'));assert(!finished.world.getObjectByName('chapter-construction-construction-test'));
   finished.dispose();
 });
+
+test('empty sites have five distinct preparation silhouettes and no invented workers',()=>{
+  const input=Array.from({length:35},(_,i)=>chapter(0,`empty-${i}`));
+  const village=createVillage(T,input),staging=new Set(input.map(c=>constructionPlan(c).staging));
+  assert.equal(staging.size,5);assert.equal(village.members.length,0);
+  for(const c of input){const site=village.world.getObjectByName(`chapter-construction-${c.id}`);assert(site.getObjectByName(`site-preparation-${constructionPlan(c).staging}`));}
+  village.dispose();
+});

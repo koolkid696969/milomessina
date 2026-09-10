@@ -1,3 +1,5 @@
+import {resolveSchoolArtwork,artworkPalette} from './school-artwork.js?v=51';
+import {hash} from './village-district-layout.js?v=22';
 import {createClothBanner} from './village-banners.js?v=47';
 
 // Official logo files and palette provenance: school-banner-references.md.
@@ -11,19 +13,28 @@ const identities=[
 const normalize=value=>String(value||'').trim().toLowerCase().replace(/\s+/g,' ');
 export function schoolIdentity(chapter){
   const names=[normalize(chapter.school),normalize(chapter.shortSchool)];
-  return identities.find(school=>school.aliases.some(alias=>names.includes(alias)))||{key:'unknown',primary:'#303849',secondary:'#C6BD9F',lines:[chapter.school||chapter.shortSchool||'UNIVERSITY'],logo:null,design:'border'};
+  return identities.find(school=>school.aliases.some(alias=>names.includes(alias)))||{key:'unknown',school:chapter.school||chapter.shortSchool||'UNIVERSITY',primary:['#233653','#4B2339','#164C47','#382C59'][Math.floor(hash(normalize(chapter.school||chapter.shortSchool),'school-color')*4)],secondary:'#D7BD80',lines:schoolLines(chapter.school||chapter.shortSchool||'UNIVERSITY'),logo:null,design:['split','border','stripe'][Math.floor(hash(normalize(chapter.school||chapter.shortSchool),'school-design')*3)]};
+}
+function schoolLines(name){
+  const words=name.split(/\s+/),lines=[''];for(const word of words){const i=lines.length-1;if(lines[i]&&lines[i].length+word.length>23)lines.push(word);else lines[i]+=(lines[i]?' ':'')+word;}return lines;
 }
 const logos=new Map();
-export function loadSchoolLogo(identity){
-  if(!identity.logo||typeof Image==='undefined')return Promise.resolve(null);
-  if(!logos.has(identity.logo))logos.set(identity.logo,new Promise(resolve=>{
-    const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>resolve(null);
-    image.src=new URL(`./assets/schools/${identity.logo}`,import.meta.url).href;
+export async function loadSchoolLogo(identity){
+  if(typeof Image==='undefined')return null;
+  const artwork=identity.logo?null:await resolveSchoolArtwork(identity.school);
+  const source=identity.logo?new URL(`./assets/schools/${identity.logo}`,import.meta.url).href:artwork?.logo;
+  if(!source)return null;
+  if(!logos.has(source))logos.set(source,new Promise(resolve=>{
+    const image=new Image();let timer;
+    const finish=value=>{clearTimeout(timer);if(!value)logos.delete(source);resolve(value);};
+    image.crossOrigin='anonymous';image.onload=()=>finish(image);image.onerror=()=>finish(null);
+    timer=setTimeout(()=>finish(null),8000);image.src=source;
   }));
-  return logos.get(identity.logo);
+  const image=await logos.get(source);
+  if(image&&artwork){identity.primary=artworkPalette(image,identity.primary);identity.source=artwork.source;}
+  return image;
 }
-export function paintSchoolBanner(ctx,chapter,w,h,logo=null){
-  const school=schoolIdentity(chapter);
+export function paintSchoolBanner(ctx,chapter,w,h,logo=null,school=schoolIdentity(chapter)){
   ctx.save();ctx.clearRect(0,0,w,h);
   const rect=(x,y,sw,sh,color)=>{ctx.fillStyle=color;ctx.fillRect(x*w,y*h,sw*w,sh*h);};
   rect(0,0,1,1,school.primary);
@@ -32,7 +43,8 @@ export function paintSchoolBanner(ctx,chapter,w,h,logo=null){
   else{ctx.strokeStyle=school.secondary;ctx.lineWidth=w*.025;ctx.strokeRect(w*.06,h*.045,w*.88,h*.91);rect(.20,.72,.60,.013,school.secondary);}
   if(logo){
     // Keep the downloaded mark intact, including its aspect ratio and colors.
-    const scale=Math.min(w*.76/logo.width,h*.31/logo.height),lw=logo.width*scale,lh=logo.height*scale;
+    if(school.key==='unknown')rect(.12,.14,.76,.45,'#FFFFFF');
+    const scale=Math.min(w*.68/logo.width,h*.35/logo.height),lw=logo.width*scale,lh=logo.height*scale;
     ctx.drawImage(logo,(w-lw)/2,h*.36-lh/2,lw,lh);
   }
   const text=(value,y,size)=>{
@@ -42,7 +54,7 @@ export function paintSchoolBanner(ctx,chapter,w,h,logo=null){
   };
   // Text remains useful if a logo is unavailable; never invent a university mark.
   if(!logo)text(chapter.shortSchool||chapter.school||'UNIVERSITY',.36,.12);
-  school.lines.forEach((line,i)=>text(line.toUpperCase(),.80+i*.065,school.lines.length>1?.089:.075));
+  school.lines.forEach((line,i)=>text(line.toUpperCase(),.79+i*Math.min(.065,.16/Math.max(1,school.lines.length-1)),school.lines.length>1?.089:.075));
   for(let y=0;y<h;y+=5){ctx.fillStyle='#FFFFFF08';ctx.fillRect(0,y,w,1);}
   ctx.strokeStyle='#FFFFFF65';ctx.lineWidth=1.5;ctx.setLineDash([6,5]);ctx.strokeRect(w*.025,h*.018,w*.95,h*.964);ctx.setLineDash([]);
   ctx.restore();
@@ -51,7 +63,7 @@ const rails=new WeakMap();
 export function createSchoolBanner(T,chapter){
   const identity=schoolIdentity(chapter);let logo=null;
   const ready=loadSchoolLogo(identity).then(image=>{logo=image;});
-  const banner=createClothBanner(T,{width:3.2,height:4.2,resolution:1024,primary:identity.primary,ready,paint:(ctx,w,h)=>paintSchoolBanner(ctx,chapter,w,h,logo)});
+  const banner=createClothBanner(T,{width:3.2,height:4.2,resolution:1024,primary:identity.primary,ready,paint:(ctx,w,h)=>paintSchoolBanner(ctx,chapter,w,h,logo,identity)});
   banner.name=`school-banner-${chapter.id}`;
   banner.userData={chapter:chapter.id,school:chapter.school,identity:identity.key};
   if(!rails.has(T)){const geometry=new T.BoxGeometry(3.45,.08,.10);geometry.userData.sharedResource=true;rails.set(T,geometry);}
