@@ -1,3 +1,4 @@
+import {houseStandings} from './village-competition.js?v=54';
 // Local effects share the village's clock, visibility and reduced-motion controls.
 export function createLotBeacon(T,lot){
   const root=new T.Group();root.name='empty-lot-beacon';root.position.set(lot.x,0,lot.z);root.rotation.y=lot.rotation;
@@ -34,7 +35,7 @@ export function createLotBeacon(T,lot){
 
 export function createNightLife(T,world,anchors,chapters){
   const root=new T.Group();root.name='village-night-life';root.visible=false;
-  const biggest=chapters.filter(c=>c.joined>=15).sort((a,b)=>b.joined-a.joined)[0],anchor=anchors.find(a=>a.id===biggest?.id);
+  const biggest=houseStandings(chapters).find(c=>c.joined>=15),anchor=anchors.find(a=>a.id===biggest?.id);
   const uplights=[];
   if(anchor){
     const house=new T.Group();house.position.set(anchor.lot.x,0,anchor.lot.z);house.rotation.y=anchor.lot.rotation;root.add(house);

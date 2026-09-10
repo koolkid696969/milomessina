@@ -33,3 +33,5 @@ dialog{width:580px;max-width:calc(100% - 32px);max-height:calc(100dvh - 48px);pa
 .street-controls>div{display:flex;gap:6px;justify-content:center}.street-controls button{min-height:44px;min-width:44px;padding:10px 14px;border:1px solid #aebce155;border-radius:12px;background:#121929ee;color:#fff;white-space:nowrap}.street-controls button:disabled{opacity:.35}.street-controls button:hover:not(:disabled){background:#35416a}#village-street[aria-pressed=true]{background:#516af6}.street-view canvas{cursor:crosshair}.street-view canvas:active{cursor:grabbing}
 @media(max-width:700px){.street-controls{bottom:205px;width:calc(100% - 32px);font-size:11px}.street-controls button{font-size:12px;padding:10px}.street-controls>span{max-width:230px;margin:auto}}
 @media(max-height:500px){.street-controls{bottom:auto;top:100px;left:16px;transform:none;width:auto}.street-controls>span{display:none}}
+
+.house-rank{display:block;align-self:flex-start;margin-bottom:9px;padding:3px 7px;border:1px solid #a8b8dc40;border-radius:6px;color:#e8cb87;font-size:12px;font-weight:700}.house-progress em{display:block;float:none!important;margin-top:4px;font-size:11px;color:#aebcd4}

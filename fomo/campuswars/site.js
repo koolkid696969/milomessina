@@ -1,6 +1,7 @@
 'use strict';
 (() => {
   let { chapters } = JSON.parse(document.getElementById('chapters-data').textContent);
+  let chapterFeed,rankChapters;
   const byId = new Map(chapters.map(chapter => [chapter.id, chapter]));
   const neighborhood = document.getElementById('neighborhood');
   let cards = [...document.querySelectorAll('.house-card')];
@@ -14,6 +15,7 @@
   function setDrawer(open) {
     drawer.hidden = !open;
     drawerToggle.setAttribute('aria-expanded', String(open));
+    if(open)chapterFeed?.refresh();
   }
   drawerToggle.addEventListener('click', () => setDrawer(drawer.hidden));
   document.getElementById('drawer-close').addEventListener('click', () => {setDrawer(false);drawerToggle.focus();});
@@ -69,7 +71,7 @@
       text('panel-school', chapter.school.toUpperCase());
       text('panel-name', chapter.name);
       text('panel-target', chapter.joined<15 ? `${15-chapter.joined} more to build your house.` : remaining ? `${remaining} more to qualify.` : 'Your house reached 80%.');
-      text('panel-detail', `${chapter.joined} joined · ${target} needed · ${chapter.active} active members`);
+      text('panel-detail', `${chapter.joined} / ${target} joined · 80% qualification target`);
       panelShare.setAttribute('aria-label', `Share ${chapter.name}’s Greek Wars progress`);
     } else {
       text('panel-letters', '+');
@@ -174,7 +176,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=53').then(async()=>{
+  import('./village.js?v=54').then(async()=>{
     try{
       const {startMarketFeed,marketStatus,marketPrice}=await import('./market-feed.js?v=50');
       const options={onUpdate(state){
@@ -196,9 +198,8 @@
   let lastUpdated;
   function updateChapters(snapshot) {
     const focusedChapter = document.activeElement?.closest('.house-card')?.dataset.chapter;
-    // Preserve existing lot order across refreshes, including a changed source sort.
-    const next = new Map(snapshot.chapters.map(c => [c.id,c]));
-    chapters = [...chapters.filter(c => next.has(c.id)).map(c => next.get(c.id)), ...snapshot.chapters.filter(c => !byId.has(c.id))];
+    // Match the displayed house ranks, including identical progress ties.
+    chapters = rankChapters(snapshot.chapters);
     byId.clear();chapters.forEach(c => byId.set(c.id,c));
     const track = document.getElementById('house-track'), empty = cards.find(c => c.dataset.chapter === 'empty');
     const existing = new Map(cards.map(c => [c.dataset.chapter,c]));
@@ -207,14 +208,15 @@
       let card = existing.get(chapter.id);
       if (!card) {card = cardTemplate.cloneNode(true);card.dataset.chapter = chapter.id;bindCard(card);}
       card.querySelector('.house-label strong').textContent = chapter.letters;
+      card.querySelector('.house-rank').textContent = `#${chapter.rank}`;
       card.querySelector('.house-label span').textContent = chapter.shortSchool;
-      const progress = chapter.joined / chapter.active * 100;
+      const progress = chapter.joined / chapter.active * 100,target = Math.ceil(chapter.active*.8);
       const line = card.querySelector('.house-progress > span');
       const count = document.createElement('b');count.textContent = chapter.joined;
-      const percent = document.createElement('em');percent.textContent = `${Math.round(progress)}%`;
-      line.replaceChildren(count,document.createTextNode(` / ${chapter.active} in `),percent);
+      const percent = document.createElement('em');percent.textContent = `${Math.round(progress)}% of roster`;
+      line.replaceChildren(count,document.createTextNode(` / ${target} target `),percent);
       card.querySelector('.progress-track i').style.width = `${Math.min(100,progress)}%`;
-      card.setAttribute('aria-label',`${chapter.name}, ${chapter.school}: ${chapter.joined} of ${chapter.active} members joined`);
+      card.setAttribute('aria-label',`Rank ${chapter.rank}: ${chapter.name}, ${chapter.school}: ${chapter.joined} of ${target} members toward the 80% target`);
       track.insertBefore(card,empty);
     }
     cards = [...track.querySelectorAll('.house-card')];
@@ -227,12 +229,15 @@
     selectChapter(selectedId,{writeHash:false,emit:false});
     if (focusedChapter) cards.find(card => card.dataset.chapter === focusedChapter)?.focus({preventScroll:true});
   }
-  import('./chapter-feed.js?v=32').then(({startChapterFeed}) => startChapterFeed({
+  Promise.all([import('./chapter-feed.js?v=32'),import('./village-competition.js?v=54')]).then(([{startChapterFeed},{houseStandings}]) => {
+    rankChapters=houseStandings;
+    chapterFeed=startChapterFeed({
     onUpdate:updateChapters,
     onStatus(status) {
       if (status.live) lastUpdated = status.updatedAt;
       const time = lastUpdated ? new Date(lastUpdated).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}) : '';
       document.getElementById('chapter-sync').textContent = status.live ? `Live onboarding · Updated ${time} · Refreshes every 30 seconds` : lastUpdated ? `Updates reconnecting · Showing data from ${time}` : 'Connecting to live onboarding · Showing saved registrations';
     }
-  })).catch(() => {document.getElementById('chapter-sync').textContent = 'Live updates unavailable · Showing saved registrations';});
+    });
+  }).catch(() => {document.getElementById('chapter-sync').textContent = 'Live updates unavailable · Showing saved registrations';});
 })();

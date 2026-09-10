@@ -1,6 +1,6 @@
 import {INTRO_PACE} from './village-intro.js?v=42';
 import {createCloudTexture,createBanknoteTexture} from './village-money-art.js?v=42';
-import {houseStandings} from './village-competition.js?v=32';
+import {houseStandings} from './village-competition.js?v=54';
 
 export const MONEY_START=7.3*INTRO_PACE;
 export const MONEY_END=12*INTRO_PACE;

@@ -1,3 +1,4 @@
+import {rankedHouseSizes} from './village-house-sizing.js?v=54';
 import {hash,appearance,roundedLoop} from './village-district-layout.js?v=22';
 import {gaitPhase,speechGesture,smooth} from './village-human-motion.js?v=48';
 import {constructionAssignment,constructionActivity} from './village-construction-layout.js?v=51';
@@ -27,7 +28,7 @@ export function pongTurn(chapter,time){
   const period=3.8+hash(chapter,'pong-period')*2.1,clock=time+hash(chapter,'pong-offset')*19,turn=Math.floor(clock/period);
   return {seat:((turn%2)+2)%2,elapsed:clock-turn*period,release:1.15,flight:.85,turn};
 }
-export function crowdMembers(chapters,lots=createLots(chapters.length)){
+export function crowdMembers(chapters,lots=createLots(chapters.length),houseSizes=rankedHouseSizes(chapters)){
   return chapters.flatMap((chapter,index)=>{
     if(!Number.isSafeInteger(chapter.joined)||chapter.joined<0)throw new RangeError('Invalid member count');
     if(chapter.joined<15)return Array.from({length:chapter.joined},(_,workerIndex)=>{
@@ -60,8 +61,9 @@ export function crowdMembers(chapters,lots=createLots(chapters.length)){
       }
       groups.push(best);occupied.push(...best.seats);
       for(let seat=0;seat<size;seat++){
-        const pos=best.seats[seat],look=appearance(chapter.id,member),roofline=5.6+10*(1-Math.exp(-chapter.joined/50));
-        best.seats[seat]={chapter:chapter.id,member:++member,...toWorld(lot,pos.x,pos.z),lot,rotation:lot.rotation+pos.a+Math.PI,phase:hash(chapter.id,member,'phase')*20,groupPhase:hash(chapter.id,g,'turn')*50,turnDuration:4.2+hash(chapter.id,g,'turn-duration')*4.2,groupSize:size,seat,walking:false,ground:isPorch?.73*(roofline/10.22):lawnGround(pos.x,pos.z),...look};
+        const pos=best.seats[seat],look=appearance(chapter.id,member),buildingSize=houseSizes.get(chapter.id);
+        const x=isPorch?pos.x*buildingSize.scaleX:pos.x,z=isPorch?pos.z*buildingSize.depthScale+buildingSize.offsetZ:pos.z;
+        best.seats[seat]={chapter:chapter.id,member:++member,...toWorld(lot,x,z),lot,rotation:lot.rotation+pos.a+Math.PI,phase:hash(chapter.id,member,'phase')*20,groupPhase:hash(chapter.id,g,'turn')*50,turnDuration:4.2+hash(chapter.id,g,'turn-duration')*4.2,groupSize:size,seat,walking:false,ground:isPorch?.73*buildingSize.scaleY:lawnGround(pos.x,pos.z),...look};
       }
     });
     const people=groups.flatMap(group=>group.seats);

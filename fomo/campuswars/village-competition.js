@@ -1,4 +1,4 @@
-import {bannerIdentity} from './village-banner-art.js?v=32';
+import {bannerIdentity} from './village-banner-art.js?v=54';
 
 // These standings use the chapter onboarding totals, not unavailable trading P&L.
 export function houseStandings(chapters,metric='progress'){
@@ -51,7 +51,7 @@ export function createCompetition(T,chapters,anchors){
     ctx.fillStyle='#E9C873';ctx.fillRect(0,0,w,12);ctx.font='700 47px Aeonik, Arial, sans-serif';ctx.fillText('FOMO / GREEK WARS',100,91);
     ctx.fillStyle='#FFFFFF';ctx.font='700 121px Aeonik, Arial, sans-serif';ctx.fillText('ONBOARDING PROGRESS',100,211);
     ctx.fillStyle='#AFC0CD';ctx.font='500 40px Aeonik, Arial, sans-serif';ctx.fillText('ONBOARDING PROGRESS',105,315);
-    ctx.textAlign='right';ctx.fillText('MEMBERS',w-327,315);ctx.fillText('%',w-110,315);
+    ctx.textAlign='right';ctx.fillText('80% TARGET',w-327,315);ctx.fillText('% ACTIVE',w-110,315);
     standings.slice(0,5).forEach((row,i)=>{
       const y=382+i*166,first=i===0;
       ctx.fillStyle=first?'#263A39':i%2?'#152632':'#12212E';ctx.fillRect(66,y,w-132,148);
@@ -59,7 +59,7 @@ export function createCompetition(T,chapters,anchors){
       ctx.fillStyle=first?'#E9C873':'#AFC0CD';ctx.textAlign='left';ctx.font='700 67px Aeonik, Arial, sans-serif';ctx.fillText(`#${row.rank}`,107,y+75);
       ctx.fillStyle='#FFFFFF';ctx.font='700 55px Aeonik, Arial, sans-serif';ctx.fillText(row.name.toUpperCase(),260,y+54,1040);
       ctx.fillStyle='#ACBDC8';ctx.font='500 34px Aeonik, Arial, sans-serif';ctx.fillText(row.shortSchool.toUpperCase(),260,y+106,1040);
-      ctx.textAlign='right';ctx.fillStyle='#D0DCE4';ctx.font='500 58px Aeonik, Arial, sans-serif';ctx.fillText(`${row.joined} / ${row.active}`,w-328,y+76);
+      ctx.textAlign='right';ctx.fillStyle='#D0DCE4';ctx.font='500 58px Aeonik, Arial, sans-serif';ctx.fillText(`${row.joined} / ${Math.ceil(row.active*.8)}`,w-328,y+76);
       ctx.fillStyle=first?'#E9C873':'#FFFFFF';ctx.font='700 75px Aeonik, Arial, sans-serif';ctx.fillText(`${Math.round(row.progress*100)}%`,w-111,y+76);
     });
     ctx.textAlign='left';ctx.fillStyle='#AFC0CD';ctx.font='500 32px Aeonik, Arial, sans-serif';ctx.fillText(`TOP ${Math.min(5,standings.length)} OF ${standings.length} CHAPTERS · Open Chapters for the full list.`,100,h-74);

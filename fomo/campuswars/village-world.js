@@ -1,23 +1,24 @@
+import {rankedHouseSizes} from './village-house-sizing.js?v=54';
 import {assignHouseFinishes} from './village-house-colors.js?v=52';
 import {createVillageEntrance} from './village-entrance.js?v=38';
 import {createPongGames} from './village-pong.js?v=31';
-import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=30';
-import {createCompetition,houseStandings} from './village-competition.js?v=52';
+import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=54';
+import {createCompetition,houseStandings} from './village-competition.js?v=54';
 import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=28';
 import {humanPose} from './village-human-motion.js?v=48';
-import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=51';
+import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=54';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=35';
 import {palettes,hash} from './village-district-layout.js?v=22';
-import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=48';
+import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=54';
 import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=32';
-import {createChapterBanner,bannerIdentity} from './village-banners.js?v=47';
-import {createSchoolBanner} from './village-school-banners.js?v=51';
+import {createChapterBanner,bannerIdentity} from './village-banners.js?v=54';
+import {createSchoolBanner} from './village-school-banners.js?v=54';
 
 export function createVillage(THREE,chapters,{streets:existingStreet,houseFinishes:previousFinishes}={}){
   // Physical addresses follow the same percentage standings as the rank badges.
   const ranked=houseStandings(chapters),rankedIds=new Set(ranked.map(c=>c.id));
   chapters=[...ranked,...chapters.filter(c=>!rankedIds.has(c.id)).sort((a,b)=>a.id.localeCompare(b.id))];
-  const houseFinishes=assignHouseFinishes(chapters,previousFinishes);
+  const houseFinishes=assignHouseFinishes(chapters,previousFinishes),houseSizes=rankedHouseSizes(chapters);
   const lots=createLots(chapters.length),extension=rowExtension(chapters.length);
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
   const materials=new Map(),landscapeKit=createCampusKit(THREE),grassMaterial=createGrassMaterial(THREE),lawns=[];
@@ -82,10 +83,9 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
       anchors.push({id,point:new THREE.Vector3(lot.x,6,lot.z),lot});return;
     }
     const house=new THREE.Group();house.name=`chapter-house-${id}`;group.add(house);
-    const originalStyle=['blue-and-gold','star-and-crescent','azure-academic','cardinal-rose','cherry-varsity'].indexOf(bannerIdentity(chapter).key);
-    const style=originalStyle<0?Math.floor(hash(id,'house-style')*5):originalStyle;
+    const size=houseSizes.get(id),{style,width,height,footprint,roofline,depthScale}=size;
     const finish=houseFinishes.get(id);house.userData.exterior=finish;
-    const wall=finish.brick?facade(finish.color):mat(finish.color);const width=[11,12.2,10.5,12.2,10.5][style],height=style===4?9.1:7.4,depth=7.5;
+    const wall=finish.brick?facade(finish.color):mat(finish.color);const depth=7.5;
     box(house,0,.38,0,width+1,.6,depth+1,0xc1b5a0);box(house,0,height/2+.6,0,width,height,depth,wall);
     box(house,0,height+.65,0,width+.5,.3,depth+.5,0xe4ddca);box(house,0,4.1,3.85,width+.25,.18,.22,0xcbbb9f);
     roof(house,0,height+.82,0,width+.8,depth+1.1,2.0,0x343846,style!==4);
@@ -117,12 +117,8 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
     cylinder(group,-6.1,2.4,6.1,.045,4.8,0xc3b997);const flag=box(group,-5.52,4.3,6.1,1.15,.65,.045,bannerIdentity(chapter).primary);flags.push(flag);
     if(chapter.joined){[-3.8,3.8].forEach(x=>{box(group,x,.6,6.7,.55,1.1,.5,0x232936);[.38,.78].forEach(y=>{const speaker=cylinder(group,x,y,6.98,.17,.025,0x596475);speaker.rotation.x=Math.PI/2;});});}
     const hit=box(house,0,height/2,0,width+1,height+3,depth+5,new THREE.MeshBasicMaterial({visible:false}));hit.userData.chapter=id;pickables.push(hit);
-    // Absolute onboarded counts grow the building, while the lawn and people retain their scale.
-    // Smooth saturation keeps future growth inside the plot without a hard size cutoff.
-    const footprint=7.2+6.8*(1-Math.exp(-chapter.joined/40));
-    const roofline=5.6+10*(1-Math.exp(-chapter.joined/50));
-    const depthScale=.78+.22*(1-Math.exp(-chapter.joined/40));
-    house.scale.set(footprint/(width+1),roofline/(height+2.82),depthScale);
+    // The displayed leaderboard rank determines the finished house's size.
+    house.scale.set(size.scaleX,size.scaleY,depthScale);
     for(const side of [-1,1]){
       const schoolBanner=createSchoolBanner(THREE,chapter);schoolBanner.rotation.y=side*Math.PI/2;
       schoolBanner.position.set(side*(width/2+.22),height/2+.6,0);
@@ -133,12 +129,12 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
     // Preserve the banner's proportions when the house grows taller.
     banner.scale.y=house.scale.x/house.scale.y;
     banner.position.y=bannerTop-banner.geometry.parameters.height*banner.scale.y/2;
-    house.position.z=6.2*(1-depthScale); // Keep the porch steps at the same lawn entrance.
-    house.userData={chapter:id,joined:chapter.joined,footprint,roofline};
+    house.position.z=size.offsetZ; // Keep the porch steps at the same lawn entrance.
+    house.userData={chapter:id,joined:chapter.joined,exterior:finish,...size};
     anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot});
   });
   world.add(createLawnBlades(THREE,lots.slice(0,chapters.length)));
-  const members=crowdMembers(chapters,lots),parts={};
+  const members=crowdMembers(chapters,lots,houseSizes),parts={};
   const pong=createPongGames(THREE,members);world.add(pong.root);
   const construction=createConstructionEquipment(THREE,members);world.add(construction.root);
   const bodyGeometry=new THREE.CapsuleGeometry(.5,1,3,8);bodyGeometry.scale(1,.5,1);
