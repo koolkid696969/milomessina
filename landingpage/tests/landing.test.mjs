@@ -9,6 +9,7 @@ function harness({reduced=false,hash='',blocked=false,frameCallbacks=false,hidde
   function node(id) {
     if(!nodes.has(id))nodes.set(id,{
       hidden:false,inert:false,offsetHeight:800,style:{setProperty(key,value){this[key]=value;}},
+      getBoundingClientRect(){return {left:300,top:240,width:600,height:112};},
       classList:{values:new Set(),add(...names){names.forEach(n=>this.values.add(n));},remove(...names){names.forEach(n=>this.values.delete(n));},contains(name){return this.values.has(name);}},
       addEventListener(type,fn){events.set(`${id}:${type}`,fn);},
       setAttribute(key,value){this[key]=value;},getAttribute(key){return this[key]||null;},

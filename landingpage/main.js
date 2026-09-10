@@ -10,12 +10,23 @@ const caption = document.getElementById('film-caption');
 const title = document.getElementById('film-title');
 const description = document.getElementById('film-description');
 const transition = document.getElementById('intro-transition');
+const heroAmount = document.querySelector('.commitment-hero > strong');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const returningFromHistory = document.documentElement.classList.contains('intro-return');
 let introComplete = returningFromHistory;
 let active = false, usedFallback = false, finishTimer, raf = 0;
 let playRetry, playAttempts = 0;
 let videoFrame = 0, lastPaint = -1, lastStage = -1, lastOutro = -1;
+
+function alignTransition() {
+  if (transition.hidden) return;
+  // Follow the hero's real layout, including its header and responsive spacing.
+  const target = heroAmount.getBoundingClientRect();
+  transition.style.setProperty('--logo-x', `${target.left + target.width / 2}px`);
+  transition.style.setProperty('--logo-y', `${target.top + target.height / 2}px`);
+}
+window.addEventListener('resize', alignTransition);
+document.fonts?.ready.then(alignTransition);
 
 function paint(mediaTime = video.currentTime || 0) {
   const seconds = Math.min(INTRO_DURATION, mediaTime);
@@ -128,6 +139,7 @@ function finish({scroll = true, cinematic = false} = {}) {
       programs.focus({preventScroll: true});
     }
     if (cinematic && !reduced.matches) {
+      alignTransition();
       page.classList.add('hero-arriving');
       transition.classList.add('is-leaving');
       finishTimer = setTimeout(() => {
@@ -157,6 +169,7 @@ function start({replay: replaying = false} = {}) {
     video.src = matchMedia('(max-width:700px)').matches ? '/landingpage/assets/intro-mobile-hd.mp4' : '/landingpage/assets/intro-desktop-smooth.mp4';
   }
   window.scrollTo({top: 0, behavior: 'instant'});
+  alignTransition();
   paint();
   if (video.error) recoverVideo(); else play();
   syncPlayback();

@@ -22,7 +22,7 @@
   background:var(--bg-primary);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:92px}
+html{scroll-behavior:smooth;scroll-padding-top:92px;scrollbar-gutter:stable}
 body{margin:0}
 h1,h2,h3,p{margin:0}
 a{color:inherit;text-decoration:none}
@@ -242,9 +242,9 @@ a.role-card:hover{transform:translateY(-2px);border-color:#516af666}
 
 /* The final village shot resolves into the campus mark, then the hero. */
 .intro-transition{--outro:0;position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg-primary);opacity:var(--outro);pointer-events:none}
-.transition-logo{font-size:clamp(30px,5.5vw,72px);gap:clamp(10px,1.2vw,20px);transform:translateY(calc((1 - var(--outro))*24px)) scale(calc(.94 + var(--outro)*.06));will-change:transform}
+.transition-logo{position:absolute;left:var(--logo-x,50%);top:var(--logo-y,50%);width:max-content;font-size:clamp(30px,5.5vw,72px);gap:clamp(10px,1.2vw,20px);transform:translate(-50%,-50%) scale(calc(.94 + var(--outro)*.06));will-change:transform}
 .transition-logo .logo-mark{width:clamp(48px,6vw,88px);height:clamp(48px,6vw,88px)}
 .intro-transition.is-leaving{opacity:0;transition:opacity .8s cubic-bezier(.22,1,.36,1)}
-.is-leaving .transition-logo{transform:translateY(-24px) scale(1.035);transition:transform .8s cubic-bezier(.22,1,.36,1)}
+.is-leaving .transition-logo{transform:translate(-50%,-50%) scale(1.035);transition:transform .8s cubic-bezier(.22,1,.36,1)}
 .hero-arriving .hero-inner{animation:hero-arrival .9s cubic-bezier(.22,1,.36,1) both}
-@keyframes hero-arrival{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes hero-arrival{from{opacity:0}to{opacity:1}}
