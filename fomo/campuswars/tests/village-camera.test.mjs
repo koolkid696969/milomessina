@@ -192,10 +192,10 @@ test('street view remains usable with reduced motion and keyboard navigation',()
   h.fire('canvas:keydown',{code:'Escape',preventDefault(){}});assert.equal(h.element('street-controls').hidden,true);
 });
 
-test('clicking a rendered road marker moves the camera to that exact street stop',()=>{
+test('clicking the unmarked road moves the camera to that street stop',()=>{
   const h=cameraHarness(true);h.show(true);h.step(.02);h.fire('village-street:click');const start=h.step(.02);
   const z=streetStep(start.z,-1),point=new THREE.Vector3(0,.25,z).project(h.camera());
-  assert(point.x>=-1&&point.x<=1&&point.y>=-1&&point.y<=1,'the road marker is visible');
+  assert(point.x>=-1&&point.x<=1&&point.y>=-1&&point.y<=1,'the road destination is in view');
   const pointer={button:0,pointerId:1,clientX:(point.x+1)*600,clientY:(1-point.y)*325};
   h.fire('canvas:pointerdown',pointer);h.fire('canvas:pointerup',pointer);
   const arrived=h.step(.02);assert(Math.abs(arrived.z-z)<1e-9);assert(Math.abs(arrived.y-2.6)<1e-9);

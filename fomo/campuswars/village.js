@@ -1,4 +1,4 @@
-import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=52';
+import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=53';
 import * as THREE from './vendor/three.module.min.js';
 import {createVillage} from './village-world.js?v=52';
 import {createDistricts} from './village-districts.js?v=50';
