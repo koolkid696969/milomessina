@@ -1,5 +1,5 @@
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=39';
+import {createVillage} from './village-world.js?v=47';
 import {createDistricts} from './village-districts.js?v=35';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
 import {createMoneyRain} from './village-money-rain.js?v=42';
@@ -10,6 +10,7 @@ const viewport=document.getElementById('village-viewport');
 const loading=document.getElementById('village-loading');
 let chapters=JSON.parse(document.getElementById('chapters-data').textContent).chapters;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MAX_ZOOM_RADIUS=320;
 
 let renderer;
 try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'});}catch(error){
@@ -25,7 +26,7 @@ function startVillage(){
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   viewport.prepend(renderer.domElement);const canvas=renderer.domElement;canvas.tabIndex=0;canvas.setAttribute('aria-label','3D Greek village. Drag to rotate, shift-drag to pan, or select a house. Arrow keys rotate the view; Escape resets it.');
   const scene=new THREE.Scene();scene.background=new THREE.Color(0x98a7ba);scene.fog=new THREE.FogExp2(0x98a7ba,.0022);
-  const camera=new THREE.PerspectiveCamera(48,1,1,450);
+  const camera=new THREE.PerspectiveCamera(48,1,1,650);
   const ambient=new THREE.HemisphereLight(0xd4e2ed,0x857768,1.55);scene.add(ambient);
   const sun=new THREE.DirectionalLight(0xffe5c6,2.6);sun.position.set(-35,55,30);sun.castShadow=true;sun.shadow.mapSize.set(coarse?1024:2048,coarse?1024:2048);sun.shadow.radius=1.4;Object.assign(sun.shadow.camera,{left:-48,right:48,top:48,bottom:-48,near:1,far:150});sun.shadow.normalBias=.05;sun.shadow.bias=-.00015;scene.add(sun);scene.add(sun.target);
   const fill=new THREE.DirectionalLight(0xc4d2e0,.5);fill.position.set(30,15,-25);scene.add(fill);
@@ -139,7 +140,7 @@ function startVillage(){
     wantedRadius=Math.max(16,7/(Math.tan(camera.fov*Math.PI/360)*camera.aspect));wake();
   });
   document.getElementById('village-zoom-in').addEventListener('click',()=>{takeControl();wantedRadius=Math.max(20,wantedRadius*.8);wake();});
-  document.getElementById('village-zoom-out').addEventListener('click',()=>{takeControl();wantedRadius=Math.min(160,wantedRadius*1.25);wake();});
+  document.getElementById('village-zoom-out').addEventListener('click',()=>{takeControl();wantedRadius=Math.min(MAX_ZOOM_RADIUS,wantedRadius*1.25);wake();});
   const expand=document.getElementById('village-expand');expand.hidden=!shell.requestFullscreen;
   expand.addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await shell.requestFullscreen();}catch{expand.disabled=true;expand.title='Full screen is unavailable in this browser.';}});
   document.addEventListener('fullscreenchange',()=>{expand.textContent=document.fullscreenElement?'Exit full screen ↙':'Full screen ↗';resize();});
@@ -152,7 +153,7 @@ function startVillage(){
     if(hit){if(hit.object.userData.action==='register'){document.getElementById('panel-claim').click();return;}choose(hit.object.userData.chapter,true);return;}
   });
   canvas.addEventListener('pointercancel',()=>{drag=null;});canvas.addEventListener('lostpointercapture',()=>{drag=null;});
-  canvas.addEventListener('wheel',e=>{if(document.activeElement!==canvas&&!document.fullscreenElement)return;e.preventDefault();takeControl();wantedRadius=Math.max(20,Math.min(160,wantedRadius*Math.exp(e.deltaY*.001)));wake();},{passive:false});
+  canvas.addEventListener('wheel',e=>{if(document.activeElement!==canvas&&!document.fullscreenElement)return;e.preventDefault();takeControl();wantedRadius=Math.max(20,Math.min(MAX_ZOOM_RADIUS,wantedRadius*Math.exp(e.deltaY*.001)));wake();},{passive:false});
   canvas.addEventListener('keydown',event=>{
     takeControl();
     if(event.code==='Escape'||event.code==='Home'){event.preventDefault();resetView();return;}

@@ -8,7 +8,8 @@ import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=35'
 import {palettes,hash} from './village-district-layout.js?v=22';
 import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=32';
 import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=32';
-import {createChapterBanner,bannerIdentity} from './village-banners.js?v=32';
+import {createChapterBanner,bannerIdentity} from './village-banners.js?v=47';
+import {createSchoolBanner} from './village-school-banners.js?v=47';
 
 export function createVillage(THREE,chapters,{streets:existingStreet}={}){
   const lots=createLots(chapters.length),extension=rowExtension(chapters.length);
@@ -105,6 +106,12 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
     }
     for(const x of [-2.4,2.4])box(site,x,1.6,6.1,.1,3,.1,steel);
     const banner=createChapterBanner(THREE,chapter,4.8);banner.position.set(0,1.66,6.2);site.add(banner);pickables.push(banner);
+    // School cloth hangs from a dedicated side scaffold, even before walls exist.
+    for(const side of [-1,1]){
+      const schoolBanner=createSchoolBanner(THREE,chapter);schoolBanner.rotation.y=side*Math.PI/2;
+      schoolBanner.position.set(side*6.25,2.55,-.5);site.add(schoolBanner);pickables.push(schoolBanner);
+      for(const z of [-2.25,1.25])cylinder(site,side*6.25,2.45,z,.055,4.9,steel);
+    }
     box(site,0,2.8,6.1,5.1,.1,.12,steel);
     sign(site,'UNDER CONSTRUCTION',0,3.12,6.2,4.8,.42,'#d6b26d','#2c3038');
     const hit=box(site,0,2.8,0,12.5,6,12,new THREE.MeshBasicMaterial({visible:false}));hit.userData.chapter=chapter.id;pickables.push(hit);
@@ -136,7 +143,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
       windowUnit(house,x,1.95+floor*2.75,depth/2+.06,(floor*5+col+style)%4!==0);
     }
     // Side windows are modeled too, so every angle holds up during a walk.
-    [-1,1].forEach(side=>{const wing=new THREE.Group();wing.position.set(side*(width/2+.02),0,0);wing.rotation.y=side*Math.PI/2;house.add(wing);for(let floor=0;floor<2;floor++)[-2.2,0,2.2].forEach((x,j)=>windowUnit(wing,x,1.95+floor*2.75,0,(j+floor+style)%3!==0));});
+    [-1,1].forEach(side=>{const wing=new THREE.Group();wing.position.set(side*(width/2+.02),0,0);wing.rotation.y=side*Math.PI/2;house.add(wing);for(let floor=0;floor<2;floor++)[-2.6,2.6].forEach((x,j)=>windowUnit(wing,x,1.95+floor*2.75,0,(j+floor+style)%3!==0));});
     const porchWidth=style===1?10.8:style===3?8:6.8;
     box(house,0,.48,4.7,porchWidth+1,.5,2.6,0xbab6ac);
     for(let step=0;step<3;step++)box(house,0,.13+step*.12,6.2-step*.38,3.3,.25,1.1,0xb9b5ac);
@@ -164,6 +171,13 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
     const roofline=5.6+10*(1-Math.exp(-chapter.joined/50));
     const depthScale=.78+.22*(1-Math.exp(-chapter.joined/40));
     house.scale.set(footprint/(width+1),roofline/(height+2.82),depthScale);
+    for(const side of [-1,1]){
+      const schoolBanner=createSchoolBanner(THREE,chapter);schoolBanner.rotation.y=side*Math.PI/2;
+      schoolBanner.position.set(side*(width/2+.22),height/2+.6,0);
+      // Sideways cloth width follows house depth; counter-scale its height to match.
+      schoolBanner.scale.y=house.scale.z/house.scale.y;
+      house.add(schoolBanner);pickables.push(schoolBanner);
+    }
     // Preserve the banner's proportions when the house grows taller.
     banner.scale.y=house.scale.x/house.scale.y;
     banner.position.y=bannerTop-banner.geometry.parameters.height*banner.scale.y/2;

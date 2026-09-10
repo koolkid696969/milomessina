@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>School banner gallery</title>
+<link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;padding:32px;background:#e8e6e1;color:#222;font-family:Arial,sans-serif}h1{font:32px Georgia,serif}section{display:grid;grid-template-columns:repeat(5,1fr);gap:20px}figure{margin:0}canvas{width:100%;box-shadow:0 8px 24px #0002}figcaption{font-size:13px;margin-top:12px}@media(max-width:700px){section{grid-template-columns:repeat(2,1fr)}}</style>
+<h1>School colors on Greek Row.</h1><p>Official university marks on woven side banners. Each design uses its school's palette.</p><section id="banners"></section>
+<script type="module">
+import {paintSchoolBanner,schoolIdentity,loadSchoolLogo} from '../village-school-banners.js?v=47';
+const {chapters}=await (await fetch('../chapters.json')).json();
+const schools=[...new Map(chapters.map(chapter=>[chapter.school,chapter])).values(),{school:'Florida International University',shortSchool:'FIU'}];
+await document.fonts.ready;
+await Promise.all(schools.map(async chapter=>{
+  const figure=document.createElement('figure'),canvas=document.createElement('canvas'),caption=document.createElement('figcaption');
+  canvas.width=1024;canvas.height=1344;caption.textContent=chapter.school;figure.append(canvas,caption);document.getElementById('banners').append(figure);
+  const logo=await loadSchoolLogo(schoolIdentity(chapter));figure.dataset.logoLoaded=String(Boolean(logo));
+  paintSchoolBanner(canvas.getContext('2d'),chapter,canvas.width,canvas.height,logo);
+}));
+document.body.dataset.ready='true';
+</script></html>

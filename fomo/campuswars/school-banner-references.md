@@ -1,0 +1,19 @@
+# School side-banner references
+
+Researched September 10, 2026. The banners use downloaded university logos, school names, and verified school palettes. Their cloth compositions adapt university pole-banner and collegiate wall-banner references to the village; they are not product photographs or claims of university sponsorship.
+
+| School | Palette | Logo source | Banner direction / references |
+| --- | --- | --- | --- |
+| San Diego State | Red `#D41736`, black `#000000`, white | [Official monogram PNG](https://brand.sdsu.edu/identity/logos/_files/_institutional_sdsu_logos/sdsu_monogram_rgb_solid_white.png), [download page](https://brand.sdsu.edu/identity/logos/downloads) | Red field, large white monogram, black school-name panel; SDSU's [color guide](https://brand.sdsu.edu/identity/design-elements/colors) includes a red-and-black pole banner. |
+| Coastal Carolina | Teal `#006F71`, bronze `#A27752`, white | [Official white university logo](https://www.coastal.edu/media/2024siteassets/siteassets/images/ccu_horz_rgb_white_lg.png), [trademark page](https://www.coastal.edu/licensing/ccutrademarks/) | Teal cloth with bronze edging, centered university mark and name. [Brand guide, pp. 4 and 9–11](https://www.coastal.edu/media/2024siteassets/contentassets/documents/universitymarketingandcommunication/Coastal_Carolina_University_Brand_Guide_2024.pdf); [28×40 vertical wall-banner reference](https://sportsposterwarehouse.com/products/coastal-carolina-chanticleers-official-ncaa-premium-28x40-wall-banner-wincraft-inc). |
+| University of Tampa | Red `#C8102E`, black `#000000`, white | [Official website header logo](https://www.ut.edu/etc.clientlibs/ut/clientlibs/clientlib-ut/resources/images/header-logo-white.svg) | Red cloth, black side stripes, university wordmark and school-name footer. [University brand guide, pp. 2–8](https://www.ut.edu/content/dam/ut/uploadedFiles/University_Services/Public_Information/UTBrandGuidelines2024UpdateV2.pdf) supplies marks, banner treatments and palette. The downloaded logo's own colors are unchanged. |
+| Virginia Tech | Chicago maroon `#861F41`, burnt orange `#E87722`, white | [Official white VT SVG](https://www.assets.cms.vt.edu/images/whiteVTonTransparent.svg) | Maroon field, oversized VT and orange name panel. [University color guide](https://brand.vt.edu/identity/color.html); [collegiate banner references](https://collegeflagsandbanners.com/virginia_tech_hokies_flag_370_ctg.html). |
+| Florida International | Blue `#081E3F`, gold `#D1A644`, white | [Official FIU website logo](https://digicdn.fiu.edu/core/_assets/images/logo-top.svg) | Blue-and-gold bordered academic banner with the original outlined FIU mark. [Logo guidelines](https://brand.fiu.edu/logos/), [current palette](https://brand.fiu.edu/creating-content/ai-guidelines/index.html). Included for the live FIU chapter. |
+
+## Implementation
+
+The five original logo files live in `assets/schools/`; visitors do not request them from university sites. Logos retain their original proportions and colors. Identity resolves from school name (including common aliases), independently of the fraternity name or live chapter ID. Unrecognized future schools receive a neutral name banner until their verified artwork is added.
+
+Each completed house has cloth on both side walls, with side windows spaced around it. Construction sites display the same school banners on side scaffolds. The banners open their chapter when selected, and house growth preserves their aspect ratio. Shared mounting geometry keeps the scene within its existing mesh budget. Late logo/font loads repaint the texture and wake paused views; disposed scenes ignore late callbacks.
+
+`tests/school-banner-gallery.html` renders the five school designs using the production painter. `tests/school-banners.test.mjs` checks university matching, asset availability, side placement, selection, growth proportions and disposal.
