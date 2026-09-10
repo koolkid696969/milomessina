@@ -1379,7 +1379,12 @@ document.getElementById("t-hours-csv").addEventListener("click", function(){
 var GH_WEEKS = 13, GH_CACHE = "fomo.github.cache", GH_LOGINS = "fomo.github.logins";
 var GH_FRESH = 15 * 60 * 1000, GH_MAX_REPOS = 6, GH_MAX_PAGES = 3;
 var GH_SEEDED = "fomo.github.seeded";
-var GH_DEFAULTS = { "Milo": "koolkid696969", "Bijan": "Code-Atreides", "Jesse": "jsebaiz, jessebaiz" };
+var GH_DEFAULTS = {
+  "Milo": "koolkid696969",
+  "Bijan": "Code-Atreides",
+  "Jesse": "jsebaiz, jessebaiz",
+  "Luchi": "ouchip"
+};
 var logins = {}, ghData = {}, ghErrors = {}, ghAt = 0, ghBusy = false;
 
 function dayKey(d){
@@ -1404,6 +1409,9 @@ function calWeeks(){
     cur.setDate(cur.getDate() + 7);
   }
   return out;
+}
+function commitLabel(n, capped){
+  return n + (capped ? "+" : "") + (n === 1 && !capped ? " commit" : " commits");
 }
 function level(n){ return !n ? 0 : n <= 2 ? 1 : n <= 5 ? 2 : n <= 9 ? 3 : 4; }
 
@@ -1650,7 +1658,7 @@ function renderGh(){
   who.className = "who2"; who.textContent = "everyone together";
   var n2 = document.createElement("span");
   n2.className = "n2";
-  n2.textContent = linked.length ? total + (capped ? "+" : "") + " commits" : "nothing counted yet";
+  n2.textContent = linked.length ? commitLabel(total, capped) : "nothing counted yet";
   h.appendChild(who); h.appendChild(n2); h.appendChild(legend());
   teamBox.appendChild(h);
   teamBox.appendChild(buildCal(team));
@@ -1667,7 +1675,7 @@ function renderGh(){
     var cnt = document.createElement("span");
     cnt.className = "n2";
     cnt.textContent = !logins[p] || ghErrors[p] ? "—"
-      : byPerson[p] + ((ghData[p] || {}).truncated ? "+" : "") + " commits";
+      : commitLabel(byPerson[p], (ghData[p] || {}).truncated);
     head.appendChild(nm); head.appendChild(cnt);
     /* the handles stay off the page — the count is the point of the card */
     card.appendChild(head);
