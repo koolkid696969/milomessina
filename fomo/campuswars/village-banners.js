@@ -1,4 +1,4 @@
-import {villageQuality} from './village-quality.js?v=55';
+import {villageQuality} from './village-quality.js?v=56';
 import {bannerIdentity,paintChapterBanner} from './village-banner-art.js?v=55';
 export {bannerIdentity} from './village-banner-art.js?v=55';
 // Chapter-specific artwork on shared sewn cloth and mounting hardware.
@@ -14,13 +14,13 @@ export function createClothBanner(T,{width,height,primary,paint,ready=Promise.re
   if(typeof document!=='undefined'){
     const canvas=document.createElement('canvas');canvas.width=resolution;canvas.height=Math.round(canvas.width*height/width);
     const ctx=canvas.getContext('2d'),h=canvas.height,w=canvas.width;
-    paint(ctx,w,h);map=new T.CanvasTexture(canvas);map.colorSpace=T.SRGBColorSpace;map.anisotropy=quality.mobile?2:16;map.minFilter=T.LinearMipmapLinearFilter;
+    paint(ctx,w,h);map=new T.CanvasTexture(canvas);map.colorSpace=T.SRGBColorSpace;map.anisotropy=quality.mobile?8:16;map.minFilter=T.LinearMipmapLinearFilter;
     const weave=document.createElement('canvas');weave.width=weave.height=64;const c=weave.getContext('2d');c.fillStyle='#888888';c.fillRect(0,0,64,64);
     for(let i=0;i<64;i+=4){c.fillStyle='#999999';c.fillRect(i,0,1,64);c.fillStyle='#777777';c.fillRect(0,i+2,64,1);}
     bumpMap=new T.CanvasTexture(weave);bumpMap.wrapS=bumpMap.wrapT=T.RepeatWrapping;bumpMap.repeat.set(width*5,height*5);bumpMap.anisotropy=8;
     Promise.allSettled([ready,...(document.fonts?[document.fonts.load('700 90px Aeonik'),document.fonts.load('500 158px Aeonik')]:[])]).then(()=>{if(disposed)return;paint(ctx,w,h);map.needsUpdate=true;document.dispatchEvent(new Event('village:artwork'));});
   }
-  const geometry=new T.PlaneGeometry(width,height,quality.mobile?16:48,quality.mobile?6:16),positions=geometry.attributes.position;
+  const geometry=new T.PlaneGeometry(width,height,quality.mobile?32:48,quality.mobile?12:16),positions=geometry.attributes.position;
   for(let i=0;i<positions.count;i++){
     const x=positions.getX(i),y=positions.getY(i),drop=(height/2-y)/height;
     positions.setY(i,y-.055*Math.cos(x/width*Math.PI)*drop);

@@ -35,3 +35,21 @@ dialog{width:580px;max-width:calc(100% - 32px);max-height:calc(100dvh - 48px);pa
 @media(max-height:500px){.street-controls{bottom:auto;top:100px;left:16px;transform:none;width:auto}.street-controls>span{display:none}}
 
 .house-rank{display:block;align-self:flex-start;margin-bottom:9px;padding:3px 7px;border:1px solid #a8b8dc40;border-radius:6px;color:#e8cb87;font-size:12px;font-weight:700}.house-progress em{display:block;float:none!important;margin-top:4px;font-size:11px;color:#aebcd4}
+
+/* Keep phone controls to one row; secondary actions open above it. */
+.village-extra-controls{display:contents}.village-primary-controls{display:flex;gap:8px;pointer-events:auto}#village-more{display:none}
+@media(max-width:700px),(pointer:coarse){
+  .village-bottom{flex-wrap:nowrap;gap:0}
+  .village-primary-controls{width:100%;justify-content:space-between}
+  .village-primary-controls button{min-height:44px;padding:10px 15px;font-size:13px}
+  #village-more{display:block}
+  .village-extra-controls{display:none}
+  .controls-open .village-extra-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:absolute;bottom:56px;right:0;width:min(310px,100%);max-height:calc(100dvh - 210px);overflow:auto;padding:12px;border:1px solid #aebce137;border-radius:16px;background:#121929f5;box-shadow:0 12px 32px #0005;pointer-events:auto}
+  .village-extra-controls .party-tools,.village-extra-controls .village-view-tools{display:contents}
+  .village-extra-controls button{min-height:44px;font-size:12px;padding:10px 8px;backdrop-filter:none;background:#ffffff08}
+  .village-extra-controls #village-expand{display:none}
+  .village-extra-controls #village-overview{grid-column:1 / -1}
+  .street-controls{top:auto;bottom:calc(max(16px,env(safe-area-inset-bottom)) + 56px);left:50%;transform:translateX(-50%);width:auto}
+  .street-controls>span,.street-controls #street-exit{display:none}
+  .controls-open .street-controls{visibility:hidden}
+}

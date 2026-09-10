@@ -19,10 +19,29 @@
   }
   drawerToggle.addEventListener('click', () => setDrawer(drawer.hidden));
   document.getElementById('drawer-close').addEventListener('click', () => {setDrawer(false);drawerToggle.focus();});
+  const moreButton=document.getElementById('village-more');
+  const extraControls=document.getElementById('village-extra-controls');
+  const villageShell=document.getElementById('village');
+  function setMoreControls(open){
+    villageShell.classList.toggle('controls-open',open);
+    moreButton.setAttribute('aria-expanded',String(open));
+    moreButton.textContent=open?'Close ×':'More ···';
+  }
+  moreButton.addEventListener('click',()=>setMoreControls(moreButton.getAttribute('aria-expanded')!=='true'));
+  document.addEventListener('pointerdown',event=>{
+    if(!extraControls.contains(event.target)&&!moreButton.contains(event.target))setMoreControls(false);
+  });
+  extraControls.addEventListener('click',event=>{
+    if(event.target.closest('#village-leaderboard,#village-exchange,#village-overview,#village-expand')){setMoreControls(false);if(matchMedia('(max-width: 700px), (pointer: coarse)').matches)moreButton.focus();}
+  });
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&moreButton.getAttribute('aria-expanded')==='true'){setMoreControls(false);moreButton.focus();}
+  });
+  document.addEventListener('village:introstart',()=>setMoreControls(false));
   const marketPanel=document.getElementById('market-panel');
   function showMarket(open){marketPanel.hidden=!open;document.getElementById('village-exchange').setAttribute('aria-expanded',String(open));}
   document.getElementById('village-exchange').addEventListener('click',()=>{setDrawer(false);showMarket(true);});
-  document.getElementById('market-close').addEventListener('click',()=>{showMarket(false);document.getElementById('village-exchange').focus();});
+  document.getElementById('market-close').addEventListener('click',()=>{showMarket(false);(matchMedia('(max-width: 700px), (pointer: coarse)').matches?moreButton:document.getElementById('village-exchange')).focus();});
   for(const id of ['village-overview','village-leaderboard','village-chapters'])document.getElementById(id).addEventListener('click',()=>showMarket(false));
   document.addEventListener('village:introstart',()=>showMarket(false));
   document.addEventListener('keydown',event=>{if(event.key==='Escape')showMarket(false);});
@@ -176,7 +195,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=55').then(async()=>{
+  import('./village.js?v=56').then(async()=>{
     try{
       const {startMarketFeed,marketStatus,marketPrice}=await import('./market-feed.js?v=50');
       const options={onUpdate(state){

@@ -1,4 +1,4 @@
-import {villageQuality} from './village-quality.js?v=55';
+import {villageQuality} from './village-quality.js?v=56';
 import {createGrassMaterial} from './village-grass.js?v=55';
 import {hash} from './village-district-layout.js?v=22';
 // Insert road sections in the one opaque floor. UVs repeat the straight part

@@ -1,7 +1,7 @@
-import {villageQuality} from './village-quality.js?v=55';
+import {villageQuality} from './village-quality.js?v=56';
 import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=53';
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=55';
+import {createVillage} from './village-world.js?v=56';
 import {createDistricts} from './village-districts.js?v=50';
 import {EXCHANGE_VIEW} from './village-market.js?v=50';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
@@ -24,7 +24,6 @@ try{renderer=new THREE.WebGLRenderer({antialias:quality.antialias,alpha:false,po
 if(renderer)startVillage();
 function startVillage(){
   let ready=false,pendingChapterUpdate=null;
-  const coarse=matchMedia('(pointer: coarse)').matches;
   let renderScale=Math.min(devicePixelRatio,quality.pixelRatio),slowFrames=0;
   renderer.setPixelRatio(renderScale);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
@@ -159,14 +158,14 @@ function startVillage(){
   });
   function leaveStreet(){
     if(!streetMode)return;
-    streetMode=false;streetNav.root.visible=false;streetControls.hidden=true;streetButton.setAttribute('aria-pressed','false');
+    streetMode=false;streetNav.root.visible=false;streetControls.hidden=true;streetButton.setAttribute('aria-pressed','false');streetButton.textContent='Street view';
     shell.classList.remove('street-view');canvas.style.cursor='';
     target.set(0,2,streetZ);wantedTarget.copy(target);radius=wantedRadius=30;phi=wantedPhi=.45;
   }
   function moveStreet(z){
     takeControl();
     if(!streetMode){
-      streetMode=true;streetNav.root.visible=true;streetControls.hidden=false;streetButton.setAttribute('aria-pressed','true');shell.classList.add('street-view');
+      streetMode=true;streetNav.root.visible=true;streetControls.hidden=false;streetButton.setAttribute('aria-pressed','true');streetButton.textContent='Exit street view';shell.classList.add('street-view');
       streetZ=z;theta=wantedTheta=0;phi=wantedPhi=0;canvas.focus({preventScroll:true});
     }
     const stops=streetStops(village.extension);streetWantedZ=Math.max(stops[0],Math.min(stops.at(-1),z));viewDirty=true;wake();
@@ -227,7 +226,7 @@ function startVillage(){
     if(paused&&!cameraMoving&&!drag&&!viewDirty&&now-lastRender<1000/30){wake();return;}
     // Start sharp; reduce only pixel density if sustained slow frames appear.
     if(visible&&!document.hidden&&lastRender&&now-lastRender>55)slowFrames++;else slowFrames=Math.max(0,slowFrames-1);
-    if(slowFrames>24&&renderScale>(coarse?1:1.25)){renderScale=Math.max(coarse?1:1.25,renderScale-.25);renderer.setPixelRatio(renderScale);slowFrames=0;}
+    if(slowFrames>24&&renderScale>quality.minPixelRatio){renderScale=Math.max(quality.minPixelRatio,renderScale-.25);renderer.setPixelRatio(renderScale);slowFrames=0;}
     const elapsed=lastTime?Math.max(0,(now-lastTime)/1000):0;
     const dt=Math.min(elapsed,.05);lastTime=now;
     if(autoOrbit&&!entranceActive&&!paused&&visible&&!document.hidden)wantedTheta+=dt*.06;
