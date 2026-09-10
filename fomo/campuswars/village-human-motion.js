@@ -31,8 +31,9 @@ export function humanPose(person,state,time){
   const breath=Math.sin(time*(profile?.breathRate??1.7)+phase)*(profile?.breathAmount??.006);
   const weight=seated?0:moving?Math.sin(gait)*.017*amount:Math.sin(time*(profile?.shiftRate??.43)+phase)*(profile?.shiftAmount??.025);
   const standingHip=.975-(moving?(jog?.105:.075)*amount:0);
-  const hipY=(lawn?.25:seated?.65:standingHip)+breath+(moving&&!skate?Math.cos(gait*2)*(jog?.025:.012)*amount:0);
-  const lean=seated?.085:jog?.055:skate?.07:.012;
+  const build=state.construction;
+  const hipY=(lawn?.25:seated?.65:standingHip)+breath+(moving&&!skate?Math.cos(gait*2)*(jog?.025:.012)*amount:0)-(build?.bend||0)*.16;
+  const lean=(seated?.085:jog?.055:skate?.07:.012)+(build?.bend||0)*.18;
   const twist=moving?Math.sin(gait)*.055*amount:Math.sin(time*(profile?.twistRate??.61)+phase)*(profile?.twistAmount??.024);
   const hip=[weight,hipY,0],chest=[weight*.65,hipY+.30,lean];
   const head=[weight*.45,hipY+.72+Math.sin(time*(profile?.nodRate??(state.speaking?1.7:.8))+phase)*(profile?.nodAmount??.006),lean+.018];
@@ -61,6 +62,22 @@ export function humanPose(person,state,time){
       const reach=(point,to)=>point.forEach((v,k)=>{point[k]=v+(to[k]-v)*lift;});
       reach(elbow,[shoulder[0]+.035,shoulder[1]-.13+extension*.07,.23+extension*.08]);
       reach(hand,[shoulder[0]+.025,shoulder[1]+.13-extension*.11,.28+extension*.27]);
+    }
+    if(build){
+      const reach=(point,to,amount)=>point.forEach((v,k)=>{point[k]=v+(to[k]-v)*amount;});
+      const carry=build.carry;
+      reach(elbow,[side*.22,hipY+.19,.21],carry);reach(hand,[side*.18,hipY+.11,.40],carry);
+      if(build.mode==='pickup'){
+        reach(elbow,[side*.19,hipY+.08,.23],build.bend);
+        reach(hand,[side*.17,hipY-.15,.44],build.bend);
+      }
+      if(build.effort){
+        const stroke=build.stroke,low=build.role==='masonry'||build.role==='saw';
+        reach(elbow,[side*.21,hipY+(low?.07:.25),.23],build.effort);
+        const y=low?hipY-.01:hipY+.30+(j&&build.role==='hammer'?(1-stroke)*.20:0);
+        const z=build.role==='saw'?.38+stroke*.15:build.role==='drill'?.52+stroke*.035:.49;
+        reach(hand,[side*(j?.10:.15),y,z],build.effort);
+      }
     }
     arms.push({shoulder,elbow,hand});
   }

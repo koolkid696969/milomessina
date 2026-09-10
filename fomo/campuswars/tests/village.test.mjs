@@ -50,9 +50,9 @@ test('repeated architecture is batched for a bounded draw count',()=>{
   let drawables=0;village.world.traverse(object=>{if(object.isMesh)drawables++;});assert(drawables<150,`Too many scene meshes: ${drawables}`);
 });
 
-test('most members stay in conversation groups with only five chapter walkers',()=>{
+test('completed houses retain conversation groups and five leisure walkers',()=>{
   assert.equal(village.members.filter(m=>m.walking).length,5);
-  const standing=village.members.filter(m=>!m.walking);assert(standing.every(m=>m.groupSize>=2));
+  const standing=village.members.filter(m=>!m.walking&&m.action!=='build');assert(standing.every(m=>m.groupSize>=2));
   for(const member of standing){const a=activityPose(member,0),b=activityPose(member,15);assert.equal(a.x,b.x);assert.equal(a.z,b.z);assert(Math.abs(a.breath)<.01&&Math.abs(b.breath)<.01);}
   const groups=Map.groupBy(standing.filter(m=>m.action!=='pong'),m=>m.chapter+':'+m.groupPhase);
   for(const t of [0,4,13,27])for(const group of groups.values())assert.equal(group.filter(m=>activityPose(m,t).speaking).length,1);

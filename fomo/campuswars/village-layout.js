@@ -1,5 +1,6 @@
 import {hash,appearance,roundedLoop} from './village-district-layout.js?v=22';
-import {gaitPhase,speechGesture,smooth} from './village-human-motion.js?v=31';
+import {gaitPhase,speechGesture,smooth} from './village-human-motion.js?v=48';
+import {constructionAssignment,constructionActivity} from './village-construction-layout.js?v=48';
 const lawnRoute=roundedLoop(-7.9,7,7.9,14.4,1.15);
 // Ease over the low lawn/path edges; the walking loop clears the porch steps.
 export function lawnGround(x,z){const edge=smooth((12-z)/.25);return .045+.085*smooth((7.5-Math.abs(x))/.25)*edge+.07*smooth((.825-Math.abs(x))/.2)*edge;}
@@ -29,6 +30,13 @@ export function pongTurn(chapter,time){
 export function crowdMembers(chapters,lots=createLots(chapters.length)){
   return chapters.flatMap((chapter,index)=>{
     if(!Number.isSafeInteger(chapter.joined)||chapter.joined<0)throw new RangeError('Invalid member count');
+    if(chapter.joined<15)return Array.from({length:chapter.joined},(_,workerIndex)=>{
+      const construction=constructionAssignment(chapter,workerIndex),member=workerIndex+1,lot=lots[index];
+      const person={...appearance(chapter.id,member),chapter:chapter.id,member,lot,construction,
+        action:'build',walking:false,phase:hash(chapter.id,member,'phase')*20,ground:.13,
+        backpack:false,jacket:false,shorts:false,motionProfile:motionProfile(chapter.id,member)};
+      const pose=constructionActivity(person,0);return {...person,x:pose.x,z:pose.z,rotation:pose.rotation};
+    });
     const lot=lots[index],walkers=Math.floor(chapter.joined/20),standing=chapter.joined-walkers,pong=chapter.joined>=15,porch=chapter.joined>=15&&standing>=9,sizes=[];
     let remaining=standing-(porch?2:0)-(pong?2:0);
     while(remaining>0){let size=sizes.length===0&&remaining>=12?7:2+Math.floor(hash(chapter.id,sizes.length,'group-size')*4);size=Math.min(size,remaining);if(remaining-size===1)size++;sizes.push(size);remaining-=size;}
@@ -67,6 +75,7 @@ export function crowdMembers(chapters,lots=createLots(chapters.length)){
   });
 }
 export function activityPose(member,time){
+  if(member.action==='build')return constructionActivity(member,time);
   if(member.walking){
     const distance=time*(member.motionProfile?.walkSpeed??.76)+member.walkPhase/(Math.PI*2)*lawnRoute.length,s=lawnRoute.sample(distance),ahead=lawnRoute.sample(distance+.24);
     const look=Math.atan2(Math.sin(ahead.angle-s.angle),Math.cos(ahead.angle-s.angle))*.45;

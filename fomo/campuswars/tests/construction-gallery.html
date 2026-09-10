@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Construction crew review</title>
+<style>body{margin:0;background:#dce1e4;font:14px Arial,sans-serif;color:#222}header{padding:14px 20px;background:#fff;display:flex;gap:16px;align-items:center;flex-wrap:wrap}label{display:flex;gap:6px;align-items:center}canvas{display:block;width:100%}select,button{padding:6px}p{margin:0;color:#666}</style>
+<header><strong>Construction crew review</strong><label>Site <select id="site"></select></label><label>Members <input id="count" type="number" min="0" max="15" value="2" style="width:42px"></label><label>Time <input id="time" type="range" min="0" max="40" step="0.05" value="0"></label><button id="play">Play</button><p>Preview counts only; live registrations are unchanged.</p></header>
+<script type="module">
+import * as T from '../vendor/three.module.min.js';
+import {createVillage} from '../village-world.js?v=48';
+import {schoolIdentity,loadSchoolLogo} from '../village-school-banners.js?v=47';
+const {chapters}=await (await fetch('../chapters.json')).json();
+const select=document.getElementById('site'),count=document.getElementById('count'),time=document.getElementById('time');
+for(const chapter of chapters){const option=document.createElement('option');option.value=chapter.id;option.textContent=chapter.name+' · '+chapter.shortSchool;select.append(option);}
+select.value='phi-kappa-psi-vt';
+await Promise.all(chapters.map(c=>loadSchoolLogo(schoolIdentity(c))));await document.fonts.ready;
+const scene=new T.Scene();scene.background=new T.Color('#a5b3bf');
+scene.add(new T.HemisphereLight(0xffffff,0x827664,2));
+const sun=new T.DirectionalLight(0xffecd5,2.4);sun.position.set(20,40,-20);scene.add(sun);
+const renderer=new T.WebGLRenderer({antialias:true});renderer.setPixelRatio(1);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;document.body.append(renderer.domElement);
+const camera=new T.PerspectiveCamera(48,1,.1,650);camera.position.set(1,14,-33);camera.lookAt(-20,1,-19);
+let village,playing=false,last=0;
+function draw(){village?.animateCrowd(Number(time.value));renderer.render(scene,camera);}
+function rebuild(){
+  const chapter={...chapters.find(c=>c.id===select.value),joined:Math.max(0,Math.min(15,Number(count.value)))};
+  const old=village;village=createVillage(T,[chapter],{streets:old?.streets});scene.add(village.world);if(old){scene.remove(old.world);old.dispose();}
+  document.body.dataset.workers=String(village.members.filter(m=>m.action==='build').length);
+  draw();
+}
+function resize(){renderer.setSize(innerWidth,innerHeight-document.querySelector('header').offsetHeight);camera.aspect=renderer.domElement.width/renderer.domElement.height;camera.updateProjectionMatrix();draw();}
+count.addEventListener('change',rebuild);select.addEventListener('change',rebuild);time.addEventListener('input',draw);
+document.addEventListener('village:artwork',draw);addEventListener('resize',resize);
+document.getElementById('play').onclick=()=>{playing=!playing;document.getElementById('play').textContent=playing?'Pause':'Play';};
+function frame(now){if(playing&&village){time.value=String((Number(time.value)+(now-last)/1000)%40);draw();}last=now;requestAnimationFrame(frame);}
+rebuild();resize();requestAnimationFrame(frame);document.body.dataset.ready='true';
+</script></html>

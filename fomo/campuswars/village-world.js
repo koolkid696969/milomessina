@@ -3,10 +3,11 @@ import {createPongGames} from './village-pong.js?v=31';
 import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=30';
 import {createCompetition} from './village-competition.js?v=33';
 import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=28';
-import {humanPose} from './village-human-motion.js?v=31';
+import {humanPose} from './village-human-motion.js?v=48';
+import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=48';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=35';
 import {palettes,hash} from './village-district-layout.js?v=22';
-import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=32';
+import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=48';
 import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=32';
 import {createChapterBanner,bannerIdentity} from './village-banners.js?v=47';
 import {createSchoolBanner} from './village-school-banners.js?v=47';
@@ -61,62 +62,6 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
     box(parent,x,y,z+.14,.065,1.45,.055,0xe8ddc8);box(parent,x,y,z+.14,.9,.065,.055,0xe8ddc8);
     [-.68,.68].forEach(dx=>box(parent,x+dx,y,z,.23,1.65,.15,0x283940));
   }
-  function constructionSite(parent,chapter){
-    const site=new THREE.Group();site.name=`chapter-construction-${chapter.id}`;site.userData={chapter:chapter.id,joined:chapter.joined,state:'construction'};parent.add(site);
-    const timber=0xc49a63,concrete=0xb3b1a5,steel=0x7e9295,orange=0xd48b46;
-    function beam(a,b,width=.14,color=timber){
-      const direction=new THREE.Vector3().subVectors(new THREE.Vector3(...b),new THREE.Vector3(...a));
-      const m=box(site,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,width,direction.length(),width,color);
-      m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction.normalize());return m;
-    }
-    box(site,0,.15,0,11,.16,8.5,0x968771);
-    box(site,0,.34,0,9.4,.32,7,concrete);
-    // Exposed foundation and joists; no finished walls, windows or roof below 15.
-    for(const z of [-3.3,3.3])box(site,0,.59,z,9.2,.18,.16,timber);
-    for(const x of [-4.5,4.5])box(site,x,.59,0,.16,.18,6.6,timber);
-    for(let x=-4;x<=4;x+=1)box(site,x,.53,0,.12,.12,6.5,timber);
-    const frameHeight=chapter.joined===0?1.7:3.2;
-    for(const x of [-4.5,4.5])for(const z of [-3.3,3.3])beam([x,.65,z],[x,frameHeight,z],.19);
-    // The rear wall begins to take shape as members arrive.
-    if(chapter.joined>0){
-      for(let x=-3.6;x<=3.7;x+=.9)beam([x,.65,-3.3],[x,frameHeight,-3.3],.12);
-      box(site,0,frameHeight,-3.3,9.3,.18,.2,timber);
-      for(const x of [-4.5,4.5]){box(site,x,frameHeight,0,.18,.18,6.6,timber);beam([x,.7,-3.2],[x,frameHeight,0],.11);}
-      for(let i=0;i<Math.min(3,Math.floor(chapter.joined/3));i++)box(site,-3.6+i*1.8,1.75,-3.4,1.7,2.2,.07,0xb39468);
-    }
-    if(chapter.joined>=8){
-      for(let x=-4.2;x<=4.3;x+=1.4)box(site,x,3.3,0,.14,.2,6.6,timber);
-      for(const x of [-4.5,4.5])for(const z of [-3.3,3.3])beam([x,3.3,z],[x,5.5,z],.16);
-      box(site,0,5.5,-3.3,9.2,.16,.16,timber);
-    }
-    // Scaffold platform, cross bracing and a leaning access ladder.
-    for(const x of [-5.3,-6.1])for(const z of [-2.8,1.8])beam([x,.2,z],[x,3.8,z],.065,steel);
-    box(site,-5.7,2.35,-.5,1.05,.12,5.2,0xa39377);
-    for(const x of [-5.3,-6.1]){beam([x,.4,-2.8],[x,3.7,1.8],.045,steel);beam([x,3.7,-2.8],[x,.4,1.8],.045,steel);}
-    for(const x of [-5.9,-5.45])beam([x,.2,3.2],[x,2.5,1.5],.05,steel);
-    for(let i=0;i<7;i++)beam([-5.9,.3+i*.32,3.13-i*.24],[-5.45,.3+i*.32,3.13-i*.24],.045,steel);
-    // Staged lumber, masonry pallets and safety barriers make the lot read as active construction.
-    for(let layer=0;layer<4;layer++)for(let row=0;row<3;row++)box(site,3.4+row*.28,.26+layer*.13,4.45,.22,.11,2.4,timber);
-    box(site,-3.2,.23,4.5,1.9,.16,1.3,0x8d775b);
-    for(let layer=0;layer<3;layer++)for(let col=0;col<4;col++)box(site,-3.86+col*.44,.43+layer*.23,4.5,.4,.2,1.05,0xa8755d);
-    for(const x of [-5.8,5.8]){
-      box(site,x,.24,6.1,.5,.12,.5,0x4e4e47);
-      const cone=new THREE.Mesh(new THREE.ConeGeometry(.23,.65,10),mat(orange));cone.position.set(x,.62,6.1);site.add(cone);
-      cylinder(site,x,.61,6.1,.14,.1,0xeee5ce);
-    }
-    for(const x of [-2.4,2.4])box(site,x,1.6,6.1,.1,3,.1,steel);
-    const banner=createChapterBanner(THREE,chapter,4.8);banner.position.set(0,1.66,6.2);site.add(banner);pickables.push(banner);
-    // School cloth hangs from a dedicated side scaffold, even before walls exist.
-    for(const side of [-1,1]){
-      const schoolBanner=createSchoolBanner(THREE,chapter);schoolBanner.rotation.y=side*Math.PI/2;
-      schoolBanner.position.set(side*6.25,2.55,-.5);site.add(schoolBanner);pickables.push(schoolBanner);
-      for(const z of [-2.25,1.25])cylinder(site,side*6.25,2.45,z,.055,4.9,steel);
-    }
-    box(site,0,2.8,6.1,5.1,.1,.12,steel);
-    sign(site,'UNDER CONSTRUCTION',0,3.12,6.2,4.8,.42,'#d6b26d','#2c3038');
-    const hit=box(site,0,2.8,0,12.5,6,12,new THREE.MeshBasicMaterial({visible:false}));hit.userData.chapter=chapter.id;pickables.push(hit);
-    return site;
-  }
   lots.forEach((lot,index)=>{
     const group=new THREE.Group();group.position.set(lot.x,0,lot.z);group.rotation.y=lot.rotation;world.add(group);
     const chapter=chapters[index],id=chapter?.id||'empty';
@@ -128,7 +73,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
     box(group,0,.15,7.7,1.65,.1,8.6,0xb3b0a4);
     [-6.8,6.8].forEach(x=>{box(group,x,.12,3,.12,.16,17,0x8b9096);});
     if(chapter.joined<15){
-      constructionSite(group,chapter);
+      group.add(createConstructionSite(THREE,chapter,{box,cylinder,sign,pickables}));
       anchors.push({id,point:new THREE.Vector3(lot.x,6,lot.z),lot});return;
     }
     const house=new THREE.Group();house.name=`chapter-house-${id}`;group.add(house);
@@ -188,6 +133,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
   world.add(createLawnBlades(THREE,lots.slice(0,chapters.length)));
   const members=crowdMembers(chapters,lots),parts={};
   const pong=createPongGames(THREE,members);world.add(pong.root);
+  const construction=createConstructionEquipment(THREE,members);world.add(construction.root);
   const bodyGeometry=new THREE.CapsuleGeometry(.5,1,3,8);bodyGeometry.scale(1,.5,1);
   const roundParts=new Set(['head','hair','handL','handR','nose']);
   const names=['torso','pelvis','neck','head','hair','nose','armL','armR','foreL','foreR','handL','handR','legL','legR','shinL','shinR','shoeL','shoeR','cup','backpack'];
@@ -197,7 +143,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
     members.forEach((m,i)=>{
       const shirt=name==='torso'||name.startsWith('arm')||(m.jacket&&name.startsWith('fore'));
       const skin=['head','neck','nose'].includes(name)||name.startsWith('hand')||name.startsWith('fore')||(m.shorts&&name.startsWith('shin'));
-      const color=shirt?palettes.shirts[m.shirt]:skin?palettes.skin[m.skin]:name==='hair'?palettes.hair[m.hair]:name==='cup'?0xd54f56:name.startsWith('shoe')?0xe1ded4:palettes.pants[m.pants];
+      const color=shirt?(m.action==='build'?0xe5a13f:palettes.shirts[m.shirt]):skin?palettes.skin[m.skin]:name==='hair'?palettes.hair[m.hair]:name==='cup'?0xd54f56:name.startsWith('shoe')?0xe1ded4:palettes.pants[m.pants];
       mesh.setColorAt(i,new THREE.Color(color));
     });
   }
@@ -217,6 +163,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
       part('hair',[rig.head[0]+Math.sin(rig.headYaw)*hairOffset,rig.head[1]+.075,rig.head[2]+Math.cos(rig.headYaw)*hairOffset],.132,.105+m.hairLength*.04,.14,rig.headYaw);
       part('nose',[rig.head[0]+Math.sin(rig.headYaw)*.132,rig.head[1]-.01,rig.head[2]+Math.cos(rig.headYaw)*.132],.026,.036,.036,rig.headYaw);
       part('backpack',[rig.chest[0],rig.chest[1]-.025,rig.chest[2]-.19],m.backpack?.28:0,.34,.15,rig.twist);
+      construction.update(m,state,rig,transform);
       for(let j=0;j<2;j++){
         const side=j?'R':'L',arm=rig.arms[j],leg=rig.legs[j];
         limb('arm'+side,i,transform(arm.shoulder),transform(arm.elbow),.115*h);
@@ -225,11 +172,11 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
         limb('leg'+side,i,transform(leg.hip),transform(leg.knee),.155*h);
         limb('shin'+side,i,transform(leg.knee),transform(leg.ankle),.11*h);
         part('shoe'+side,[leg.ankle[0],leg.ankle[1]-.055+Math.abs(Math.sin(leg.pitch))*.145,leg.ankle[2]+.045],.15,.13,.29,0,leg.pitch);
-        if(j)part('cup',[arm.hand[0],arm.hand[1]+.04,arm.hand[2]+.025],.065,!state.walking&&m.action!=='pong'&&hash(m.chapter,m.member,'cup')>.86?.13:0,.065);
+        if(j)part('cup',[arm.hand[0],arm.hand[1]+.04,arm.hand[2]+.025],.065,!state.walking&&m.action!=='pong'&&m.action!=='build'&&hash(m.chapter,m.member,'cup')>.86?.13:0,.065);
       }
     });
     Object.values(parts).forEach(mesh=>mesh.instanceMatrix.needsUpdate=true);
-    pong.animate(time);
+    pong.animate(time);construction.finish();
     flags.forEach((flag,i)=>{flag.rotation.y=Math.sin(time*2+i)*.15;flag.rotation.z=Math.sin(time*3+i)*.035;});
   }
   animateCrowd(0);
@@ -238,7 +185,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
   const selection=new THREE.Mesh(new THREE.RingGeometry(6.8,7.0,64),new THREE.MeshBasicMaterial({color:0xa2aeff,transparent:true,opacity:.75,side:THREE.DoubleSide,depthWrite:false}));selection.rotation.x=-Math.PI/2;selection.position.y=.21;world.add(selection);
   // Batch repeated architectural parts so phones draw whole sets at once.
   world.updateMatrixWorld(true);
-  const dynamic=new Set([selection,...pickables,...flags,...Object.values(parts),...pong.games.map(game=>game.ball)]);
+  const dynamic=new Set([selection,...pickables,...flags,...Object.values(parts),...Object.values(construction.meshes),...pong.games.map(game=>game.ball)]);
   const resources=new Set();
   function collect(){world.traverse(o=>{if(o===streets)return;if(o.geometry)resources.add(o.geometry);for(const m of (Array.isArray(o.material)?o.material:[o.material]))if(m){resources.add(m);for(const value of Object.values(m))if(value?.isTexture)resources.add(value);}if(o.isInstancedMesh)resources.add(o);});}
   collect();Object.values(landscapeKit.geometries).forEach(g=>resources.add(g));materials.forEach(m=>resources.add(m));windowMaterials.forEach(m=>resources.add(m));
@@ -253,5 +200,5 @@ export function createVillage(THREE,chapters,{streets:existingStreet}={}){
   function animateEffects(time){beacon?.animate(time);if(nightLife.root.visible)nightLife.animate(time);}
   collect();
   function dispose(){for(const resource of resources)if(!resource.userData?.sharedResource)resource.dispose();resources.clear();}
-  return {world,streets,lots,extension,dispose,pickables,anchors,members,parts,selection,animateCrowd,competition,beacon,nightLife,animateEffects,pong};
+  return {world,streets,lots,extension,dispose,pickables,anchors,members,parts,selection,animateCrowd,competition,beacon,nightLife,animateEffects,pong,construction};
 }
