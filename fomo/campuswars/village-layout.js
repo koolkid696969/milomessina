@@ -13,10 +13,11 @@ export const LOTS = [
   {x:-20,z:19,rotation:Math.PI/2,style:4},
   {x:20,z:19,rotation:-Math.PI/2,style:5}
 ];
-// A street carries ten chapter houses. Beyond that the village grows sideways
-// onto the next parallel street rather than into one endless row: streets sit on
-// the campus road grid, alternating east then west of the original boulevard.
-export const STREET_CAPACITY=10,STREET_SPACING=100;
+// A street carries ten chapter houses down each side, twenty in all. Beyond that
+// the village grows sideways onto the next parallel street rather than into one
+// endless row: streets sit on the campus road grid, alternating east then west
+// of the original boulevard.
+export const STREET_SIDE_CAPACITY=10,STREET_CAPACITY=STREET_SIDE_CAPACITY*2,STREET_SPACING=100;
 export const streetOriginX=street=>street?(street%2?1:-1)*Math.ceil(street/2)*STREET_SPACING:0;
 export function streetCount(chapterCount){return Math.max(1,Math.ceil(chapterCount/STREET_CAPACITY));}
 export function createLots(chapterCount) {

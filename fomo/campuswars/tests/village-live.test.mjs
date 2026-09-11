@@ -9,7 +9,7 @@ const chapters = count => Array.from({length:count},(_,i)=>({id:`test-${i}`,name
 
 test('the row adds a selectable lot for every chapter and retains one claim lot',()=>{
   const village=createVillage(THREE,chapters(14));
-  assert.equal(village.anchors.length,15);assert.equal(village.anchors.filter(a=>a.id==='empty').length,1);assert.equal(village.extension,38);
+  assert.equal(village.anchors.length,15);assert.equal(village.anchors.filter(a=>a.id==='empty').length,1);assert.equal(village.extension,95);
   assert.deepEqual(createLots(5).map(({x,z})=>[x,z]),[[-20,-19],[20,-19],[-20,0],[20,0],[-20,19],[20,19]]);
   assert.equal(new Set(village.anchors.map(a=>`${a.lot.x},${a.lot.z}`)).size,15);
   village.world.updateMatrixWorld(true);
@@ -17,18 +17,22 @@ test('the row adds a selectable lot for every chapter and retains one claim lot'
   for(const mesh of Object.values(village.parts))assert([...mesh.instanceMatrix.array].every(Number.isFinite));
   assert.equal(village.members.length,112);assert(village.competition.board.position.z>village.anchors.at(-1).lot.z+15);village.dispose();
 });
-test('a street takes ten houses, then the village opens the next one beside it',()=>{
+test('a street takes ten houses down each side, then the village opens the next one',()=>{
   const plots=count=>{const streets=new Map();for(const lot of createLots(count))streets.set(lot.street,(streets.get(lot.street)||0)+1);return [...streets.values()];};
-  assert.deepEqual(plots(9),[10]);          // nine houses and the claimable lot
-  assert.deepEqual(plots(10),[11]);         // the claim lot trails a full street
-  assert.deepEqual(plots(11),[10,2]);
-  assert.deepEqual(plots(25),[10,10,6]);
-  assert.equal(streetCount(25),3);
+  const sides=count=>{const lots=createLots(count).filter(lot=>lot.street===0);return [lots.filter(l=>l.x<l.originX).length,lots.filter(l=>l.x>l.originX).length];};
+  assert.deepEqual(plots(19),[20]);         // ten a side, and the claim lot fills the twentieth
+  assert.deepEqual(sides(19),[10,10]);
+  assert.deepEqual(plots(20),[21]);         // the claim lot trails a full street
+  assert.deepEqual(plots(21),[20,2]);
+  assert.deepEqual(plots(45),[20,20,6]);
+  assert.equal(streetCount(45),3);
   // Streets stand on the campus road grid, opening east then west of the original.
   assert.deepEqual([0,1,2,3].map(streetOriginX),[0,100,-100,200]);
-  for(const lot of createLots(25)){assert.equal(Math.abs(lot.x-lot.originX),20);assert(lot.z>=-19&&lot.z<=76);}
+  for(const lot of createLots(45)){assert.equal(Math.abs(lot.x-lot.originX),20);assert(lot.z>=-19&&lot.z<=171);}
   // Every street shares one length, so the world stops growing with the row.
-  for(const count of [11,25,60,400])assert(rowExtension(count)<=57);
+  for(const count of [21,45,120,400])assert(rowExtension(count)<=152);
+  // The row as it stands today is one street and keeps its own length.
+  assert.equal(streetCount(17),1);assert.equal(rowExtension(17),114);
   // A street's own block carries houses instead of campus buildings.
   assert.equal(districtKind(1,0,1),'science');
   assert.equal(districtKind(1,0,2),'greek');
@@ -37,18 +41,18 @@ test('a street takes ten houses, then the village opens the next one beside it',
 });
 
 test('houses on a second street stand clear of the campus and keep their own frontage',()=>{
-  const village=createVillage(THREE,chapters(14));
+  const village=createVillage(THREE,chapters(25));
   assert.equal(village.streetTotal,2);
   const second=village.anchors.filter(a=>a.lot.street===1);
-  assert.equal(second.length,5,'four houses and the claimable lot');
+  assert.equal(second.length,6,'five houses and the claimable lot');
   for(const anchor of second){
     assert.equal(anchor.lot.originX,100);
     assert(village.world.getObjectByName(`chapter-house-${anchor.id}`)||village.world.getObjectByName(`chapter-construction-${anchor.id}`)||anchor.id==='empty');
   }
   // Lamps, benches and trees follow each street rather than only the first.
-  const lamps=[];village.world.updateMatrixWorld(true);
-  village.world.traverse(o=>{if(o.isMesh)lamps.push(o.getWorldPosition(new THREE.Vector3()));});
-  assert(lamps.some(p=>Math.abs(p.x-107.6)<.01),'the second street is lit too');
+  const meshes=[];village.world.updateMatrixWorld(true);
+  village.world.traverse(o=>{if(o.isMesh)meshes.push(o.getWorldPosition(new THREE.Vector3()));});
+  assert(meshes.some(p=>Math.abs(p.x-107.6)<.01),'the second street is lit too');
   village.dispose();
 });
 
