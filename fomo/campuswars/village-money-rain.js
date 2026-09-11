@@ -14,10 +14,18 @@ const seed=(index,salt)=>{const value=Math.sin(index*127.1+salt*311.7)*43758.545
 export const RAIN_HALF_WIDTH=7.6,RAIN_BACK=-5,RAIN_FRONT=14.2;
 const RAIN_DEPTH=RAIN_FRONT-RAIN_BACK,CLOUD_PUFFS=24;
 // Bills reach the lawn itself, fade in just under the cloud and shrink out a
-// short way above whatever they land on, at one speed across the lot.
-const LAWN_LANDING=.25,BILL_TOP=12.5,ROOF_DROP=11.5,FADE_IN=1.1,FADE_OUT=1.6;
+// short way above whatever they land on, at one speed across the lot. The
+// shrink-out is kept near the surface: a note this small vanishing a metre and a
+// half up would read as evaporating rather than landing.
+const LAWN_LANDING=.1,BILL_TOP=12.5,ROOF_DROP=11.5,FADE_IN=1.1,FADE_OUT=.6;
+// A house is about eleven metres wide here, so a note is sized the way a real
+// one is against it: a hand's width across, not a doorway. Curl and flutter are
+// written against the note's own width so its shape survives the smaller size.
+const BILL_WIDTH=.34,BILL_HEIGHT=BILL_WIDTH/2.35;
 
 // Use the same onboarding ranks as the roof badges. Ties receive equal rain.
+// Counts are read against the note's size: real notes cover far less sky than
+// the oversized ones did, so it takes more of them to still read as a downpour.
 export function moneyRecipients(chapters,anchors){
   const byId=new Map(anchors.map(anchor=>[anchor.id,anchor]));
   return houseStandings(chapters).filter(row=>(row.joined>=15||chapterGoalReached(row))&&byId.has(row.id)).map(row=>{
@@ -25,7 +33,7 @@ export function moneyRecipients(chapters,anchors){
     // Only a finished house reports a roof to catch bills. A lot still under
     // construction has none, so its rain carries all the way down to its crew.
     const house=anchor.house;
-    return {id:row.id,goalReached:chapterGoalReached(row),rank:row.rank,count:Math.max(8,Math.round(190/Math.pow(row.rank,.8))),
+    return {id:row.id,goalReached:chapterGoalReached(row),rank:row.rank,count:Math.max(24,Math.round(560/Math.pow(row.rank,.8))),
       x:anchor.lot.x,z:anchor.lot.z,rotation:anchor.lot.rotation||0,roof:anchor.point.y-1,
       houseHalf:house?house.halfWidth+.45:0,houseFront:house?house.front+.45:0};
   });
@@ -33,9 +41,9 @@ export function moneyRecipients(chapters,anchors){
 
 export function createMoneyRain(T,chapters,anchors){
   const root=new T.Group();root.name='intro-money-rain';root.visible=false;
-  const cloudGeometry=new T.PlaneGeometry(1,1),billGeometry=new T.PlaneGeometry(1.4,.61,12,4);
+  const cloudGeometry=new T.PlaneGeometry(1,1),billGeometry=new T.PlaneGeometry(BILL_WIDTH,BILL_HEIGHT,12,4);
   const vertices=billGeometry.attributes.position;
-  for(let i=0;i<vertices.count;i++){const x=vertices.getX(i),y=vertices.getY(i);vertices.setZ(i,.08*Math.sin(x*3.8)+.045*Math.cos(y*7+x*2));}
+  for(let i=0;i<vertices.count;i++){const u=vertices.getX(i)/BILL_WIDTH,v=vertices.getY(i)/BILL_HEIGHT;vertices.setZ(i,BILL_WIDTH*(.057*Math.sin(u*5.32)+.032*Math.cos(v*4.27+u*2.8)));}
   billGeometry.computeVertexNormals();
   const cloudTexture=createCloudTexture(T),texture=createBanknoteTexture(T),flutter={value:0};
   const cloudMaterial=new T.MeshBasicMaterial({map:cloudTexture,color:0xe4e9ef,transparent:true,opacity:0,depthWrite:false,alphaTest:.015});
@@ -52,7 +60,7 @@ export function createMoneyRain(T,chapters,anchors){
     shader.vertexShader='uniform float uFlutter;\n'+shader.vertexShader;
     shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
       float phase = instanceMatrix[3].x * 1.7 + instanceMatrix[3].z * 2.3;
-      transformed.z += .045 * sin(position.x * 5.0 + uFlutter * 3.8 + phase) * abs(position.x);
+      transformed.z += .045 * sin(position.x * ${(7/BILL_WIDTH).toFixed(3)} + uFlutter * 3.8 + phase) * abs(position.x);
     `);
   };
   const dummy=new T.Object3D();
