@@ -1,5 +1,5 @@
 import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=63';
-import {createCampusKit} from './village-campus-kit.js?v=61';
+import {createCampusKit} from './village-campus-kit.js?v=62';
 import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=59';
 
 export function createDistricts(T,extension=0,streets=1){

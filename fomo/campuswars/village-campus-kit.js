@@ -77,8 +77,14 @@ export function createCampusKit(T){
     for(let k=0;k<3;k++)box(g,0,.14+k*.15,d/2+1.4-k*.34,5.4,.22,1.8,0xc9c4b6);
     if(s.type==='library'){
       for(const x of [-12,-8,-4,4,8,12]){cylinder(g,x,5.8,d/2+2,.4,10.6,0xe5dfce);cylinder(g,x,.7,d/2+2,.65,.4,0xe5dfce);cylinder(g,x,11.2,d/2+2,.62,.35,0xe5dfce);}
-      box(g,0,11.7,d/2+1.5,29,.6,4.5,0xe5dfce);sign(g,'UNIVERSITY LIBRARY',0,11.73,d/2+3.8,23,.6);
-      if(s.x===0&&s.z===-120){
+      box(g,0,11.7,d/2+1.5,29,.6,4.5,0xe5dfce);
+      // The one library carrying the fomo banner keeps its cornice bare. Two
+      // rows of lettering stacked on the same facade read as clutter, and the
+      // banner is the one the village is meant to see. Every other library
+      // still names itself.
+      const bannerLibrary=s.x===0&&s.z===-120;
+      if(!bannerLibrary)sign(g,'UNIVERSITY LIBRARY',0,11.73,d/2+3.8,23,.6);
+      if(bannerLibrary){
         const map=createCampusBannerTexture(T),banner=instances(g,geometries.box,1);
         banner.name='fomo-campus-building-banner';banner.material=new T.MeshLambertMaterial({color:0xffffff,...(map?{map}:{color:0x12111a})});banner.userData={ownedMaterial:true,ownedMap:Boolean(map)};
         const matrix=new T.Matrix4().compose(new T.Vector3(0,8.25,d/2+2.65),new T.Quaternion(),new T.Vector3(29,29*320/1536,.08));
