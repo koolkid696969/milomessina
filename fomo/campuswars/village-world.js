@@ -1,7 +1,8 @@
 import {rankedHouseSizes} from './village-house-sizing.js?v=55';
 import {assignHouseFinishes} from './village-house-colors.js?v=52';
 import {createVillageEntrance} from './village-entrance.js?v=38';
-import {createPongGames} from './village-pong.js?v=55';
+import {createPongGames} from './village-pong.js?v=56';
+import {createDieGames} from './village-die.js?v=1';
 import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=55';
 import {createCompetition,houseStandings} from './village-competition.js?v=55';
 import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=55';
@@ -9,7 +10,7 @@ import {humanPose} from './village-human-motion.js?v=48';
 import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=56';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=61';
 import {palettes,hash} from './village-district-layout.js?v=63';
-import {createLots,rowExtension,streetCount,streetOriginX,toWorld,crowdMembers,activityPose} from './village-layout.js?v=64';
+import {createLots,rowExtension,streetCount,streetOriginX,toWorld,crowdMembers,activityPose} from './village-layout.js?v=65';
 import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=56';
 import {createChapterBanner,bannerIdentity} from './village-banners.js?v=56';
 import {createSchoolBanner} from './village-school-banners.js?v=56';
@@ -148,6 +149,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
   const crowdReach=Math.max(...lots.map(lot=>Math.abs(lot.originX)))+40;
   const members=crowdMembers(chapters,lots,houseSizes),parts={};
   const pong=createPongGames(THREE,members);world.add(pong.root);
+  const die=createDieGames(THREE,members);world.add(die.root);
   const construction=createConstructionEquipment(THREE,members);world.add(construction.root);
   const bodyGeometry=new THREE.CapsuleGeometry(.5,1,3,8);bodyGeometry.scale(1,.5,1);
   const roundParts=new Set(['head','hair','handL','handR','nose']);
@@ -187,11 +189,11 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
         limb('leg'+side,i,transform(leg.hip),transform(leg.knee),.155*h);
         limb('shin'+side,i,transform(leg.knee),transform(leg.ankle),.11*h);
         part('shoe'+side,[leg.ankle[0],leg.ankle[1]-.055+Math.abs(Math.sin(leg.pitch))*.145,leg.ankle[2]+.045],.15,.13,.29,0,leg.pitch);
-        if(j)part('cup',[arm.hand[0],arm.hand[1]+.04,arm.hand[2]+.025],.065,!state.walking&&m.action!=='pong'&&m.action!=='build'&&hash(m.chapter,m.member,'cup')>.86?.13:0,.065);
+        if(j)part('cup',[arm.hand[0],arm.hand[1]+.04,arm.hand[2]+.025],.065,!state.walking&&!['pong','die','build'].includes(m.action)&&hash(m.chapter,m.member,'cup')>.86?.13:0,.065);
       }
     });
     Object.values(parts).forEach(mesh=>mesh.instanceMatrix.needsUpdate=true);
-    pong.animate(time);construction.finish();
+    pong.animate(time);die.animate(time);construction.finish();
     flags.forEach((flag,i)=>{flag.rotation.y=Math.sin(time*2+i)*.15;flag.rotation.z=Math.sin(time*3+i)*.035;});
   }
   animateCrowd(0);
@@ -199,7 +201,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
   const entrance=createVillageEntrance(THREE,extension);world.add(entrance);
   // Batch repeated architectural parts so phones draw whole sets at once.
   world.updateMatrixWorld(true);
-  const dynamic=new Set([...pickables,...flags,...Object.values(parts),...Object.values(construction.meshes),...pong.games.map(game=>game.ball)]);
+  const dynamic=new Set([...pickables,...flags,...Object.values(parts),...Object.values(construction.meshes),...pong.games.map(game=>game.ball),die.dice]);
   const resources=new Set();
   function collect(){world.traverse(o=>{if(o===streets)return;if(o.geometry)resources.add(o.geometry);for(const m of (Array.isArray(o.material)?o.material:[o.material]))if(m){resources.add(m);for(const value of Object.values(m))if(value?.isTexture)resources.add(value);}if(o.isInstancedMesh)resources.add(o);});}
   collect();Object.values(landscapeKit.geometries).forEach(g=>resources.add(g));materials.forEach(m=>resources.add(m));windowMaterials.forEach(m=>resources.add(m));
@@ -214,5 +216,5 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
   function animateEffects(time){beacon?.animate(time);if(nightLife.root.visible)nightLife.animate(time);}
   collect();
   function dispose(){for(const resource of resources)if(!resource.userData?.sharedResource)resource.dispose();resources.clear();}
-  return {world,streets,lots,extension,streetTotal,houseFinishes,dispose,pickables,anchors,members,parts,animateCrowd,competition,beacon,nightLife,animateEffects,pong,construction};
+  return {world,streets,lots,extension,streetTotal,houseFinishes,dispose,pickables,anchors,members,parts,animateCrowd,competition,beacon,nightLife,animateEffects,pong,die,construction};
 }

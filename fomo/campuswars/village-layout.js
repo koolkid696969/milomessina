@@ -37,6 +37,9 @@ export function rowExtension(chapterCount) {
 }
 export function toWorld(lot,x,z){return {x:lot.x+x*Math.cos(lot.rotation)+z*Math.sin(lot.rotation),z:lot.z-x*Math.sin(lot.rotation)+z*Math.cos(lot.rotation)};}
 export const PONG_TABLE={x:3.8,z:9.8,width:1.25,length:2.6,height:.86,playerDistance:2.05};
+// Die is played two a side across a low folding table, each player behind their own cup.
+export const DIE_TABLE={x:-3.9,z:9.8,width:1.8,length:1.05,height:.76,playerDistance:.95,seatOffset:.44,cupOffset:.3};
+export const dieSeat=seat=>({side:seat<2?-1:1,dx:(seat%2?1:-1)*DIE_TABLE.seatOffset});
 export function motionProfile(chapter,member){
   const value=(key,min,range)=>min+hash(chapter,member,key)*range;
   return {breathRate:value('breath-rate',1.05,1.05),breathAmount:value('breath-range',.002,.005),shiftRate:value('shift-rate',.21,.37),shiftAmount:value('shift-range',.014,.03),twistRate:value('twist-rate',.31,.51),twistAmount:value('twist-range',.012,.023),nodRate:value('nod-rate',.5,.8),nodAmount:value('nod-range',.002,.005),lookRate:value('look-rate',.27,.53),lookAmount:value('look-range',.025,.065),idlePeriod:value('idle-period',7,12),idleOffset:value('idle-offset',0,30),idleAmount:value('idle-range',.035,.085),gestureRate:value('gesture-rate',.65,.8),gestureAmount:value('gesture-range',.55,.6),walkSpeed:value('walk-speed',.59,.28)};
@@ -44,6 +47,12 @@ export function motionProfile(chapter,member){
 export function pongTurn(chapter,time){
   const period=3.8+hash(chapter,'pong-period')*2.1,clock=time+hash(chapter,'pong-offset')*19,turn=Math.floor(clock/period);
   return {seat:((turn%2)+2)%2,elapsed:clock-turn*period,release:1.15,flight:.85,turn};
+}
+export function dieTurn(chapter,time){
+  // Play passes around the table, each throw aimed at one of the two cups opposite.
+  const period=2.9+hash(chapter,'die-period')*1.5,clock=time+hash(chapter,'die-offset')*23,turn=Math.floor(clock/period);
+  const seat=((turn%4)+4)%4;
+  return {seat,target:(seat<2?2:0)+Math.abs(turn%2),elapsed:clock-turn*period,release:.95,flight:.8,bounce:.42,turn};
 }
 export function crowdMembers(chapters,lots=createLots(chapters.length),houseSizes=rankedHouseSizes(chapters)){
   return chapters.flatMap((chapter,index)=>{
@@ -55,8 +64,8 @@ export function crowdMembers(chapters,lots=createLots(chapters.length),houseSize
         backpack:false,jacket:false,shorts:false,motionProfile:motionProfile(chapter.id,member)};
       const pose=constructionActivity(person,0);return {...person,x:pose.x,z:pose.z,rotation:pose.rotation};
     });
-    const lot=lots[index],walkers=Math.floor(chapter.joined/20),standing=chapter.joined-walkers,pong=chapter.joined>=15,porch=chapter.joined>=15&&standing>=9,sizes=[];
-    let remaining=standing-(porch?2:0)-(pong?2:0);
+    const lot=lots[index],walkers=Math.floor(chapter.joined/20),standing=chapter.joined-walkers,pong=chapter.joined>=15,die=chapter.joined>=15,porch=chapter.joined>=15&&standing>=9,sizes=[];
+    let remaining=standing-(porch?2:0)-(pong?2:0)-(die?4:0);
     while(remaining>0){let size=sizes.length===0&&remaining>=12?7:2+Math.floor(hash(chapter.id,sizes.length,'group-size')*4);size=Math.min(size,remaining);if(remaining-size===1)size++;sizes.push(size);remaining-=size;}
     if(porch)sizes.push(2);
     const groups=[],occupied=[];let member=0;
@@ -64,6 +73,10 @@ export function crowdMembers(chapters,lots=createLots(chapters.length),houseSize
       // Reserve the table and both players before placing conversation groups.
       for(let x=-.8;x<=.81;x+=.4)for(let z=-1.5;z<=1.51;z+=.3)occupied.push({x:PONG_TABLE.x+x,z:PONG_TABLE.z+z});
       for(const side of [-1,1])occupied.push({x:PONG_TABLE.x,z:PONG_TABLE.z+side*PONG_TABLE.playerDistance});
+    }
+    if(die){
+      for(let x=-1.1;x<=1.11;x+=.4)for(let z=-.7;z<=.71;z+=.3)occupied.push({x:DIE_TABLE.x+x,z:DIE_TABLE.z+z});
+      for(let seat=0;seat<4;seat++){const {side,dx}=dieSeat(seat);occupied.push({x:DIE_TABLE.x+dx,z:DIE_TABLE.z+side*DIE_TABLE.playerDistance});}
     }
     sizes.forEach((size,g)=>{
       const isPorch=porch&&g===sizes.length-1,radius=isPorch?.57:.62+size*.105,phase=hash(chapter.id,g,'angle')*Math.PI*2;
@@ -89,6 +102,10 @@ export function crowdMembers(chapters,lots=createLots(chapters.length),houseSize
       const z=PONG_TABLE.z+(seat?1:-1)*PONG_TABLE.playerDistance;
       people.push({chapter:chapter.id,member:++member,...toWorld(lot,PONG_TABLE.x,z),lot,rotation:lot.rotation+(seat?Math.PI:0),phase:hash(chapter.id,member,'phase')*20,groupPhase:-1,groupSize:2,seat,walking:false,action:'pong',ground:lawnGround(PONG_TABLE.x,z),...appearance(chapter.id,member)});
     }
+    if(die)for(let seat=0;seat<4;seat++){
+      const {side,dx}=dieSeat(seat),x=DIE_TABLE.x+dx,z=DIE_TABLE.z+side*DIE_TABLE.playerDistance;
+      people.push({chapter:chapter.id,member:++member,...toWorld(lot,x,z),lot,rotation:lot.rotation+(side>0?Math.PI:0),phase:hash(chapter.id,member,'phase')*20,groupPhase:-1,groupSize:4,seat,walking:false,action:'die',ground:lawnGround(x,z),...appearance(chapter.id,member)});
+    }
     for(const person of people)person.motionProfile=motionProfile(person.chapter,person.member);
     return people;
   });
@@ -103,6 +120,12 @@ export function activityPose(member,time){
   if(member.action==='pong'){
     const shot=pongTurn(member.chapter,time),active=shot.seat===member.seat,t=shot.elapsed;
     return {x:member.x,z:member.z,rotation:member.rotation,walking:false,gait:0,speaking:false,gesture:0,breath:0,pong:{lift:active?smooth(t/.65)*(1-smooth((t-1.5)/.8)):.18*smooth((t-1.8)/.3)*(1-smooth((t-2.3)/.5)),extension:smooth((t-.72)/.43)}};
+  }
+  if(member.action==='die'){
+    // The throwing arm rides the same toss channel as pong; the rest of the table watches the die.
+    const shot=dieTurn(member.chapter,time),active=shot.seat===member.seat,t=shot.elapsed;
+    const lift=active?smooth(t/.55)*(1-smooth((t-1.35)/.55)):.15*smooth((t-1.55)/.35)*(1-smooth((t-2.1)/.5));
+    return {x:member.x,z:member.z,rotation:member.rotation,walking:false,gait:0,speaking:false,gesture:0,breath:0,pong:{lift,extension:smooth((t-.6)/.4)}};
   }
   const profile=member.motionProfile,turn=(time+member.groupPhase)/(member.turnDuration??6),speaking=Math.floor(turn)%member.groupSize===member.seat;
   // The speaking hand rises only to chest level; listeners keep their arms down.

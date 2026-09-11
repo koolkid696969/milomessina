@@ -54,7 +54,7 @@ test('completed houses retain conversation groups and five leisure walkers',()=>
   assert.equal(village.members.filter(m=>m.walking).length,5);
   const standing=village.members.filter(m=>!m.walking&&m.action!=='build');assert(standing.every(m=>m.groupSize>=2));
   for(const member of standing){const a=activityPose(member,0),b=activityPose(member,15);assert.equal(a.x,b.x);assert.equal(a.z,b.z);assert(Math.abs(a.breath)<.01&&Math.abs(b.breath)<.01);}
-  const groups=Map.groupBy(standing.filter(m=>m.action!=='pong'),m=>m.chapter+':'+m.groupPhase);
+  const groups=Map.groupBy(standing.filter(m=>!['pong','die'].includes(m.action)),m=>m.chapter+':'+m.groupPhase);
   for(const t of [0,4,13,27])for(const group of groups.values())assert.equal(group.filter(m=>activityPose(m,t).speaking).length,1);
   for(const member of village.members.filter(m=>m.walking)){const a=activityPose(member,0),b=activityPose(member,10);assert(Math.hypot(a.x-b.x,a.z-b.z)>1);}
 });
@@ -309,6 +309,57 @@ test('pong balls leave the throwing hand continuously, arc to cups and alternate
   }
 });
 
+
+test('every built house runs a four-player die game clear of the lawn crowd',async()=>{
+  const {DIE_TABLE,dieSeat}=await import('../village-layout.js');
+  assert.equal(village.die.games.length,3);assert.equal(village.members.filter(m=>m.action==='die').length,12);
+  for(const game of village.die.games){
+    assert.deepEqual(game.players.map(p=>p.seat),[0,1,2,3]);assert.equal(game.cups.length,4);
+    assert(game.players.every(p=>village.members.includes(p)&&p.chapter===game.chapter&&p.ground<.3));
+    // Two a side, each facing the table across their own cup.
+    for(const [seat,player] of game.players.entries()){
+      const {side,dx}=dieSeat(seat),front=toWorld(player.lot,DIE_TABLE.x+dx,DIE_TABLE.z);
+      assert(Math.hypot(front.x-player.x,front.z-player.z)-DIE_TABLE.playerDistance<1e-9);
+      assert(Math.abs(game.cups[seat].position.x-(DIE_TABLE.x+dx))<1e-9);
+      assert.equal(Math.sign(game.cups[seat].position.z-DIE_TABLE.z),side);
+    }
+    for(const member of village.members.filter(m=>m.chapter===game.chapter&&!m.walking&&m.action!=='die')){
+      const dx=member.x-member.lot.x,dz=member.z-member.lot.z,a=member.lot.rotation;
+      const x=dx*Math.cos(a)-dz*Math.sin(a),z=dx*Math.sin(a)+dz*Math.cos(a);
+      assert(Math.abs(x-DIE_TABLE.x)>DIE_TABLE.width/2+.2||Math.abs(z-DIE_TABLE.z)>DIE_TABLE.length/2+.2);
+    }
+  }
+});
+
+test('thrown dice bounce off the table into a cup opposite and play passes round the table',async()=>{
+  const {dieTurn,DIE_TABLE,dieSeat}=await import('../village-layout.js');
+  const clocks=village.die.games.map(g=>dieTurn(g.chapter,0).elapsed);assert.equal(new Set(clocks).size,clocks.length);
+  for(const game of village.die.games){
+    const shot=dieTurn(game.chapter,20),releaseTime=20-shot.elapsed+shot.release,thrower=game.players[shot.seat];
+    assert.equal(dieSeat(shot.target).side,-dieSeat(shot.seat).side);
+    village.die.animate(releaseTime-1e-5);const before=game.die.position.clone();
+    village.die.animate(releaseTime);const start=game.die.position.clone();assert(start.distanceTo(before)<.001);
+    assert(start.distanceTo(village.die.handPosition(thrower,releaseTime))<1e-8);
+    village.die.animate(releaseTime+shot.flight*shot.bounce);const bounce=game.die.position.clone();
+    assert(Math.abs(bounce.y-(DIE_TABLE.height+.073))<1e-8);assert(start.y>bounce.y);
+    // The die must land on the table itself, on the thrower's half of it.
+    const table=new THREE.Vector3(DIE_TABLE.x,0,DIE_TABLE.z).applyAxisAngle(new THREE.Vector3(0,1,0),thrower.lot.rotation).add(new THREE.Vector3(thrower.lot.x,0,thrower.lot.z));
+    const rel=bounce.clone().sub(table).applyAxisAngle(new THREE.Vector3(0,1,0),-thrower.lot.rotation);
+    assert(Math.abs(rel.x)<DIE_TABLE.width/2&&Math.abs(rel.z)<DIE_TABLE.length/2);
+    assert.equal(Math.sign(rel.z),dieSeat(shot.seat).side);
+    village.die.animate(releaseTime+shot.flight*(1+shot.bounce)/2);const mid=game.die.position.clone();assert(mid.y>bounce.y);
+    village.die.animate(releaseTime+shot.flight);const end=game.die.position.clone();
+    const cup=game.cups[shot.target].position.clone();cup.y=DIE_TABLE.height+.14;
+    cup.applyAxisAngle(new THREE.Vector3(0,1,0),thrower.lot.rotation).add(new THREE.Vector3(thrower.lot.x,0,thrower.lot.z));
+    assert(end.distanceTo(cup)<1e-8);
+    village.die.animate(releaseTime+shot.flight+.2);assert(!game.die.visible);
+    const seats=new Map();for(let t=releaseTime;seats.size<4;t+=.2){const next=dieTurn(game.chapter,t);if(!seats.has(next.turn))seats.set(next.turn,next.seat);}
+    const order=[...seats.entries()].toSorted((a,b)=>a[0]-b[0]).map(([,seat])=>seat);
+    assert.deepEqual(order.toSorted(),[0,1,2,3]);assert(order.every((seat,i)=>!i||seat===(order[i-1]+1)%4));
+    village.animateCrowd(releaseTime+.3);village.world.updateMatrixWorld(true);
+    assert([...village.die.dice.instanceMatrix.array].every(Number.isFinite));
+  }
+});
 
 test('fomo eyes banner hangs from both building walls with no ground supports',()=>{
   for(const count of [5,9]){

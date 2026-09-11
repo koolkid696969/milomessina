@@ -1,11 +1,27 @@
-import {PONG_TABLE,pongTurn,activityPose} from './village-layout.js?v=64';
+import {PONG_TABLE,pongTurn,activityPose} from './village-layout.js?v=65';
 import {humanPose} from './village-human-motion.js?v=31';
 
+// The throwing hand in world space, shared by every lawn game's projectile.
+export function throwingHand(T,player,time){
+  const state=activityPose(player,time),rig=humanPose(player,state,time),hand=rig.arms[1].hand,h=player.height,a=state.rotation;
+  return new T.Vector3(state.x+(hand[0]*Math.cos(a)+hand[2]*Math.sin(a))*h,(hand[1]+.055)*h+player.ground,state.z+(-hand[0]*Math.sin(a)+hand[2]*Math.cos(a))*h);
+}
 // Tables and players share one layout and clock, including ball release from the hand.
+// Every lawn game draws from one set of materials so all their tables and cups
+// batch into the same handful of draw calls.
+const lawnGameMaterials=new WeakMap();
+export function lawnGameKit(T){
+  if(!lawnGameMaterials.has(T))lawnGameMaterials.set(T,{
+    top:new T.MeshStandardMaterial({color:0x285f61,roughness:.7}),metal:new T.MeshStandardMaterial({color:0x9ca4a6,metalness:.65,roughness:.45}),
+    red:new T.MeshStandardMaterial({color:0xe34f4c,roughness:.6}),white:new T.MeshStandardMaterial({color:0xfff1dc,roughness:.5}),
+    box:new T.BoxGeometry(1,1,1),cup:new T.CylinderGeometry(.10,.073,.22,12,1,true),rim:new T.TorusGeometry(.10,.012,4,12)
+  });
+  return lawnGameMaterials.get(T);
+}
 export function createPongGames(T,members){
   const root=new T.Group();root.name='chapter-beer-pong';const games=[];
-  const boxGeometry=new T.BoxGeometry(1,1,1),cupGeometry=new T.CylinderGeometry(.10,.073,.22,12,1,true),rimGeometry=new T.TorusGeometry(.10,.012,4,12);
-  const top=new T.MeshStandardMaterial({color:0x285f61,roughness:.7}),metal=new T.MeshStandardMaterial({color:0x9ca4a6,metalness:.65,roughness:.45}),red=new T.MeshStandardMaterial({color:0xe34f4c,roughness:.6}),white=new T.MeshStandardMaterial({color:0xfff1dc,roughness:.5});
+  const kit=lawnGameKit(T),boxGeometry=kit.box,cupGeometry=kit.cup,rimGeometry=kit.rim;
+  const {top,metal,red,white}=kit;
   function box(parent,x,y,z,w,h,d,material){const mesh=new T.Mesh(boxGeometry,material);mesh.position.set(x,y,z);mesh.scale.set(w,h,d);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
   for(const player of members.filter(m=>m.action==='pong'&&m.seat===0)){
     const players=[player,members.find(m=>m.chapter===player.chapter&&m.action==='pong'&&m.seat===1)],group=new T.Group();
@@ -26,10 +42,7 @@ export function createPongGames(T,members){
     const ball=new T.Mesh(new T.SphereGeometry(.07,10,8),new T.MeshBasicMaterial({color:0xfff5d7}));ball.name=`pong-ball-${player.chapter}`;root.add(ball);
     games.push({chapter:player.chapter,group,players,ball,cups});
   }
-  function handPosition(player,time){
-    const state=activityPose(player,time),rig=humanPose(player,state,time),hand=rig.arms[1].hand,h=player.height,a=state.rotation;
-    return new T.Vector3(state.x+(hand[0]*Math.cos(a)+hand[2]*Math.sin(a))*h,(hand[1]+.055)*h+player.ground,state.z+(-hand[0]*Math.sin(a)+hand[2]*Math.cos(a))*h);
-  }
+  const handPosition=(player,time)=>throwingHand(T,player,time);
   function animate(time){
     for(const game of games){
       const shot=pongTurn(game.chapter,time),player=game.players[shot.seat],t=shot.elapsed;
