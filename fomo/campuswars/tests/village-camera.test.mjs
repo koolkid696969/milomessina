@@ -8,10 +8,11 @@ import * as THREE from '../vendor/three.module.min.js';
 import {createMoneyRain} from '../village-money-rain.js';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from '../village-intro.js';
 
-function cameraHarness(reduced=false,initialHash='',deferWarmup=false,mobile=false){
+function cameraHarness(reduced=false,initialHash='',deferWarmup=false,mobile=false,screen={width:1200,height:650}){
   const elements=new Map(),events=new Map(),selections=[],lighting=[],builds=[],pixelRatios=[];let intersection,frame,camera,finishWarmup,renders=0;
   function element(id){if(!elements.has(id))elements.set(id,{clientWidth:1200,clientHeight:650,hidden:false,style:{setProperty(){}},querySelectorAll:()=>[],classList:{add(){},remove(){},toggle(){}},getAttribute:()=> 'false',setAttribute(){},prepend(){},focus(){},setPointerCapture(){},addEventListener(type,fn){events.set(id+':'+type,fn);}});return elements.get(id);}
   element('chapters-data').textContent='{"chapters":[]}';
+  Object.assign(element('village-viewport'),{clientWidth:screen.width,clientHeight:screen.height});
   const canvas=element('canvas');canvas.getBoundingClientRect=()=>({left:0,top:0,width:1200,height:650});canvas.hasPointerCapture=()=>false;
   class Renderer{constructor(){this.domElement=canvas;this.shadowMap={};}setPixelRatio(ratio){pixelRatios.push(ratio);}setSize(){}render(scene,view){renders++;scene.updateMatrixWorld(true);camera=view;}}
   const sandbox={villageQuality:()=>villageQuality(mobile),createStreetNavigation,streetStops,streetStep,prewarmVillage:()=>({then(done){finishWarmup=done;if(!deferWarmup)done();return {catch(){}};}}),createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:(_T,input)=>(builds.push(input),{dispose(){},extension:0,world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:2,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
@@ -238,4 +239,19 @@ test('pinching the overview changes zoom and cancellation releases the gesture',
   const zoomed=h.step(.02);assert(zoomed.y<start.y);
   h.fire('canvas:pointercancel',touch(2,300));h.fire('canvas:pointerup',touch(1,100));
   h.fire('village-zoom-out:click');assert(h.step(.02).y>zoomed.y);
+});
+
+test('a phone frames the house above the chapter sheet',()=>{
+  // The phone sheet covers the screen from 380px of 812 downward; the house belongs above it.
+  const sheetTop=1-2*380/812,lot=new THREE.Vector3(-20,0,-19),roofline=new THREE.Vector3(-20,15,-19);
+  const h=cameraHarness(false,'',false,true,{width:375,height:812});h.show(true);h.step(.02);
+  h.fire('document:chapter:select',{detail:{id:'sigma-chi-sdsu',focus:true}});h.step(4);
+  const roof=roofline.clone().project(h.camera()),lawn=lot.clone().project(h.camera());
+  assert(roof.y<1,`the tallest roofline sits off screen at ${roof.y}`);
+  assert(lawn.y>sheetTop,`the lawn sinks behind the sheet at ${lawn.y}`);
+  // The desktop drawer sits beside the village, so that framing stays close in.
+  const desktop=cameraHarness();desktop.show(true);desktop.step(.02);
+  desktop.fire('document:chapter:select',{detail:{id:'sigma-chi-sdsu',focus:true}});desktop.step(4);
+  assert(roofline.clone().project(desktop.camera()).y>roof.y,'the phone should stand back further than the desktop');
+  assert(desktop.camera().position.distanceTo(lot)<h.camera().position.distanceTo(lot));
 });

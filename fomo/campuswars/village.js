@@ -120,7 +120,8 @@ function startVillage(){
   function choose(id,focus=false,emit=true){
     const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
     // Frame the house from its own street's centre line, whichever street that is.
-    if(focus){takeControl();leaveStreet();const ox=anchor.lot.originX||0,side=anchor.lot.x-ox;wantedTarget.set(ox+side*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=side<0?1.08:-1.08;}
+    // On phones the chapter sheet takes the bottom of the screen, so stand back and aim low: the whole house fits above it.
+    if(focus){takeControl();leaveStreet();const ox=anchor.lot.originX||0,side=anchor.lot.x-ox,phone=viewport.clientWidth<650;wantedTarget.set(ox+side*.69,phone?-.5:2,anchor.lot.z);wantedRadius=phone?46:30;wantedPhi=.67;wantedTheta=side<0?1.08:-1.08;}
     if(emit)document.dispatchEvent(new CustomEvent('village:select',{detail:{id,interactive:focus}}));wake();
   }
   document.addEventListener('chapter:select',e=>choose(e.detail.id,Boolean(e.detail.focus)));

@@ -53,3 +53,30 @@ dialog{width:580px;max-width:calc(100% - 32px);max-height:calc(100dvh - 48px);pa
   .street-controls>span,.street-controls #street-exit{display:none}
   .controls-open .street-controls{visibility:hidden}
 }
+
+/* Phone: the chapter drawer drops to a short sheet along the bottom edge, so the
+   house you just tapped stays in view above it. */
+@media(max-width:700px){
+  .village-drawer{
+    display:flex;flex-direction:column;
+    top:auto;bottom:calc(max(16px,env(safe-area-inset-bottom)) + 56px);
+    left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));
+    width:auto;max-width:none;max-height:min(46dvh,360px);
+    padding:15px 16px 12px;border-radius:16px
+  }
+  .village-drawer>*{flex:none}
+  .drawer-note{display:none}
+  .drawer-heading h2{font-size:22px;margin-top:4px}
+  /* Tapping a house asks about that house, so its panel comes first. */
+  .chapter-panel{order:1;border-top:0;margin-top:12px;padding-top:0;gap:12px}
+  .chapter-crest{min-width:40px;height:40px;font-size:18px}
+  .chapter-identity h3{font-size:19px;margin-top:3px}
+  .neighborhood{order:2;border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+  .house-card{width:134px;padding:10px}
+  .row-disclosure{order:3}
+  .copy-fallback{order:4}
+  .drawer-open .street-controls{visibility:hidden}
+}
+@media(max-width:700px) and (max-height:600px){
+  .village-drawer{top:auto;max-height:min(52dvh,300px)}
+}

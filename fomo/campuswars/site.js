@@ -16,7 +16,9 @@
   function setDrawer(open) {
     drawer.hidden = !open;
     drawerToggle.setAttribute('aria-expanded', String(open));
-    if(open)chapterFeed?.refresh();
+    // The phone sheet shares the bottom edge with the controls, so they take turns.
+    villageShell.classList.toggle('drawer-open', open);
+    if(open){setMoreControls(false);chapterFeed?.refresh();}
   }
   drawerToggle.addEventListener('click', () => setDrawer(drawer.hidden));
   document.getElementById('drawer-close').addEventListener('click', () => {setDrawer(false);drawerToggle.focus();});
@@ -189,7 +191,7 @@
   addEventListener('hashchange', readHash);
   selectChapter(selectedId, {writeHash: false, emit: false});
   readHash();
-  import('./village.js?v=64').catch(error => {
+  import('./village.js?v=68').catch(error => {
     console.error('Unable to load Greek village:', error);
     document.getElementById('village-loading').textContent = 'The village couldn’t load. Open Chapters to browse progress or join Greek Wars.';
     document.getElementById('village').classList.remove('intro-playing');
