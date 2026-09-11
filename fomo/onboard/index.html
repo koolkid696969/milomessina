@@ -268,10 +268,10 @@ footer{border-top:0;margin-top:0}
    still reach the sheet.
 
      app / ios / android
-       Where "download fomo" goes. Points at fomo.family today
-       because that is a real page that sends people to the app. Set
-       ios and android and the button picks the right store off the
-       phone it is opened on.
+       Where "download fomo" goes: fomo — never miss out, by FOMO
+       Labs Inc. The button picks the store off the phone it is
+       opened on, and anything that is neither iPhone nor Android
+       gets fomo.family.
 
      verifyUsername    GET  <url>?username=jackd
        Answers {"exists":true} / {"exists":false}. Turns step 2 into
@@ -302,8 +302,8 @@ footer{border-top:0;margin-top:0}
    ════════════════════════════════════════════════════════════ */
 const FOMO = {
   app:            'https://fomo.family',
-  ios:            '',
-  android:        '',
+  ios:            'https://apps.apple.com/us/app/fomo-never-miss-out/id6741115427',
+  android:        'https://play.google.com/store/apps/details?id=family.fomo.app',
   verifyUsername: '',
   clanLink:       '',
   joinEndpoint:   '',
@@ -331,19 +331,15 @@ const wanted = (params.get('c')||params.get('clan')||'').trim().toLowerCase();
 const slot   = document.getElementById('clanSlot');
 const pick   = document.getElementById('pickSlot');
 const lede   = document.getElementById('lede');
-let chapters = [], allChapters = [], clan = null;
+let chapters = [], clan = null;
 
-/* The admin holds some houses twice — two rows, two uuids, one chapter. A
-   student cannot choose between two identical lines, so the picker is shown
-   the earliest registration of each. Links to the copies keep working:
-   ?c= is resolved against the full list, never this one. */
-function dedupe(list){
-  const seen=new Map();
-  for(const c of list){
-    const key=(c.name+'|'+c.school).toLowerCase().replace(/[^a-z0-9|]+/g,' ');
-    if(!seen.has(key))seen.set(key,c);
-  }
-  return [...seen.values()];
+/* Some houses are in the admin twice — two rows, two uuids, different roster
+   counts on each. Both are real registrations and both are shown; picking the
+   house is what matters, and either row puts a student in the same clan.
+   What they cannot be is two identical lines, so when a name and school are
+   shared the rosters are printed to tell them apart. */
+function twinned(c){
+  return chapters.some(o=>o!==c&&o.name===c.name&&o.school===c.school);
 }
 
 async function loadChapters(){
@@ -491,7 +487,8 @@ function showPicker({focus=false}={}){
       li.innerHTML='<b></b><i><span class="nm"></span><span class="sc"></span></i>';
       li.querySelector('b').textContent=c.letters||'';
       li.querySelector('.nm').textContent=c.name;
-      li.querySelector('.sc').textContent=c.school||'';
+      li.querySelector('.sc').textContent=(c.school||'')+
+        (twinned(c)?' · '+c.active+' actives, '+c.joined+' joined':'');
       li.addEventListener('mousedown',e=>e.preventDefault());
       li.addEventListener('click',()=>take(c));
       list.appendChild(li);
@@ -604,9 +601,8 @@ document.getElementById('haveIt').addEventListener('click',()=>{
 /* ── go ───────────────────────────────────────────────────── */
 restoreDraft();
 loadChapters().then(list=>{
-  allChapters=list;
-  chapters=dedupe(list);
-  const match=allChapters.find(c=>c.id.toLowerCase()===wanted);
+  chapters=list;
+  const match=chapters.find(c=>c.id.toLowerCase()===wanted);
   if(match)setClan(match);
   else if(chapters.length)showPicker();
   else{

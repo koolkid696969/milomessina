@@ -80,8 +80,8 @@ is reported, and the answers still reach the sheet.
 ```js
 const FOMO = {
   app:            'https://fomo.family',
-  ios:            '',
-  android:        '',
+  ios:            'https://apps.apple.com/…/id6741115427',
+  android:        'https://play.google.com/…?id=family.fomo.app',
   verifyUsername: '',
   clanLink:       '',
   joinEndpoint:   '',
@@ -89,11 +89,13 @@ const FOMO = {
 };
 ```
 
-**`app` / `ios` / `android`** — where *download fomo* goes. It points at
-fomo.family today because that is a real page that sends people to the app;
-it is not pointed at a guessed store id, which would land people on somebody
-else's listing. Set `ios` and `android` and the button picks the right store
-off the phone it is opened on.
+**`app` / `ios` / `android`** — where *download fomo* goes: **fomo — never
+miss out**, by FOMO Labs Inc. ([App Store][ios], [Google Play][play]). The
+button picks the store off the phone it is opened on; anything that is
+neither iPhone nor Android gets `app`, which is fomo.family.
+
+[ios]: https://apps.apple.com/us/app/fomo-never-miss-out/id6741115427
+[play]: https://play.google.com/store/apps/details?id=family.fomo.app
 
 **`verifyUsername`** — `GET <url>?username=jackd` answering
 `{"exists": true}`. Turns step 2 into a live check, so a handle nobody can

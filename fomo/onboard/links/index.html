@@ -95,18 +95,6 @@ function message(c,url){
     c.name+' clan. Takes two minutes:\n'+url;
 }
 
-/* the admin holds some houses twice — two rows, two uuids, one chapter.
-   One house should get one link, so only the earliest registration is
-   listed. Links to the copies still resolve on the portal itself. */
-function dedupe(list){
-  const seen=new Map();
-  for(const c of list){
-    const key=(c.name+'|'+c.school).toLowerCase().replace(/[^a-z0-9|]+/g,' ');
-    if(!seen.has(key))seen.set(key,c);
-  }
-  return [...seen.values()];
-}
-
 async function load(){
   for(const [url,live] of [['/api/campuswars',true],['/fomo/campuswars/chapters.json',false]]){
     try{
@@ -114,31 +102,31 @@ async function load(){
       if(!r.ok)continue;
       const j=await r.json();
       if(Array.isArray(j.chapters)&&j.chapters.length)
-        return {chapters:dedupe(j.chapters.filter(c=>c&&c.id&&c.id!=='empty'&&c.name)),
-                live:live&&j.live===true,at:j.updatedAt,raw:j.chapters.length};
+        return {chapters:j.chapters.filter(c=>c&&c.id&&c.id!=='empty'&&c.name),
+                live:live&&j.live===true,at:j.updatedAt};
     }catch(_){}
   }
   return {chapters:[],live:false};
 }
 
-load().then(({chapters,live,at,raw})=>{
+load().then(({chapters,live,at})=>{
   if(!chapters.length){
     state.textContent='chapter list unavailable — the feed and the saved copy both failed';
     return;
   }
-  const dupes=(raw||chapters.length)-chapters.length;
-  state.innerHTML = (live
+  state.innerHTML = live
     ? '<b>live</b> · '+chapters.length+' registered chapter'+(chapters.length===1?'':'s')+
       (at?' · read '+new Date(at).toLocaleTimeString():'')
-    : 'saved copy · '+chapters.length+' chapter'+(chapters.length===1?'':'s')+' · the live feed did not answer')
-    + (dupes?' · '+dupes+' duplicate registration'+(dupes===1?'':'s')+' folded in':'');
+    : 'saved copy · '+chapters.length+' chapter'+(chapters.length===1?'':'s')+' · the live feed did not answer';
 
   rows.innerHTML=chapters.map(c=>{
     const url=location.origin+'/fomo/onboard/?c='+encodeURIComponent(c.id);
     return '<div class="row" data-id="'+esc(c.id)+'">'+
       '<span class="crest">'+esc(c.letters||c.name.slice(0,2))+'</span>'+
       '<span class="who"><strong>'+esc(c.name)+'</strong>'+
-      '<span class="sch">'+esc(c.school||'')+'</span>'+
+      '<span class="sch">'+esc(c.school||'')+
+        (chapters.some(o=>o!==c&&o.name===c.name&&o.school===c.school)
+          ? ' · '+c.active+' actives, '+c.joined+' joined' : '')+'</span>'+
       '<span class="lnk">'+esc(url)+'</span></span>'+
       '<span class="acts">'+
         '<button class="btn btn-g btn-sm" type="button" data-copy="msg">message</button>'+
