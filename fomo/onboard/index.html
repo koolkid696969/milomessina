@@ -273,6 +273,23 @@ footer{border-top:0;margin-top:0}
        opened on, and anything that is neither iPhone nor Android
        gets fomo.family.
 
+     referral / referrals          CONFIRM WITH FOMO BEFORE SETTING
+       A fomo username. Set one and the download button points at
+       fomo.family/r/<username> instead of the store, so the install
+       carries attribution into fomo's own system rather than
+       arriving anonymous — which is what every install this page
+       has produced so far. fomo's referral code is applied at
+       signup and survives the trip through the App Store.
+
+       referral is one username for the whole campaign. referrals
+       maps a chapter id to its own, so each house's installs credit
+       that house's lead — which gives every president a reason of
+       their own to chase the rest of the roster.
+
+       The fomo.family/r/<username> shape is documented by third
+       parties, not by fomo. Confirm it with them before setting
+       this: a wrong link here sends every student nowhere.
+
      verifyUsername    GET  <url>?username=jackd
        Answers {"exists":true} / {"exists":false}. Turns step 2 into
        a live check, so a handle nobody can find is caught while the
@@ -304,18 +321,24 @@ const FOMO = {
   app:            'https://fomo.family',
   ios:            'https://apps.apple.com/us/app/fomo-never-miss-out/id6741115427',
   android:        'https://play.google.com/store/apps/details?id=family.fomo.app',
+  referral:       '',
+  referrals:      {},
   verifyUsername: '',
   clanLink:       '',
   joinEndpoint:   '',
   clanIds:        {}
 };
 
-/* the store button, off whatever phone this was opened on */
-(function(){
+/* Where the download button goes. A referral link routes to the right store
+   by itself and carries the attribution with it, so when one is set it
+   replaces the store link rather than sitting beside it. */
+function downloadHref(c){
+  const who=(c&&FOMO.referrals[c.id])||FOMO.referral;
+  if(who)return 'https://fomo.family/r/'+encodeURIComponent(who);
   const ua=navigator.userAgent||'';
-  const store=/iPhone|iPad|iPod/i.test(ua)?FOMO.ios:/Android/i.test(ua)?FOMO.android:'';
-  document.getElementById('getApp').href=store||FOMO.app;
-})();
+  return (/iPhone|iPad|iPod/i.test(ua)?FOMO.ios:/Android/i.test(ua)?FOMO.android:'')||FOMO.app;
+}
+document.getElementById('getApp').href=downloadHref(null);
 
 const fomoClanId  = c => (c && (FOMO.clanIds[c.id]||c.id)) || '';
 const clanLinkFor = c => FOMO.clanLink && c
@@ -396,6 +419,7 @@ function setClan(c,{inline=false}={}){
     slot.innerHTML='';
     showPicker({focus:true});
   });
+  document.getElementById('getApp').href=downloadHref(c);
   history.replaceState(null,'','?c='+encodeURIComponent(c.id));
   saveDraft();
 }
