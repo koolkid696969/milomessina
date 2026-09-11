@@ -1,5 +1,5 @@
 import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=60';
-import {createCampusKit} from './village-campus-kit.js?v=35';
+import {createCampusKit} from './village-campus-kit.js?v=61';
 import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=59';
 
 export function createDistricts(T,extension=0){
@@ -94,13 +94,6 @@ export function createDistricts(T,extension=0){
       }
       // Lamps and access bollards punctuate long pavements without blocking the road.
       for(const z of [-40,34])for(let i=0;i<3;i++)cylinder(p,side*(core?31:18)+i*.9,.55,z,.09,.9,0x687575);
-    }
-    if(!spine){
-      for(const side of [-1,1])for(const z of [-37,37]){
-        const x=side*9.7;cylinder(p,x,4.8,z,.12,9.5,0x74614a);box(p,x,8.8,z,2.1,.12,.12,0x74614a);
-        if(z===-37)for(const dx of [-.6,.6])kit.wire(p,[x+dx,8.8,-37],[x+dx,8.8,37],1.4);
-      }
-      for(const z of [-37,37])kit.wire(p,[-9.7,8.8,z],[9.7,8.8,z],.9);
     }
   }
   function distantCampus(){

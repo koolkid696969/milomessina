@@ -66,7 +66,7 @@ The density pass adds:
 
 - Foreground picnic areas, planted edges, hedgerows, low walls, bollards, parked bicycle racks, trash/recycling pairs, newspaper boxes, sandwich signs, cabinets, hydrants and banner poles.
 - 76 static parked cars in the opening nine-block neighborhood, with parking pockets painted into the existing floor and checked against building footprints. Moving traffic remains eight vehicles and twelve cyclists.
-- Gutters, downspouts, window boxes, address plaques, wall lights, chimneys, vents, roof hatches, dishes and utility poles with sagging wires. Existing modern buildings retain rooftop HVAC units and canopies.
+- Gutters, downspouts, window boxes, address plaques, wall lights, chimneys, vents, roof hatches and dishes. Existing modern buildings retain rooftop HVAC units and canopies. The streets carry no overhead lines or utility poles.
 - A permanent, non-streamed distant ring of dormitory silhouettes and tree mass, plus a water tower, bell tower and stadium lighting. Fog density is 0.0022 so the horizon remains legible as depth.
 - 424 ambient people in the opening neighborhood, concentrated at plazas, café queues, picnic areas and entrances. Academic blocks have 64 each and Greek Row has 99; quieter surrounding streets have 31–35. These are scenery counts, never registration statistics.
 - Doorway arrivals/departures with an indoor pause, a dog walker and leashed dog, skateboarders, a frisbee pair, and a groundskeeper, alongside existing walking, jogging, conversation, study and basketball.

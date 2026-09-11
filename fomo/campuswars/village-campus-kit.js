@@ -4,7 +4,7 @@ import {hash,pick} from './village-district-layout.js?v=60';
 // Shared architectural parts, textures and landscape geometry. All static parts
 // are instanced per streamed block; texture resources live across block changes.
 export function createCampusKit(T){
-  const geometries={box:new T.BoxGeometry(1,1,1),wire:new T.CylinderGeometry(1,1,1,3),shoe:new T.CapsuleGeometry(.5,1,1,6),cylinder:new T.CylinderGeometry(1,1,1,12),sphere:new T.SphereGeometry(1,12,8),leaf:new T.SphereGeometry(1,8,5),cone:new T.ConeGeometry(1,1,12),wheel:new T.TorusGeometry(.34,.045,6,14),dome:new T.SphereGeometry(1,24,12,0,Math.PI*2,0,Math.PI/2)};
+  const geometries={box:new T.BoxGeometry(1,1,1),shoe:new T.CapsuleGeometry(.5,1,1,6),cylinder:new T.CylinderGeometry(1,1,1,12),sphere:new T.SphereGeometry(1,12,8),leaf:new T.SphereGeometry(1,8,5),cone:new T.ConeGeometry(1,1,12),wheel:new T.TorusGeometry(.34,.045,6,14),dome:new T.SphereGeometry(1,24,12,0,Math.PI*2,0,Math.PI/2)};
   geometries.shoe.scale(1,.5,1);
   const maps=new Map(),materials=new Map();
   let vehicleKit;
@@ -161,7 +161,6 @@ export function createCampusKit(T){
     for(const x of [-w*.3,w*.3]){box(g,x,1.02,d/2+.5,1.65,.3,.6,0x8a775b);for(let i=0;i<3;i++)mesh(g,'leaf',x-.5+i*.5,1.35,d/2+.5,.33,.25,.3,0x6f7f56);}
     address(g,10+Math.floor(hash(s.x,s.z,'address')*89),2.8,2.1,d/2+.17);
   }
-  function wire(p,start,end,sag=.8){for(let i=0;i<10;i++){const point=t=>[start[0]+(end[0]-start[0])*t,start[1]+(end[1]-start[1])*t-4*sag*t*(1-t),start[2]+(end[2]-start[2])*t];const a=point(i/10),b=point((i+1)/10),d=new T.Vector3().subVectors(new T.Vector3(...b),new T.Vector3(...a)),m=mesh(p,'wire',(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,.015,d.length(),.015,0x4a5351);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize());}}
   function claimFloor(parent){
     const floor=box(parent,0,.02,3,15,.22,18,0x6269dd);
     floor.name='chapter-claim-floor';floor.userData={chapter:'empty',action:'register'};
@@ -183,7 +182,7 @@ export function createCampusKit(T){
     return floor;
   }
   function disposeChunk(p){p.traverse(m=>{if(m.isInstancedMesh)m.dispose();if(m.userData.ownedMap)m.material.map.dispose();if(m.userData.ownedMaterial)m.material.dispose();if(m.userData.ownedTexture){m.material.map.dispose();m.material.dispose();m.geometry.dispose();}else if(m.userData.ownedGeometry){m.geometry.dispose();if(![...materials.values()].includes(m.material))m.material.dispose();}});}
-  return {geometries,get vehicles(){return vehicles();},material,instances,mesh,box,cylinder,bar,tree,bench,lamp,table,path,sign,building,disposeChunk,hedge,bins,hydrant,parkedCar,streetFurniture,wire,claimFloor,batch:(p,exclude=[])=>batchCampusGeometry(T,p,exclude)};
+  return {geometries,get vehicles(){return vehicles();},material,instances,mesh,box,cylinder,bar,tree,bench,lamp,table,path,sign,building,disposeChunk,hedge,bins,hydrant,parkedCar,streetFurniture,claimFloor,batch:(p,exclude=[])=>batchCampusGeometry(T,p,exclude)};
 }
 
 export function batchCampusGeometry(T,parent,exclude=[]){
