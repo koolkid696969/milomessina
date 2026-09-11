@@ -1,5 +1,5 @@
 import {rankedHouseSizes} from './village-house-sizing.js?v=55';
-import {hash,appearance,roundedLoop} from './village-district-layout.js?v=60';
+import {hash,appearance,roundedLoop} from './village-district-layout.js?v=63';
 import {gaitPhase,speechGesture,smooth} from './village-human-motion.js?v=48';
 import {constructionAssignment,constructionActivity} from './village-construction-layout.js?v=51';
 const lawnRoute=roundedLoop(-7.9,7,7.9,14.4,1.15);
@@ -13,11 +13,27 @@ export const LOTS = [
   {x:-20,z:19,rotation:Math.PI/2,style:4},
   {x:20,z:19,rotation:-Math.PI/2,style:5}
 ];
+// A street carries ten chapter houses. Beyond that the village grows sideways
+// onto the next parallel street rather than into one endless row: streets sit on
+// the campus road grid, alternating east then west of the original boulevard.
+export const STREET_CAPACITY=10,STREET_SPACING=100;
+export const streetOriginX=street=>street?(street%2?1:-1)*Math.ceil(street/2)*STREET_SPACING:0;
+export function streetCount(chapterCount){return Math.max(1,Math.ceil(chapterCount/STREET_CAPACITY));}
 export function createLots(chapterCount) {
   if (!Number.isSafeInteger(chapterCount) || chapterCount < 0) throw new RangeError('Invalid chapter count');
-  return Array.from({length:chapterCount+1},(_,i)=>({x:i%2?20:-20,z:-19+Math.floor(i/2)*19,rotation:i%2?-Math.PI/2:Math.PI/2,style:i%5}));
+  const last=streetCount(chapterCount)-1;
+  // The claimable lot follows the final house, staying on that street even when
+  // the ten houses in front of it have already filled it.
+  return Array.from({length:chapterCount+1},(_,i)=>{
+    const street=Math.min(Math.floor(i/STREET_CAPACITY),last),slot=i-street*STREET_CAPACITY,originX=streetOriginX(street);
+    return {x:originX+(slot%2?20:-20),z:-19+Math.floor(slot/2)*19,rotation:slot%2?-Math.PI/2:Math.PI/2,style:i%5,street,originX};
+  });
 }
-export function rowExtension(chapterCount) {return Math.max(0,Math.ceil((chapterCount+1)/2)-3)*19;}
+// Every street shares one world length, so the deepest of them sets the extension.
+export function rowExtension(chapterCount) {
+  const rows=Math.max(...createLots(chapterCount).map(lot=>lot.z))/19+2;
+  return Math.max(0,rows-3)*19;
+}
 export function toWorld(lot,x,z){return {x:lot.x+x*Math.cos(lot.rotation)+z*Math.sin(lot.rotation),z:lot.z-x*Math.sin(lot.rotation)+z*Math.cos(lot.rotation)};}
 export const PONG_TABLE={x:3.8,z:9.8,width:1.25,length:2.6,height:.86,playerDistance:2.05};
 export function motionProfile(chapter,member){

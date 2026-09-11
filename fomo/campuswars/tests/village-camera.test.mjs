@@ -48,7 +48,7 @@ test('captions follow the tour, clear at 13.6 seconds, and replay on request',()
   assert.equal(h.element('village-intro').hidden,false);
   assert.equal(h.element('intro-title').textContent,'GREEK WARS.');
   h.step(2.8);assert.equal(h.element('intro-title').textContent,"IF YOU'RE IN A FRAT.");
-  h.step(3.25);assert.equal(h.element('intro-title').textContent,'$500 once onboarded');
+  h.step(3.25);assert.equal(h.element('intro-title').textContent,'$500 ONCE ONBOARDED');
   h.step(4.25);assert.equal(h.element('intro-title').textContent,'YOUR CHAPTER. NEXT.');
   h.step(3.4);assert.equal(h.element('village-intro').hidden,true);
   h.fire('document:village:replay');h.step(.02);

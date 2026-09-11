@@ -2,13 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../vendor/three.module.min.js';
 import {createVillage} from '../village-world.js';
-import {createLots,rowExtension,activityPose} from '../village-layout.js';
+import {createLots,rowExtension,streetCount,streetOriginX,activityPose} from '../village-layout.js';
+import {districtKind,districtSpecs} from '../village-district-layout.js';
 import {createDistricts} from '../village-districts.js';
 const chapters = count => Array.from({length:count},(_,i)=>({id:`test-${i}`,name:'Alpha Beta',letters:'ΑΒ',school:`School ${i}`,shortSchool:`School ${i}`,joined:i%2?15:1,active:100}));
 
 test('the row adds a selectable lot for every chapter and retains one claim lot',()=>{
   const village=createVillage(THREE,chapters(14));
-  assert.equal(village.anchors.length,15);assert.equal(village.anchors.filter(a=>a.id==='empty').length,1);assert.equal(village.extension,95);
+  assert.equal(village.anchors.length,15);assert.equal(village.anchors.filter(a=>a.id==='empty').length,1);assert.equal(village.extension,38);
   assert.deepEqual(createLots(5).map(({x,z})=>[x,z]),[[-20,-19],[20,-19],[-20,0],[20,0],[-20,19],[20,19]]);
   assert.equal(new Set(village.anchors.map(a=>`${a.lot.x},${a.lot.z}`)).size,15);
   village.world.updateMatrixWorld(true);
@@ -16,6 +17,41 @@ test('the row adds a selectable lot for every chapter and retains one claim lot'
   for(const mesh of Object.values(village.parts))assert([...mesh.instanceMatrix.array].every(Number.isFinite));
   assert.equal(village.members.length,112);assert(village.competition.board.position.z>village.anchors.at(-1).lot.z+15);village.dispose();
 });
+test('a street takes ten houses, then the village opens the next one beside it',()=>{
+  const plots=count=>{const streets=new Map();for(const lot of createLots(count))streets.set(lot.street,(streets.get(lot.street)||0)+1);return [...streets.values()];};
+  assert.deepEqual(plots(9),[10]);          // nine houses and the claimable lot
+  assert.deepEqual(plots(10),[11]);         // the claim lot trails a full street
+  assert.deepEqual(plots(11),[10,2]);
+  assert.deepEqual(plots(25),[10,10,6]);
+  assert.equal(streetCount(25),3);
+  // Streets stand on the campus road grid, opening east then west of the original.
+  assert.deepEqual([0,1,2,3].map(streetOriginX),[0,100,-100,200]);
+  for(const lot of createLots(25)){assert.equal(Math.abs(lot.x-lot.originX),20);assert(lot.z>=-19&&lot.z<=76);}
+  // Every street shares one length, so the world stops growing with the row.
+  for(const count of [11,25,60,400])assert(rowExtension(count)<=57);
+  // A street's own block carries houses instead of campus buildings.
+  assert.equal(districtKind(1,0,1),'science');
+  assert.equal(districtKind(1,0,2),'greek');
+  assert.deepEqual(districtSpecs(1,0,2),[]);
+  assert.equal(districtKind(1,1,3),'residential','only the row itself turns Greek');
+});
+
+test('houses on a second street stand clear of the campus and keep their own frontage',()=>{
+  const village=createVillage(THREE,chapters(14));
+  assert.equal(village.streetTotal,2);
+  const second=village.anchors.filter(a=>a.lot.street===1);
+  assert.equal(second.length,5,'four houses and the claimable lot');
+  for(const anchor of second){
+    assert.equal(anchor.lot.originX,100);
+    assert(village.world.getObjectByName(`chapter-house-${anchor.id}`)||village.world.getObjectByName(`chapter-construction-${anchor.id}`)||anchor.id==='empty');
+  }
+  // Lamps, benches and trees follow each street rather than only the first.
+  const lamps=[];village.world.updateMatrixWorld(true);
+  village.world.traverse(o=>{if(o.isMesh)lamps.push(o.getWorldPosition(new THREE.Vector3()));});
+  assert(lamps.some(p=>Math.abs(p.x-107.6)<.01),'the second street is lit too');
+  village.dispose();
+});
+
 test('new members complete a new chapter house while shared terrain survives scene replacement',()=>{
   const input=chapters(7),old=createVillage(THREE,input),street=old.streets;let disposed=false;street.geometry.addEventListener('dispose',()=>disposed=true);
   assert(old.world.getObjectByName('chapter-construction-test-6'));
@@ -24,7 +60,7 @@ test('new members complete a new chapter house while shared terrain survives sce
   assert.equal(next.members.filter(m=>m.chapter==='test-6').length,15);next.dispose();
 });
 test('long-row crowds remain inside their rendering bounds and scenery clears the end of the row',()=>{
-  const village=createVillage(THREE,chapters(20)),districts=createDistricts(THREE,village.extension);
+  const village=createVillage(THREE,chapters(20)),districts=createDistricts(THREE,village.extension,village.streetTotal);
   for(const m of village.members){const p=activityPose(m,5);for(const part of Object.values(village.parts))assert(part.boundingSphere.containsPoint(new THREE.Vector3(p.x,1.5,p.z)));}
   assert.equal(districts.chunks.get('0,1').group.position.z,100+village.extension);
   assert(districts.traffic.loops[0].sample(200).z<=50+village.extension);

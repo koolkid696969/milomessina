@@ -8,15 +8,19 @@ export function appearance(id,index){return {shirt:Math.floor(hash(id,index,'shi
 export const BLOCK=100;
 export const mod=(n,d)=>((n%d)+d)%d;
 export function districtAt(x,z){return {x:Math.floor((x+50)/BLOCK),z:Math.floor((z+50)/BLOCK)};}
-export function districtKind(cx,cz){
-  if(cx===0&&cz===0)return 'greek';
+// Greek Row's own blocks hold houses instead of campus buildings. Streets open
+// east then west of the original boulevard, so column cx is Greek Row's while a
+// street is standing on it.
+export function greekColumn(cx,streets=1){return cx===0||(cx>0?cx*2-1:cx*-2)<streets;}
+export function districtKind(cx,cz,streets=1){
+  if(cz===0&&greekColumn(cx,streets))return 'greek';
   const x=mod(cx+1,3)-1,z=mod(cz+1,3)-1;
   if(x===0)return z<0?'library':z>0?'athletics':'commons';
   if(z===0)return x<0?'arts':'science';
   return x===z?'residential':'town';
 }
-export function districtSpecs(cx,cz){
-  const kind=districtKind(cx,cz),seed=Math.floor(hash(cx,cz,'district')*1000000),ox=cx*BLOCK,oz=cz*BLOCK;
+export function districtSpecs(cx,cz,streets=1){
+  const kind=districtKind(cx,cz,streets),seed=Math.floor(hash(cx,cz,'district')*1000000),ox=cx*BLOCK,oz=cz*BLOCK;
   const specs=[];
   const add=(type,x,z,width,depth,height,rotation=0,label='')=>specs.push({type,x:ox+x,z:oz+z,width,depth,height,rotation,label,seed:Math.floor(hash(cx,cz,type,x,z)*1000000)});
   if(kind==='greek')return specs;

@@ -7,7 +7,7 @@ function review(){
   clearTimeout(timer);observer?.disconnect();const doc=frame.contentDocument;
   status.textContent='Playing; pauses automatically during the money rain.';
   observer=new MutationObserver(()=>{
-    if(doc.getElementById('intro-title').textContent!=='$500 once onboarded')return;
+    if(doc.getElementById('intro-title').textContent!=='$500 ONCE ONBOARDED')return;
     observer.disconnect();timer=setTimeout(()=>{
       const button=doc.getElementById('intro-pause');
       if(!doc.getElementById('village-intro').hidden&&button.getAttribute('aria-pressed')!=='true')button.click();

@@ -1,10 +1,10 @@
 import {villageQuality} from './village-quality.js?v=56';
 import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=53';
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=60';
-import {createDistricts} from './village-districts.js?v=61';
-import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
-import {createMoneyRain} from './village-money-rain.js?v=60';
+import {createVillage} from './village-world.js?v=63';
+import {createDistricts} from './village-districts.js?v=63';
+import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=62';
+import {createMoneyRain} from './village-money-rain.js?v=62';
 import {prewarmVillage} from './village-prewarm.js?v=55';
 
 const shell=document.getElementById('village');
@@ -38,7 +38,7 @@ function startVillage(){
   let streetNav=createStreetNavigation(THREE,village.extension);scene.add(streetNav.root);
   let streetMode=false,streetZ=28.5,streetWantedZ=28.5;
   const streetButton=document.getElementById('village-street'),streetControls=document.getElementById('street-controls');
-  let districts=createDistricts(THREE,village.extension);scene.add(districts.root);
+  let districts=createDistricts(THREE,village.extension,village.streetTotal);scene.add(districts.root);
   const dusk={sky:new THREE.Color(0x25233f),ambient:new THREE.Color(0x9a9fdc),ground:new THREE.Color(0x453649),sun:new THREE.Color(0xc49ab1),fill:new THREE.Color(0x858dff)};
   let litAtNight=false;
   function applyLighting(amount){
@@ -119,14 +119,16 @@ function startVillage(){
   function resetView(){leaveStreet();wantedTarget.set(...openingView.target);wantedRadius=openingView.radius;wantedPhi=openingView.phi;wantedTheta=openingView.theta;wake();}
   function choose(id,focus=false,emit=true){
     const anchor=village.anchors.find(a=>a.id===id);if(!anchor)return;selected=id;viewDirty=true;
-    if(focus){takeControl();leaveStreet();wantedTarget.set(anchor.lot.x*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=anchor.lot.x<0?1.08:-1.08;}
+    // Frame the house from its own street's centre line, whichever street that is.
+    if(focus){takeControl();leaveStreet();const ox=anchor.lot.originX||0,side=anchor.lot.x-ox;wantedTarget.set(ox+side*.69,2,anchor.lot.z);wantedRadius=viewport.clientWidth<650?38:30;wantedPhi=.67;wantedTheta=side<0?1.08:-1.08;}
     if(emit)document.dispatchEvent(new CustomEvent('village:select',{detail:{id,interactive:focus}}));wake();
   }
   document.addEventListener('chapter:select',e=>choose(e.detail.id,Boolean(e.detail.focus)));
   function updateChapters(event){
     const previous=village,next=createVillage(THREE,event.detail.chapters,{streets:previous.streets,houseFinishes:previous.houseFinishes});
     chapters=event.detail.chapters;scene.remove(previous.world);scene.add(next.world);village=next;previous.dispose();
-    if(previous.extension!==next.extension){scene.remove(districts.root);districts.dispose();districts=createDistricts(THREE,next.extension);scene.add(districts.root);}
+    // A new street opens its own Greek block, so the campus around it restreams.
+    if(previous.extension!==next.extension||previous.streetTotal!==next.streetTotal){scene.remove(districts.root);districts.dispose();districts=createDistricts(THREE,next.extension,next.streetTotal);scene.add(districts.root);}
     if(previous.extension!==next.extension){
       scene.remove(streetNav.root);streetNav.dispose();streetNav=createStreetNavigation(THREE,next.extension);scene.add(streetNav.root);streetNav.root.visible=streetMode;
       const stops=streetStops(next.extension);streetWantedZ=Math.max(stops[0],Math.min(stops.at(-1),streetWantedZ));

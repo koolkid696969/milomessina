@@ -8,8 +8,8 @@ import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=55';
 import {humanPose} from './village-human-motion.js?v=48';
 import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=56';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=61';
-import {palettes,hash} from './village-district-layout.js?v=60';
-import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=55';
+import {palettes,hash} from './village-district-layout.js?v=63';
+import {createLots,rowExtension,streetCount,streetOriginX,toWorld,crowdMembers,activityPose} from './village-layout.js?v=63';
 import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=56';
 import {createChapterBanner,bannerIdentity} from './village-banners.js?v=56';
 import {createSchoolBanner} from './village-school-banners.js?v=56';
@@ -19,7 +19,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
   const ranked=houseStandings(chapters),rankedIds=new Set(ranked.map(c=>c.id));
   chapters=[...ranked,...chapters.filter(c=>!rankedIds.has(c.id)).sort((a,b)=>a.id.localeCompare(b.id))];
   const houseFinishes=assignHouseFinishes(chapters,previousFinishes),houseSizes=rankedHouseSizes(chapters);
-  const lots=createLots(chapters.length),extension=rowExtension(chapters.length);
+  const lots=createLots(chapters.length),extension=rowExtension(chapters.length),streetTotal=streetCount(chapters.length);
   const world=new THREE.Group(),pickables=[],anchors=[],flags=[];
   const materials=new Map(),landscapeKit=createCampusKit(THREE),grassMaterial=createGrassMaterial(THREE),lawns=[];
   function mat(color,emissive=0){const key=color+':'+emissive;if(!materials.has(key))materials.set(key,new THREE.MeshStandardMaterial({color,roughness:.84,emissive,emissiveIntensity:emissive?.45:0}));return materials.get(key);}
@@ -54,13 +54,20 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
   // Street lamps, paths, trees and furniture give the village a lived-in scale.
   function tree(x,z,size=1){landscapeKit.tree(world,x,z,Math.floor(hash(x,z,'tree')*10000),size);}
 
-  [-1,1].forEach(side=>{
-    [-31,-10,10,31].forEach(z=>{const x=side*7.6;cylinder(world,x,2,z,.07,4,0x3b3a46);box(world,x,4.1,z,.55,.12,.55,0x353444);const glow=box(world,x,3.82,z,.34,.45,.34,mat(0xffdea0,0xffbb55));glow.castShadow=false;const pool=new THREE.Mesh(new THREE.CircleGeometry(1.3,20),new THREE.MeshBasicMaterial({color:0xffd196,transparent:true,opacity:.07,depthWrite:false}));pool.rotation.x=-Math.PI/2;pool.position.set(x,.19,z);world.add(pool);});
-    [-33,-9,10,33].forEach(z=>tree(side*29,z,.85+Math.abs(z)%3*.1));
-    [-9,10].forEach(z=>{box(world,side*9,.6,z,1,.2,2.3,0x85694f);box(world,side*9.4,1,z,.13,.65,2.3,0x85694f);[-.8,.8].forEach(d=>box(world,side*9,.3,z+d,.8,.6,.12,0x333747));});
-  });
-  for(let row=3;row<Math.ceil(lots.length/2);row++)for(const side of [-1,1]){
-    const z=-19+row*19;landscapeKit.lamp(world,side*7.6,z+9);tree(side*29,z+9,.95);
+  // Each street carries the same lamps, benches and trees; the plots on it decide
+  // how far down the block that furniture runs.
+  const plotsOnStreet=new Map();
+  for(const lot of lots)plotsOnStreet.set(lot.street,(plotsOnStreet.get(lot.street)||0)+1);
+  for(const [street,plots] of plotsOnStreet){
+    const ox=streetOriginX(street);
+    [-1,1].forEach(side=>{
+      [-31,-10,10,31].forEach(z=>{const x=ox+side*7.6;cylinder(world,x,2,z,.07,4,0x3b3a46);box(world,x,4.1,z,.55,.12,.55,0x353444);const glow=box(world,x,3.82,z,.34,.45,.34,mat(0xffdea0,0xffbb55));glow.castShadow=false;const pool=new THREE.Mesh(new THREE.CircleGeometry(1.3,20),new THREE.MeshBasicMaterial({color:0xffd196,transparent:true,opacity:.07,depthWrite:false}));pool.rotation.x=-Math.PI/2;pool.position.set(x,.19,z);world.add(pool);});
+      [-33,-9,10,33].forEach(z=>tree(ox+side*29,z,.85+Math.abs(z)%3*.1));
+      [-9,10].forEach(z=>{box(world,ox+side*9,.6,z,1,.2,2.3,0x85694f);box(world,ox+side*9.4,1,z,.13,.65,2.3,0x85694f);[-.8,.8].forEach(d=>box(world,ox+side*9,.3,z+d,.8,.6,.12,0x333747));});
+    });
+    for(let row=3;row<Math.ceil(plots/2);row++)for(const side of [-1,1]){
+      const z=-19+row*19;landscapeKit.lamp(world,ox+side*7.6,z+9);tree(ox+side*29,z+9,.95);
+    }
   }
   const windowMaterials=[false,true].map(lit=>{const m=new THREE.MeshStandardMaterial({color:lit?0xffdca1:0x34414f,roughness:.5,emissive:0xa36527,emissiveIntensity:lit?.45:.01});m.userData.nightWindow=true;return m;});
   function windowUnit(parent,x,y,z,lit=true){
@@ -136,6 +143,9 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
     anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot,house:{halfWidth:footprint/2,front:size.offsetZ+depth*depthScale/2}});
   });
   world.add(createLawnBlades(THREE,lots.slice(0,chapters.length)));
+  // One sphere covers the crowd on every street, so a turn of the camera cannot
+  // cull a row of people that is still on screen.
+  const crowdReach=Math.max(...lots.map(lot=>Math.abs(lot.originX)))+40;
   const members=crowdMembers(chapters,lots,houseSizes),parts={};
   const pong=createPongGames(THREE,members);world.add(pong.root);
   const construction=createConstructionEquipment(THREE,members);world.add(construction.root);
@@ -144,7 +154,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
   const names=['torso','pelvis','neck','head','hair','nose','armL','armR','foreL','foreR','handL','handR','legL','legR','shinL','shinR','shoeL','shoeR','cup','backpack'];
   for(const name of names){
     const geometry=roundParts.has(name)?landscapeKit.geometries.sphere:name.startsWith('shoe')?landscapeKit.geometries.shoe:name==='cup'?cylinderGeometry:name==='backpack'?landscapeKit.geometries.box:bodyGeometry;
-    const mesh=landscapeKit.instances(world,geometry,members.length,39);mesh.material=mat(0xffffff);mesh.castShadow=false;mesh.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,2,extension/2),Math.hypot(40,40+extension/2));parts[name]=mesh;
+    const mesh=landscapeKit.instances(world,geometry,members.length,39);mesh.material=mat(0xffffff);mesh.castShadow=false;mesh.boundingSphere=new THREE.Sphere(new THREE.Vector3(0,2,extension/2),Math.hypot(crowdReach,40+extension/2));parts[name]=mesh;
     members.forEach((m,i)=>{
       const shirt=name==='torso'||name.startsWith('arm')||(m.jacket&&name.startsWith('fore'));
       const skin=['head','neck','nose'].includes(name)||name.startsWith('hand')||name.startsWith('fore')||(m.shorts&&name.startsWith('shin'));
@@ -204,5 +214,5 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
   function animateEffects(time){beacon?.animate(time);if(nightLife.root.visible)nightLife.animate(time);}
   collect();
   function dispose(){for(const resource of resources)if(!resource.userData?.sharedResource)resource.dispose();resources.clear();}
-  return {world,streets,lots,extension,houseFinishes,dispose,pickables,anchors,members,parts,animateCrowd,competition,beacon,nightLife,animateEffects,pong,construction};
+  return {world,streets,lots,extension,streetTotal,houseFinishes,dispose,pickables,anchors,members,parts,animateCrowd,competition,beacon,nightLife,animateEffects,pong,construction};
 }

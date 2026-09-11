@@ -1,8 +1,8 @@
-import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=60';
+import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=63';
 import {createCampusKit} from './village-campus-kit.js?v=61';
 import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=59';
 
-export function createDistricts(T,extension=0){
+export function createDistricts(T,extension=0,streets=1){
   const root=new T.Group(),chunks=new Map(),kit=createCampusKit(T);
   const {box,mesh,cylinder,bar,tree:plantTree,bench,lamp,table,path,sign}=kit;
   function tree(p,x,z,seed,size){
@@ -116,7 +116,7 @@ export function createDistricts(T,extension=0){
   const horizon=distantCampus();root.add(horizon);
   function makeChunk(cx,cz){
     const p=new T.Group();p.position.set(cx*BLOCK,0,cz*BLOCK);root.add(p);
-    const kind=districtKind(cx,cz),specs=districtSpecs(cx,cz);p.userData.specs=specs;
+    const kind=districtKind(cx,cz,streets),specs=districtSpecs(cx,cz,streets);p.userData.specs=specs;
     for(const spec of specs)kit.building(p,spec,cx*BLOCK,cz*BLOCK);
     landscape(p,kind,cx,cz);
     fillDetails(p,kind,cx,cz);
