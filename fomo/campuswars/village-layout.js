@@ -37,9 +37,14 @@ export function rowExtension(chapterCount) {
 }
 export function toWorld(lot,x,z){return {x:lot.x+x*Math.cos(lot.rotation)+z*Math.sin(lot.rotation),z:lot.z-x*Math.sin(lot.rotation)+z*Math.cos(lot.rotation)};}
 export const PONG_TABLE={x:3.8,z:9.8,width:1.25,length:2.6,height:.86,playerDistance:2.05};
-// Die is played two a side across a low folding table, each player behind their own cup.
-export const DIE_TABLE={x:-3.9,z:9.8,width:1.8,length:1.05,height:.76,playerDistance:.95,seatOffset:.44,cupOffset:.3};
-export const dieSeat=seat=>({side:seat<2?-1:1,dx:(seat%2?1:-1)*DIE_TABLE.seatOffset});
+// Die is played on an eight-by-four sheet: partners share an end, opponents face
+// them down the long axis, and each player stands behind a cup set eight inches
+// from their back rail and five in from the side.
+// The eight-foot axis lies across the lawn, where there is room for it.
+export const DIE_TABLE={x:-3.9,z:9.8,width:2.44,depth:1.22,height:.76,playerDistance:1.72,seatOffset:.42,cupInset:.13,cupBack:.2};
+export const dieSeat=seat=>({side:seat<2?-1:1,dz:(seat%2?1:-1)*DIE_TABLE.seatOffset});
+export const dieSeatSpot=seat=>{const {side,dz}=dieSeat(seat);return {x:DIE_TABLE.x+side*DIE_TABLE.playerDistance,z:DIE_TABLE.z+dz,rotation:side<0?Math.PI/2:-Math.PI/2};};
+export const dieCup=seat=>{const {side,dz}=dieSeat(seat);return {x:DIE_TABLE.x+side*(DIE_TABLE.width/2-DIE_TABLE.cupBack),z:DIE_TABLE.z+Math.sign(dz)*(DIE_TABLE.depth/2-DIE_TABLE.cupInset)};};
 export function motionProfile(chapter,member){
   const value=(key,min,range)=>min+hash(chapter,member,key)*range;
   return {breathRate:value('breath-rate',1.05,1.05),breathAmount:value('breath-range',.002,.005),shiftRate:value('shift-rate',.21,.37),shiftAmount:value('shift-range',.014,.03),twistRate:value('twist-rate',.31,.51),twistAmount:value('twist-range',.012,.023),nodRate:value('nod-rate',.5,.8),nodAmount:value('nod-range',.002,.005),lookRate:value('look-rate',.27,.53),lookAmount:value('look-range',.025,.065),idlePeriod:value('idle-period',7,12),idleOffset:value('idle-offset',0,30),idleAmount:value('idle-range',.035,.085),gestureRate:value('gesture-rate',.65,.8),gestureAmount:value('gesture-range',.55,.6),walkSpeed:value('walk-speed',.59,.28)};
@@ -49,10 +54,11 @@ export function pongTurn(chapter,time){
   return {seat:((turn%2)+2)%2,elapsed:clock-turn*period,release:1.15,flight:.85,turn};
 }
 export function dieTurn(chapter,time){
-  // Play passes around the table, each throw aimed at one of the two cups opposite.
-  const period=2.9+hash(chapter,'die-period')*1.5,clock=time+hash(chapter,'die-offset')*23,turn=Math.floor(clock/period);
+  // Play passes around the table. The throw is a high lob that has to clear head
+  // height and land past the half line; it either sinks or the defender catches it.
+  const period=4.6+hash(chapter,'die-period')*1.9,clock=time+hash(chapter,'die-offset')*23,turn=Math.floor(clock/period);
   const seat=((turn%4)+4)%4;
-  return {seat,target:(seat<2?2:0)+Math.abs(turn%2),elapsed:clock-turn*period,release:.95,flight:.8,bounce:.42,turn};
+  return {seat,target:(seat<2?2:0)+Math.abs(turn%2),sink:hash(chapter,turn,'die-sink')>.74,elapsed:clock-turn*period,release:1.1,toss:.82,settle:.74,turn};
 }
 export function crowdMembers(chapters,lots=createLots(chapters.length),houseSizes=rankedHouseSizes(chapters)){
   return chapters.flatMap((chapter,index)=>{
@@ -75,8 +81,8 @@ export function crowdMembers(chapters,lots=createLots(chapters.length),houseSize
       for(const side of [-1,1])occupied.push({x:PONG_TABLE.x,z:PONG_TABLE.z+side*PONG_TABLE.playerDistance});
     }
     if(die){
-      for(let x=-1.1;x<=1.11;x+=.4)for(let z=-.7;z<=.71;z+=.3)occupied.push({x:DIE_TABLE.x+x,z:DIE_TABLE.z+z});
-      for(let seat=0;seat<4;seat++){const {side,dx}=dieSeat(seat);occupied.push({x:DIE_TABLE.x+dx,z:DIE_TABLE.z+side*DIE_TABLE.playerDistance});}
+      for(let x=-1.3;x<=1.31;x+=.35)for(let z=-.7;z<=.71;z+=.35)occupied.push({x:DIE_TABLE.x+x,z:DIE_TABLE.z+z});
+      for(let seat=0;seat<4;seat++)occupied.push(dieSeatSpot(seat));
     }
     sizes.forEach((size,g)=>{
       const isPorch=porch&&g===sizes.length-1,radius=isPorch?.57:.62+size*.105,phase=hash(chapter.id,g,'angle')*Math.PI*2;
@@ -103,8 +109,8 @@ export function crowdMembers(chapters,lots=createLots(chapters.length),houseSize
       people.push({chapter:chapter.id,member:++member,...toWorld(lot,PONG_TABLE.x,z),lot,rotation:lot.rotation+(seat?Math.PI:0),phase:hash(chapter.id,member,'phase')*20,groupPhase:-1,groupSize:2,seat,walking:false,action:'pong',ground:lawnGround(PONG_TABLE.x,z),...appearance(chapter.id,member)});
     }
     if(die)for(let seat=0;seat<4;seat++){
-      const {side,dx}=dieSeat(seat),x=DIE_TABLE.x+dx,z=DIE_TABLE.z+side*DIE_TABLE.playerDistance;
-      people.push({chapter:chapter.id,member:++member,...toWorld(lot,x,z),lot,rotation:lot.rotation+(side>0?Math.PI:0),phase:hash(chapter.id,member,'phase')*20,groupPhase:-1,groupSize:4,seat,walking:false,action:'die',ground:lawnGround(x,z),...appearance(chapter.id,member)});
+      const spot=dieSeatSpot(seat);
+      people.push({chapter:chapter.id,member:++member,...toWorld(lot,spot.x,spot.z),lot,rotation:lot.rotation+spot.rotation,phase:hash(chapter.id,member,'phase')*20,groupPhase:-1,groupSize:4,seat,walking:false,action:'die',ground:lawnGround(spot.x,spot.z),...appearance(chapter.id,member)});
     }
     for(const person of people)person.motionProfile=motionProfile(person.chapter,person.member);
     return people;
@@ -122,10 +128,13 @@ export function activityPose(member,time){
     return {x:member.x,z:member.z,rotation:member.rotation,walking:false,gait:0,speaking:false,gesture:0,breath:0,pong:{lift:active?smooth(t/.65)*(1-smooth((t-1.5)/.8)):.18*smooth((t-1.8)/.3)*(1-smooth((t-2.3)/.5)),extension:smooth((t-.72)/.43)}};
   }
   if(member.action==='die'){
-    // The throwing arm rides the same toss channel as pong; the rest of the table watches the die.
-    const shot=dieTurn(member.chapter,time),active=shot.seat===member.seat,t=shot.elapsed;
-    const lift=active?smooth(t/.55)*(1-smooth((t-1.35)/.55)):.15*smooth((t-1.55)/.35)*(1-smooth((t-2.1)/.5));
-    return {x:member.x,z:member.z,rotation:member.rotation,walking:false,gait:0,speaking:false,gesture:0,breath:0,pong:{lift,extension:smooth((t-.6)/.4)}};
+    // Throwing and catching arms both ride the pong toss channel: the thrower
+    // winds up and lofts, and the defender reaches up as the die comes down.
+    const shot=dieTurn(member.chapter,time),t=shot.elapsed,hit=shot.release+shot.toss,caught=hit+shot.settle;
+    let lift=0,extension=0;
+    if(shot.seat===member.seat){lift=smooth(t/.5)*(1-smooth((t-shot.release-.45)/.6));extension=smooth((t-shot.release+.3)/.45);}
+    else if(shot.target===member.seat&&!shot.sink){lift=smooth((t-hit+.5)/.55)*(1-smooth((t-caught-.3)/.5));extension=smooth((t-hit+.2)/.5);}
+    return {x:member.x,z:member.z,rotation:member.rotation,walking:false,gait:0,speaking:false,gesture:0,breath:0,pong:{lift,extension}};
   }
   const profile=member.motionProfile,turn=(time+member.groupPhase)/(member.turnDuration??6),speaking=Math.floor(turn)%member.groupSize===member.seat;
   // The speaking hand rises only to chest level; listeners keep their arms down.

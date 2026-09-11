@@ -1,8 +1,8 @@
 import {rankedHouseSizes} from './village-house-sizing.js?v=55';
 import {assignHouseFinishes} from './village-house-colors.js?v=52';
 import {createVillageEntrance} from './village-entrance.js?v=38';
-import {createPongGames} from './village-pong.js?v=56';
-import {createDieGames} from './village-die.js?v=1';
+import {createPongGames} from './village-pong.js?v=57';
+import {createDieGames} from './village-die.js?v=3';
 import {createLotBeacon,createNightLife} from './village-atmosphere.js?v=55';
 import {createCompetition,houseStandings} from './village-competition.js?v=55';
 import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=55';
@@ -10,7 +10,7 @@ import {humanPose} from './village-human-motion.js?v=48';
 import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=56';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=61';
 import {palettes,hash} from './village-district-layout.js?v=63';
-import {createLots,rowExtension,streetCount,streetOriginX,toWorld,crowdMembers,activityPose} from './village-layout.js?v=65';
+import {createLots,rowExtension,streetCount,streetOriginX,toWorld,crowdMembers,activityPose} from './village-layout.js?v=66';
 import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=56';
 import {createChapterBanner,bannerIdentity} from './village-banners.js?v=56';
 import {createSchoolBanner} from './village-school-banners.js?v=56';
@@ -149,7 +149,7 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
   const crowdReach=Math.max(...lots.map(lot=>Math.abs(lot.originX)))+40;
   const members=crowdMembers(chapters,lots,houseSizes),parts={};
   const pong=createPongGames(THREE,members);world.add(pong.root);
-  const die=createDieGames(THREE,members);world.add(die.root);
+  const die=createDieGames(THREE,members,chapters);world.add(die.root);
   const construction=createConstructionEquipment(THREE,members);world.add(construction.root);
   const bodyGeometry=new THREE.CapsuleGeometry(.5,1,3,8);bodyGeometry.scale(1,.5,1);
   const roundParts=new Set(['head','hair','handL','handR','nose']);

@@ -310,53 +310,78 @@ test('pong balls leave the throwing hand continuously, arc to cups and alternate
 });
 
 
-test('every built house runs a four-player die game clear of the lawn crowd',async()=>{
-  const {DIE_TABLE,dieSeat}=await import('../village-layout.js');
+test('every built house sets up a regulation die table with four players at its corners',async()=>{
+  const {DIE_TABLE,dieSeat,dieSeatSpot,dieCup}=await import('../village-layout.js');
+  // Eight by four feet, in metres.
+  assert(Math.abs(DIE_TABLE.width-2.44)<.01&&Math.abs(DIE_TABLE.depth-1.22)<.01);
   assert.equal(village.die.games.length,3);assert.equal(village.members.filter(m=>m.action==='die').length,12);
   for(const game of village.die.games){
     assert.deepEqual(game.players.map(p=>p.seat),[0,1,2,3]);assert.equal(game.cups.length,4);
     assert(game.players.every(p=>village.members.includes(p)&&p.chapter===game.chapter&&p.ground<.3));
-    // Two a side, each facing the table across their own cup.
+    // Partners share an end; opponents are down the long axis.
+    assert.equal(dieSeat(0).side,dieSeat(1).side);assert.equal(dieSeat(2).side,-dieSeat(0).side);
     for(const [seat,player] of game.players.entries()){
-      const {side,dx}=dieSeat(seat),front=toWorld(player.lot,DIE_TABLE.x+dx,DIE_TABLE.z);
-      assert(Math.hypot(front.x-player.x,front.z-player.z)-DIE_TABLE.playerDistance<1e-9);
-      assert(Math.abs(game.cups[seat].position.x-(DIE_TABLE.x+dx))<1e-9);
-      assert.equal(Math.sign(game.cups[seat].position.z-DIE_TABLE.z),side);
+      const spot=dieSeatSpot(seat),cup=dieCup(seat),front=toWorld(player.lot,spot.x,spot.z);
+      assert(Math.hypot(front.x-player.x,front.z-player.z)<1e-9);
+      assert(Math.abs(Math.abs(spot.x-DIE_TABLE.x)-DIE_TABLE.playerDistance)<1e-9);
+      // A cup eight inches from the back rail and five in from the side.
+      assert(Math.abs(Math.abs(cup.x-DIE_TABLE.x)-(DIE_TABLE.width/2-.2))<1e-9);
+      assert(Math.abs(Math.abs(cup.z-DIE_TABLE.z)-(DIE_TABLE.depth/2-.13))<1e-9);
+      assert.equal(Math.sign(cup.x-DIE_TABLE.x),dieSeat(seat).side);
+      assert.equal(Math.sign(cup.z-DIE_TABLE.z),Math.sign(dieSeat(seat).dz));
+      // Each player looks down the table at the pair opposite.
+      const facing=new THREE.Vector3(0,0,1).applyAxisAngle(new THREE.Vector3(0,1,0),spot.rotation);
+      assert(facing.x*-dieSeat(seat).side>.99);
     }
     for(const member of village.members.filter(m=>m.chapter===game.chapter&&!m.walking&&m.action!=='die')){
       const dx=member.x-member.lot.x,dz=member.z-member.lot.z,a=member.lot.rotation;
       const x=dx*Math.cos(a)-dz*Math.sin(a),z=dx*Math.sin(a)+dz*Math.cos(a);
-      assert(Math.abs(x-DIE_TABLE.x)>DIE_TABLE.width/2+.2||Math.abs(z-DIE_TABLE.z)>DIE_TABLE.length/2+.2);
+      assert(Math.abs(x-DIE_TABLE.x)>DIE_TABLE.width/2+.2||Math.abs(z-DIE_TABLE.z)>DIE_TABLE.depth/2+.2);
     }
   }
 });
 
-test('thrown dice bounce off the table into a cup opposite and play passes round the table',async()=>{
-  const {dieTurn,DIE_TABLE,dieSeat}=await import('../village-layout.js');
+test('the die is lofted over head height, lands past the half line, then sinks or is caught',async()=>{
+  const {dieTurn,dieSeat,dieCup,DIE_TABLE,lawnGround}=await import('../village-layout.js');
+  const surface=lawnGround(DIE_TABLE.x,DIE_TABLE.z)+DIE_TABLE.height+.075;
   const clocks=village.die.games.map(g=>dieTurn(g.chapter,0).elapsed);assert.equal(new Set(clocks).size,clocks.length);
-  for(const game of village.die.games){
-    const shot=dieTurn(game.chapter,20),releaseTime=20-shot.elapsed+shot.release,thrower=game.players[shot.seat];
+  const outcomes=new Set();
+  for(const game of village.die.games)for(const turn of [0,1,2,3,4,5,6,7]){
+    const shot=dieTurn(game.chapter,20+turn*7),releaseTime=20+turn*7-shot.elapsed+shot.release;
+    const thrower=game.players[shot.seat],defender=game.players[shot.target];
     assert.equal(dieSeat(shot.target).side,-dieSeat(shot.seat).side);
+    outcomes.add(shot.sink);
     village.die.animate(releaseTime-1e-5);const before=game.die.position.clone();
     village.die.animate(releaseTime);const start=game.die.position.clone();assert(start.distanceTo(before)<.001);
     assert(start.distanceTo(village.die.handPosition(thrower,releaseTime))<1e-8);
-    village.die.animate(releaseTime+shot.flight*shot.bounce);const bounce=game.die.position.clone();
-    assert(Math.abs(bounce.y-(DIE_TABLE.height+.073))<1e-8);assert(start.y>bounce.y);
-    // The die must land on the table itself, on the thrower's half of it.
-    const table=new THREE.Vector3(DIE_TABLE.x,0,DIE_TABLE.z).applyAxisAngle(new THREE.Vector3(0,1,0),thrower.lot.rotation).add(new THREE.Vector3(thrower.lot.x,0,thrower.lot.z));
-    const rel=bounce.clone().sub(table).applyAxisAngle(new THREE.Vector3(0,1,0),-thrower.lot.rotation);
-    assert(Math.abs(rel.x)<DIE_TABLE.width/2&&Math.abs(rel.z)<DIE_TABLE.length/2);
-    assert.equal(Math.sign(rel.z),dieSeat(shot.seat).side);
-    village.die.animate(releaseTime+shot.flight*(1+shot.bounce)/2);const mid=game.die.position.clone();assert(mid.y>bounce.y);
-    village.die.animate(releaseTime+shot.flight);const end=game.die.position.clone();
-    const cup=game.cups[shot.target].position.clone();cup.y=DIE_TABLE.height+.14;
-    cup.applyAxisAngle(new THREE.Vector3(0,1,0),thrower.lot.rotation).add(new THREE.Vector3(thrower.lot.x,0,thrower.lot.z));
-    assert(end.distanceTo(cup)<1e-8);
-    village.die.animate(releaseTime+shot.flight+.2);assert(!game.die.visible);
-    const seats=new Map();for(let t=releaseTime;seats.size<4;t+=.2){const next=dieTurn(game.chapter,t);if(!seats.has(next.turn))seats.set(next.turn,next.seat);}
+    // The throw has to clear the eight-foot line before it comes down.
+    let apex=0;for(let s=0;s<=20;s++){village.die.animate(releaseTime+shot.toss*s/20);apex=Math.max(apex,game.die.position.y);}
+    assert(apex>2.44,`die only reached ${apex.toFixed(2)}m`);
+    village.die.animate(releaseTime+shot.toss);const land=game.die.position.clone();
+    assert(Math.abs(land.y-surface)<1e-8);
+    const rel=land.clone().sub(new THREE.Vector3(DIE_TABLE.x,0,DIE_TABLE.z).applyAxisAngle(new THREE.Vector3(0,1,0),thrower.lot.rotation).add(new THREE.Vector3(thrower.lot.x,0,thrower.lot.z))).applyAxisAngle(new THREE.Vector3(0,1,0),-thrower.lot.rotation);
+    assert(Math.abs(rel.x)<DIE_TABLE.width/2&&Math.abs(rel.z)<DIE_TABLE.depth/2);
+    assert.equal(Math.sign(rel.x),-dieSeat(shot.seat).side,'the die must land past the half line');
+    village.die.animate(releaseTime+shot.toss+shot.settle-1e-6);const end=game.die.position.clone();
+    if(shot.sink){
+      const cup=dieCup(shot.target);
+      const world=new THREE.Vector3(cup.x,0,cup.z).applyAxisAngle(new THREE.Vector3(0,1,0),thrower.lot.rotation).add(new THREE.Vector3(thrower.lot.x,0,thrower.lot.z));
+      assert(Math.hypot(end.x-world.x,end.z-world.z)<.02,'a sunk die ends in the cup it was aimed at');
+    }else{
+      // Otherwise the defender takes it one-handed, and their arm is up for it.
+      const hand=village.die.handPosition(defender,releaseTime+shot.toss+shot.settle);
+      assert(end.distanceTo(hand)<.05,'a live die ends in the defending hand');
+      const reach=activityPose(defender,releaseTime+shot.toss+shot.settle-.1).pong;
+      assert(reach.lift>.6,`defender reaches ${reach.lift.toFixed(2)}`);
+    }
+    village.die.animate(releaseTime+shot.toss+shot.settle+.05);assert(!game.die.visible);
+  }
+  assert.equal(outcomes.size,2,'houses both sink and lose the die across turns');
+  for(const game of village.die.games){
+    const seats=new Map();for(let t=20;seats.size<4;t+=.2){const next=dieTurn(game.chapter,t);if(!seats.has(next.turn))seats.set(next.turn,next.seat);}
     const order=[...seats.entries()].toSorted((a,b)=>a[0]-b[0]).map(([,seat])=>seat);
     assert.deepEqual(order.toSorted(),[0,1,2,3]);assert(order.every((seat,i)=>!i||seat===(order[i-1]+1)%4));
-    village.animateCrowd(releaseTime+.3);village.world.updateMatrixWorld(true);
+    village.animateCrowd(37.4);village.world.updateMatrixWorld(true);
     assert([...village.die.dice.instanceMatrix.array].every(Number.isFinite));
   }
 });
