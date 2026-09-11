@@ -52,11 +52,15 @@ header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150
 @media(max-width:520px){.clan{padding:13px 14px;gap:12px}.clan .crest{width:44px;height:44px;font-size:1.05rem}
   .clan strong{font-size:1.06rem}.clan .sch{font-size:.76rem}}
 
-/* ── picking a house, only when the link didn't carry one ── */
-.pick{border:1px solid var(--line);border-radius:var(--r-l);background:var(--surface);padding:16px}
-.pick h3{font-size:1.05rem;font-weight:500;letter-spacing:-.03em;margin-bottom:4px}
-.pick .say{font-size:.84rem;color:var(--muted);margin-bottom:14px}
-.pick .f{margin-bottom:0}
+/* ── picking a house, only when the link didn't carry one ──
+   It sits in step 3 with the other questions, so it wears a field's clothes
+   rather than a card's. Once picked it becomes the same identity block the
+   link case shows at the top of the page, one size down. */
+.clan.inline{padding:12px 14px;border-color:var(--line)}
+.clan.inline .crest{width:40px;height:40px;font-size:.98rem;border-radius:11px}
+.clan.inline strong{font-size:1.02rem}
+.clan.inline .sch{font-size:.78rem}
+.clan.inline .change{padding-top:2px}
 /* the dropdown itself is base.css's .ac-list, the same one the apply page's
    school field opens, so a chapter is picked exactly the way a school is.
    these rules only add the crest and the school line inside a row. */
@@ -189,9 +193,10 @@ footer{border-top:0;margin-top:0}
     <section class="step">
       <b>step 03</b>
       <h3>So we can match you to your signup</h3>
-      <p class="say">We already have your chapter&rsquo;s list. These three match your fomo account to the name on it.</p>
+      <p class="say">We already have your chapter&rsquo;s list. This is what matches your fomo account to the name on it.</p>
       <fieldset class="fset">
         <legend>who you are</legend>
+        <div id="pickSlot"></div>
         <label class="f">
           <span>full name</span>
           <input type="text" name="full_name" id="fullname" required autocomplete="name" placeholder="Jack Donnelly" maxlength="80">
@@ -324,6 +329,7 @@ const clanLinkFor = c => FOMO.clanLink && c
 const params = new URLSearchParams(location.search);
 const wanted = (params.get('c')||params.get('clan')||'').trim().toLowerCase();
 const slot   = document.getElementById('clanSlot');
+const pick   = document.getElementById('pickSlot');
 const lede   = document.getElementById('lede');
 let chapters = [], allChapters = [], clan = null;
 
@@ -355,22 +361,45 @@ async function loadChapters(){
 
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-function setClan(c){
+/* Two ways a chapter gets settled, and they want different furniture.
+
+   A link carried it: the chapter is the first thing on the page, in their own
+   letters, because it is the reason they opened it and confirming it is the
+   whole job of the top of the page.
+
+   They arrived without one: it is just another thing we need from them, so it
+   is asked in step 3 beside their name and email, and nothing appears at the
+   top at all. Asking which house before they have even downloaded the app put
+   a question in front of the door. */
+function setClan(c,{inline=false}={}){
   clan=c;
   document.getElementById('clanId').value    = c.id;
   document.getElementById('clanName').value  = c.name;
   document.getElementById('clanSchool').value= c.school||'';
   document.title = 'join the '+c.name.toLowerCase()+' clan — fomo campus';
-  lede.innerHTML = '<b style="color:var(--text);font-weight:600">'+esc(c.name)+'</b> is already registered for Greek Wars. '+
-    'This is the last step: get on fomo, and we drop you into the chapter&rsquo;s clan.';
-  slot.innerHTML =
-    '<div class="clan"><span class="crest">'+esc(c.letters||c.name.slice(0,2))+'</span>'+
-    '<span class="who"><span class="lab">your clan</span><strong>'+esc(c.name)+'</strong>'+
+
+  const card = label =>
+    '<div class="clan'+(inline?' inline':'')+'"><span class="crest">'+esc(c.letters||c.name.slice(0,2))+'</span>'+
+    '<span class="who"><span class="lab">'+label+'</span><strong>'+esc(c.name)+'</strong>'+
     '<span class="sch">'+esc(c.school||'')+'</span></span>'+
-    (chapters.length>1?'<button class="change" type="button" id="changeClan">not you?</button>':'')+
+    (chapters.length>1?'<button class="change" type="button" id="changeClan">'+
+      (inline?'change':'not you?')+'</button>':'')+
     '</div>';
+
+  if(inline){
+    pick.innerHTML='<div class="f"><span>your chapter</span>'+card('picked')+'<span class="err" id="pickErr"></span></div>';
+  }else{
+    lede.innerHTML = '<b style="color:var(--text);font-weight:600">'+esc(c.name)+'</b> is already registered for Greek Wars. '+
+      'This is the last step: get on fomo, and we drop you into the chapter&rsquo;s clan.';
+    slot.innerHTML = card('your clan');
+  }
+
   const change=document.getElementById('changeClan');
-  if(change)change.addEventListener('click',()=>{history.replaceState(null,'',location.pathname);showPicker();});
+  if(change)change.addEventListener('click',()=>{
+    history.replaceState(null,'',location.pathname);
+    slot.innerHTML='';
+    showPicker({focus:true});
+  });
   history.replaceState(null,'','?c='+encodeURIComponent(c.id));
   saveDraft();
 }
@@ -415,21 +444,21 @@ function chapterMatches(q){
     .slice(0,8).map(m=>m.c);
 }
 
-function showPicker(){
+function showPicker({focus=false}={}){
   clan=null;
+  document.title='get in your clan — fomo campus';
   document.getElementById('clanId').value=document.getElementById('clanName').value=document.getElementById('clanSchool').value='';
-  slot.innerHTML=
-    '<div class="pick"><h3>Which house are you in?</h3>'+
-    '<p class="say">Type your chapter or your school &mdash; we&rsquo;ll find it.</p>'+
+  pick.innerHTML=
     '<div class="f ac-field">'+
+      '<span>your chapter</span>'+
       '<input type="text" id="houseSearch" placeholder="sigma chi, or san diego state" '+
         'role="combobox" aria-expanded="false" aria-controls="houseList" aria-autocomplete="list" '+
-        'aria-label="Search for your chapter" autocomplete="off" autocapitalize="none" '+
-        'autocorrect="off" spellcheck="false">'+
+        'autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">'+
       '<ul class="ac-list" id="houseList" role="listbox" hidden></ul>'+
       '<span class="err" id="pickErr"></span>'+
-      '<span class="hint" id="pickHint">'+chapters.length+' chapters are registered.</span>'+
-    '</div></div>';
+      '<span class="hint" id="pickHint">Type your chapter or your school &mdash; '+
+        chapters.length+' are registered.</span>'+
+    '</div>';
 
   const search=document.getElementById('houseSearch'),
         list=document.getElementById('houseList'),
@@ -445,12 +474,12 @@ function showPicker(){
       list.children[i].scrollIntoView({block:'nearest'});}
     else search.removeAttribute('aria-activedescendant');};
 
-  const take=c=>{close();setClan(c);};
+  const take=c=>{close();setClan(c,{inline:true});};
 
   const open=()=>{
     items=chapterMatches(search.value);
     const typed=search.value.trim();
-    hint.textContent = !typed ? chapters.length+' chapters are registered.'
+    hint.textContent = !typed ? 'Type your chapter or your school — '+chapters.length+' are registered.'
       : items.length ? ''
       : 'No chapter matches that. Check with whoever sent you this link — your house may not be registered yet.';
     if(!items.length)return close();
@@ -471,6 +500,8 @@ function showPicker(){
     search.setAttribute('aria-expanded','true');
     mark(-1);
   };
+
+  if(focus)search.focus();
 
   search.addEventListener('input',()=>{
     const err=document.getElementById('pickErr');
@@ -581,12 +612,12 @@ loadChapters().then(list=>{
   else{
     /* both the feed and the bundled file failed. never strand them on a dead
        page — take the chapter as typed and sort it out in the sheet. */
-    slot.innerHTML='<div class="pick"><h3>Which house are you in?</h3>'+
-      '<p class="say">We couldn&rsquo;t load the chapter list just now, so type it in.</p>'+
-      '<label class="f"><span>chapter</span><input type="text" name="clan_typed" id="clanTyped" '+
-      'placeholder="Sigma Chi" maxlength="60"><span class="err"></span></label>'+
+    pick.innerHTML=
+      '<label class="f"><span>your chapter</span><input type="text" name="clan_typed" id="clanTyped" '+
+      'placeholder="Sigma Chi" maxlength="60"><span class="err"></span>'+
+      '<span class="hint">We couldn&rsquo;t load the chapter list just now, so type it in.</span></label>'+
       '<label class="f"><span>school</span><input type="text" name="school_typed" id="schoolTyped" '+
-      'placeholder="San Diego State University" maxlength="80"><span class="err"></span></label></div>';
+      'placeholder="San Diego State University" maxlength="80"><span class="err"></span></label>';
   }
 });
 
