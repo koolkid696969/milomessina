@@ -353,6 +353,23 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
 .dock .d-photos{background:none;box-shadow:none;border-radius:0;
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.34))}
 .dock .d-photos img{width:100%;height:100%;display:block}
+/* ── private projects gate ──────────────────────────── */
+[data-private]{display:none!important}
+.gate{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;
+  padding:26px 20px;margin:6px 0 2px;border:1px dashed var(--line-2);border-radius:12px;
+  background:rgba(23,21,15,.025)}
+.gate-mark{width:30px;height:30px;color:var(--muted);margin-bottom:6px}
+.gate-mark svg{width:100%;height:100%;display:block}
+.gate-t{font-weight:600;font-size:.92rem;color:var(--ink)}
+.gate-d{font-size:.82rem;color:var(--muted)}
+.gate-row{display:flex;gap:7px;margin-top:13px;width:100%;max-width:290px}
+.gate-row input{flex:1;min-width:0;padding:8px 11px;font:inherit;font-size:.86rem;color:var(--ink);
+  background:#fff;border:1px solid var(--line-2);border-radius:8px}
+.gate-row input:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
+.gate-row button{padding:8px 16px;font:inherit;font-size:.86rem;font-weight:600;color:var(--paper);
+  background:var(--ink);border-radius:8px;white-space:nowrap}
+.gate-row button:hover{background:var(--ink-2)}
+.gate-e{min-height:1.1em;margin-top:9px;font-size:.79rem;color:var(--red)}
 .dock .sep{width:1px;height:34px;background:rgba(255,255,255,.22);margin-inline:3px;align-self:center}
 .dock .run{position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:4px;height:4px;
   border-radius:50%;background:rgba(255,255,255,.9);opacity:0;transition:opacity .2s}
@@ -602,7 +619,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
       </span>
       <span class="crumb">My Work <b id="crumb-work">/ fomo</b></span>
       <span class="tools">
-        <a href="/fomo" aria-label="Open the fomo campus site">
+        <a href="/fomo" data-private aria-label="Open the fomo campus site">
           <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
             <path d="M3 11L11 3M11 3H5.5M11 3v5.5" stroke="currentColor" stroke-width="1.7"
                   stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -639,7 +656,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
         <div class="pane-title">
           <h2>fomo campus</h2>
           <!-- fomo's lockup, same mark as the tab. this is the way into the site -->
-          <a class="lockup" href="/fomo" aria-label="Open the fomo campus site">
+          <a class="lockup" href="/fomo" data-private aria-label="Open the fomo campus site">
             <svg viewBox="0 0 100 100">
               <path fill="currentColor" d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z"/>
               <path fill="currentColor" d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z"/>
@@ -707,7 +724,22 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
           pages, the chapter competition, and the experiments.
         </p>
 
-        <div class="grp">
+        <form class="gate" id="gate">
+          <div class="gate-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M7 10V7a5 5 0 0 1 10 0v3" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round"/><rect x="4" y="10" width="16" height="10" rx="2.5"
+              fill="currentColor"/></svg>
+          </div>
+          <p class="gate-t">These are private for now.</p>
+          <p class="gate-d">Enter the password to list them.</p>
+          <div class="gate-row">
+            <input id="gate-p" type="password" autocomplete="off" aria-label="Password" placeholder="Password">
+            <button type="submit">Show</button>
+          </div>
+          <p class="gate-e" id="gate-e" role="status"></p>
+        </form>
+
+        <div class="grp" data-private>
           <h3>fomo campus</h3>
           <ul class="plist">
             <li><a href="/fomo">
@@ -737,7 +769,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
           </ul>
         </div>
 
-        <div class="grp">
+        <div class="grp" data-private>
           <h3>experiments</h3>
           <ul class="plist">
             <li><a href="/cars">
@@ -870,9 +902,9 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
   <button type="button" class="d-mail on" data-open="win-contact">
     <svg viewBox="0 0 100 100" aria-hidden="true"><use href="#ic-mail"/></svg>
     <span class="run"></span><span class="tip">Contact</span></button>
-  <span class="sep" aria-hidden="true"></span>
-  <a class="d-fomo" href="/fomo">fm<span class="tip">fomo campus ↗</span></a>
-  <a class="d-photos" href="/photos">
+  <span class="sep" data-private aria-hidden="true"></span>
+  <a class="d-fomo" href="/fomo" data-private>fm<span class="tip">fomo campus ↗</span></a>
+  <a class="d-photos" href="/photos" data-private>
     <img src="/assets/photos.png" width="46" height="46" alt="" decoding="async">
     <span class="tip">Photos</span>
   </a>
@@ -1041,8 +1073,14 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
        instead of guessing viewport breakpoints. offsetTop is measured from
        the window, so it holds whatever height the window currently has. */
     var pane = work.querySelector('.pane:not([hidden])'),
-        tail = pane && pane.lastElementChild,
-        name = document.querySelector('.brand');
+        name = document.querySelector('.brand'),
+        tail = null;
+    /* the last child may be hidden — the projects gate hides the directory
+       groups — and a display:none element measures zero, which would collapse
+       the window onto its minimum. Size to the last child actually on screen. */
+    if (pane) for (var t = pane.children.length - 1; t >= 0; t--) {
+      if (pane.children[t].getClientRects().length) { tail = pane.children[t]; break; }
+    }
     if (tail && name) {
       work.classList.add('fitted');
       var cap  = Math.round(name.offsetTop - TOP - SHADOW_GAP);
@@ -1136,6 +1174,47 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:60;opa
     document.fonts.ready.then(function(){ layoutDesktop(); clampAll(); });
   }
   focusWin(document.getElementById('win-work'));
+})();
+</script>
+<script>
+/* The projects on this domain stay public and directly reachable; they are just
+   not advertised here until someone enters the password. This only hides links,
+   so treat it as discretion, not access control. */
+(function(){
+  'use strict';
+  var KEY = 'mm-projects-shown';
+  var HASH = '7ce009efa969db550efc2baf8d9a43896f7820fd4993b318715e7d9a2d5dde5e';
+  var gate = document.getElementById('gate');
+  if (!gate) return;
+  var field = document.getElementById('gate-p'), err = document.getElementById('gate-e');
+
+  function reveal(){
+    var hidden = document.querySelectorAll('[data-private]');
+    for (var i = 0; i < hidden.length; i++) hidden[i].removeAttribute('data-private');
+    if (gate.isConnected) gate.remove();
+    // the work window sizes itself to its content, so let it measure again
+    dispatchEvent(new Event('resize'));
+  }
+
+  try { if (localStorage.getItem(KEY) === '1') return reveal(); } catch (e) {}
+
+  function digest(text){
+    var bytes = new TextEncoder().encode('milomessina-gate-v1:' + text);
+    return crypto.subtle.digest('SHA-256', bytes).then(function(buf){
+      return [].map.call(new Uint8Array(buf), function(b){
+        return b.toString(16).padStart(2, '0'); }).join('');
+    });
+  }
+
+  gate.addEventListener('submit', function(event){
+    event.preventDefault();
+    err.textContent = '';
+    digest(field.value).then(function(hex){
+      if (hex !== HASH) { err.textContent = 'Not the right password.'; field.select(); return; }
+      try { localStorage.setItem(KEY, '1'); } catch (e) {}
+      reveal();
+    }).catch(function(){ err.textContent = 'Could not check that in this browser.'; });
+  });
 })();
 </script>
 </body>
