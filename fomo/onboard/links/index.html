@@ -95,6 +95,18 @@ function message(c,url){
     c.name+' clan. Takes two minutes:\n'+url;
 }
 
+/* the admin holds some houses twice — two rows, two uuids, one chapter.
+   One house should get one link, so only the earliest registration is
+   listed. Links to the copies still resolve on the portal itself. */
+function dedupe(list){
+  const seen=new Map();
+  for(const c of list){
+    const key=(c.name+'|'+c.school).toLowerCase().replace(/[^a-z0-9|]+/g,' ');
+    if(!seen.has(key))seen.set(key,c);
+  }
+  return [...seen.values()];
+}
+
 async function load(){
   for(const [url,live] of [['/api/campuswars',true],['/fomo/campuswars/chapters.json',false]]){
     try{
@@ -102,21 +114,24 @@ async function load(){
       if(!r.ok)continue;
       const j=await r.json();
       if(Array.isArray(j.chapters)&&j.chapters.length)
-        return {chapters:j.chapters.filter(c=>c&&c.id&&c.id!=='empty'&&c.name),live:live&&j.live===true,at:j.updatedAt};
+        return {chapters:dedupe(j.chapters.filter(c=>c&&c.id&&c.id!=='empty'&&c.name)),
+                live:live&&j.live===true,at:j.updatedAt,raw:j.chapters.length};
     }catch(_){}
   }
   return {chapters:[],live:false};
 }
 
-load().then(({chapters,live,at})=>{
+load().then(({chapters,live,at,raw})=>{
   if(!chapters.length){
     state.textContent='chapter list unavailable — the feed and the saved copy both failed';
     return;
   }
-  state.innerHTML = live
+  const dupes=(raw||chapters.length)-chapters.length;
+  state.innerHTML = (live
     ? '<b>live</b> · '+chapters.length+' registered chapter'+(chapters.length===1?'':'s')+
       (at?' · read '+new Date(at).toLocaleTimeString():'')
-    : 'saved copy · '+chapters.length+' chapter'+(chapters.length===1?'':'s')+' · the live feed did not answer';
+    : 'saved copy · '+chapters.length+' chapter'+(chapters.length===1?'':'s')+' · the live feed did not answer')
+    + (dupes?' · '+dupes+' duplicate registration'+(dupes===1?'':'s')+' folded in':'');
 
   rows.innerHTML=chapters.map(c=>{
     const url=location.origin+'/fomo/onboard/?c='+encodeURIComponent(c.id);

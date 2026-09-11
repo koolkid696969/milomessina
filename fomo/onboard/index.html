@@ -245,6 +245,7 @@ footer{border-top:0;margin-top:0}
   </div>
 </footer>
 
+<script src="/fomo/assets/schools.js?v=1"></script>
 <script src="/fomo/assets/form.js?v=5"></script>
 <script>
 /* ════════════════════════════════════════════════════════════
@@ -324,7 +325,20 @@ const params = new URLSearchParams(location.search);
 const wanted = (params.get('c')||params.get('clan')||'').trim().toLowerCase();
 const slot   = document.getElementById('clanSlot');
 const lede   = document.getElementById('lede');
-let chapters = [], clan = null;
+let chapters = [], allChapters = [], clan = null;
+
+/* The admin holds some houses twice — two rows, two uuids, one chapter. A
+   student cannot choose between two identical lines, so the picker is shown
+   the earliest registration of each. Links to the copies keep working:
+   ?c= is resolved against the full list, never this one. */
+function dedupe(list){
+  const seen=new Map();
+  for(const c of list){
+    const key=(c.name+'|'+c.school).toLowerCase().replace(/[^a-z0-9|]+/g,' ');
+    if(!seen.has(key))seen.set(key,c);
+  }
+  return [...seen.values()];
+}
 
 async function loadChapters(){
   for(const url of ['/api/campuswars','/fomo/campuswars/chapters.json']){
@@ -366,10 +380,22 @@ function setClan(c){
    they are already in, so they know its name — and a wall of other
    people's houses is a wall to read past, not a help. This is the same
    combobox base.css dresses for the school field on /fomo/apply. */
+/* "usc" appears in no chapter's school string, but it is in the alias table
+   schools.js already carries for /fomo/apply. Resolve what was typed through
+   that, and match on what it turns out to mean — so usc, sdsu and vt find
+   their houses the way a student expects them to. */
+function aliasedSchools(typed){
+  if(typeof schoolMatches!=='function'||typed.length<2)return[];
+  return schoolMatches(typed,3)
+    .filter(m=>m.kind==='alias'||m.kind==='exact'||(m.kind==='prefix'&&typed.length>=4))
+    .map(m=>schoolKeywords(schoolNorm(m.name)));
+}
+
 function chapterMatches(q){
   const norm=v=>String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
   const typed=norm(q);
   if(!typed)return[];
+  const aliases=aliasedSchools(typed);
   return chapters.map(c=>{
     const name=norm(c.name), school=norm(c.school), short=norm(c.shortSchool);
     /* their own letters first, then their school; a match at the start of a
@@ -380,7 +406,9 @@ function chapterMatches(q){
       (' '+name).includes(' '+typed)                           ?  70 :
       (' '+school).includes(' '+typed)||(' '+short).includes(' '+typed) ? 60 :
       name.includes(typed)                                     ?  40 :
-      school.includes(typed)||short.includes(typed)            ?  30 : 0;
+      school.includes(typed)||short.includes(typed)            ?  30 :
+      /* an abbreviation that resolved to this chapter's school */
+      aliases.some(a=>(' '+schoolKeywords(schoolNorm(c.school))+' ').includes(' '+a+' ')) ? 78 : 0;
     return {c,score};
   }).filter(m=>m.score)
     .sort((a,b)=>b.score-a.score||a.c.name.localeCompare(b.c.name))
@@ -545,8 +573,9 @@ document.getElementById('haveIt').addEventListener('click',()=>{
 /* ── go ───────────────────────────────────────────────────── */
 restoreDraft();
 loadChapters().then(list=>{
-  chapters=list;
-  const match=chapters.find(c=>c.id.toLowerCase()===wanted);
+  allChapters=list;
+  chapters=dedupe(list);
+  const match=allChapters.find(c=>c.id.toLowerCase()===wanted);
   if(match)setClan(match);
   else if(chapters.length)showPicker();
   else{
