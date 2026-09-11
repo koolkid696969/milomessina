@@ -1,5 +1,5 @@
 import {rankedHouseSizes} from './village-house-sizing.js?v=55';
-import {hash,appearance,roundedLoop} from './village-district-layout.js?v=22';
+import {hash,appearance,roundedLoop} from './village-district-layout.js?v=60';
 import {gaitPhase,speechGesture,smooth} from './village-human-motion.js?v=48';
 import {constructionAssignment,constructionActivity} from './village-construction-layout.js?v=51';
 const lawnRoute=roundedLoop(-7.9,7,7.9,14.4,1.15);

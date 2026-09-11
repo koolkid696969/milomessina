@@ -1,4 +1,4 @@
-import {hash} from './village-district-layout.js?v=22';
+import {hash} from './village-district-layout.js?v=60';
 import {lawnGround,toWorld} from './village-layout.js?v=55';
 const textures=new WeakMap();
 export const GRASS_COLOR=0x718753;

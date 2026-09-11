@@ -1,4 +1,4 @@
-import {MONEY_START} from './village-money-rain.js?v=55';
+import {MONEY_START} from './village-money-rain.js?v=60';
 
 // Prepare both light-count variants and upload effect geometry/textures while
 // the loading cover is still up. Use the real canvas so output/tone-mapping

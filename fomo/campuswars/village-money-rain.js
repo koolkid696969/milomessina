@@ -8,12 +8,26 @@ export const MONEY_END=12*INTRO_PACE;
 const smooth=value=>{const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);};
 const seed=(index,salt)=>{const value=Math.sin(index*127.1+salt*311.7)*43758.5453;return value-Math.floor(value);};
 
+// The rain covers the whole lot in the house's own coordinates, from behind the
+// roof out to the street edge of the lawn, so the crowd standing in front of the
+// porch is rained on as well as the roof. Both stay inside the walking routes.
+export const RAIN_HALF_WIDTH=7.6,RAIN_BACK=-5,RAIN_FRONT=14.2;
+const RAIN_DEPTH=RAIN_FRONT-RAIN_BACK,CLOUD_PUFFS=24;
+// Bills reach the lawn itself, fade in just under the cloud and shrink out a
+// short way above whatever they land on, at one speed across the lot.
+const LAWN_LANDING=.25,BILL_TOP=12.5,ROOF_DROP=11.5,FADE_IN=1.1,FADE_OUT=1.6;
+
 // Use the same onboarding ranks as the roof badges. Ties receive equal rain.
 export function moneyRecipients(chapters,anchors){
   const byId=new Map(anchors.map(anchor=>[anchor.id,anchor]));
   return houseStandings(chapters).filter(row=>(row.joined>=15||chapterGoalReached(row))&&byId.has(row.id)).map(row=>{
     const anchor=byId.get(row.id);
-    return {id:row.id,goalReached:chapterGoalReached(row),rank:row.rank,count:Math.max(8,Math.round(112/Math.pow(row.rank,.8))),x:anchor.lot.x,z:anchor.lot.z,roof:anchor.point.y-1};
+    // Only a finished house reports a roof to catch bills. A lot still under
+    // construction has none, so its rain carries all the way down to its crew.
+    const house=anchor.house;
+    return {id:row.id,goalReached:chapterGoalReached(row),rank:row.rank,count:Math.max(8,Math.round(190/Math.pow(row.rank,.8))),
+      x:anchor.lot.x,z:anchor.lot.z,rotation:anchor.lot.rotation||0,roof:anchor.point.y-1,
+      houseHalf:house?house.halfWidth+.45:0,houseFront:house?house.front+.45:0};
   });
 }
 
@@ -51,7 +65,7 @@ export function createMoneyRain(T,chapters,anchors){
     knownGoals=goals;
     releaseInstances();recipients=moneyRecipients(nextChapters,nextAnchors);lastTime=null;
     if(!recipients.length){root.visible=false;return;}
-    clouds=new T.InstancedMesh(cloudGeometry,cloudMaterial,recipients.length*16);clouds.name='rising-money-clouds';
+    clouds=new T.InstancedMesh(cloudGeometry,cloudMaterial,recipients.length*CLOUD_PUFFS);clouds.name='rising-money-clouds';
     bills=new T.InstancedMesh(billGeometry,billMaterial,recipients.reduce((sum,row)=>sum+row.count,0));bills.name='rank-weighted-money';
     for(const mesh of [clouds,bills]){mesh.frustumCulled=false;mesh.instanceMatrix.setUsage(T.DynamicDrawUsage);root.add(mesh);}
     root.visible=false;
@@ -62,22 +76,34 @@ export function createMoneyRain(T,chapters,anchors){
     root.visible=recipients.some(row=>!reward||(row.goalReached&&celebrating.has(row.id)))&&seconds>MONEY_START&&seconds<end;
     if(!root.visible)return;
     const time=seconds-MONEY_START,rise=smooth(time/.65),fade=1-smooth((seconds-(end-.7))/.7);
-    cloudMaterial.opacity=rise*fade*.88;cloudMaterial.color.setRGB(1-night*.3,1-night*.27,1-night*.22);billMaterial.opacity=fade;flutter.value=time;
+    cloudMaterial.opacity=rise*fade*.88;cloudMaterial.color.setRGB(1-night*.3,1-night*.27,1-night*.22);billMaterial.opacity=rise*fade;flutter.value=time;
     let cloudIndex=0,billIndex=0;
     for(const row of recipients){
       const show=!reward||(row.goalReached&&celebrating.has(row.id))?1:0;
-      for(let i=0;i<16;i++){
-        const x=(seed(i,21)-.5)*7,z=(seed(i,22)-.5)*6,y=seed(i,23)*2.6;
-        dummy.position.set(row.x+x+Math.sin(time*.4+i)*.15,row.roof+5+rise*9+y,row.z+z);
+      // Lot-local placement, turned to face the street like the house it belongs to.
+      const turn=Math.cos(row.rotation),lean=Math.sin(row.rotation),top=row.roof+BILL_TOP;
+      const place=(x,z,y)=>dummy.position.set(row.x+x*turn+z*lean,y,row.z-x*lean+z*turn);
+      for(let i=0;i<CLOUD_PUFFS;i++){
+        const x=(seed(i,21)-.5)*2*RAIN_HALF_WIDTH,z=RAIN_BACK+seed(i,22)*RAIN_DEPTH,y=seed(i,23)*2.6;
+        place(x+Math.sin(time*.4+i)*.15,z,row.roof+5+rise*9+y);
         dummy.rotation.set(0,0,0);dummy.scale.set((5+seed(i,24)*4)*rise*show,(3.5+seed(i,25)*3)*rise*show,1);dummy.updateMatrix();clouds.setMatrixAt(cloudIndex++,dummy.matrix);
       }
       for(let i=0;i<row.count;i++){
-        const delay=i/row.count*1.5,clock=time-.45-delay,fall=2.7+seed(i,5)*.7;
-        const age=Math.max(0,clock)%fall,progress=age/fall;
-        const x=(seed(i,6)-.5)*7.6,z=(seed(i,7)-.5)*7.6;
-        dummy.position.set(row.x+x+Math.sin(age*2.3+seed(i,8)*6)*1.1,row.roof+12.5-Math.pow(progress,1.13)*11.5,row.z+z+Math.cos(age*1.7+seed(i,9)*6)*.8);
+        // Drift on the beat clock rather than the bill's own fall, so the column
+        // a bill will land in is known before its drop is chosen.
+        const x=(seed(i,6)-.5)*2*RAIN_HALF_WIDTH+Math.sin(time*2.3+seed(i,8)*6)*1.1;
+        const z=RAIN_BACK+seed(i,7)*RAIN_DEPTH+Math.cos(time*1.7+seed(i,9)*6)*.8;
+        // Bills over the roof settle on it; the rest carry on past the eaves to
+        // the lawn and the people standing on it.
+        const onRoof=Math.abs(x)<row.houseHalf&&z<row.houseFront,drop=top-(onRoof?row.roof+1:LAWN_LANDING);
+        // One fall speed across the lot, so the longer drop to the lawn simply
+        // starts that much earlier and still lands inside the beat.
+        const span=2.7+seed(i,5)*.7,fall=span*drop/ROOF_DROP;
+        const delay=i/row.count*1.5,clock=time-.45-delay+fall-span;
+        const age=Math.max(0,clock)%fall,fallen=Math.pow(age/fall,1.13)*drop;
+        place(x,z,top-fallen);
         dummy.rotation.set(-Math.PI/2+Math.sin(age*3.5+i)*.5,age*.55+seed(i,11)*6,Math.sin(age*2.6+i)*.3);
-        const size=clock<0?0:(.85+seed(i,12)*.3)*smooth(progress/.08)*(1-smooth((progress-.86)/.14));
+        const size=clock<0?0:(.85+seed(i,12)*.3)*smooth(fallen/FADE_IN)*smooth((drop-fallen)/FADE_OUT);
         dummy.scale.setScalar(size*show);dummy.updateMatrix();bills.setMatrixAt(billIndex++,dummy.matrix);
       }
     }

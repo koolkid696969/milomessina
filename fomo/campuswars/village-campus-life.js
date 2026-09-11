@@ -1,6 +1,6 @@
 import {FOMO_VEHICLE_COLOR} from './village-vehicles.js?v=35';
 import {gaitPhase,humanPose,speechGesture,smooth} from './village-human-motion.js?v=25';
-import {roundedLoop,mod,hash,appearance,palettes,districtSpecs} from './village-district-layout.js?v=49';
+import {roundedLoop,mod,hash,appearance,palettes,districtSpecs} from './village-district-layout.js?v=60';
 
 // Physical routes keep activity on sidewalks, lawns and bike lanes.
 export function campusPeople(kind,cx,cz){

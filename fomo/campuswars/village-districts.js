@@ -1,4 +1,4 @@
-import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=50';
+import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=60';
 import {createCampusKit} from './village-campus-kit.js?v=35';
 import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=59';
 

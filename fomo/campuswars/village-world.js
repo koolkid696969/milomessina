@@ -8,7 +8,7 @@ import {createGrassMaterial,createLawnBlades} from './village-grass.js?v=55';
 import {humanPose} from './village-human-motion.js?v=48';
 import {createConstructionSite,createConstructionEquipment} from './village-construction.js?v=56';
 import {batchCampusGeometry,createCampusKit} from './village-campus-kit.js?v=35';
-import {palettes,hash} from './village-district-layout.js?v=22';
+import {palettes,hash} from './village-district-layout.js?v=60';
 import {createLots,rowExtension,toWorld,crowdMembers,activityPose} from './village-layout.js?v=55';
 import {createStreetNetwork,setStreetExtension} from './village-streets.js?v=56';
 import {createChapterBanner,bannerIdentity} from './village-banners.js?v=56';
@@ -131,7 +131,9 @@ export function createVillage(THREE,chapters,{streets:existingStreet,houseFinish
     banner.position.y=bannerTop-banner.geometry.parameters.height*banner.scale.y/2;
     house.position.z=size.offsetZ; // Keep the porch steps at the same lawn entrance.
     house.userData={chapter:id,joined:chapter.joined,exterior:finish,...size};
-    anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot});
+    // The roof's own footprint, used by the money rain to tell a bill landing on
+    // the house from one carrying on down to the lawn.
+    anchors.push({id,point:new THREE.Vector3(lot.x,roofline+1,lot.z),lot,house:{halfWidth:footprint/2,front:size.offsetZ+depth*depthScale/2}});
   });
   world.add(createLawnBlades(THREE,lots.slice(0,chapters.length)));
   const members=crowdMembers(chapters,lots,houseSizes),parts={};

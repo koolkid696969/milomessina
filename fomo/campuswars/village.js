@@ -1,10 +1,10 @@
 import {villageQuality} from './village-quality.js?v=56';
 import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=53';
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=59';
-import {createDistricts} from './village-districts.js?v=59';
+import {createVillage} from './village-world.js?v=60';
+import {createDistricts} from './village-districts.js?v=60';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
-import {createMoneyRain} from './village-money-rain.js?v=55';
+import {createMoneyRain} from './village-money-rain.js?v=60';
 import {prewarmVillage} from './village-prewarm.js?v=55';
 
 const shell=document.getElementById('village');

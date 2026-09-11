@@ -1,6 +1,6 @@
 import {houseStandings} from './village-competition.js?v=55';
 import {bannerIdentity} from './village-banner-art.js?v=55';
-import {hash} from './village-district-layout.js?v=22';
+import {hash} from './village-district-layout.js?v=60';
 
 function houseStyle(chapter){
   const original=['blue-and-gold','star-and-crescent','azure-academic','cardinal-rose','cherry-varsity'].indexOf(bannerIdentity(chapter).key);
