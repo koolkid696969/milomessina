@@ -86,16 +86,29 @@ button:hover{background:#3A352B}
 const form = document.getElementById('f');
 const field = document.getElementById('p');
 const error = document.getElementById('e');
+let busy = false;
 form.addEventListener('submit', async event => {
   event.preventDefault();
+  if (busy) return;
+  busy = true;
   error.textContent = '';
-  // Hash here so the password itself never leaves the browser.
-  const bytes = new TextEncoder().encode(${JSON.stringify(SALT)} + ':' + field.value);
-  const digest = await crypto.subtle.digest('SHA-256', bytes);
-  const token = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
-  document.cookie = ${JSON.stringify(COOKIE)} + '=' + token +
-    '; Path=/; Max-Age=${MAX_AGE}; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
-  location.reload();
+  try {
+    // Hash here so the password itself never leaves the browser.
+    const bytes = new TextEncoder().encode(${JSON.stringify(SALT)} + ':' + field.value);
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    const token = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+    document.cookie = ${JSON.stringify(COOKIE)} + '=' + token +
+      '; Path=/; Max-Age=${MAX_AGE}; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : '');
+    location.reload();
+  } catch {
+    busy = false;
+    error.textContent = 'Could not unlock in this browser. Try a different one.';
+  }
+});
+// Enter should submit. Handle it explicitly rather than relying on the
+// browser's implicit submission, which does not fire everywhere.
+field.addEventListener('keydown', event => {
+  if (event.key === 'Enter') { event.preventDefault(); form.requestSubmit(); }
 });
 </script>
 </body>
