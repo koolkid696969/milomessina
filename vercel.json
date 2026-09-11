@@ -1,6 +1,5 @@
 {
   "functions": {
-    "api/campuswars.mjs": { "maxDuration": 30 },
-    "api/campus-market.mjs": { "maxDuration": 15 }
+    "api/campuswars.mjs": { "maxDuration": 30 }
   }
 }

@@ -3,7 +3,6 @@ import {createStreetNavigation,streetStops,streetStep} from './village-street-na
 import * as THREE from './vendor/three.module.min.js';
 import {createVillage} from './village-world.js?v=59';
 import {createDistricts} from './village-districts.js?v=59';
-import {EXCHANGE_VIEW} from './village-market.js?v=50';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=44';
 import {createMoneyRain} from './village-money-rain.js?v=55';
 import {prewarmVillage} from './village-prewarm.js?v=55';
@@ -40,7 +39,6 @@ function startVillage(){
   let streetMode=false,streetZ=28.5,streetWantedZ=28.5;
   const streetButton=document.getElementById('village-street'),streetControls=document.getElementById('street-controls');
   let districts=createDistricts(THREE,village.extension);scene.add(districts.root);
-  let marketState;
   const dusk={sky:new THREE.Color(0x25233f),ambient:new THREE.Color(0x9a9fdc),ground:new THREE.Color(0x453649),sun:new THREE.Color(0xc49ab1),fill:new THREE.Color(0x858dff)};
   let litAtNight=false;
   function applyLighting(amount){
@@ -108,7 +106,6 @@ function startVillage(){
   });
   document.addEventListener('village:replay',beginIntro);
   document.addEventListener('village:artwork',()=>{viewDirty=true;wake();});
-  document.addEventListener('market:update',event=>{marketState=event.detail;districts.setMarket(marketState);viewDirty=true;wake();});
   let selected='sigma-chi-sdsu',paused=reduced||document.getElementById('party-toggle').getAttribute('aria-pressed')==='true',visible=false,drag=null,dragDistance=0,raf=0,lastTime=0,partyTime=0,lastRender=0,viewDirty=true,shadowX=NaN,shadowZ=NaN;
   const target=new THREE.Vector3(...openingView.target),wantedTarget=new THREE.Vector3(...openingView.target),raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
   let {theta,phi,radius}=openingView;let wantedTheta=theta,wantedPhi=phi,wantedRadius=radius;
@@ -129,7 +126,7 @@ function startVillage(){
   function updateChapters(event){
     const previous=village,next=createVillage(THREE,event.detail.chapters,{streets:previous.streets,houseFinishes:previous.houseFinishes});
     chapters=event.detail.chapters;scene.remove(previous.world);scene.add(next.world);village=next;previous.dispose();
-    if(previous.extension!==next.extension){scene.remove(districts.root);districts.dispose();districts=createDistricts(THREE,next.extension);districts.setMarket(marketState);scene.add(districts.root);}
+    if(previous.extension!==next.extension){scene.remove(districts.root);districts.dispose();districts=createDistricts(THREE,next.extension);scene.add(districts.root);}
     if(previous.extension!==next.extension){
       scene.remove(streetNav.root);streetNav.dispose();streetNav=createStreetNavigation(THREE,next.extension);scene.add(streetNav.root);streetNav.root.visible=streetMode;
       const stops=streetStops(next.extension);streetWantedZ=Math.max(stops[0],Math.min(stops.at(-1),streetWantedZ));
@@ -148,11 +145,6 @@ function startVillage(){
   });
   document.addEventListener('party:pause',e=>{paused=e.detail.paused;wake();});
   document.getElementById('village-overview').addEventListener('click',()=>{takeControl();resetView();});
-  document.getElementById('village-exchange').addEventListener('click',()=>{
-    takeControl();leaveStreet();const view=EXCHANGE_VIEW;
-    wantedTarget.set(view.x,view.y,view.z);wantedTheta=view.theta;wantedPhi=view.phi;
-    wantedRadius=Math.max(view.radius,18/(Math.tan(camera.fov*Math.PI/360)*camera.aspect));wake();
-  });
   document.getElementById('village-leaderboard').addEventListener('click',()=>{
     takeControl();leaveStreet();const board=village.competition.board;
     wantedTarget.set(board.position.x,5,board.position.z);

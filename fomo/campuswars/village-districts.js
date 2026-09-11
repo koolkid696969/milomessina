@@ -1,11 +1,9 @@
 import {BLOCK,districtSpecs,districtAt,districtKind,mod,hash,pick} from './village-district-layout.js?v=50';
 import {createCampusKit} from './village-campus-kit.js?v=35';
 import {createCampusPeople,createCampusTraffic} from './village-campus-life.js?v=59';
-import {createMarketExchange} from './village-market.js?v=50';
 
 export function createDistricts(T,extension=0){
   const root=new T.Group(),chunks=new Map(),kit=createCampusKit(T);
-  let marketState;
   const {box,mesh,cylinder,bar,tree:plantTree,bench,lamp,table,path,sign}=kit;
   function tree(p,x,z,seed,size){
     const blocked=(p.userData.specs||[]).some(s=>{const dx=x-(s.x-p.position.x),dz=z-(s.z-p.position.z),a=s.rotation;return Math.abs(dx*Math.cos(a)-dz*Math.sin(a))<s.width/2+2&&Math.abs(dx*Math.sin(a)+dz*Math.cos(a))<s.depth/2+3;});
@@ -126,11 +124,7 @@ export function createDistricts(T,extension=0){
   function makeChunk(cx,cz){
     const p=new T.Group();p.position.set(cx*BLOCK,0,cz*BLOCK);root.add(p);
     const kind=districtKind(cx,cz),specs=districtSpecs(cx,cz);p.userData.specs=specs;
-    const exchanges=[];
-    for(const spec of specs){
-      if(spec.type==='exchange'){const exchange=createMarketExchange(T,kit,spec,cx*BLOCK,cz*BLOCK,marketState);p.add(exchange.root);exchanges.push(exchange);}
-      else kit.building(p,spec,cx*BLOCK,cz*BLOCK);
-    }
+    for(const spec of specs)kit.building(p,spec,cx*BLOCK,cz*BLOCK);
     landscape(p,kind,cx,cz);
     fillDetails(p,kind,cx,cz);
     const activity=createCampusPeople(T,kit,kind,cx,cz);p.add(activity.root);
@@ -144,12 +138,10 @@ export function createDistricts(T,extension=0){
     // include every route and prop, so skipping a whole invisible batch cannot
     // leave an old pose visible. Absolute-time poses catch up before drawing.
     const activityBounds=activity.root.children.find(o=>o.isInstancedMesh).boundingSphere.clone().applyMatrix4(activity.root.matrixWorld);
-    let animatedAt=0,marketAt;
-    return {group:p,kind,specs,exchanges,activityBounds,people:activity.people,animate(time,animatePeople=true){
+    let animatedAt=0;
+    return {group:p,kind,specs,activityBounds,people:activity.people,animate(time,animatePeople=true){
       if(animatePeople&&time!==animatedAt){activity.animate(time);animatedAt=time;}
-      // Market screens have separate building bounds, outside the crowd batch.
-      if(time!==marketAt){exchanges.forEach(e=>e.animate(time));marketAt=time;}
-    },dispose(){exchanges.forEach(e=>e.dispose());activity.dispose();kit.disposeChunk(p);}};
+    },dispose(){activity.dispose();kit.disposeChunk(p);}};
   }
   let lastKey='';
   function update(x,z){
@@ -177,6 +169,5 @@ export function createDistricts(T,extension=0){
     kit.vehicles.resources.forEach(r=>resources.add(r));
     for(const r of resources)if(!r.userData?.sharedResource)r.dispose();chunks.clear();
   }
-  function setMarket(state){marketState=state;for(const chunk of chunks.values())for(const exchange of chunk.exchanges)exchange.setMarket(state);}
-  return {root,update,animate,chunks,traffic,horizon,setMarket,dispose};
+  return {root,update,animate,chunks,traffic,horizon,dispose};
 }
