@@ -1,19 +1,24 @@
-import {MONEY_START} from './village-money-rain.js?v=62';
+import {MONEY_START} from './village-money-rain.js?v=70';
+import {INTRO_PREWARM_TIMES,aimIntroCamera} from './village-intro.js?v=70';
 
-// Prepare both light-count variants and upload effect geometry/textures while
-// the loading cover is still up. Use the real canvas so output/tone-mapping
-// shader variants match playback; a one-pixel scissor limits fragment work.
+// Compile and upload everything the intro flight will draw while the loading
+// cover is still up, so the flight itself links no shaders and uploads nothing.
+// A dusk spotlight and the bonfire raise the scene's light count, which is part
+// of every program's cache key: reaching dusk mid-flight without a warm night
+// variant relinks the whole village in one frame. Both variants are warmed here.
+// Use the real canvas so output and tone-mapping variants match playback, and
+// fly the warm-up camera down the real route so the route's own draws — the
+// aerial opening, the boulevard, the money over the roofs, the resting view —
+// upload their textures and instance buffers now. A one-pixel scissor keeps the
+// fragment cost of those passes at nothing.
 export async function prewarmVillage(T,renderer,scene,camera,applyLighting,moneyRain,{mobile=false}={}){
-  // Upload only the visible daytime scene on phones. Warming every offscreen
-  // banner and both lighting variants together can exhaust Safari's GPU memory.
-  if(mobile){
-    applyLighting(0);moneyRain.clear();
-    renderer.render(scene,camera);
-    return;
-  }
   const scissor=renderer.getScissor(new T.Vector4()),scissorTest=renderer.getScissorTest();
+  const home={position:camera.position.clone(),quaternion:camera.quaternion.clone(),fov:camera.fov};
   const culled=new Map();
-  scene.traverse(object=>{
+  // A desktop can hold the whole world resident, so drop culling and warm every
+  // offscreen banner too. Phones cannot: uploading all of them at once exhausts
+  // Safari's GPU memory, so they keep culling and warm what the route passes.
+  if(!mobile)scene.traverse(object=>{
     if(object.isMesh||object.isSprite||object.isPoints){culled.set(object,object.frustumCulled);object.frustumCulled=false;}
   });
   renderer.setScissor(0,0,1,1);renderer.setScissorTest(true);
@@ -23,12 +28,24 @@ export async function prewarmVillage(T,renderer,scene,camera,applyLighting,money
       await renderer.compileAsync(scene,camera);
       // Compilation alone does not upload textures, instance buffers, or
       // prepare shadow and double-sided transparent draw variants.
-      renderer.render(scene,camera);
+      // One shadow pass per lighting variant warms its depth programs; the
+      // map itself does not move during the flight.
+      renderer.shadowMap.needsUpdate=true;
+      for(const seconds of INTRO_PREWARM_TIMES){
+        aimIntroCamera(camera,seconds);
+        renderer.render(scene,camera);
+      }
     }
   }finally{
     applyLighting(0);moneyRain.clear();
     for(const [object,frustumCulled] of culled)object.frustumCulled=frustumCulled;
+    camera.position.copy(home.position);camera.quaternion.copy(home.quaternion);
+    camera.fov=home.fov;camera.updateProjectionMatrix();camera.updateMatrixWorld();
     renderer.setScissor(scissor);renderer.setScissorTest(scissorTest);
     renderer.shadowMap.needsUpdate=true;
   }
+  // Every pass above drew into a single pixel, so the canvas is still blank.
+  // Paint the opening frame in full before the caller lifts the loading cover,
+  // or the cover comes off an empty canvas for the frame before the first tick.
+  renderer.render(scene,camera);
 }

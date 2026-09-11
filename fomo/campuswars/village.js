@@ -3,9 +3,9 @@ import {createStreetNavigation,streetStops,streetStep} from './village-street-na
 import * as THREE from './vendor/three.module.min.js';
 import {createVillage} from './village-world.js?v=64';
 import {createDistricts} from './village-districts.js?v=63';
-import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=62';
-import {createMoneyRain} from './village-money-rain.js?v=62';
-import {prewarmVillage} from './village-prewarm.js?v=55';
+import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=70';
+import {createMoneyRain} from './village-money-rain.js?v=70';
+import {prewarmVillage} from './village-prewarm.js?v=70';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
@@ -272,7 +272,11 @@ function startVillage(){
       const width=Math.min(badge.userData.width,camera.position.distanceTo(badge.position)*2*Math.tan(camera.fov*Math.PI/360)*112/viewport.clientHeight);
       badge.scale.set(width,width/2,1);badge.updateMatrix();
     }
-    const districtChanged=districts.update(target.x,target.z),lightX=Math.round(target.x/12)*12,lightZ=Math.round(target.z/12)*12;
+    // The whole flight fits inside one shadow box, so hold the map where the
+    // village settles. The intro then costs no shadow pass of its own, and the
+    // handover to the resting view needs none either.
+    const shadowX0=entranceActive?openingView.target[0]:target.x,shadowZ0=entranceActive?openingView.target[2]:target.z;
+    const districtChanged=districts.update(target.x,target.z),lightX=Math.round(shadowX0/12)*12,lightZ=Math.round(shadowZ0/12)*12;
     if(districtChanged||lightX!==shadowX||lightZ!==shadowZ){
       shadowX=lightX;shadowZ=lightZ;sun.position.set(lightX-35,55,lightZ+30);sun.target.position.set(lightX,0,lightZ);renderer.shadowMap.needsUpdate=true;
     }

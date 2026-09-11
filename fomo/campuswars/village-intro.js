@@ -47,3 +47,17 @@ export function introCaptionAt(seconds){
   const reveal=smooth((local-.3*INTRO_PACE)/.22),exit=1-smooth((local-hold)/.3);
   return {index,...stage,opacity:clamp((INTRO_DURATION-time)/.35),copyOpacity:reveal*exit,lift:(1-reveal)*24,scale:1+(1-reveal)*.12,join:index===3};
 }
+// The flight's warm-up and its playback must frame identical views, or the
+// warm-up compiles draws the flight never makes and misses the ones it does.
+export function aimIntroCamera(camera,seconds){
+  const view=introViewAt(seconds),[x,y,z]=view.target;
+  camera.position.set(x+Math.sin(view.theta)*Math.cos(view.phi)*view.radius,y+Math.sin(view.phi)*view.radius,z+Math.cos(view.theta)*Math.cos(view.phi)*view.radius);
+  camera.lookAt(x,y,z);
+  if(view.roll)camera.rotateZ(view.roll);
+  camera.fov=view.fov;camera.updateProjectionMatrix();camera.updateMatrixWorld();
+  return view;
+}
+// Every beat that brings new scenery into frame: the aerial opening, the drop
+// onto the boulevard, the low run between the houses, the bank over the roofs,
+// the high orbit, and the resting view the flight hands over to.
+export const INTRO_PREWARM_TIMES=[0,1.4,3.2,5,6.6,8.2,10,11.8,INTRO_DURATION];
