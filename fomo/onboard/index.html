@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>get in your clan — fomo campus</title>
+<meta name="description" content="You signed your chapter up for Greek Wars. This is the two-minute step that puts you on fomo and inside your chapter's clan.">
+<meta name="theme-color" content="#060510">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/fomo/assets/favicon.svg">
+<link rel="stylesheet" href="/fomo/assets/base.css">
+<style>
+/* same palette and radii as /fomo/apply, so this reads as the same site */
+:root{
+  --ink:#060510; --ink-2:#12111A; --ink-3:#1A1926;
+  --text:#F7F7F7; --muted:#9899A3; --muted-2:#6B6F7B;
+  --line:rgba(203,208,235,.1); --line-2:rgba(203,208,235,.2);
+  --surface:#12111A; --surface-2:rgba(255,255,255,.12);
+  --violet-hi:#8A9BFF; --glow-v:none;
+  --r-m:12px; --r-l:16px; --r-xl:25px;
+  --maxw:680px;
+}
+header.stuck{background:rgba(6,5,16,.82);backdrop-filter:blur(18px) saturate(150%);border-bottom-color:var(--line)}
+@media(max-width:620px){header{position:static}header.stuck{background:none;backdrop-filter:none;border-bottom-color:transparent}}
+
+/* ── the head ───────────────────────────────────────────
+   this page is opened from a link pasted in a group chat, on a phone, by
+   someone who has already said yes once. it gets one job and no navigation
+   away from it. */
+.top{padding-block:clamp(26px,5vw,52px) clamp(18px,2.6vw,26px)}
+.top .h1{font-size:clamp(2rem,5.4vw,3.2rem);line-height:1;margin-top:0}
+.top .h1 .grad{background-image:linear-gradient(100deg,#A3B0FF 0%,#7FA0FF 34%,#19D97C 100%)}
+.top p{color:#A9A2CC;font-size:clamp(.96rem,1.3vw,1.06rem);max-width:44ch;margin:16px 0 0}
+
+/* ── whose clan this is ─────────────────────────────────
+   the chapter is settled before a single field is typed: the link carries it,
+   so the first thing on the page is their own letters, not a dropdown. */
+.clan{display:flex;align-items:center;gap:15px;padding:15px 17px;border:1px solid var(--line-2);
+  border-radius:var(--r-l);background:linear-gradient(150deg,rgba(138,155,255,.11),rgba(255,255,255,.02))}
+.clan .crest{width:52px;height:52px;flex:none;border-radius:13px;display:grid;place-items:center;
+  font-family:var(--display);font-weight:700;font-size:1.25rem;letter-spacing:-.02em;
+  background:rgba(138,155,255,.16);border:1px solid rgba(138,155,255,.3);color:#CBD3FF}
+.clan .who{min-width:0}
+.clan .lab{display:block;font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--violet-hi);margin-bottom:5px}
+.clan strong{display:block;font-family:var(--display);font-weight:500;font-size:1.22rem;letter-spacing:-.035em;
+  line-height:1.1;text-transform:lowercase}
+.clan .sch{display:block;font-size:.82rem;color:var(--muted);margin-top:3px}
+.clan .change{margin-left:auto;flex:none;font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted-2);transition:color .25s;align-self:flex-start;padding-top:4px}
+.clan .change:hover{color:var(--text)}
+@media(max-width:520px){.clan{padding:13px 14px;gap:12px}.clan .crest{width:44px;height:44px;font-size:1.05rem}
+  .clan strong{font-size:1.06rem}.clan .sch{font-size:.76rem}}
+
+/* ── picking a house, only when the link didn't carry one ── */
+.pick{border:1px solid var(--line);border-radius:var(--r-l);background:var(--surface);padding:16px}
+.pick h3{font-size:1.05rem;font-weight:500;letter-spacing:-.03em;margin-bottom:4px}
+.pick .say{font-size:.84rem;color:var(--muted);margin-bottom:14px}
+.pick input[type=text]{margin-bottom:10px}
+.houses{display:grid;gap:7px;max-height:310px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.house{display:flex;align-items:center;gap:12px;padding:11px 13px;border:1px solid var(--line);
+  border-radius:12px;background:rgba(255,255,255,.02);text-align:left;width:100%;transition:.22s}
+.house:hover,.house:focus-visible{border-color:var(--violet-hi);background:rgba(138,155,255,.1);outline:none}
+.house b{font-family:var(--display);font-weight:700;font-size:.92rem;color:#CBD3FF;flex:none;min-width:2.4em}
+.house span{display:block;font-size:.88rem;text-transform:lowercase}
+.house em{display:block;font-style:normal;text-transform:none;font-size:.76rem;color:var(--muted-2);margin-top:1px}
+.house-none{font-size:.8rem;color:var(--muted-2);text-align:center;padding:14px}
+
+/* ── the rail: three steps, numbered, nothing else on screen ── */
+.rail{margin-top:clamp(22px,3.4vw,32px);padding-bottom:clamp(44px,7vw,80px)}
+.step{border-top:1px solid var(--line);padding-block:clamp(22px,3.2vw,30px)}
+.step>b{display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--green);margin-bottom:13px}
+.step h3{font-size:clamp(1.18rem,2.2vw,1.5rem);font-weight:500;letter-spacing:-.03em;margin:0 0 8px}
+.step p.say{font-size:.86rem;line-height:1.5;color:var(--muted);max-width:52ch;margin:0 0 18px}
+.step:last-of-type{border-bottom:0}
+.fset{margin:0}
+legend{display:none}
+
+/* step one is a door out to the App Store and back again. it is the only
+   place this page can lose someone, so it says plainly that their answers
+   survive the trip — and they do, see the draft restore below. */
+.getapp{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.getapp .btn-p{font-size:.95rem;padding:15px 26px}
+.have{background:none;border:0;padding:0;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted-2);transition:color .25s;text-decoration:underline;
+  text-underline-offset:4px}
+.have:hover{color:var(--text)}
+.kept{display:flex;gap:9px;align-items:flex-start;margin-top:15px;padding:11px 13px;border-radius:11px;
+  border:1px solid rgba(25,217,124,.22);background:rgba(25,217,124,.06);font-size:.8rem;line-height:1.5;color:#9FE3BE}
+.kept b{color:#C9F5DF;font-weight:600}
+
+/* the username is the whole point of the page, so it gets the @ in the box
+   rather than in the hint, and nothing shares its row */
+.at{position:relative}
+.at input{padding-left:33px}
+.at::before{content:'@';position:absolute;left:15px;top:50%;translate:0 -50%;color:var(--muted-2);
+  font-size:.92rem;pointer-events:none}
+/* only ever seen when FOMO.verifyUsername is wired up */
+.vstat{display:flex;gap:7px;align-items:flex-start;margin-top:9px;font-size:.8rem;line-height:1.45}
+.vstat.ok{color:#9FE3BE}
+.vstat.no{color:#FFB49B}
+.vstat.busy{color:var(--muted-2)}
+.actions{border-top:0;padding-top:0;margin-top:6px}
+.actions .btn-p{width:100%;justify-content:center;padding:16px 26px;font-size:.98rem}
+@media(min-width:560px){.actions .btn-p{width:auto}}
+
+.done{margin-block:clamp(30px,6vw,64px)}
+.done .openclan{margin-top:18px;padding:15px 28px;font-size:.98rem}
+.done .clanline{font-family:var(--display);font-weight:500;font-size:1.05rem;letter-spacing:-.03em;
+  text-transform:lowercase;color:#CBD3FF}
+/* the last screen is the cheapest place to reach the rest of the house:
+   they are already holding their phone with the link open. */
+.share{margin-top:26px;padding-top:22px;border-top:1px solid var(--line)}
+.share p{font-size:.84rem;color:var(--muted);margin-bottom:12px}
+.sharerow{display:flex;gap:8px;max-width:420px;margin-inline:auto}
+.sharerow input{font-family:var(--mono);font-size:.72rem}
+.sharerow .btn{flex:none}
+footer{border-top:0;margin-top:0}
+.f-bot{margin-top:0;padding-top:0;border-top:0}
+@media(max-width:620px){.top{padding-block:22px 16px}}
+</style>
+<link rel="stylesheet" href="/fomo/assets/campus-ui.css?v=1">
+<script src="/fomo/assets/campus-ui.js?v=1" defer></script>
+</head>
+<body class="campus-page">
+<a class="campus-skip" href="#main-content">Skip to content</a>
+
+<canvas id="stars"></canvas>
+<div class="aurora"><i></i><i></i><i></i></div>
+
+<header class="campus-header" id="hdr"><div class="campus-top"><a class="logo" href="/fomo/campuswars/" aria-label="fomo campus — Greek Wars"><span class="logo-mark"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M36.9747 24.3586C44.1067 24.3587 49.7941 27.9515 52.9484 33.5959C48.7626 38.0418 45.6617 43.7612 44.4679 50.0002C43.2743 56.2391 44.1865 61.9572 46.67 66.4026C41.3555 72.0468 34.2931 75.6408 27.1613 75.6409C18.432 75.6407 11.8659 70.2588 9.46204 62.3196H26.8478C27.4159 62.3193 28.0059 61.8593 28.1691 61.2932L34.6486 38.7043C34.8098 38.1381 34.4815 37.6782 33.9152 37.678H14.1788C19.6213 29.7404 28.2465 24.3588 36.9747 24.3586Z" fill="currentColor"/><path d="M72.3285 24.3586C85.0779 24.3586 93.2156 35.8374 90.5062 49.9993C87.7966 64.1596 75.2646 75.6409 62.515 75.6409C53.7856 75.6408 47.2196 70.2589 44.8158 62.3196H64.1537C64.7218 62.3194 65.3127 61.8594 65.476 61.2932L71.9545 38.7043C72.1157 38.138 71.7876 37.678 71.2211 37.678H49.5316C54.9741 29.7401 63.5999 24.3587 72.3285 24.3586Z" fill="currentColor"/></svg></span>fomo<span>/campus</span></a><div class="campus-actions"><a class="campus-back" href="/fomo/campuswars/">← The village</a></div></div></header>
+
+<main id="main-content" tabindex="-1">
+<div class="wrap">
+
+  <div class="top">
+    <span class="eyebrow">greek wars · fall 2026</span>
+    <h1 class="h1">you signed up.<br>now <span class="grad">get in the clan</span>.</h1>
+    <p id="lede">Your chapter registered you for Greek Wars. This is the last step: get on fomo, and we drop you into your house&rsquo;s clan.</p>
+  </div>
+
+  <!-- the chapter, settled from the link. replaced by the picker when the
+       link carried nothing we recognise. -->
+  <div id="clanSlot"></div>
+
+  <form id="joinForm" class="rail" novalidate>
+    <div class="banner"></div>
+    <input class="hp" type="text" name="_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <input type="hidden" name="clan" id="clanName">
+    <input type="hidden" name="school" id="clanSchool">
+    <input type="hidden" name="clan_id" id="clanId">
+
+    <section class="step">
+      <b>step 01</b>
+      <h3>Get fomo on your phone</h3>
+      <p class="say">If you already have the app, skip straight to step 2.</p>
+      <div class="getapp">
+        <a class="btn btn-p" id="getApp" href="https://fomo.family" target="_blank" rel="noopener">download fomo &rarr;</a>
+        <button class="have" type="button" id="haveIt">i already have it</button>
+      </div>
+      <div class="kept">
+        <span aria-hidden="true">&#8635;</span>
+        <span><b>Come straight back here when you&rsquo;re done.</b> Anything you&rsquo;ve already typed on this page is still here when you return &mdash; you won&rsquo;t start over.</span>
+      </div>
+    </section>
+
+    <section class="step">
+      <b>step 02</b>
+      <h3>Your fomo username</h3>
+      <p class="say">Open fomo, tap your profile &mdash; it&rsquo;s the handle under your name. This is the only way we can find you and add you to the right clan.</p>
+      <fieldset class="fset">
+        <legend>your fomo account</legend>
+        <label class="f">
+          <span>fomo username</span>
+          <span class="at"><input type="text" name="fomo_username" id="username" required autocomplete="off"
+            autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="yourname" maxlength="40" inputmode="text"></span>
+          <span class="err"></span>
+          <span class="hint">Type it exactly as it appears in the app. Not your name, not your Instagram.</span>
+          <span class="vstat" id="vstat" hidden></span>
+        </label>
+      </fieldset>
+    </section>
+
+    <section class="step">
+      <b>step 03</b>
+      <h3>So we can match you to your signup</h3>
+      <p class="say">We already have your chapter&rsquo;s list. These three match your fomo account to the name on it.</p>
+      <fieldset class="fset">
+        <legend>who you are</legend>
+        <label class="f">
+          <span>full name</span>
+          <input type="text" name="full_name" id="fullname" required autocomplete="name" placeholder="Jack Donnelly" maxlength="80">
+          <span class="err"></span>
+        </label>
+        <label class="f">
+          <span>email</span>
+          <input type="email" name="email" id="email" required autocomplete="email" inputmode="email"
+            autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="you@school.edu">
+          <span class="err"></span>
+          <span class="hint">The one you used when your chapter signed you up, if you remember it.</span>
+        </label>
+        <label class="f">
+          <span>phone</span>
+          <input type="tel" name="phone" id="phone" required autocomplete="tel" inputmode="tel" placeholder="(313) 555-0142">
+          <span class="err"></span>
+          <span class="hint">We text you the moment you&rsquo;re in the clan. That&rsquo;s all it&rsquo;s used for.</span>
+        </label>
+      </fieldset>
+
+      <div class="actions">
+        <button class="btn btn-p" type="submit" id="submitBtn">put me in the clan &rarr;</button>
+      </div>
+    </section>
+  </form>
+
+  <div class="done">
+    <div class="tick">&#10003;</div>
+    <h2 id="doneHead">You&rsquo;re on the list.</h2>
+    <p class="clanline" id="doneClan"></p>
+    <p class="msg" id="doneMsg">fomo adds you by hand, usually inside 24 hours. You&rsquo;ll get a text the moment your clan opens up &mdash; nothing else to do.</p>
+    <a class="btn btn-p openclan" id="openClan" hidden href="#">open fomo and join &rarr;</a>
+    <div class="share" id="shareBox" hidden>
+      <p>Half your house still hasn&rsquo;t done this. Send them the link.</p>
+      <div class="sharerow">
+        <input type="text" id="shareUrl" readonly aria-label="Your chapter's join link">
+        <button class="btn btn-g btn-sm" type="button" id="shareBtn">copy</button>
+      </div>
+    </div>
+    <div class="dump" style="display:none"></div>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-bot">
+      <span>18+ TO COMPETE. TRADING INVOLVES RISK, INCLUDING LOSS OF PRINCIPAL.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="/fomo/assets/form.js?v=5"></script>
+<script>
+/* ════════════════════════════════════════════════════════════
+   THE SEAM — where fomo plugs this into their own stack.
+
+   This page deliberately knows nothing about fomo's database. As it
+   ships, it is the missing wire done by hand: a student's fomo
+   username lands in the campus sheet next to the chapter they signed
+   up with, and someone at fomo adds them to the clan.
+
+   Every field below is off by default. Fill one in and this page
+   upgrades itself around it; leave it blank and the manual path
+   stays exactly as it is. Nothing here ever claims a step happened
+   that did not — an endpoint that fails is reported, and the answers
+   still reach the sheet.
+
+     app / ios / android
+       Where "download fomo" goes. Points at fomo.family today
+       because that is a real page that sends people to the app. Set
+       ios and android and the button picks the right store off the
+       phone it is opened on.
+
+     verifyUsername    GET  <url>?username=jackd
+       Answers {"exists":true} / {"exists":false}. Turns step 2 into
+       a live check, so a handle nobody can find is caught while the
+       student is still on the page rather than three days later by
+       whoever is doing the adding. The answer travels to the sheet
+       as `username checked`, so a row can be trusted at a glance.
+       A check that errors never blocks a submission.
+
+     clanLink          e.g. 'https://fomo.family/clan/{clan}'
+       A link that opens the app on a clan. This is the one that
+       turns the page from a waiting list into a door: fill it in and
+       the last screen becomes a button that puts them in the clan
+       themselves, and the "we add you by hand" copy disappears.
+       {clan} is replaced with the fomo clan id from clanIds below,
+       or with our own chapter id when there is no entry.
+
+     joinEndpoint      POST <url>  {fomo_username, clan_id, email, …}
+       Records the join on fomo's side as well as in the sheet. The
+       sheet write happens first and is what the student is told
+       about, so this failing costs nobody their place.
+
+     clanIds
+       Our chapter id → fomo's clan id, for clanLink and joinEndpoint.
+       Our ids come from the Greek Wars admin (`sigma-chi-sdsu`, or
+       `chapter-<uuid>` for houses registered since). Anything not
+       listed falls through as-is.
+   ════════════════════════════════════════════════════════════ */
+const FOMO = {
+  app:            'https://fomo.family',
+  ios:            '',
+  android:        '',
+  verifyUsername: '',
+  clanLink:       '',
+  joinEndpoint:   '',
+  clanIds:        {}
+};
+
+/* the store button, off whatever phone this was opened on */
+(function(){
+  const ua=navigator.userAgent||'';
+  const store=/iPhone|iPad|iPod/i.test(ua)?FOMO.ios:/Android/i.test(ua)?FOMO.android:'';
+  document.getElementById('getApp').href=store||FOMO.app;
+})();
+
+const fomoClanId  = c => (c && (FOMO.clanIds[c.id]||c.id)) || '';
+const clanLinkFor = c => FOMO.clanLink && c
+  ? FOMO.clanLink.replace('{clan}',encodeURIComponent(fomoClanId(c))) : '';
+
+/* ── which house this is ──────────────────────────────────────
+   The live feed is the same one the village reads, so a chapter that
+   registered on Arya's site an hour ago already has a working link here
+   with nothing deployed. The bundled file is the fallback when the feed
+   is down — a stale chapter list is far better than a dead page. */
+const params = new URLSearchParams(location.search);
+const wanted = (params.get('c')||params.get('clan')||'').trim().toLowerCase();
+const slot   = document.getElementById('clanSlot');
+const lede   = document.getElementById('lede');
+let chapters = [], clan = null;
+
+async function loadChapters(){
+  for(const url of ['/api/campuswars','/fomo/campuswars/chapters.json']){
+    try{
+      const r=await fetch(url,{cache:'no-store'});
+      if(!r.ok)continue;
+      const j=await r.json();
+      if(Array.isArray(j.chapters)&&j.chapters.length)
+        return j.chapters.filter(c=>c&&c.id&&c.id!=='empty'&&c.name);
+    }catch(_){}
+  }
+  return [];
+}
+
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function setClan(c){
+  clan=c;
+  document.getElementById('clanId').value    = c.id;
+  document.getElementById('clanName').value  = c.name;
+  document.getElementById('clanSchool').value= c.school||'';
+  document.title = 'join the '+c.name.toLowerCase()+' clan — fomo campus';
+  lede.innerHTML = '<b style="color:var(--text);font-weight:600">'+esc(c.name)+'</b> is already registered for Greek Wars. '+
+    'This is the last step: get on fomo, and we drop you into the chapter&rsquo;s clan.';
+  slot.innerHTML =
+    '<div class="clan"><span class="crest">'+esc(c.letters||c.name.slice(0,2))+'</span>'+
+    '<span class="who"><span class="lab">your clan</span><strong>'+esc(c.name)+'</strong>'+
+    '<span class="sch">'+esc(c.school||'')+'</span></span>'+
+    (chapters.length>1?'<button class="change" type="button" id="changeClan">not you?</button>':'')+
+    '</div>';
+  const change=document.getElementById('changeClan');
+  if(change)change.addEventListener('click',()=>{history.replaceState(null,'',location.pathname);showPicker();});
+  history.replaceState(null,'','?c='+encodeURIComponent(c.id));
+  saveDraft();
+}
+
+function showPicker(){
+  clan=null;
+  document.getElementById('clanId').value=document.getElementById('clanName').value=document.getElementById('clanSchool').value='';
+  slot.innerHTML=
+    '<div class="pick"><h3>Which house are you in?</h3>'+
+    '<p class="say">Pick yours and the rest of the page fills itself in.</p>'+
+    '<input type="text" id="houseSearch" placeholder="search your chapter or school" autocomplete="off" aria-label="Search chapters">'+
+    '<div class="houses" id="houses"></div>'+
+    '<span class="err" id="pickErr"></span></div>';
+  const search=document.getElementById('houseSearch'), list=document.getElementById('houses');
+  function paint(){
+    const q=search.value.trim().toLowerCase();
+    const hits=chapters.filter(c=>!q||(c.name+' '+(c.school||'')+' '+(c.shortSchool||'')).toLowerCase().includes(q));
+    list.innerHTML=hits.length
+      ? hits.map(c=>'<button class="house" type="button" data-id="'+esc(c.id)+'">'+
+          '<b>'+esc(c.letters||'')+'</b><span>'+esc(c.name)+
+          '<em>'+esc(c.shortSchool||c.school||'')+'</em></span></button>').join('')
+      : '<p class="house-none">No chapter matches that. Check with whoever sent you this link &mdash; '+
+        'your house may not be registered yet.</p>';
+  }
+  search.addEventListener('input',paint);paint();
+  list.addEventListener('click',e=>{
+    const b=e.target.closest('.house');if(!b)return;
+    setClan(chapters.find(c=>c.id===b.dataset.id));
+  });
+}
+
+/* ── the draft ────────────────────────────────────────────────
+   Step 1 sends people to the App Store, which on a phone means leaving this
+   page entirely and coming back minutes later. Everything typed so far is
+   written down on every keystroke, so the trip costs them nothing. */
+const DRAFT='fomo:join:draft:v1';
+const fields=['username','fullname','email','phone'];
+function saveDraft(){
+  try{
+    const d={clan:clan?clan.id:''};
+    fields.forEach(id=>d[id]=document.getElementById(id).value);
+    localStorage.setItem(DRAFT,JSON.stringify(d));
+  }catch(_){}
+}
+function restoreDraft(){
+  try{
+    const d=JSON.parse(localStorage.getItem(DRAFT)||'null');if(!d)return;
+    fields.forEach(id=>{const el=document.getElementById(id);if(el&&!el.value&&d[id])el.value=d[id];});
+  }catch(_){}
+}
+function clearDraft(){try{localStorage.removeItem(DRAFT);}catch(_){}}
+fields.forEach(id=>document.getElementById(id).addEventListener('input',saveDraft));
+
+/* people type their handle as @jack, as "Jack", with a space on the end, or
+   with the app's own copy button which brings the @ along. all of those mean
+   the same account, and the sheet should hold one spelling of it. */
+const username=document.getElementById('username');
+function tidyUsername(){
+  username.value=username.value.replace(/^\s*@+/,'').replace(/\s+/g,'').toLowerCase();
+}
+username.addEventListener('blur',tidyUsername);
+
+/* ── step 2, checked against fomo itself ──────────────────────
+   Dormant until FOMO.verifyUsername is set. The result is never a gate:
+   a handle fomo cannot find still submits, it just lands in the sheet
+   marked so, because a check that is down must not cost us the person. */
+const vstat=document.getElementById('vstat');
+let checked='unchecked';
+
+function showStat(kind,text){
+  if(!text){vstat.hidden=true;return;}
+  vstat.hidden=false;
+  vstat.className='vstat '+kind;
+  vstat.innerHTML='<span aria-hidden="true">'+(kind==='ok'?'&#10003;':kind==='no'?'!':'&#8230;')+'</span><span>'+text+'</span>';
+}
+
+async function checkUsername(){
+  checked='unchecked';
+  if(!FOMO.verifyUsername||!/^[a-z0-9._]{2,30}$/.test(username.value)){showStat('',null);return;}
+  const asked=username.value;
+  showStat('busy','checking fomo&hellip;');
+  try{
+    const r=await fetch(FOMO.verifyUsername+(FOMO.verifyUsername.includes('?')?'&':'?')+
+      'username='+encodeURIComponent(asked),{cache:'no-store',signal:AbortSignal.timeout(8000)});
+    if(!r.ok)throw 0;
+    const j=await r.json();
+    if(username.value!==asked)return;            /* they kept typing; that answer is stale */
+    if(j&&j.exists===true){checked='found';showStat('ok','found on fomo.');}
+    else{checked='not found';
+      showStat('no','We can&rsquo;t find that handle on fomo. Check it against the app &mdash; '+
+        'you can still send it, but a wrong handle means we can&rsquo;t add you.');}
+  }catch(_){
+    if(username.value!==asked)return;
+    checked='unchecked';
+    showStat('','');                              /* fomo is unreachable: say nothing, block nothing */
+  }
+}
+username.addEventListener('blur',checkUsername);
+
+document.getElementById('haveIt').addEventListener('click',()=>{
+  username.focus();
+  username.closest('.step').scrollIntoView({behavior:'smooth',block:'center'});
+});
+
+/* ── go ───────────────────────────────────────────────────── */
+restoreDraft();
+loadChapters().then(list=>{
+  chapters=list;
+  const match=chapters.find(c=>c.id.toLowerCase()===wanted);
+  if(match)setClan(match);
+  else if(chapters.length)showPicker();
+  else{
+    /* both the feed and the bundled file failed. never strand them on a dead
+       page — take the chapter as typed and sort it out in the sheet. */
+    slot.innerHTML='<div class="pick"><h3>Which house are you in?</h3>'+
+      '<p class="say">We couldn&rsquo;t load the chapter list just now, so type it in.</p>'+
+      '<label class="f"><span>chapter</span><input type="text" name="clan_typed" id="clanTyped" '+
+      'placeholder="Sigma Chi" maxlength="60"><span class="err"></span></label>'+
+      '<label class="f"><span>school</span><input type="text" name="school_typed" id="schoolTyped" '+
+      'placeholder="San Diego State University" maxlength="80"><span class="err"></span></label></div>';
+  }
+});
+
+/* whoever does the adding needs to know how much to trust a row */
+const checkedField=document.createElement('input');
+checkedField.type='hidden';checkedField.name='username_checked';
+document.getElementById('joinForm').appendChild(checkedField);
+
+wireForm(document.getElementById('joinForm'),{
+  extra(showErr){
+    tidyUsername();
+    checkedField.value=FOMO.verifyUsername?checked:'not checked';
+    if(!/^[a-z0-9._]{2,30}$/.test(username.value)){
+      showErr(username,username.value
+        ? 'A fomo username is letters, numbers, dots and underscores. Copy it out of the app.'
+        : 'This one is required — it is how we find you.');
+      return username;
+    }
+    const typed=document.getElementById('clanTyped');
+    if(typed&&!typed.value.trim()){showErr(typed,'Tell us which chapter you are in.');return typed;}
+    if(!clan&&!typed){
+      const err=document.getElementById('pickErr');
+      if(err){err.textContent='Pick your house first.';err.classList.add('on');}
+      return document.getElementById('houseSearch');
+    }
+    return null;
+  }
+});
+
+/* form.js hides the form and reveals .done on a clean send. that is the point
+   the draft stops being useful, the link becomes worth passing on, and — once
+   fomo wires the seam up — the student can finish the job themselves. */
+const done=document.querySelector('.done');
+
+/* tell fomo's own system, if there is one to tell. this runs after the sheet
+   has already taken the answer, so a failure here is invisible to the student
+   and costs them nothing: the row is safe and the manual path still works. */
+async function tellFomo(){
+  if(!FOMO.joinEndpoint||!clan)return;
+  try{
+    await fetch(FOMO.joinEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},
+      signal:AbortSignal.timeout(8000),
+      body:JSON.stringify({fomo_username:username.value,clan_id:fomoClanId(clan),
+        chapter_id:clan.id,chapter:clan.name,school:clan.school||'',
+        full_name:document.getElementById('fullname').value.trim(),
+        email:document.getElementById('email').value.trim(),
+        phone:document.getElementById('phone').value.trim(),
+        username_checked:FOMO.verifyUsername?checked:'not checked'})});
+  }catch(_){}
+}
+
+new MutationObserver(()=>{
+  if(!done.classList.contains('on'))return;
+  clearDraft();
+  tellFomo();
+  if(!clan)return;
+
+  const name=clan.name.toLowerCase();
+  const link=clanLinkFor(clan);
+  if(link){
+    /* the seam is live: they are one tap from being in, so the page stops
+       promising that somebody will get to it and hands them the door. */
+    document.getElementById('doneHead').textContent='One tap and you\u2019re in.';
+    document.getElementById('doneClan').textContent='the '+name+' clan is waiting for you';
+    document.getElementById('doneMsg').textContent=
+      'Tap below and fomo opens on your chapter\u2019s clan. If the app asks you to sign in first, '+
+      'come back and tap it again.';
+    const open=document.getElementById('openClan');
+    open.href=link;open.hidden=false;
+  }else{
+    document.getElementById('doneClan').textContent='you\u2019re in line for the '+name+' clan';
+  }
+
+  const url=location.origin+'/fomo/onboard/?c='+encodeURIComponent(clan.id);
+  document.getElementById('shareUrl').value=url;
+  document.getElementById('shareBox').hidden=false;
+  document.getElementById('shareBtn').addEventListener('click',async e=>{
+    const b=e.currentTarget;
+    try{
+      if(navigator.share&&matchMedia('(pointer:coarse)').matches)
+        {await navigator.share({url,title:'join the '+clan.name+' clan on fomo'});return;}
+      await navigator.clipboard.writeText(url);
+    }catch(_){
+      const i=document.getElementById('shareUrl');i.focus();i.select();return;
+    }
+    b.textContent='copied';setTimeout(()=>b.textContent='copy',1800);
+  });
+}).observe(done,{attributes:true,attributeFilter:['class']});
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>clan links — fomo campus</title>
+<meta name="description" content="One join link per registered chapter, ready to paste into the house group chat.">
+<meta name="theme-color" content="#060510">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/fomo/assets/favicon.svg">
+<link rel="stylesheet" href="/fomo/assets/base.css">
+<style>
+/* an internal page: same skin as the rest of the site, none of the sell */
+:root{
+  --ink:#060510; --ink-2:#12111A; --ink-3:#1A1926;
+  --text:#F7F7F7; --muted:#9899A3; --muted-2:#6B6F7B;
+  --line:rgba(203,208,235,.1); --line-2:rgba(203,208,235,.2);
+  --surface:#12111A; --surface-2:rgba(255,255,255,.12);
+  --violet-hi:#8A9BFF; --glow-v:none;
+  --r-m:12px; --r-l:16px; --r-xl:25px; --maxw:900px;
+}
+.top{padding-block:clamp(30px,5vw,58px) clamp(16px,2.4vw,24px)}
+.top .h1{font-size:clamp(1.9rem,4.6vw,2.9rem);line-height:1;margin-top:0}
+.top p{color:#A9A2CC;font-size:.98rem;max-width:56ch;margin:15px 0 0}
+.state{font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted-2);margin-top:14px;display:block}
+.state b{color:var(--green);font-weight:500}
+
+.rows{display:grid;gap:9px;padding-bottom:clamp(50px,8vw,90px)}
+.row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+  padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface)}
+.row .crest{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;flex:none;
+  font-family:var(--display);font-weight:700;font-size:1rem;background:rgba(138,155,255,.14);
+  border:1px solid rgba(138,155,255,.28);color:#CBD3FF}
+.row .who{min-width:0}
+.row strong{display:block;font-family:var(--display);font-weight:500;font-size:1.05rem;letter-spacing:-.03em;
+  text-transform:lowercase;line-height:1.15}
+.row .sch{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
+.row .lnk{display:block;font-family:var(--mono);font-size:.68rem;color:var(--muted-2);margin-top:5px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .acts{display:flex;gap:7px;flex:none}
+.row .btn{white-space:nowrap}
+.ok{border-color:var(--green)!important;color:var(--green)!important}
+@media(max-width:700px){
+  .row{grid-template-columns:auto 1fr;gap:12px}
+  .row .acts{grid-column:1/-1;justify-content:stretch}
+  .row .acts .btn{flex:1;justify-content:center}
+}
+.note{margin-top:26px;padding:16px 18px;border:1px solid var(--line);border-radius:var(--r-m);
+  background:rgba(255,255,255,.02);font-size:.85rem;line-height:1.55;color:var(--muted)}
+.note b{color:var(--text);font-weight:600}
+.note code{font-family:var(--mono);font-size:.8em;color:#CBD3FF}
+footer{border-top:0;margin-top:0}
+.f-bot{margin-top:0;padding-top:0;border-top:0}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="aurora"><i></i><i></i><i></i></div>
+
+<main>
+<div class="wrap">
+  <div class="top">
+    <span class="eyebrow">internal · fomo campus</span>
+    <h1 class="h1">clan links</h1>
+    <p>One link per registered chapter. Paste a house&rsquo;s link into its group chat and every member who opens it
+      lands on a page that already knows which clan they belong to.</p>
+    <span class="state" id="state">loading chapters&hellip;</span>
+  </div>
+
+  <div class="rows" id="rows"></div>
+
+  <div class="note" id="note" hidden>
+    <b>Message</b> copies the whole thing &mdash; a line of text plus the link &mdash; ready to paste straight into
+    GroupMe or iMessage. <b>Link</b> copies the URL on its own.
+    <br><br>
+    This list is built from the same live chapter feed the village runs on, so a house that registers on the
+    Greek Wars site shows up here on the next refresh with a working link. Nothing to deploy.
+  </div>
+</div>
+</main>
+
+<footer><div class="wrap"><div class="f-bot"><span>INTERNAL. NOT LINKED FROM ANY PUBLIC PAGE.</span></div></div></footer>
+
+<script src="/fomo/assets/form.js?v=5"></script>
+<script>
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rows=document.getElementById('rows'), state=document.getElementById('state');
+
+/* the message a chapter lead actually pastes. it says the house's name back to
+   them, because a bare link in a group chat of 90 people gets scrolled past. */
+function message(c,url){
+  return c.name+' — this is the last step for Greek Wars. Get fomo and we put you in the '+
+    c.name+' clan. Takes two minutes:\n'+url;
+}
+
+async function load(){
+  for(const [url,live] of [['/api/campuswars',true],['/fomo/campuswars/chapters.json',false]]){
+    try{
+      const r=await fetch(url,{cache:'no-store'});
+      if(!r.ok)continue;
+      const j=await r.json();
+      if(Array.isArray(j.chapters)&&j.chapters.length)
+        return {chapters:j.chapters.filter(c=>c&&c.id&&c.id!=='empty'&&c.name),live:live&&j.live===true,at:j.updatedAt};
+    }catch(_){}
+  }
+  return {chapters:[],live:false};
+}
+
+load().then(({chapters,live,at})=>{
+  if(!chapters.length){
+    state.textContent='chapter list unavailable — the feed and the saved copy both failed';
+    return;
+  }
+  state.innerHTML = live
+    ? '<b>live</b> · '+chapters.length+' registered chapter'+(chapters.length===1?'':'s')+
+      (at?' · read '+new Date(at).toLocaleTimeString():'')
+    : 'saved copy · '+chapters.length+' chapter'+(chapters.length===1?'':'s')+' · the live feed did not answer';
+
+  rows.innerHTML=chapters.map(c=>{
+    const url=location.origin+'/fomo/onboard/?c='+encodeURIComponent(c.id);
+    return '<div class="row" data-id="'+esc(c.id)+'">'+
+      '<span class="crest">'+esc(c.letters||c.name.slice(0,2))+'</span>'+
+      '<span class="who"><strong>'+esc(c.name)+'</strong>'+
+      '<span class="sch">'+esc(c.school||'')+'</span>'+
+      '<span class="lnk">'+esc(url)+'</span></span>'+
+      '<span class="acts">'+
+        '<button class="btn btn-g btn-sm" type="button" data-copy="msg">message</button>'+
+        '<button class="btn btn-g btn-sm" type="button" data-copy="url">link</button>'+
+      '</span></div>';
+  }).join('');
+  document.getElementById('note').hidden=false;
+
+  rows.addEventListener('click',async e=>{
+    const b=e.target.closest('[data-copy]');if(!b)return;
+    const c=chapters.find(x=>x.id===b.closest('.row').dataset.id);
+    const url=location.origin+'/fomo/onboard/?c='+encodeURIComponent(c.id);
+    const text=b.dataset.copy==='url'?url:message(c,url);
+    const label=b.textContent;
+    try{await navigator.clipboard.writeText(text);}
+    catch(_){b.textContent='copy failed';setTimeout(()=>b.textContent=label,1800);return;}
+    b.textContent='copied';b.classList.add('ok');
+    setTimeout(()=>{b.textContent=label;b.classList.remove('ok');},1800);
+  });
+});
+</script>
+</body>
+</html>
