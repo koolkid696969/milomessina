@@ -53,8 +53,8 @@ body.campus-page{--ink:var(--campus-bg);--ink-2:var(--campus-surface);--text:var
 @media(max-width:650px){
   .campus-header .campus-top{padding:10px 20px;gap:10px;flex-wrap:wrap}
   .campus-header .campus-actions{gap:8px}
-  .campus-header .logo,.campus-header .brand{font-size:1.125rem;gap:5px}
-  .campus-header .logo-mark{width:27px;height:27px}
+  .campus-header .logo,.campus-header .brand{font-size:1.25rem;gap:6px}
+  .campus-header .logo-mark{width:32px;height:32px}
   .campus-header .campus-actions .btn{padding:9px 11px}
   .campus-header .campus-actions:has(.campus-sections)>.btn{display:none}
   .campus-programs{gap:2px;padding-inline:12px}
