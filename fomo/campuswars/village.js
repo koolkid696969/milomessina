@@ -1,11 +1,11 @@
 import {villageQuality} from './village-quality.js?v=56';
 import {createStreetNavigation,streetStops,streetStep} from './village-street-navigation.js?v=53';
 import * as THREE from './vendor/three.module.min.js';
-import {createVillage} from './village-world.js?v=64';
+import {createVillage} from './village-world.js?v=65';
 import {createDistricts} from './village-districts.js?v=63';
 import {INTRO_DURATION,openingView,introViewAt,introCaptionAt} from './village-intro.js?v=70';
-import {createMoneyRain} from './village-money-rain.js?v=71';
-import {prewarmVillage} from './village-prewarm.js?v=70';
+import {createMoneyRain} from './village-money-rain.js?v=72';
+import {prewarmVillage} from './village-prewarm.js?v=71';
 
 const shell=document.getElementById('village');
 const viewport=document.getElementById('village-viewport');
@@ -205,7 +205,11 @@ function startVillage(){
   canvas.addEventListener('pointerup',e=>{
     if(endTouch(e))return;
     if(!drag||drag.id!==e.pointerId)return;drag=null;if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);
-    if(dragDistance>8)return;rayAt(e);
+    if(dragDistance>8)return;
+    // The canvas keeps the pointer for the whole gesture, so a tap that started
+    // beside a control and drifted onto it would still pick the house behind it.
+    if(document.elementFromPoint(e.clientX,e.clientY)!==canvas)return;
+    rayAt(e);
     if(streetMode){const step=raycaster.intersectObjects(streetNav.pickables.filter(o=>o.parent.visible),false)[0];if(step){moveStreet(step.object.userData.streetZ);return;}}
     const hit=raycaster.intersectObjects(village.pickables,false)[0];
     if(hit){if(hit.object.userData.action==='register'){document.getElementById('panel-claim').click();return;}choose(hit.object.userData.chapter,!streetMode);return;}

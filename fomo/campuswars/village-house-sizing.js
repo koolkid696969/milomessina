@@ -1,4 +1,4 @@
-import {houseStandings} from './village-competition.js?v=55';
+import {houseStandings} from './village-competition.js?v=56';
 import {bannerIdentity} from './village-banner-art.js?v=55';
 import {hash} from './village-district-layout.js?v=63';
 

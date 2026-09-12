@@ -42,7 +42,13 @@ dialog{width:580px;max-width:calc(100% - 32px);max-height:calc(100dvh - 48px);pa
   .village-bottom{flex-wrap:nowrap;gap:0}
   .village-primary-controls{width:100%;justify-content:space-between}
   .village-primary-controls button{min-height:44px;padding:10px 15px;font-size:13px}
-  #village-more{display:block}
+  #village-more{display:block;position:relative}
+  /* A thumb lands a few pixels wide of a 44px target, and every pixel around
+     this button is village, so a near miss used to open a random house. The
+     button claims the dead space beside it instead. */
+  #village-more::after{content:'';position:absolute;top:-10px;left:0;
+    right:calc(-1 * max(16px,env(safe-area-inset-right)));
+    bottom:calc(-1 * max(16px,env(safe-area-inset-bottom)))}
   .village-extra-controls{display:none}
   .controls-open .village-extra-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:absolute;bottom:56px;right:0;width:min(310px,100%);max-height:calc(100dvh - 210px);overflow:auto;padding:12px;border:1px solid #aebce137;border-radius:16px;background:#121929f5;box-shadow:0 12px 32px #0005;pointer-events:auto}
   .village-extra-controls .party-tools,.village-extra-controls .village-view-tools{display:contents}

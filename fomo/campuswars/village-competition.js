@@ -49,8 +49,8 @@ export function createCompetition(T,chapters,anchors){
   const map=canvasTexture(T,2048,1376,(ctx,w,h)=>{
     ctx.fillStyle='#101D29';ctx.fillRect(0,0,w,h);ctx.textBaseline='middle';ctx.textAlign='left';
     ctx.fillStyle='#E9C873';ctx.fillRect(0,0,w,12);ctx.font='700 47px Aeonik, Arial, sans-serif';ctx.fillText('FOMO / GREEK WARS',100,91);
-    ctx.fillStyle='#FFFFFF';ctx.font='700 121px Aeonik, Arial, sans-serif';ctx.fillText('ONBOARDING PROGRESS',100,211);
-    ctx.fillStyle='#AFC0CD';ctx.font='500 40px Aeonik, Arial, sans-serif';ctx.fillText('ONBOARDING PROGRESS',105,315);
+    ctx.fillStyle='#FFFFFF';ctx.font='700 121px Aeonik, Arial, sans-serif';ctx.fillText('LEADERBOARD',100,211);
+    ctx.fillStyle='#AFC0CD';ctx.font='500 40px Aeonik, Arial, sans-serif';ctx.fillText('CHAPTER',105,315);
     ctx.textAlign='right';ctx.fillText('80% TARGET',w-327,315);ctx.fillText('% ACTIVE',w-110,315);
     standings.slice(0,5).forEach((row,i)=>{
       const y=382+i*166,first=i===0;

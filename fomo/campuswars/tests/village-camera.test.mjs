@@ -14,12 +14,14 @@ function cameraHarness(reduced=false,initialHash='',deferWarmup=false,mobile=fal
   element('chapters-data').textContent='{"chapters":[]}';
   Object.assign(element('village-viewport'),{clientWidth:screen.width,clientHeight:screen.height});
   const canvas=element('canvas');canvas.getBoundingClientRect=()=>({left:0,top:0,width:1200,height:650});canvas.hasPointerCapture=()=>false;
+  // What sits under the finger when the tap ends: the village, unless a test puts a control there.
+  let topmost=canvas;
   class Renderer{constructor(){this.domElement=canvas;this.shadowMap={};}setPixelRatio(ratio){pixelRatios.push(ratio);}setSize(){}render(scene,view){renders++;scene.updateMatrixWorld(true);camera=view;}}
-  const sandbox={villageQuality:()=>villageQuality(mobile),createStreetNavigation,streetStops,streetStep,prewarmVillage:()=>({then(done){finishWarmup=done;if(!deferWarmup)done();return {catch(){}};}}),createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:(_T,input)=>(builds.push(input),{dispose(){},extension:0,world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:2,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
+  const sandbox={villageQuality:()=>villageQuality(mobile),createStreetNavigation,streetStops,streetStep,prewarmVillage:()=>({then(done){finishWarmup=done;if(!deferWarmup)done();return {catch(){}};}}),createMoneyRain,INTRO_DURATION,openingView,introViewAt,introCaptionAt,THREE:{...THREE,WebGLRenderer:Renderer},createVillage:(_T,input)=>(builds.push(input),{dispose(){},extension:0,world:new THREE.Group(),anchors:[{id:'sigma-chi-sdsu',lot:{x:-20,z:-19}}],selection:new THREE.Object3D(),competition:{badges:[]},nightLife:{setNight(night){lighting.push(night);}},animateCrowd(){},animateEffects(){}}),createDistricts:()=>({root:new THREE.Group(),update(){return false;},animate(){}}),CustomEvent:class{constructor(type,options={}){this.type=type;this.detail=options.detail;}},document:{getElementById:element,elementFromPoint:()=>topmost,addEventListener(type,fn){events.set('document:'+type,fn);},dispatchEvent(event){if(event.type==='village:select')selections.push(event.detail.id);},hidden:false},matchMedia:query=>({matches:query.includes('reduced-motion')&&reduced}),devicePixelRatio:2,location:{hash:initialHash},URLSearchParams,ResizeObserver:class{observe(){}},IntersectionObserver:class{constructor(fn){intersection=fn;}observe(){}},addEventListener(){},requestAnimationFrame:fn=>{frame=fn;return 1;},cancelAnimationFrame(){}};
   const source=fs.readFileSync(new URL('../village.js',import.meta.url),'utf8').replace(/^import .*;$/gm,'');
   vm.runInNewContext(source,sandbox);
   let now=100;
-  return {camera:()=>camera,builds,pixelRatios,renders:()=>renders,finishWarmup:()=>finishWarmup(),selections,lighting,lens:()=>camera.fov,element,fire(name,event){events.get(name)(event);},show(visible){intersection([{isIntersecting:visible}]);},step(seconds,fps=60){for(let t=0;t<seconds;t+=1/fps){now+=1000/fps;const fn=frame;frame=null;fn?.(now);}return camera?.position.clone();},drag(){events.get('canvas:pointerdown')({button:0,pointerId:1,clientX:0,clientY:0});},reset(){events.get('village-overview:click')();}};
+  return {camera:()=>camera,builds,coverCanvas(id){topmost=id?element(id):canvas;},pixelRatios,renders:()=>renders,finishWarmup:()=>finishWarmup(),selections,lighting,lens:()=>camera.fov,element,fire(name,event){events.get(name)(event);},show(visible){intersection([{isIntersecting:visible}]);},step(seconds,fps=60){for(let t=0;t<seconds;t+=1/fps){now+=1000/fps;const fn=frame;frame=null;fn?.(now);}return camera?.position.clone();},drag(){events.get('canvas:pointerdown')({button:0,pointerId:1,clientX:0,clientY:0});},reset(){events.get('village-overview:click')();}};
 }
 test('slow frames preserve resolution and hidden villages perform no rendering',()=>{
   const h=cameraHarness();h.show(true);h.step(20,10);
@@ -197,6 +199,18 @@ test('clicking the unmarked road moves the camera to that street stop',()=>{
   const pointer={button:0,pointerId:1,clientX:(point.x+1)*600,clientY:(1-point.y)*325};
   h.fire('canvas:pointerdown',pointer);h.fire('canvas:pointerup',pointer);
   const arrived=h.step(.02);assert(Math.abs(arrived.z-z)<1e-9);assert(Math.abs(arrived.y-2.6)<1e-9);
+});
+
+test('a tap that ends on a control leaves the village behind it alone',()=>{
+  const h=cameraHarness(true);h.show(true);h.step(.02);h.fire('village-street:click');const start=h.step(.02);
+  const z=streetStep(start.z,-1),point=new THREE.Vector3(0,.25,z).project(h.camera());
+  const pointer={button:0,pointerId:1,clientX:(point.x+1)*600,clientY:(1-point.y)*325};
+  h.coverCanvas('village-more');
+  h.fire('canvas:pointerdown',pointer);h.fire('canvas:pointerup',pointer);
+  const stayed=h.step(.02);assert(Math.abs(stayed.z-start.z)<1e-9,'the More button keeps its own tap');
+  h.coverCanvas(null);
+  h.fire('canvas:pointerdown',pointer);h.fire('canvas:pointerup',pointer);
+  assert(Math.abs(h.step(.02).z-z)<1e-9,'the same tap on open village still travels');
 });
 
 test('a lost graphics context shows recovery text and restoration resumes rendering',()=>{
